@@ -408,7 +408,7 @@
             </div>
 
             <div class="drawer-footer">
-                &copy; {{ date('Y') }} BCTVI Broadband Telecommunications.<br>Customer Support: (032) 123-4567
+                &copy; {{ date('Y') }} BCTVI Broadband Telecommunications.<br>Customer Support: 0999 998 8209
             </div>
         </div>
     </div>

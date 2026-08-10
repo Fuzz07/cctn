@@ -481,7 +481,7 @@
                 </div>
                 <div>
                     <strong>High-Speed Fiber</strong>
-                    <span>Up to 300 Mbps</span>
+                    <span>Up to 150 Mbps</span>
                 </div>
             </div>
             <div class="bl-feature-item">
@@ -534,6 +534,10 @@
                         <li>
                             <span class="bl-check"><i class="bi bi-check-lg"></i></span>
                             Unlimited Data
+                        </li>
+                        <li>
+                            <span class="bl-check"><i class="bi bi-check-lg"></i></span>
+                            Free Installation
                         </li>
                         <li>
                             <span class="bl-check"><i class="bi bi-check-lg"></i></span>
@@ -591,7 +595,7 @@
                     Our local support team on Bantayan Island is ready to help with connection
                     issues, billing questions, and installation schedules — any time, any day.
                 </p>
-                <span class="bl-info-phone">(032) 123-4567</span>
+                <span class="bl-info-phone">0999 998 8209</span>
             </div>
             <div class="bl-info-card" id="about">
                 <h3>

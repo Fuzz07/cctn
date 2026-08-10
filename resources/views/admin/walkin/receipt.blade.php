@@ -232,7 +232,7 @@
 
         <div class="footer-note">
             Thank you for subscribing to CBTVI High Speed Broadband!<br>
-            Bantayan Island Office &middot; Customer Support Helpline: (032) 123-4567 &middot; www.cbtvi-wifi.ph
+            Bantayan Island Office &middot; Customer Support Helpline: 0999 998 8209 &middot; www.cbtvi-wifi.ph
         </div>
     </div>
 
