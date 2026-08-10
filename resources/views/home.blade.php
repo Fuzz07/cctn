@@ -163,14 +163,14 @@
     }
     .bl-plans-grid {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 1.4rem;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
     }
     .bl-plan-card {
         background: #fff;
         border: 1px solid #e5e7eb;
         border-radius: 16px;
-        padding: 1.75rem 1.5rem;
+        padding: 2.25rem 2rem;
         display: flex;
         flex-direction: column;
         box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
@@ -195,10 +195,10 @@
     }
     .bl-plan-name {
         font-family: var(--font-heading, inherit);
-        font-size: 1.45rem;
+        font-size: 1.7rem;
         font-weight: 800;
         color: var(--bl-navy);
-        margin-bottom: 0.75rem;
+        margin-bottom: 0.85rem;
         white-space: nowrap;
     }
     .bl-plan-price {
@@ -209,31 +209,31 @@
     }
     .bl-plan-amount {
         font-family: var(--font-heading, inherit);
-        font-size: 1.9rem;
+        font-size: 2.3rem;
         font-weight: 800;
         color: var(--bl-blue);
     }
-    .bl-plan-period { font-size: 0.88rem; color: var(--bl-slate); font-weight: 500; }
+    .bl-plan-period { font-size: 0.95rem; color: var(--bl-slate); font-weight: 500; }
     .bl-plan-features {
         list-style: none;
-        margin: 0 0 1.5rem;
+        margin: 0 0 1.75rem;
         padding: 0;
         display: flex;
         flex-direction: column;
-        gap: 0.7rem;
+        gap: 0.85rem;
         flex: 1;
     }
     .bl-plan-features li {
         display: flex;
         align-items: center;
-        gap: 0.6rem;
-        font-size: 0.9rem;
+        gap: 0.65rem;
+        font-size: 0.98rem;
         color: #334155;
         font-weight: 500;
     }
     .bl-check {
-        width: 19px;
-        height: 19px;
+        width: 21px;
+        height: 21px;
         border-radius: 50%;
         background: var(--bl-blue);
         color: #fff;
@@ -250,8 +250,8 @@
         color: var(--bl-blue);
         border: 1.5px solid var(--bl-blue);
         font-weight: 700;
-        font-size: 0.92rem;
-        padding: 0.7rem;
+        font-size: 1rem;
+        padding: 0.85rem;
         border-radius: 9px;
         cursor: pointer;
         transition: background 0.2s, color 0.2s;
