@@ -67,7 +67,7 @@
     <!-- LEFT PANEL -->
     <div class="admin-auth-left">
         <div class="admin-auth-left-bg">
-            <img src="{{ asset('assets/images/admin-hero-bg.png') }}" alt="Background">
+            <img src="{{ asset('assets/images/login-bg.jpg') }}" alt="BCTVI Office">
         </div>
         <div class="admin-auth-left-overlay"></div>
         

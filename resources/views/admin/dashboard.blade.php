@@ -96,6 +96,7 @@
         transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
     .stat-card:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(15, 23, 42, 0.07); }
+    a.stat-card { text-decoration: none; color: inherit; cursor: pointer; }
     .stat-icon-wrap {
         width: 56px;
         height: 56px;
@@ -257,7 +258,7 @@
     <!-- 4 KPI Stat Cards -->
     <div class="stats-row">
         <!-- Total Bookings -->
-        <div class="stat-card">
+        <a href="{{ route('admin.appointments') }}" class="stat-card">
             <div class="stat-icon-wrap" style="background: #fef2f2; color: #dc2626;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
             </div>
@@ -265,10 +266,10 @@
                 <span class="stat-title">Total Bookings</span>
                 <span class="stat-number">{{ $stats['total'] }}</span>
             </div>
-        </div>
+        </a>
 
         <!-- Pending Approvals -->
-        <div class="stat-card">
+        <a href="{{ route('admin.appointments', ['status' => 'pending']) }}" class="stat-card">
             <div class="stat-icon-wrap" style="background: #fff7ed; color: #ea580c;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             </div>
@@ -276,10 +277,10 @@
                 <span class="stat-title">Pending Approvals</span>
                 <span class="stat-number">{{ $stats['pending'] }}</span>
             </div>
-        </div>
+        </a>
 
         <!-- Registered Clients -->
-        <div class="stat-card">
+        <a href="{{ route('admin.clients') }}" class="stat-card">
             <div class="stat-icon-wrap" style="background: #f0fdf4; color: #16a34a;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
             </div>
@@ -287,10 +288,10 @@
                 <span class="stat-title">Total Clients</span>
                 <span class="stat-number">{{ $stats['clients'] }}</span>
             </div>
-        </div>
+        </a>
 
         <!-- Active Services -->
-        <div class="stat-card">
+        <a href="{{ route('admin.services') }}" class="stat-card">
             <div class="stat-icon-wrap" style="background: #eff6ff; color: #2563eb;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
             </div>
@@ -298,7 +299,7 @@
                 <span class="stat-title">Active Services</span>
                 <span class="stat-number">{{ $stats['services'] }}</span>
             </div>
-        </div>
+        </a>
     </div>
 
     <div class="dash-split-row">

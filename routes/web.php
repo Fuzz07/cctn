@@ -36,6 +36,9 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout.get');
 Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('forgot-password');
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->name('forgot-password.submit');
 
+Route::get('/auth/google', [AuthController::class, 'googleRedirect'])->name('google.redirect');
+Route::get('/auth/google/callback', [AuthController::class, 'googleCallback'])->name('google.callback');
+
 // ─── Client Routes (Protected) ──────────────────────────────────────────────
 Route::middleware('auth.client')->group(function () {
     Route::get('/dashboard', [ClientDashboard::class, 'index'])->name('client.dashboard');

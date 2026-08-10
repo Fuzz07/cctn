@@ -93,6 +93,16 @@
             <h2 class="auth-form-title">Client Registration</h2>
             <p class="auth-form-sub">Please fill in your details accurately to create an account.</p>
 
+            <a href="{{ route('google.redirect') }}" style="display: flex; justify-content: center; align-items: center; gap: 0.5rem; width: 100%; background: #fff; color: var(--text-dark); padding: 0.85rem; border-radius: 8px; font-weight: 700; font-size: 1rem; border: 1px solid #cbd5e1; text-decoration: none; box-sizing: border-box; margin-bottom: 1.25rem;">
+                <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303C33.654 32.657 29.223 36 24 36c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="#FF3D00" d="m6.306 14.691 6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/></svg>
+                Sign up with Google
+            </a>
+            <div style="display: flex; align-items: center; text-align: center; color: #94a3b8; font-size: 0.85rem; margin-bottom: 1.5rem;">
+                <span style="flex: 1; border-bottom: 1px solid #e2e8f0;"></span>
+                <span style="padding: 0 0.75rem;">or fill in the form below</span>
+                <span style="flex: 1; border-bottom: 1px solid #e2e8f0;"></span>
+            </div>
+
             @if ($errors->any())
                 <div style="background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; padding: 1rem; border-radius: 8px; font-size: 0.85rem; margin-bottom: 1.5rem;">
                     <ul style="margin: 0; padding-left: 1.2rem;">
