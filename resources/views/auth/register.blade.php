@@ -32,16 +32,27 @@
         .auth-subtitle { color: #e2e8f0; font-size: 1.05rem; line-height: 1.6; max-width: 420px; margin-bottom: 2.5rem; text-shadow: 0 1px 8px rgba(0,0,0,0.4); }
         .auth-image { display: none; }
 
-        .auth-right { width: 100%; max-width: 700px; margin: 0; background: transparent; display: flex; flex-direction: column; align-items: center; position: static; padding: 0; }
+        .auth-right { width: 100%; max-width: 1140px; margin: 0; background: transparent; display: flex; flex-direction: column; align-items: center; position: static; padding: 0; }
         .auth-back-link { position: fixed; top: 1.5rem; right: 1.5rem; display: inline-flex; align-items: center; gap: 0.5rem; color: #e2e8f0; text-decoration: none; font-weight: 700; font-size: 0.88rem; transition: color 0.2s; z-index: 10; text-shadow: 0 1px 6px rgba(0,0,0,0.4); }
         .auth-back-link:hover { color: #ffffff; }
-        .auth-form-card { background: #fff; width: 100%; max-width: 700px; border-radius: 20px; padding: 3rem 2.5rem; box-shadow: 0 25px 60px rgba(0,0,0,0.35); border: 1px solid #e5e7eb; position: relative; z-index: 2; margin-top: 0; }
+        .auth-form-card { background: #fff; width: 100%; max-width: 1140px; border-radius: 20px; padding: 3rem 2.5rem; box-shadow: 0 25px 60px rgba(0,0,0,0.35); border: 1px solid #e5e7eb; position: relative; z-index: 2; margin-top: 0; }
+        .auth-card-head { max-width: 620px; margin: 0 auto 2rem; }
         .auth-form-title { text-align: center; font-family: system-ui, sans-serif; font-size: 1.6rem; font-weight: 700; color: #0f172a; margin-bottom: 0.5rem; }
         .auth-form-sub { text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem; }
         
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 1.25rem; margin-bottom: 1.5rem; }
         .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem 1.25rem; margin-bottom: 1.5rem; }
         .form-full { grid-column: 1 / -1; }
+
+        /* Three side-by-side sections */
+        .form-columns { display: grid; grid-template-columns: repeat(3, 1fr); align-items: start; }
+        .form-column { padding: 0 1.75rem; border-left: 1px solid #eef2f7; }
+        .form-column:first-child { padding-left: 0; border-left: none; }
+        .form-column:last-child { padding-right: 0; }
+        .form-column .auth-input-group { margin-bottom: 1.1rem; }
+        .form-column .form-section-title { margin-top: 0; }
+        .form-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 0 0.85rem; }
+        .field-hint { font-size: 0.75rem; color: #94a3b8; margin-top: 0.35rem; line-height: 1.5; }
         
         .auth-input-group label { display: block; font-size: 0.85rem; font-weight: 700; color: var(--text-dark); margin-bottom: 0.5rem; }
         .auth-input { width: 100%; padding: 0.8rem 1rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; color: var(--text-dark); transition: border-color 0.2s; box-sizing: border-box;}
@@ -56,7 +67,12 @@
         .auth-login-link a { color: var(--primary); font-weight: 700; text-decoration: none; }
         .auth-login-link a:hover { text-decoration: underline; }
 
-        @media (max-width: 1024px) {
+        /* Below three-column width the sections stack, so the card narrows with them */
+        @media (max-width: 1150px) {
+            .auth-right, .auth-form-card { max-width: 640px; }
+            .form-columns { grid-template-columns: 1fr; }
+            .form-column { padding: 1.5rem 0 0; border-left: none; border-top: 1px solid #eef2f7; margin-top: 1.25rem; }
+            .form-column:first-child { padding-top: 0; border-top: none; margin-top: 0; }
             .form-grid-3 { grid-template-columns: 1fr; }
         }
         @media (max-width: 768px) {
@@ -107,6 +123,7 @@
         </a>
 
         <div class="auth-form-card">
+            <div class="auth-card-head">
             <h2 class="auth-form-title">Client Registration</h2>
             <p class="auth-form-sub">Please fill in your details accurately to create an account.</p>
 
@@ -129,141 +146,133 @@
                     </ul>
                 </div>
             @endif
+            </div>
 
             <form action="{{ route('register.submit') }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                <div class="form-section-title">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    Personal Information
-                </div>
 
-                <div class="form-grid-3">
-                    <div class="auth-input-group">
-                        <label>First Name *</label>
-                        <input type="text" name="firstname" class="auth-input" value="{{ old('firstname') }}" required>
-                    </div>
-                    <div class="auth-input-group">
-                        <label>Middle Name</label>
-                        <input type="text" name="middlename" class="auth-input" value="{{ old('middlename') }}">
-                    </div>
-                    <div class="auth-input-group">
-                        <label>Last Name *</label>
-                        <input type="text" name="lastname" class="auth-input" value="{{ old('lastname') }}" required>
-                    </div>
-                </div>
+                <div class="form-columns">
+                    <!-- Section 1: Personal Information -->
+                    <div class="form-column">
+                        <div class="form-section-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            Personal Information
+                        </div>
 
-                <div class="form-grid-3">
-                    <div class="auth-input-group">
-                        <label>Birth Date *</label>
-                        <input type="date" name="birthdate" id="birthdate" class="auth-input" value="{{ old('birthdate') }}" required>
-                    </div>
-                    <div class="auth-input-group">
-                        <label>Age *</label>
-                        <input type="number" name="age" id="age" class="auth-input" value="{{ old('age') }}" readonly style="background:#f1f5f9; cursor:not-allowed;">
-                    </div>
-                    <div class="auth-input-group">
-                        <label>Gender *</label>
-                        <select name="gender" class="auth-input" required>
-                            <option value="">Select Gender</option>
-                            <option value="Male" {{ old('gender') == 'Male' ? 'selected' : '' }}>Male</option>
-                            <option value="Female" {{ old('gender') == 'Female' ? 'selected' : '' }}>Female</option>
-                        </select>
-                    </div>
-                </div>
+                        <div class="auth-input-group">
+                            <label>First Name *</label>
+                            <input type="text" name="firstname" class="auth-input" value="{{ old('firstname') }}" required>
+                        </div>
+                        <div class="auth-input-group">
+                            <label>Middle Name</label>
+                            <input type="text" name="middlename" class="auth-input" value="{{ old('middlename') }}">
+                        </div>
+                        <div class="auth-input-group">
+                            <label>Last Name *</label>
+                            <input type="text" name="lastname" class="auth-input" value="{{ old('lastname') }}" required>
+                        </div>
 
-                <div class="form-grid">
-                    <div class="auth-input-group">
-                        <label>Place of Birth</label>
-                        <input type="text" name="place_of_birth" class="auth-input" value="{{ old('place_of_birth') }}">
-                    </div>
-                    <div class="auth-input-group">
-                        <label>Civil Status *</label>
-                        <select name="civil_status" class="auth-input" required>
-                            <option value="">Select Status</option>
-                            <option value="Single" {{ old('civil_status') == 'Single' ? 'selected' : '' }}>Single</option>
-                            <option value="Married" {{ old('civil_status') == 'Married' ? 'selected' : '' }}>Married</option>
-                            <option value="Widowed" {{ old('civil_status') == 'Widowed' ? 'selected' : '' }}>Widowed</option>
-                            <option value="Legally Separated" {{ old('civil_status') == 'Legally Separated' ? 'selected' : '' }}>Legally Separated</option>
-                        </select>
-                    </div>
-                </div>
+                        <div class="form-pair">
+                            <div class="auth-input-group">
+                                <label>Birth Date *</label>
+                                <input type="date" name="birthdate" id="birthdate" class="auth-input" value="{{ old('birthdate') }}" required>
+                            </div>
+                            <div class="auth-input-group">
+                                <label>Age *</label>
+                                <input type="number" name="age" id="age" class="auth-input" value="{{ old('age') }}" readonly style="background:#f1f5f9; cursor:not-allowed;">
+                            </div>
+                        </div>
 
-                <div class="form-section-title">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    Contact & Address
-                </div>
+                        <div class="auth-input-group">
+                            <label>Gender *</label>
+                            <select name="gender" class="auth-input" required>
+                                <option value="">Select Gender</option>
+                                <option value="Male" {{ old('gender') == 'Male' ? 'selected' : '' }}>Male</option>
+                                <option value="Female" {{ old('gender') == 'Female' ? 'selected' : '' }}>Female</option>
+                            </select>
+                        </div>
+                        <div class="auth-input-group">
+                            <label>Place of Birth</label>
+                            <input type="text" name="place_of_birth" class="auth-input" value="{{ old('place_of_birth') }}">
+                        </div>
+                        <div class="auth-input-group">
+                            <label>Civil Status *</label>
+                            <select name="civil_status" class="auth-input" required>
+                                <option value="">Select Status</option>
+                                <option value="Single" {{ old('civil_status') == 'Single' ? 'selected' : '' }}>Single</option>
+                                <option value="Married" {{ old('civil_status') == 'Married' ? 'selected' : '' }}>Married</option>
+                                <option value="Widowed" {{ old('civil_status') == 'Widowed' ? 'selected' : '' }}>Widowed</option>
+                                <option value="Legally Separated" {{ old('civil_status') == 'Legally Separated' ? 'selected' : '' }}>Legally Separated</option>
+                            </select>
+                        </div>
+                    </div>
 
-                <div class="form-grid">
-                    <div class="auth-input-group">
-                        <label>Mobile Number *</label>
-                        <input type="text" name="contact_no" class="auth-input" placeholder="e.g. 09123456789" value="{{ old('contact_no') }}" required>
-                    </div>
-                    <div class="auth-input-group">
-                        <label>Email Address *</label>
-                        <input type="email" name="email" class="auth-input" value="{{ old('email') }}" required>
-                    </div>
-                </div>
+                    <!-- Section 2: Contact & Address -->
+                    <div class="form-column">
+                        <div class="form-section-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                            Contact &amp; Address
+                        </div>
 
-                <div class="form-grid-3">
-                    <div class="auth-input-group">
-                        <label>Province *</label>
-                        <input type="text" name="address_province" class="auth-input" value="Cebu" readonly style="background:#f1f5f9;">
+                        <div class="auth-input-group">
+                            <label>Mobile Number *</label>
+                            <input type="text" name="contact_no" class="auth-input" placeholder="e.g. 09123456789" value="{{ old('contact_no') }}" required>
+                        </div>
+                        <div class="auth-input-group">
+                            <label>Email Address *</label>
+                            <input type="email" name="email" class="auth-input" value="{{ old('email') }}" required>
+                        </div>
+                        <div class="auth-input-group">
+                            <label>Province *</label>
+                            <input type="text" name="address_province" class="auth-input" value="Cebu" readonly style="background:#f1f5f9;">
+                        </div>
+                        <div class="auth-input-group">
+                            <label>Municipality *</label>
+                            <select name="address_municipality" id="municipality" class="auth-input" required>
+                                <option value="">Select Municipality</option>
+                                <option value="Bantayan" {{ old('address_municipality', 'Bantayan') == 'Bantayan' ? 'selected' : '' }}>Bantayan</option>
+                                <option value="Santa Fe" {{ old('address_municipality') == 'Santa Fe' ? 'selected' : '' }}>Santa Fe</option>
+                                <option value="Madridejos" {{ old('address_municipality') == 'Madridejos' ? 'selected' : '' }}>Madridejos</option>
+                            </select>
+                        </div>
+                        <div class="auth-input-group">
+                            <label>Barangay *</label>
+                            <select name="address_barangay" id="barangay" class="auth-input" required data-old="{{ old('address_barangay') }}">
+                                <option value="">Select Brgy</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="auth-input-group">
-                        <label>Municipality *</label>
-                        <select name="address_municipality" id="municipality" class="auth-input" required>
-                            <option value="">Select Municipality</option>
-                            <option value="Bantayan" {{ old('address_municipality', 'Bantayan') == 'Bantayan' ? 'selected' : '' }}>Bantayan</option>
-                            <option value="Santa Fe" {{ old('address_municipality') == 'Santa Fe' ? 'selected' : '' }}>Santa Fe</option>
-                            <option value="Madridejos" {{ old('address_municipality') == 'Madridejos' ? 'selected' : '' }}>Madridejos</option>
-                        </select>
-                    </div>
-                    <div class="auth-input-group">
-                        <label>Barangay *</label>
-                        <select name="address_barangay" id="barangay" class="auth-input" required data-old="{{ old('address_barangay') }}">
-                            <option value="">Select Brgy</option>
-                        </select>
-                    </div>
-                </div>
 
-                <div class="form-section-title">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-                    Account Verification
-                </div>
+                    <!-- Section 3: Account & Verification -->
+                    <div class="form-column">
+                        <div class="form-section-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            Account &amp; Verification
+                        </div>
 
-                <div class="auth-input-group">
-                    <label>Proof of Billing (Photo) *</label>
-                    <input type="file" name="proof_of_billing" class="auth-input" accept="image/png, image/jpeg, image/webp" style="padding: 0.6rem;" required>
-                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 0.4rem; line-height: 1.5;">
-                        Attach a clear photo of a recent billing statement (electric or water bill) showing your name and address.
-                        This is required to verify that your account details are valid.
-                    </div>
-                </div>
-
-                <div class="form-section-title">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                    Account Credentials
-                </div>
-
-                <div class="form-grid">
-                    <div class="auth-input-group">
-                        <label>Username *</label>
-                        <input type="text" name="username" class="auth-input" value="{{ old('username') }}" required>
-                    </div>
-                    <div class="auth-input-group">
-                        <label>Profile Photo (Optional)</label>
-                        <input type="file" name="profile_photo" class="auth-input" accept="image/png, image/jpeg, image/webp" style="padding: 0.6rem;">
-                    </div>
-                </div>
-
-                <div class="form-grid">
-                    <div class="auth-input-group">
-                        <label>Password *</label>
-                        <input type="password" name="password" class="auth-input" minlength="8" required>
-                    </div>
-                    <div class="auth-input-group">
-                        <label>Confirm Password *</label>
-                        <input type="password" name="password_confirmation" class="auth-input" minlength="8" required>
+                        <div class="auth-input-group">
+                            <label>Username *</label>
+                            <input type="text" name="username" class="auth-input" value="{{ old('username') }}" required>
+                        </div>
+                        <div class="auth-input-group">
+                            <label>Password *</label>
+                            <input type="password" name="password" class="auth-input" minlength="8" required>
+                        </div>
+                        <div class="auth-input-group">
+                            <label>Confirm Password *</label>
+                            <input type="password" name="password_confirmation" class="auth-input" minlength="8" required>
+                        </div>
+                        <div class="auth-input-group">
+                            <label>Profile Photo (Optional)</label>
+                            <input type="file" name="profile_photo" class="auth-input" accept="image/png, image/jpeg, image/gif, image/webp" style="padding: 0.6rem;">
+                        </div>
+                        <div class="auth-input-group">
+                            <label>Proof of Billing (Photo) *</label>
+                            <input type="file" name="proof_of_billing" class="auth-input" accept="image/png, image/jpeg, image/webp" style="padding: 0.6rem;" required>
+                            <div class="field-hint">
+                                A recent electric or water bill showing your name and address, used to verify your details.
+                            </div>
+                        </div>
                     </div>
                 </div>
 
