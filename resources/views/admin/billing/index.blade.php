@@ -84,7 +84,7 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Account Number *</label>
-                    <input type="text" name="account_number" class="form-control" value="{{ old('account_number') }}" required placeholder="e.g. BCTVI-2024-0001">
+                    <input type="text" name="account_number" class="form-control" value="{{ old('account_number') }}" required placeholder="e.g. 2026-01-01">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Statement Period *</label>

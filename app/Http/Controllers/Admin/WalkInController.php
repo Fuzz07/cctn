@@ -69,7 +69,7 @@ class WalkInController extends Controller
 
         $client = Client::where('email', $request->email)->first();
         if (!$client) {
-            $acctNo = 'CBTVI-' . date('Y') . '-' . str_pad(Client::count() + 1, 4, '0', STR_PAD_LEFT);
+            $acctNo = Client::nextAccountNumber();
             $client = Client::create([
                 'account_number'     => $acctNo,
                 'firstname'          => $firstname,
@@ -162,10 +162,13 @@ class WalkInController extends Controller
             'admin_notes'          => 'Registered via Walk-In Portal by Staff.',
         ]);
 
-        // Create billing account record for ledger
+        // Create billing account record for ledger; backfill the client's account number if missing
+        if (!$client->account_number) {
+            $client->update(['account_number' => Client::nextAccountNumber()]);
+        }
         $billing = BillingAccount::create([
             'client_id'         => $client->id,
-            'account_number'    => $client->account_number ?? 'CBTVI-' . date('Y') . '-' . $client->id,
+            'account_number'    => $client->account_number,
             'statement_period'  => date('F Y'),
             'amount_due'        => $totalAmountDue,
             'penalty_amount'    => 0.00,

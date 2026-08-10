@@ -61,8 +61,7 @@ class AuthController extends Controller
             'address_province'     => 'required|string|max:100',
         ]);
 
-        $maxId         = Client::max('id') ?? 0;
-        $accountNumber = 'BCTVI-' . date('Y') . '-' . str_pad($maxId + 1, 4, '0', STR_PAD_LEFT);
+        $accountNumber = Client::nextAccountNumber();
 
         $birthdate = $request->input('birthdate') ?: '1995-01-01';
         $age       = Carbon::parse($birthdate)->age;

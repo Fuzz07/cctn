@@ -51,4 +51,20 @@ class Client extends Authenticatable
     {
         return trim("{$this->firstname} {$this->middlename} {$this->lastname}");
     }
+
+    /**
+     * Generate the next account number in the YYYY-MM-NN series (e.g. 2026-01-01),
+     * where NN is a per-month sequence that continues from the highest issued number.
+     */
+    public static function nextAccountNumber(): string
+    {
+        $prefix = now()->format('Y-m') . '-';
+
+        $lastSequence = static::where('account_number', 'like', $prefix . '%')
+            ->pluck('account_number')
+            ->map(fn ($number) => (int) substr($number, strlen($prefix)))
+            ->max() ?? 0;
+
+        return $prefix . str_pad($lastSequence + 1, 2, '0', STR_PAD_LEFT);
+    }
 }

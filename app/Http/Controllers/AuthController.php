@@ -81,9 +81,8 @@ class AuthController extends Controller
             'proof_of_billing.max'      => 'The proof of billing photo must not be larger than 5 MB.',
         ]);
 
-        // Auto-generate account number
-        $maxId = Client::max('id') ?? 0;
-        $accountNumber = 'BCTVI-' . date('Y') . '-' . str_pad($maxId + 1, 4, '0', STR_PAD_LEFT);
+        // Auto-generate account number (YYYY-MM-NN series, e.g. 2026-01-01)
+        $accountNumber = Client::nextAccountNumber();
 
         // Handle profile photo upload
         $profilePhotoPath = null;
