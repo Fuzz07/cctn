@@ -1,14 +1,19 @@
+@php
+    // Android WebView app identifies itself via this user-agent marker (see MainActivity.kt)
+    $isApp = str_contains(request()->userAgent() ?? '', 'CCTN-Android-App');
+@endphp
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#dc2626">
     <title>@yield('title', 'CCTN / BCTVI Broadband Telecommunications')</title>
     <meta name="description" content="Official CCTN / BCTVI Broadband Client Portal & Mobile App. Book WiFi installation, manage statements, and receive installation updates.">
     
     <link rel="icon" type="image/png" href="{{ asset('assets/images/bctvi-logo.png') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}?v={{ filemtime(public_path('assets/css/style.css')) }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
     <style>
         /* Modern Mobile Client Navigation Drawer & Bottom Bar */
@@ -267,23 +272,35 @@
             display: none;
         }
 
-        @media (max-width: 768px) {
+        /* Desktop nav holds many links; collapse to drawer + bottom bar below 992px */
+        @media (max-width: 992px) {
             .mobile-only-trigger { display: inline-block; }
             .bottom-nav { display: block; }
-            body { padding-bottom: 65px; }
+            body { padding-bottom: calc(65px + env(safe-area-inset-bottom)); }
             .desktop-nav-links { display: none !important; }
+            .client-navbar { padding: 0.65rem 1rem; }
         }
+
+        /* ── App Mode (Android WebView): customer-only production app chrome ── */
+        body.app-mode .desktop-nav-links { display: none !important; }
+        body.app-mode .mobile-only-trigger { display: inline-block; }
+        body.app-mode .bottom-nav { display: block; }
+        body.app-mode { padding-bottom: calc(65px + env(safe-area-inset-bottom)); }
+        body.app-mode .site-footer { display: none; }
+        body.app-mode .admin-only-link { display: none !important; }
+        body.app-mode #download { display: none; }
+        .bottom-nav { padding-bottom: calc(0.6rem + env(safe-area-inset-bottom)); }
     </style>
     @stack('styles')
 </head>
-<body>
+<body class="{{ $isApp ? 'app-mode' : '' }}">
 
     <!-- Header Navbar -->
     <header class="client-header">
         <div class="client-navbar">
             <div style="display: flex; align-items: center; gap: 12px;">
                 <button class="btn-drawer-close mobile-only-trigger" style="color: #0f172a;" onclick="toggleDrawer(true)" aria-label="Open Navigation Drawer">
-                    ☰
+                    <i class="bi bi-list"></i>
                 </button>
                 <a href="{{ route('home') }}" class="client-brand">
                     <img src="{{ asset('assets/images/cctn-logo.png') }}" alt="BCTVI Logo" class="client-brand-img">
@@ -345,55 +362,55 @@
                         </div>
                     </div>
                 @endauth
-                <button class="btn-drawer-close" onclick="toggleDrawer(false)">&times;</button>
+                <button class="btn-drawer-close" onclick="toggleDrawer(false)" aria-label="Close Navigation Drawer"><i class="bi bi-x-lg"></i></button>
             </div>
 
             <div class="drawer-menu">
                 <a href="{{ route('home') }}" class="drawer-item {{ request()->routeIs('home') ? 'active' : '' }}">
-                    <span class="drawer-item-icon">🏠</span> Home
+                    <span class="drawer-item-icon"><i class="bi bi-house-door"></i></span> Home
                 </a>
-                
+
                 @auth('client')
                     <a href="{{ route('client.dashboard') }}" class="drawer-item {{ request()->routeIs('client.dashboard*') ? 'active' : '' }}">
-                        <span class="drawer-item-icon">📊</span> Client Dashboard
+                        <span class="drawer-item-icon"><i class="bi bi-speedometer2"></i></span> Client Dashboard
                     </a>
                     <a href="{{ route('client.appointments') }}" class="drawer-item {{ request()->routeIs('client.appointments*') ? 'active' : '' }}">
-                        <span class="drawer-item-icon">📋</span> My Bookings
+                        <span class="drawer-item-icon"><i class="bi bi-journal-text"></i></span> My Bookings
                     </a>
                     <a href="{{ route('client.dashboard') }}#schedule" class="drawer-item">
-                        <span class="drawer-item-icon">📅</span> Installation Schedule
+                        <span class="drawer-item-icon"><i class="bi bi-calendar-event"></i></span> Installation Schedule
                     </a>
                     <a href="{{ route('client.billing') }}" class="drawer-item {{ request()->routeIs('client.billing*') ? 'active' : '' }}">
-                        <span class="drawer-item-icon">💳</span> Payments
+                        <span class="drawer-item-icon"><i class="bi bi-credit-card"></i></span> Payments
                     </a>
                     <a href="{{ route('client.notifications') }}" class="drawer-item {{ request()->routeIs('client.notifications*') ? 'active' : '' }}">
-                        <span class="drawer-item-icon">🔔</span> Notifications
+                        <span class="drawer-item-icon"><i class="bi bi-bell"></i></span> Notifications
                         @if(isset($unreadCount) && $unreadCount > 0)
                             <span class="drawer-badge">{{ $unreadCount }}</span>
                         @endif
                     </a>
                     <a href="{{ route('client.dashboard') }}#profile" class="drawer-item">
-                        <span class="drawer-item-icon">👤</span> Profile
+                        <span class="drawer-item-icon"><i class="bi bi-person"></i></span> Profile
                     </a>
                     <a href="{{ route('client.dashboard') }}#settings" class="drawer-item">
-                        <span class="drawer-item-icon">⚙️</span> Settings
+                        <span class="drawer-item-icon"><i class="bi bi-gear"></i></span> Settings
                     </a>
                     <div style="border-top: 1px solid #f1f5f9; margin: 0.5rem 0;"></div>
                     <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
                         @csrf
                         <button type="submit" class="drawer-item" style="width: 100%; border: none; background: none; text-align: left; cursor: pointer; color: #ef4444;">
-                            <span class="drawer-item-icon">🚪</span> Logout
+                            <span class="drawer-item-icon"><i class="bi bi-box-arrow-right"></i></span> Logout
                         </button>
                     </form>
                 @else
                     <a href="{{ route('login') }}" class="drawer-item">
-                        <span class="drawer-item-icon">🔑</span> Login
+                        <span class="drawer-item-icon"><i class="bi bi-box-arrow-in-right"></i></span> Login
                     </a>
-                    <a href="{{ route('admin.login') }}" class="drawer-item">
-                        <span class="drawer-item-icon">🛡️</span> Admin Login
+                    <a href="{{ route('admin.login') }}" class="drawer-item admin-only-link">
+                        <span class="drawer-item-icon"><i class="bi bi-shield-lock"></i></span> Admin Login
                     </a>
                     <a href="{{ route('register') }}" class="drawer-item">
-                        <span class="drawer-item-icon">📝</span> Register
+                        <span class="drawer-item-icon"><i class="bi bi-person-plus"></i></span> Register
                     </a>
                 @endauth
             </div>
@@ -436,50 +453,50 @@
     <nav class="bottom-nav">
         <div class="bottom-nav-grid">
             <a href="{{ route('home') }}" class="bottom-nav-item {{ request()->routeIs('home') ? 'active' : '' }}">
-                <span class="bottom-nav-icon">🏠</span>
+                <span class="bottom-nav-icon"><i class="bi bi-house-door-fill"></i></span>
                 <span>Home</span>
             </a>
             @auth('client')
                 <a href="{{ route('client.appointments') }}" class="bottom-nav-item {{ request()->routeIs('client.appointments*') ? 'active' : '' }}">
-                    <span class="bottom-nav-icon">📋</span>
+                    <span class="bottom-nav-icon"><i class="bi bi-journal-text"></i></span>
                     <span>Bookings</span>
                 </a>
                 <a href="{{ route('client.book') }}" class="bottom-nav-item {{ request()->routeIs('client.book*') ? 'active' : '' }}" style="color:#dc2626;">
-                    <span class="bottom-nav-icon" style="background:#dc2626; color:#fff; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-top:-10px; box-shadow:0 4px 10px rgba(220,38,38,0.3);">⚡</span>
+                    <span class="bottom-nav-icon" style="background:#dc2626; color:#fff; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-top:-10px; box-shadow:0 4px 10px rgba(220,38,38,0.3);"><i class="bi bi-lightning-charge-fill"></i></span>
                     <span style="margin-top:2px;">Book</span>
                 </a>
                 <a href="{{ route('client.billing') }}" class="bottom-nav-item {{ request()->routeIs('client.billing*') ? 'active' : '' }}">
-                    <span class="bottom-nav-icon">💳</span>
+                    <span class="bottom-nav-icon"><i class="bi bi-credit-card"></i></span>
                     <span>Payments</span>
                 </a>
                 <a href="{{ route('client.notifications') }}" class="bottom-nav-item {{ request()->routeIs('client.notifications*') ? 'active' : '' }}">
-                    <span class="bottom-nav-icon">🔔</span>
+                    <span class="bottom-nav-icon"><i class="bi bi-bell"></i></span>
                     <span>Alerts</span>
                 </a>
             @else
                 <a href="{{ route('login') }}" class="bottom-nav-item">
-                    <span class="bottom-nav-icon">🔑</span>
+                    <span class="bottom-nav-icon"><i class="bi bi-box-arrow-in-right"></i></span>
                     <span>Login</span>
                 </a>
                 <a href="{{ route('register') }}" class="bottom-nav-item" style="color:#dc2626;">
-                    <span class="bottom-nav-icon" style="background:#dc2626; color:#fff; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-top:-10px; box-shadow:0 4px 10px rgba(220,38,38,0.3);">✨</span>
+                    <span class="bottom-nav-icon" style="background:#dc2626; color:#fff; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-top:-10px; box-shadow:0 4px 10px rgba(220,38,38,0.3);"><i class="bi bi-person-plus-fill"></i></span>
                     <span>Join</span>
                 </a>
                 <a href="{{ route('home') }}#plans" class="bottom-nav-item">
-                    <span class="bottom-nav-icon">📶</span>
+                    <span class="bottom-nav-icon"><i class="bi bi-wifi"></i></span>
                     <span>Plans</span>
                 </a>
                 <a href="{{ route('login') }}" class="bottom-nav-item">
-                    <span class="bottom-nav-icon">👤</span>
+                    <span class="bottom-nav-icon"><i class="bi bi-person"></i></span>
                     <span>Account</span>
                 </a>
             @endauth
         </div>
     </nav>
 
-    <footer style="background: #0f172a; padding: 2rem 1rem; text-align: center; color: #94a3b8; font-size: 0.85rem; margin-top: 3rem;">
+    <footer class="site-footer" style="background: #0f172a; padding: 2rem 1rem; text-align: center; color: #94a3b8; font-size: 0.85rem; margin-top: 3rem;">
         <p>&copy; {{ date('Y') }} BCTVI Broadband Telecommunications. All Rights Reserved.</p>
-        <p style="margin-top: 0.5rem;"><a href="{{ route('admin.login') }}" style="color: #64748b; text-decoration: none; font-weight: 600;">Staff / Admin Login</a></p>
+        <p class="admin-only-link" style="margin-top: 0.5rem;"><a href="{{ route('admin.login') }}" style="color: #64748b; text-decoration: none; font-weight: 600;">Staff / Admin Login</a></p>
     </footer>
 
     <script>

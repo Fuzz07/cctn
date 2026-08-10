@@ -71,9 +71,10 @@ class MainActivity : AppCompatActivity() {
         settings.databaseEnabled = true
         settings.useWideViewPort = true
         settings.loadWithOverviewMode = true
-        settings.setSupportZoom(true)
-        settings.builtInZoomControls = true
-        settings.displayZoomControls = false
+        // Fixed layout like a native app: no pinch-zoom, no system font scaling of the UI
+        settings.setSupportZoom(false)
+        settings.builtInZoomControls = false
+        settings.textZoom = 100
         settings.cacheMode = WebSettings.LOAD_DEFAULT
         settings.mediaPlaybackRequiresUserGesture = false
 
@@ -134,6 +135,11 @@ class MainActivity : AppCompatActivity() {
 
             private fun handleUrlOverride(url: String?): Boolean {
                 if (url == null) return false
+
+                // Customer-only app: never navigate into staff/admin areas
+                if (url.contains("/admin")) {
+                    return true
+                }
 
                 // If URL belongs to the CCTN domain, load inside WebView
                 if (url.contains("cctn-two.vercel.app") || url.contains("localhost") || url.contains("10.0.2.2")) {

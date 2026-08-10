@@ -41,7 +41,7 @@
     }
     .bl-hero-title {
         font-family: var(--font-heading, inherit);
-        font-size: 3.4rem;
+        font-size: clamp(2.1rem, 5.5vw, 3.4rem);
         font-weight: 800;
         line-height: 1.12;
         color: var(--bl-navy);
@@ -137,6 +137,9 @@
         flex-shrink: 0;
         box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
     }
+    .bl-feature-icon i { font-size: 1.35rem; line-height: 1; }
+    .bl-check i { font-size: 0.85rem; line-height: 1; }
+    .bl-info-card h3 i { color: var(--bl-blue); font-size: 1.3rem; }
     .bl-feature-item strong { display: block; font-size: 1rem; font-weight: 800; color: var(--bl-navy); }
     .bl-feature-item span { font-size: 0.85rem; color: var(--bl-slate); }
 
@@ -195,11 +198,10 @@
     }
     .bl-plan-name {
         font-family: var(--font-heading, inherit);
-        font-size: 1.7rem;
+        font-size: clamp(1.35rem, 2vw, 1.7rem);
         font-weight: 800;
         color: var(--bl-navy);
         margin-bottom: 0.85rem;
-        white-space: nowrap;
     }
     .bl-plan-price {
         display: flex;
@@ -320,7 +322,6 @@
     /* ── Responsive ── */
     @media (max-width: 1000px) {
         .bl-plans-grid { grid-template-columns: repeat(2, 1fr); }
-        .bl-hero-title { font-size: 2.6rem; }
     }
     @media (max-width: 860px) {
         .bl-hero-inner { grid-template-columns: 1fr; text-align: center; padding-top: 2.5rem; }
@@ -336,8 +337,14 @@
     }
     @media (max-width: 560px) {
         .bl-plans-grid { grid-template-columns: 1fr; }
-        .bl-hero-title { font-size: 2.1rem; }
         .bl-section-title { font-size: 1.8rem; }
+        .bl-hero-inner { padding: 2rem 1.1rem 2rem; gap: 1.75rem; }
+        .bl-container, .bl-features-wrap { padding-left: 1.1rem; padding-right: 1.1rem; }
+        .bl-plan-card { padding: 1.75rem 1.5rem; }
+        .bl-download-inner { padding: 1.75rem 1.25rem; }
+        .bl-info-card { padding: 1.5rem 1.25rem; }
+        .bl-hero-btns .bl-btn-primary,
+        .bl-hero-btns .bl-btn-outline { flex: 1 1 auto; justify-content: center; }
     }
 </style>
 @endpush
@@ -362,7 +369,7 @@
                 @auth('client')
                     <a href="{{ route('client.book') }}" class="bl-btn-primary" id="cta-book">
                         Book Installation
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                        <i class="bi bi-arrow-right"></i>
                     </a>
                     <a href="{{ route('client.appointments') }}" class="bl-btn-outline" id="cta-dash">
                         View My Bookings
@@ -370,11 +377,11 @@
                 @else
                     <a href="{{ route('register') }}" class="bl-btn-primary" id="cta-get-started">
                         Get Started
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                        <i class="bi bi-arrow-right"></i>
                     </a>
                     <a href="#plans" class="bl-btn-outline" id="cta-view-plans">
                         View Plans
-                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1"/></svg>
+                        <i class="bi bi-wifi"></i>
                     </a>
                 @endauth
             </div>
@@ -470,7 +477,7 @@
         <div class="bl-features-bar">
             <div class="bl-feature-item">
                 <div class="bl-feature-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>
+                    <i class="bi bi-speedometer2"></i>
                 </div>
                 <div>
                     <strong>High-Speed Fiber</strong>
@@ -479,7 +486,7 @@
             </div>
             <div class="bl-feature-item">
                 <div class="bl-feature-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <i class="bi bi-clock"></i>
                 </div>
                 <div>
                     <strong>Fast Installation</strong>
@@ -488,7 +495,7 @@
             </div>
             <div class="bl-feature-item">
                 <div class="bl-feature-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 0 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z"/></svg>
+                    <i class="bi bi-headset"></i>
                 </div>
                 <div>
                     <strong>Reliable Support</strong>
@@ -521,15 +528,15 @@
                     </div>
                     <ul class="bl-plan-features">
                         <li>
-                            <span class="bl-check"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            <span class="bl-check"><i class="bi bi-check-lg"></i></span>
                             {{ $mbps ? "Up to {$mbps} Mbps" : ($service->speed ?? 'High-Speed Fiber') }}
                         </li>
                         <li>
-                            <span class="bl-check"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            <span class="bl-check"><i class="bi bi-check-lg"></i></span>
                             Unlimited Data
                         </li>
                         <li>
-                            <span class="bl-check"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            <span class="bl-check"><i class="bi bi-check-lg"></i></span>
                             24/7 Support
                         </li>
                     </ul>
@@ -560,7 +567,7 @@
                     statements, and receive real-time updates directly on your Android phone.
                 </p>
                 <a href="{{ route('download.apk') }}" class="bl-btn-primary">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    <i class="bi bi-download"></i>
                     Download Official Android APK
                 </a>
             </div>
@@ -577,7 +584,7 @@
         <div class="bl-info-grid">
             <div class="bl-info-card">
                 <h3>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 0 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z"/></svg>
+                    <i class="bi bi-headset"></i>
                     24/7 Customer Support
                 </h3>
                 <p>
@@ -588,7 +595,7 @@
             </div>
             <div class="bl-info-card" id="about">
                 <h3>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                    <i class="bi bi-info-circle"></i>
                     About BCTVI
                 </h3>
                 <p>

@@ -125,7 +125,7 @@
 <div class="notif-container">
     <div class="notif-header">
         <h1 class="notif-title">
-            🔔 Notifications
+            <i class="bi bi-bell"></i> Notifications
         </h1>
         @if ($notifications->where('is_read', false)->count() > 0)
             <form action="{{ route('client.notifications.read-all') }}" method="POST">
@@ -146,11 +146,11 @@
             <div class="notif-card {{ $notif->is_read ? 'read' : 'unread' }}">
                 <div class="notif-icon">
                     @if (Str::contains(strtolower($notif->title), ['payment', 'billing', 'paid']))
-                        💳
+                        <i class="bi bi-credit-card"></i>
                     @elseif (Str::contains(strtolower($notif->title), ['installation', 'schedule', 'appointment']))
-                        📅
+                        <i class="bi bi-calendar-event"></i>
                     @else
-                        📢
+                        <i class="bi bi-megaphone"></i>
                     @endif
                 </div>
                 <div class="notif-body">
