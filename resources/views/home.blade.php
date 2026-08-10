@@ -4,17 +4,17 @@
 <style>
     /* ═══════════ BCTVI Blue Landing Theme ═══════════ */
     :root {
-        --bl-blue: #2563eb;
-        --bl-blue-dark: #1d4ed8;
+        --bl-blue: #dc2626;
+        --bl-blue-dark: #b91c1c;
         --bl-navy: #0f172a;
         --bl-slate: #64748b;
-        --bl-sky-bg: #eff6ff;
-        --bl-sky-soft: #dbeafe;
+        --bl-sky-bg: #fef2f2;
+        --bl-sky-soft: #fee2e2;
     }
 
     /* ── Hero ── */
     .bl-hero {
-        background: linear-gradient(180deg, #f0f6ff 0%, #e3eefc 100%);
+        background: linear-gradient(180deg, #fff5f5 0%, #fdeaea 100%);
         overflow: hidden;
     }
     .bl-hero-inner {
@@ -70,14 +70,14 @@
         font-size: 0.98rem;
         border: none;
         cursor: pointer;
-        box-shadow: 0 6px 18px rgba(37, 99, 235, 0.28);
+        box-shadow: 0 6px 18px rgba(220, 38, 38, 0.28);
         transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
     }
     .bl-btn-primary:hover {
         background: var(--bl-blue-dark);
         color: #fff;
         transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(37, 99, 235, 0.38);
+        box-shadow: 0 8px 24px rgba(220, 38, 38, 0.38);
     }
     .bl-btn-outline {
         display: inline-flex;
@@ -90,7 +90,7 @@
         border-radius: 10px;
         font-weight: 700;
         font-size: 0.98rem;
-        border: 1.5px solid #d7dfeb;
+        border: 1.5px solid #d1d5db;
         cursor: pointer;
         transition: border-color 0.2s, color 0.2s, background 0.2s;
     }
@@ -124,7 +124,7 @@
         gap: 1rem;
         padding: 0.25rem 1rem;
     }
-    .bl-feature-item + .bl-feature-item { border-left: 1px solid #eef2f7; }
+    .bl-feature-item + .bl-feature-item { border-left: 1px solid #f1f5f9; }
     .bl-feature-icon {
         width: 48px;
         height: 48px;
@@ -135,7 +135,7 @@
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
     }
     .bl-feature-item strong { display: block; font-size: 1rem; font-weight: 800; color: var(--bl-navy); }
     .bl-feature-item span { font-size: 0.85rem; color: var(--bl-slate); }
@@ -168,7 +168,7 @@
     }
     .bl-plan-card {
         background: #fff;
-        border: 1px solid #e5eaf2;
+        border: 1px solid #e5e7eb;
         border-radius: 16px;
         padding: 1.75rem 1.5rem;
         display: flex;
@@ -178,8 +178,8 @@
     }
     .bl-plan-card:hover {
         transform: translateY(-5px);
-        border-color: #bfd3f7;
-        box-shadow: 0 14px 40px rgba(37, 99, 235, 0.13);
+        border-color: #f5b5b5;
+        box-shadow: 0 14px 40px rgba(220, 38, 38, 0.13);
     }
     .bl-plan-badge {
         align-self: flex-start;
@@ -279,7 +279,7 @@
     .bl-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; }
     .bl-info-card {
         background: #f8fafc;
-        border: 1px solid #e5eaf2;
+        border: 1px solid #e5e7eb;
         border-radius: 16px;
         padding: 2rem;
     }
@@ -329,7 +329,7 @@
         .bl-hero-visual { max-width: 440px; margin: 0 auto; }
         .bl-features-bar { grid-template-columns: 1fr; gap: 1rem; }
         .bl-feature-item { justify-content: flex-start; }
-        .bl-feature-item + .bl-feature-item { border-left: none; border-top: 1px solid #eef2f7; padding-top: 1rem; }
+        .bl-feature-item + .bl-feature-item { border-left: none; border-top: 1px solid #f1f5f9; padding-top: 1rem; }
         .bl-download-inner { grid-template-columns: 1fr; text-align: center; padding: 2rem 1.5rem; }
         .bl-left-label, .bl-left-title { text-align: center; }
         .bl-info-grid { grid-template-columns: 1fr; }
@@ -384,7 +384,7 @@
         <div class="bl-hero-visual">
             <svg viewBox="0 0 640 480" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="House with WiFi connection illustration">
                 <!-- Blob background -->
-                <path d="M323 34 C 462 18, 588 82, 610 200 C 630 314, 566 420, 408 448 C 250 476, 78 434, 44 316 C 12 202, 148 54, 323 34 Z" fill="#d6e6fb"/>
+                <path d="M323 34 C 462 18, 588 82, 610 200 C 630 314, 566 420, 408 448 C 250 476, 78 434, 44 316 C 12 202, 148 54, 323 34 Z" fill="#fee2e2"/>
                 <!-- Clouds -->
                 <g fill="#ffffff">
                     <ellipse cx="112" cy="150" rx="42" ry="18"/>
@@ -394,26 +394,26 @@
                     <ellipse cx="495" cy="112" rx="28" ry="14"/>
                 </g>
                 <!-- WiFi signal -->
-                <g stroke="#2563eb" stroke-width="11" stroke-linecap="round" fill="none">
+                <g stroke="#dc2626" stroke-width="11" stroke-linecap="round" fill="none">
                     <path d="M276 118 a 62 62 0 0 1 88 0"/>
                     <path d="M296 142 a 34 34 0 0 1 48 0"/>
                 </g>
-                <circle cx="320" cy="162" r="8" fill="#2563eb"/>
+                <circle cx="320" cy="162" r="8" fill="#dc2626"/>
                 <!-- Ground shadow -->
-                <rect x="130" y="404" width="390" height="12" rx="6" fill="#b9d3f5"/>
+                <rect x="130" y="404" width="390" height="12" rx="6" fill="#fca5a5"/>
                 <!-- House body -->
                 <rect x="188" y="264" width="264" height="141" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
                 <!-- Roof -->
-                <path d="M152 268 L 320 176 L 488 268 Z" fill="#1e3a8a" stroke="#1e3a8a" stroke-width="14" stroke-linejoin="round"/>
+                <path d="M152 268 L 320 176 L 488 268 Z" fill="#7f1d1d" stroke="#7f1d1d" stroke-width="14" stroke-linejoin="round"/>
                 <!-- Door -->
-                <path d="M297 405 v-64 a 23 23 0 0 1 46 0 v64 Z" fill="#1e40af"/>
-                <circle cx="333" cy="360" r="3" fill="#93c5fd"/>
+                <path d="M297 405 v-64 a 23 23 0 0 1 46 0 v64 Z" fill="#991b1b"/>
+                <circle cx="333" cy="360" r="3" fill="#fca5a5"/>
                 <!-- Windows -->
                 <g>
-                    <rect x="212" y="296" width="58" height="56" rx="5" fill="#bfdbfe" stroke="#1e40af" stroke-width="5"/>
-                    <line x1="241" y1="299" x2="241" y2="349" stroke="#1e40af" stroke-width="4"/>
-                    <rect x="370" y="296" width="58" height="56" rx="5" fill="#bfdbfe" stroke="#1e40af" stroke-width="5"/>
-                    <line x1="399" y1="299" x2="399" y2="349" stroke="#1e40af" stroke-width="4"/>
+                    <rect x="212" y="296" width="58" height="56" rx="5" fill="#fecaca" stroke="#991b1b" stroke-width="5"/>
+                    <line x1="241" y1="299" x2="241" y2="349" stroke="#991b1b" stroke-width="4"/>
+                    <rect x="370" y="296" width="58" height="56" rx="5" fill="#fecaca" stroke="#991b1b" stroke-width="5"/>
+                    <line x1="399" y1="299" x2="399" y2="349" stroke="#991b1b" stroke-width="4"/>
                 </g>
                 <!-- Left plant -->
                 <g>
@@ -577,7 +577,7 @@
         <div class="bl-info-grid">
             <div class="bl-info-card">
                 <h3>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 0 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 0 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z"/></svg>
                     24/7 Customer Support
                 </h3>
                 <p>
@@ -588,7 +588,7 @@
             </div>
             <div class="bl-info-card" id="about">
                 <h3>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
                     About BCTVI
                 </h3>
                 <p>

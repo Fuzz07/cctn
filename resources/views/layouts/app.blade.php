@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#2563eb">
+    <meta name="theme-color" content="#dc2626">
     <title>@yield('title', 'CCTN / BCTVI Broadband Telecommunications')</title>
     <meta name="description" content="Official CCTN / BCTVI Broadband Client Portal & Mobile App. Book WiFi installation, manage statements, and receive installation updates.">
     
@@ -43,7 +43,7 @@
             font-family: 'Inter', sans-serif;
             font-size: 1.25rem;
             font-weight: 900;
-            color: #0f172a;
+            color: #dc2626;
             line-height: 1;
             letter-spacing: -0.5px;
         }
@@ -66,22 +66,22 @@
             padding: 0.5rem 0.15rem;
             transition: color 0.2s;
         }
-        .top-nav-link:hover { color: #2563eb; }
-        .top-nav-link.active { color: #2563eb; }
+        .top-nav-link:hover { color: #dc2626; }
+        .top-nav-link.active { color: #dc2626; }
         .top-nav-link.active::after {
             content: '';
             position: absolute;
             left: 0; right: 0; bottom: -4px;
             height: 2.5px;
             border-radius: 2px;
-            background: #2563eb;
+            background: #dc2626;
         }
         .top-nav-btn-outline {
             display: inline-flex;
             align-items: center;
             color: #0f172a;
             background: #fff;
-            border: 1.5px solid #d7dfeb;
+            border: 1.5px solid #d1d5db;
             text-decoration: none;
             font-weight: 700;
             font-size: 0.9rem;
@@ -89,23 +89,23 @@
             border-radius: 10px;
             transition: border-color 0.2s, color 0.2s;
         }
-        .top-nav-btn-outline:hover { border-color: #2563eb; color: #2563eb; }
+        .top-nav-btn-outline:hover { border-color: #dc2626; color: #dc2626; }
         .top-nav-btn-solid {
             display: inline-flex;
             align-items: center;
             gap: 0.4rem;
             color: #fff;
-            background: #2563eb;
+            background: #dc2626;
             border: none;
             text-decoration: none;
             font-weight: 700;
             font-size: 0.9rem;
             padding: 0.6rem 1.4rem;
             border-radius: 10px;
-            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.28);
+            box-shadow: 0 4px 14px rgba(220, 38, 38, 0.28);
             transition: background 0.2s, transform 0.2s;
         }
-        .top-nav-btn-solid:hover { background: #1d4ed8; color: #fff; transform: translateY(-1px); }
+        .top-nav-btn-solid:hover { background: #b91c1c; color: #fff; transform: translateY(-1px); }
 
         /* Drawer Overlay */
         .drawer-overlay {
@@ -159,7 +159,7 @@
             width: 44px;
             height: 44px;
             border-radius: 50%;
-            border: 2px solid #2563eb;
+            border: 2px solid #dc2626;
             object-fit: cover;
         }
         .drawer-user-name {
@@ -201,8 +201,8 @@
             transition: all 0.2s ease;
         }
         .drawer-item:hover, .drawer-item.active {
-            background: #eff6ff;
-            color: #2563eb;
+            background: #fef2f2;
+            color: #dc2626;
         }
         .drawer-item-icon {
             font-size: 1.2rem;
@@ -211,7 +211,7 @@
         }
         .drawer-badge {
             margin-left: auto;
-            background: #2563eb;
+            background: #dc2626;
             color: #fff;
             font-size: 0.7rem;
             font-weight: 800;
@@ -257,7 +257,7 @@
             padding: 4px 0;
         }
         .bottom-nav-item.active {
-            color: #2563eb;
+            color: #dc2626;
         }
         .bottom-nav-icon {
             font-size: 1.2rem;
@@ -444,8 +444,8 @@
                     <span class="bottom-nav-icon">📋</span>
                     <span>Bookings</span>
                 </a>
-                <a href="{{ route('client.book') }}" class="bottom-nav-item {{ request()->routeIs('client.book*') ? 'active' : '' }}" style="color:#2563eb;">
-                    <span class="bottom-nav-icon" style="background:#2563eb; color:#fff; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-top:-10px; box-shadow:0 4px 10px rgba(37,99,235,0.3);">⚡</span>
+                <a href="{{ route('client.book') }}" class="bottom-nav-item {{ request()->routeIs('client.book*') ? 'active' : '' }}" style="color:#dc2626;">
+                    <span class="bottom-nav-icon" style="background:#dc2626; color:#fff; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-top:-10px; box-shadow:0 4px 10px rgba(220,38,38,0.3);">⚡</span>
                     <span style="margin-top:2px;">Book</span>
                 </a>
                 <a href="{{ route('client.billing') }}" class="bottom-nav-item {{ request()->routeIs('client.billing*') ? 'active' : '' }}">
@@ -461,8 +461,8 @@
                     <span class="bottom-nav-icon">🔑</span>
                     <span>Login</span>
                 </a>
-                <a href="{{ route('register') }}" class="bottom-nav-item" style="color:#2563eb;">
-                    <span class="bottom-nav-icon" style="background:#2563eb; color:#fff; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-top:-10px; box-shadow:0 4px 10px rgba(37,99,235,0.3);">✨</span>
+                <a href="{{ route('register') }}" class="bottom-nav-item" style="color:#dc2626;">
+                    <span class="bottom-nav-icon" style="background:#dc2626; color:#fff; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-top:-10px; box-shadow:0 4px 10px rgba(220,38,38,0.3);">✨</span>
                     <span>Join</span>
                 </a>
                 <a href="{{ route('home') }}#plans" class="bottom-nav-item">
