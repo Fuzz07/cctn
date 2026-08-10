@@ -8,10 +8,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#dc2626">
-    <title>@yield('title', 'CCTN / BCTVI Broadband Telecommunications')</title>
-    <meta name="description" content="Official CCTN / BCTVI Broadband Client Portal & Mobile App. Book WiFi installation, manage statements, and receive installation updates.">
+    <title>@yield('title', 'BCTVI Broadband Telecommunications')</title>
+    <meta name="description" content="Official BCTVI Broadband Client Portal & Mobile App. Book WiFi installation, manage statements, and receive installation updates.">
     
-    <link rel="icon" type="image/png" href="{{ asset('assets/images/bctvi-logo.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('assets/images/favicon.png') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}?v={{ filemtime(public_path('assets/css/style.css')) }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
@@ -45,7 +45,7 @@
             object-fit: contain;
         }
         .client-brand-name {
-            font-family: 'Inter', sans-serif;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
             font-size: 1.25rem;
             font-weight: 900;
             color: #dc2626;
@@ -247,7 +247,8 @@
         }
         .bottom-nav-grid {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            grid-auto-flow: column;
+            grid-auto-columns: 1fr;
             text-align: center;
         }
         .bottom-nav-item {
@@ -372,13 +373,10 @@
 
                 @auth('client')
                     <a href="{{ route('client.dashboard') }}" class="drawer-item {{ request()->routeIs('client.dashboard*') ? 'active' : '' }}">
-                        <span class="drawer-item-icon"><i class="bi bi-speedometer2"></i></span> Client Dashboard
+                        <span class="drawer-item-icon"><i class="bi bi-speedometer2"></i></span> Dashboard
                     </a>
                     <a href="{{ route('client.appointments') }}" class="drawer-item {{ request()->routeIs('client.appointments*') ? 'active' : '' }}">
                         <span class="drawer-item-icon"><i class="bi bi-journal-text"></i></span> My Bookings
-                    </a>
-                    <a href="{{ route('client.dashboard') }}#schedule" class="drawer-item">
-                        <span class="drawer-item-icon"><i class="bi bi-calendar-event"></i></span> Installation Schedule
                     </a>
                     <a href="{{ route('client.billing') }}" class="drawer-item {{ request()->routeIs('client.billing*') ? 'active' : '' }}">
                         <span class="drawer-item-icon"><i class="bi bi-credit-card"></i></span> Payments
@@ -388,12 +386,6 @@
                         @if(isset($unreadCount) && $unreadCount > 0)
                             <span class="drawer-badge">{{ $unreadCount }}</span>
                         @endif
-                    </a>
-                    <a href="{{ route('client.dashboard') }}#profile" class="drawer-item">
-                        <span class="drawer-item-icon"><i class="bi bi-person"></i></span> Profile
-                    </a>
-                    <a href="{{ route('client.dashboard') }}#settings" class="drawer-item">
-                        <span class="drawer-item-icon"><i class="bi bi-gear"></i></span> Settings
                     </a>
                     <div style="border-top: 1px solid #f1f5f9; margin: 0.5rem 0;"></div>
                     <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
@@ -474,21 +466,17 @@
                     <span>Alerts</span>
                 </a>
             @else
-                <a href="{{ route('login') }}" class="bottom-nav-item">
-                    <span class="bottom-nav-icon"><i class="bi bi-box-arrow-in-right"></i></span>
-                    <span>Login</span>
+                <a href="{{ route('home') }}#plans" class="bottom-nav-item">
+                    <span class="bottom-nav-icon"><i class="bi bi-wifi"></i></span>
+                    <span>Plans</span>
                 </a>
                 <a href="{{ route('register') }}" class="bottom-nav-item" style="color:#dc2626;">
                     <span class="bottom-nav-icon" style="background:#dc2626; color:#fff; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-top:-10px; box-shadow:0 4px 10px rgba(220,38,38,0.3);"><i class="bi bi-person-plus-fill"></i></span>
                     <span>Join</span>
                 </a>
-                <a href="{{ route('home') }}#plans" class="bottom-nav-item">
-                    <span class="bottom-nav-icon"><i class="bi bi-wifi"></i></span>
-                    <span>Plans</span>
-                </a>
                 <a href="{{ route('login') }}" class="bottom-nav-item">
-                    <span class="bottom-nav-icon"><i class="bi bi-person"></i></span>
-                    <span>Account</span>
+                    <span class="bottom-nav-icon"><i class="bi bi-box-arrow-in-right"></i></span>
+                    <span>Login</span>
                 </a>
             @endauth
         </div>

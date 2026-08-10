@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Book a Service - CCTN Bantayan')
+@section('title', 'Book a Service - BCTVI Bantayan')
 
 @push('styles')
 <style>

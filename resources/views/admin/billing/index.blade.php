@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Billing & Payments - CCTN Bantayan')
+@section('title', 'Billing & Payments - BCTVI Bantayan')
 
 @push('styles')
 <style>
@@ -84,7 +84,7 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Account Number *</label>
-                    <input type="text" name="account_number" class="form-control" value="{{ old('account_number') }}" required placeholder="e.g. CCTN-2024-0001">
+                    <input type="text" name="account_number" class="form-control" value="{{ old('account_number') }}" required placeholder="e.g. BCTVI-2024-0001">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Statement Period *</label>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#dc2626">
-    <title>@yield('title', 'Admin Panel - CCTN Bantayan')</title>
+    <title>@yield('title', 'Admin Panel - BCTVI Bantayan')</title>
     
     <link rel="icon" type="image/png" href="{{ asset('assets/images/favicon.png') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
@@ -18,9 +18,9 @@
         <aside class="admin-sidebar">
             <div>
                 <div class="admin-sidebar-brand">
-                    <img src="{{ asset('assets/images/cctn-logo.png') }}" alt="CCTN Logo" style="width: 38px; height: 38px; object-fit: contain;">
+                    <img src="{{ asset('assets/images/cctn-logo.png') }}" alt="BCTVI Logo" style="width: 38px; height: 38px; object-fit: contain;">
                     <div>
-                        <strong style="color: #ffffff; font-family: var(--font-heading, sans-serif); font-size: 1.25rem; font-weight: 800; display: block; line-height: 1;">CCTN</strong>
+                        <strong style="color: #ffffff; font-family: var(--font-heading, sans-serif); font-size: 1.25rem; font-weight: 800; display: block; line-height: 1;">BCTVI</strong>
                         <span style="color: rgba(255,255,255,0.85); font-size: 0.7rem; font-weight: 600; letter-spacing: 0.05em;">Bantayan</span>
                     </div>
                 </div>

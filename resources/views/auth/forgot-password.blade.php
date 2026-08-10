@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forgot Password - CCTN Bantayan</title>
+    <title>Forgot Password - BCTVI Bantayan</title>
     <link rel="icon" type="image/png" href="{{ asset('assets/images/favicon.png') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <style>
@@ -32,9 +32,9 @@
 <body>
     <div class="card">
         <a href="{{ route('home') }}" class="logo">
-            <img src="{{ asset('assets/images/cctn-logo.png') }}" alt="CCTN" class="logo-img">
+            <img src="{{ asset('assets/images/cctn-logo.png') }}" alt="BCTVI" class="logo-img">
             <div>
-                <span class="logo-name">CCTN</span>
+                <span class="logo-name">BCTVI</span>
                 <span class="logo-sub">Bantayan</span>
             </div>
         </a>

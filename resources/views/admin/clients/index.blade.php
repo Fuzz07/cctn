@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Client Database - CCTN Bantayan')
+@section('title', 'Client Database - BCTVI Bantayan')
 
 @push('styles')
 <style>
@@ -96,6 +96,7 @@
                 <th>Profile</th>
                 <th>Contact</th>
                 <th>Location</th>
+                <th>Verification</th>
                 <th>Joined</th>
             </tr>
         </thead>
@@ -120,12 +121,23 @@
                         <div style="font-size:0.8rem; color:#64748b;">{{ $client->address_municipality }}, {{ $client->address_province }}</div>
                     </td>
                     <td>
+                        @if ($client->proof_of_billing)
+                            <a href="{{ asset($client->proof_of_billing) }}" target="_blank" style="display:inline-block; background:#f0fdf4; color:#15803d; border:1px solid #bbf7d0; padding:0.3rem 0.75rem; border-radius:50px; font-size:0.75rem; font-weight:700; text-decoration:none;">
+                                View Proof of Billing
+                            </a>
+                        @else
+                            <span style="display:inline-block; background:#fef9c3; color:#a16207; border:1px solid #fde68a; padding:0.3rem 0.75rem; border-radius:50px; font-size:0.75rem; font-weight:700;">
+                                Not Submitted
+                            </span>
+                        @endif
+                    </td>
+                    <td>
                         <div style="color:#64748b;">{{ $client->created_at->format('M d, Y') }}</div>
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="4" style="text-align: center; padding: 3rem; color: #94a3b8;">
+                    <td colspan="5" style="text-align: center; padding: 3rem; color: #94a3b8;">
                         No clients found matching your search criteria.
                     </td>
                 </tr>

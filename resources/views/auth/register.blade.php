@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Account - CCTN Bantayan</title>
+    <title>Create Account - BCTVI Bantayan</title>
     <link rel="icon" type="image/png" href="{{ asset('assets/images/favicon.png') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <style>
@@ -62,9 +62,9 @@
     <div class="auth-left">
         <div class="auth-left-content">
             <a href="{{ route('home') }}" class="auth-logo">
-                <img src="{{ asset('assets/images/cctn-logo.png') }}" alt="CCTN" class="auth-logo-img">
+                <img src="{{ asset('assets/images/cctn-logo.png') }}" alt="BCTVI" class="auth-logo-img">
                 <div>
-                    <span class="auth-logo-name">CCTN</span>
+                    <span class="auth-logo-name">BCTVI</span>
                     <span class="auth-logo-sub">Bantayan</span>
                 </div>
             </a>
@@ -74,7 +74,7 @@
                 <span class="text-primary" style="color: #dc2626;">Account</span>
             </h1>
             <p class="auth-subtitle">
-                Join CCTN Bantayan today. Book your Fiber WiFi installation and manage your subscription easily from our client portal.
+                Join BCTVI Bantayan today. Book your Fiber WiFi installation and manage your subscription easily from our client portal.
             </p>
         </div>
         
@@ -183,19 +183,32 @@
                     </div>
                     <div class="auth-input-group">
                         <label>Municipality *</label>
-                        <input type="text" name="address_municipality" class="auth-input" value="Bantayan" readonly style="background:#f1f5f9;">
+                        <select name="address_municipality" id="municipality" class="auth-input" required>
+                            <option value="">Select Municipality</option>
+                            <option value="Bantayan" {{ old('address_municipality', 'Bantayan') == 'Bantayan' ? 'selected' : '' }}>Bantayan</option>
+                            <option value="Santa Fe" {{ old('address_municipality') == 'Santa Fe' ? 'selected' : '' }}>Santa Fe</option>
+                            <option value="Madridejos" {{ old('address_municipality') == 'Madridejos' ? 'selected' : '' }}>Madridejos</option>
+                        </select>
                     </div>
                     <div class="auth-input-group">
                         <label>Barangay *</label>
-                        <select name="address_barangay" class="auth-input" required>
+                        <select name="address_barangay" id="barangay" class="auth-input" required data-old="{{ old('address_barangay') }}">
                             <option value="">Select Brgy</option>
-                            @php
-                                $brgys = ['Atop-atop','Baigad','Bantigue','Baod','Binaobao','Botigues','Doong','Guiwanon','Hilotongan','Kabac','Kabangbang','Kampingganon','Kangkaibe','Lipayran','Luyongbaybay','Mojon','Obo-ob','Patao','Puting Bato','Sillion','Suba','Sulangan','Sungko','Ticad'];
-                            @endphp
-                            @foreach ($brgys as $brgy)
-                                <option value="{{ $brgy }}" {{ old('address_barangay') == $brgy ? 'selected' : '' }}>{{ $brgy }}</option>
-                            @endforeach
                         </select>
+                    </div>
+                </div>
+
+                <div class="form-section-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+                    Account Verification
+                </div>
+
+                <div class="auth-input-group">
+                    <label>Proof of Billing (Photo) *</label>
+                    <input type="file" name="proof_of_billing" class="auth-input" accept="image/png, image/jpeg, image/webp" style="padding: 0.6rem;" required>
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 0.4rem; line-height: 1.5;">
+                        Attach a clear photo of a recent billing statement (electric or water bill) showing your name and address.
+                        This is required to verify that your account details are valid.
                     </div>
                 </div>
 
@@ -239,6 +252,35 @@
 </div>
 
 <script>
+    // Barangays per municipality on Bantayan Island
+    var BARANGAYS = {
+        'Bantayan': ['Atop-atop','Baigad','Bantigue','Baod','Binaobao','Botigues','Doong','Guiwanon','Hilotongan','Kabac','Kabangbang','Kampingganon','Kangkaibe','Lipayran','Luyongbaybay','Mojon','Obo-ob','Patao','Puting Bato','Sillion','Suba','Sulangan','Sungko','Ticad'],
+        'Santa Fe': ['Balidbid','Hagdan','Hilantagaan','Kinatarkan','Langub','Maricaban','Okoy','Poblacion','Pooc','Talisay'],
+        'Madridejos': ['Bunakan','Kangwayan','Kaongkod','Kodia','Maalat','Malbago','Mancilang','Pili','Poblacion','San Agustin','Tabagak','Talangnan','Tarong','Tugas']
+    };
+
+    var municipalitySelect = document.getElementById('municipality');
+    var barangaySelect = document.getElementById('barangay');
+
+    function populateBarangays() {
+        var list = BARANGAYS[municipalitySelect.value] || [];
+        var oldValue = barangaySelect.getAttribute('data-old') || '';
+        barangaySelect.innerHTML = '<option value="">Select Brgy</option>';
+        list.forEach(function(brgy) {
+            var opt = document.createElement('option');
+            opt.value = brgy;
+            opt.textContent = brgy;
+            if (brgy === oldValue) opt.selected = true;
+            barangaySelect.appendChild(opt);
+        });
+    }
+
+    municipalitySelect.addEventListener('change', function() {
+        barangaySelect.setAttribute('data-old', '');
+        populateBarangays();
+    });
+    populateBarangays();
+
     document.getElementById('birthdate').addEventListener('change', function() {
         var dob = new Date(this.value);
         if(!isNaN(dob)) {

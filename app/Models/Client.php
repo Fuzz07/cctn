@@ -15,7 +15,7 @@ class Client extends Authenticatable
         'account_number', 'firstname', 'middlename', 'lastname', 'birthdate', 'age',
         'place_of_birth', 'gender', 'civil_status', 'address_barangay',
         'address_municipality', 'address_province', 'contact_no', 'email',
-        'username', 'password', 'profile_photo', 'email_verified_at',
+        'username', 'password', 'profile_photo', 'proof_of_billing', 'email_verified_at',
         'verification_token', 'reset_token', 'reset_expires_at',
     ];
 

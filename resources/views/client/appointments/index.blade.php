@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'My Appointments - CCTN Bantayan')
+@section('title', 'My Appointments - BCTVI Bantayan')
 
 @push('styles')
 <style>

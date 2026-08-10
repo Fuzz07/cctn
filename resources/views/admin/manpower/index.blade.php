@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Technical Manpower - CCTN Bantayan')
+@section('title', 'Technical Manpower - BCTVI Bantayan')
 
 @push('styles')
 <style>

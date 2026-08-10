@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In - CCTN Bantayan</title>
+    <title>Sign In - BCTVI Bantayan</title>
     <link rel="icon" type="image/png" href="{{ asset('assets/images/favicon.png') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <style>
@@ -67,15 +67,15 @@
     <div class="auth-left">
         <div class="auth-left-content">
             <a href="{{ route('home') }}" class="auth-logo">
-                <img src="{{ asset('assets/images/cctn-logo.png') }}" alt="CCTN" class="auth-logo-img">
+                <img src="{{ asset('assets/images/cctn-logo.png') }}" alt="BCTVI" class="auth-logo-img">
                 <div>
-                    <span class="auth-logo-name">CCTN</span>
+                    <span class="auth-logo-name">BCTVI</span>
                     <span class="auth-logo-sub">Bantayan</span>
                 </div>
             </a>
             
             <h1 class="auth-title">
-                <span class="text-primary" style="color: #dc2626;">CCTN</span><br>
+                <span class="text-primary" style="color: #dc2626;">BCTVI</span><br>
                 FIBER WIFI<br>
                 INSTALLATION &amp; BOOKING
             </h1>
@@ -178,7 +178,7 @@
         </div>
         
         <div class="auth-copyright">
-            &copy; {{ date('Y') }} CCTN Bantayan. All rights reserved.
+            &copy; {{ date('Y') }} BCTVI Bantayan. All rights reserved.
         </div>
     </div>
 </div>

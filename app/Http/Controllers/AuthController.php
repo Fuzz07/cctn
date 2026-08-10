@@ -72,13 +72,18 @@ class AuthController extends Controller
             'password'          => 'required|string|min:8|confirmed',
             'contact_no'        => 'required|string|max:20',
             'address_barangay'  => 'required|string|max:100',
-            'address_municipality' => 'required|string|max:100',
+            'address_municipality' => 'required|string|max:100|in:Bantayan,Santa Fe,Madridejos',
             'address_province'  => 'required|string|max:100',
+            'proof_of_billing'  => 'required|image|mimes:jpeg,jpg,png,webp|max:5120',
+        ], [
+            'proof_of_billing.required' => 'Please attach a photo of your proof of billing for account verification.',
+            'proof_of_billing.image'    => 'The proof of billing must be a photo (JPG, PNG, or WEBP).',
+            'proof_of_billing.max'      => 'The proof of billing photo must not be larger than 5 MB.',
         ]);
 
         // Auto-generate account number
         $maxId = Client::max('id') ?? 0;
-        $accountNumber = 'CCTN-' . date('Y') . '-' . str_pad($maxId + 1, 4, '0', STR_PAD_LEFT);
+        $accountNumber = 'BCTVI-' . date('Y') . '-' . str_pad($maxId + 1, 4, '0', STR_PAD_LEFT);
 
         // Handle profile photo upload
         $profilePhotoPath = null;
@@ -87,6 +92,15 @@ class AuthController extends Controller
             $filename = 'client_' . time() . '_' . rand(1000, 9999) . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('uploads/profile_photos'), $filename);
             $profilePhotoPath = 'uploads/profile_photos/' . $filename;
+        }
+
+        // Handle proof of billing upload (required for account verification)
+        $proofOfBillingPath = null;
+        if ($request->hasFile('proof_of_billing') && $request->file('proof_of_billing')->isValid()) {
+            $file = $request->file('proof_of_billing');
+            $filename = 'proof_' . time() . '_' . rand(1000, 9999) . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/proof_of_billing'), $filename);
+            $proofOfBillingPath = 'uploads/proof_of_billing/' . $filename;
         }
 
         // Calculate age
@@ -114,11 +128,12 @@ class AuthController extends Controller
             'username'             => $request->username,
             'password'             => Hash::make($request->password),
             'profile_photo'        => $profilePhotoPath,
+            'proof_of_billing'     => $proofOfBillingPath,
             'email_verified_at'    => now(),
         ]);
 
         Auth::guard('client')->login($client);
-        session()->flash('success_message', "Welcome, {$client->firstname}! Your CCTN account has been created successfully. Your account number is {$accountNumber}.");
+        session()->flash('success_message', "Welcome, {$client->firstname}! Your BCTVI account has been created successfully. Your account number is {$accountNumber}.");
 
         return redirect()->route('client.dashboard');
     }

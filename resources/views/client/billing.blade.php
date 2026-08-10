@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'My Billing & Statements - CCTN Bantayan')
+@section('title', 'My Billing & Statements - BCTVI Bantayan')
 
 @section('content')
 <div class="fade-in" style="padding: 1.5rem 0;">
@@ -39,7 +39,7 @@
         <div>
             <h4 style="font-size: 1.05rem; font-weight: 800; margin: 0 0 0.35rem; color: #ffffff;">How to Pay Your Bill (In-Office Cash Payment)</h4>
             <p style="font-size: 0.88rem; color: #cbd5e1; margin: 0 0 0.5rem; line-height: 1.5;">
-                To pay your bill, simply visit the <strong>CCTN Bantayan Office / Shop</strong> and present your Account Number (<strong style="color: #f87171; font-family: monospace;">{{ $client->account_number ?? 'N/A' }}</strong>) at the counter.
+                To pay your bill, simply visit the <strong>BCTVI Bantayan Office / Shop</strong> and present your Account Number (<strong style="color: #f87171; font-family: monospace;">{{ $client->account_number ?? 'N/A' }}</strong>) at the counter.
             </p>
             <div style="font-size: 0.8rem; color: #94a3b8; font-weight: 600;">
                 ✓ Our office staff will receive your payment and immediately issue your official printed receipt.
@@ -87,7 +87,7 @@
                                 </span>
                                 @if ($st === 'paid' && !empty($row->paid_at))
                                     <div style="font-size: 0.72rem; color: #16a34a; margin-top: 0.25rem; font-weight: 700;">
-                                        ✓ Paid at CCTN Shop counter on {{ date('M d, Y', strtotime($row->paid_at)) }}
+                                        ✓ Paid at BCTVI Shop counter on {{ date('M d, Y', strtotime($row->paid_at)) }}
                                     </div>
                                 @elseif ($st !== 'paid')
                                     <div style="font-size: 0.7rem; color: #64748b; margin-top: 0.25rem;">

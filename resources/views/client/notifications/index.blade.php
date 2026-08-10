@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'My Notifications — CCTN / BCTVI Broadband')
+@section('title', 'My Notifications — BCTVI Broadband')
 
 @push('styles')
 <style>

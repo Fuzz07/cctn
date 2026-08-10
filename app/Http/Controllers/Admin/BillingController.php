@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\BillingAccount;
 use App\Models\Payment;
 use App\Models\Client;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -72,6 +73,26 @@ class BillingController extends Controller
         ]);
 
         $billing->update(['status' => 'paid', 'paid_at' => now()]);
+
+        // Notify the client and the admin panel that the payment receipt has been issued
+        $client = Client::find($billing->client_id);
+        $clientName = $client ? trim("{$client->firstname} {$client->lastname}") : $billing->account_number;
+        $amountPaid = number_format((float) $request->amount_paid, 2);
+
+        Notification::create([
+            'for_admin' => false,
+            'client_id' => $billing->client_id,
+            'title'     => 'Payment Received — Receipt ' . $receiptNo,
+            'message'   => "Your payment of ₱{$amountPaid} for {$billing->statement_period} has been received and recorded. Official Receipt No: {$receiptNo}. Thank you for keeping your account updated!",
+            'link'      => 'billing',
+        ]);
+
+        Notification::create([
+            'for_admin' => true,
+            'title'     => 'Payment Recorded — Receipt ' . $receiptNo,
+            'message'   => "₱{$amountPaid} received from {$clientName} (Acct: {$billing->account_number}) for {$billing->statement_period}. Receipt No: {$receiptNo}.",
+            'link'      => 'admin/billing',
+        ]);
 
         return redirect()->route('admin.billing')->with('success_message', "Payment recorded. Receipt: {$receiptNo}");
     }

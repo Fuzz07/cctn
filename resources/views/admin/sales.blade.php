@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Sales Report - CCTN Bantayan')
+@section('title', 'Sales Report - BCTVI Bantayan')
 
 @push('styles')
 <style>

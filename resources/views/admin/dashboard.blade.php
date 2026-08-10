@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Admin Dashboard - CCTN Bantayan')
+@section('title', 'Admin Dashboard - BCTVI Bantayan')
 
 @push('styles')
 <style>
@@ -240,7 +240,7 @@
             <div class="dashboard-eyebrow"><span class="dashboard-live-dot"></span> Operations overview</div>
             <h2>Welcome back, {{ $admin->fullname ?? 'Admin' }}</h2>
             <p>Monitor bookings, customers, and service activity from one workspace.</p>
-            <div class="dashboard-hero-meta">{{ date('l, F j, Y') }} &middot; CCTN Bantayan</div>
+            <div class="dashboard-hero-meta">{{ date('l, F j, Y') }} &middot; BCTVI Bantayan</div>
         </div>
         <a class="dashboard-primary-action" href="{{ route('admin.appointments') }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>

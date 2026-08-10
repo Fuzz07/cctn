@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login - CCTN Bantayan</title>
+    <title>Admin Login - BCTVI Bantayan</title>
     <link rel="icon" type="image/png" href="{{ asset('assets/images/favicon.png') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <style>
@@ -73,9 +73,9 @@
         
         <div class="admin-auth-left-content">
             <a href="{{ route('home') }}" class="admin-brand">
-                <img src="{{ asset('assets/images/cctn-logo.png') }}" alt="CCTN">
+                <img src="{{ asset('assets/images/cctn-logo.png') }}" alt="BCTVI">
                 <div class="admin-brand-text">
-                    <strong>CCTN</strong>
+                    <strong>BCTVI</strong>
                     <span>Bantayan</span>
                 </div>
             </a>
@@ -152,7 +152,7 @@
         </div>
         
         <div class="admin-footer">
-            &copy; {{ date('Y') }} CCTN Bantayan Administrator Portal. Restricted Access.
+            &copy; {{ date('Y') }} BCTVI Bantayan Administrator Portal. Restricted Access.
         </div>
     </div>
 </div>
