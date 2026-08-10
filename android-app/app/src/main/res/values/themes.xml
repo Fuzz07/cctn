@@ -17,6 +17,7 @@
     <!-- Splash Screen theme -->
     <style name="Theme.CCTNApp.SplashScreen" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/white</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
         <item name="postSplashScreenTheme">@style/Theme.CCTNApp</item>
     </style>
 </resources>
