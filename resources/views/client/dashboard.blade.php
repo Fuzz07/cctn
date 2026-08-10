@@ -291,7 +291,8 @@
                         </div>
                         <div class="c-field">
                             <label class="c-label">Update Profile Photo</label>
-                            <input type="file" name="profile_photo" class="c-input" accept="image/png, image/jpeg, image/gif" style="padding: 0.4rem 0.85rem;">
+                            <input type="file" name="profile_photo" class="c-input" accept="image/png, image/jpeg, image/gif, image/webp" style="padding: 0.4rem 0.85rem;">
+                            <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.35rem;">JPG, PNG, GIF, or WEBP &middot; up to 5 MB</div>
                         </div>
                     </div>
 

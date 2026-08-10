@@ -76,7 +76,11 @@ class AuthController extends Controller
             'address_municipality' => 'required|string|max:100|in:Bantayan,Santa Fe,Madridejos',
             'address_province'  => 'required|string|max:100',
             'proof_of_billing'  => 'required|image|mimes:jpeg,jpg,png,webp|max:5120',
+            'profile_photo'     => 'nullable|image|mimes:jpeg,jpg,png,gif,webp|max:5120',
         ], [
+            'profile_photo.image' => 'The profile photo must be an image file (JPG, PNG, GIF, or WEBP).',
+            'profile_photo.mimes' => 'The profile photo must be a JPG, PNG, GIF, or WEBP image.',
+            'profile_photo.max'   => 'The profile photo must not be larger than 5 MB.',
             'proof_of_billing.required' => 'Please attach a photo of your proof of billing for account verification.',
             'proof_of_billing.image'    => 'The proof of billing must be a photo (JPG, PNG, or WEBP).',
             'proof_of_billing.max'      => 'The proof of billing photo must not be larger than 5 MB.',
@@ -85,22 +89,28 @@ class AuthController extends Controller
         // Auto-generate account number (YYYY-MM-NN series, e.g. 2026-01-01)
         $accountNumber = Client::nextAccountNumber();
 
-        // Handle profile photo upload
-        $profilePhotoPath = null;
-        if ($request->hasFile('profile_photo') && $request->file('profile_photo')->isValid()) {
-            $file = $request->file('profile_photo');
-            $filename = 'client_' . time() . '_' . rand(1000, 9999) . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads/profile_photos'), $filename);
-            $profilePhotoPath = 'uploads/profile_photos/' . $filename;
-        }
+        try {
+            // Handle profile photo upload
+            $profilePhotoPath = null;
+            if ($request->hasFile('profile_photo') && $request->file('profile_photo')->isValid()) {
+                $file = $request->file('profile_photo');
+                $filename = 'client_' . time() . '_' . rand(1000, 9999) . '.' . ($file->extension() ?: 'jpg');
+                $file->move(public_path('uploads/profile_photos'), $filename);
+                $profilePhotoPath = 'uploads/profile_photos/' . $filename;
+            }
 
-        // Handle proof of billing upload (required for account verification)
-        $proofOfBillingPath = null;
-        if ($request->hasFile('proof_of_billing') && $request->file('proof_of_billing')->isValid()) {
-            $file = $request->file('proof_of_billing');
-            $filename = 'proof_' . time() . '_' . rand(1000, 9999) . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads/proof_of_billing'), $filename);
-            $proofOfBillingPath = 'uploads/proof_of_billing/' . $filename;
+            // Handle proof of billing upload (required for account verification)
+            $proofOfBillingPath = null;
+            if ($request->hasFile('proof_of_billing') && $request->file('proof_of_billing')->isValid()) {
+                $file = $request->file('proof_of_billing');
+                $filename = 'proof_' . time() . '_' . rand(1000, 9999) . '.' . ($file->extension() ?: 'jpg');
+                $file->move(public_path('uploads/proof_of_billing'), $filename);
+                $proofOfBillingPath = 'uploads/proof_of_billing/' . $filename;
+            }
+        } catch (\Exception $e) {
+            return back()
+                ->withErrors(['proof_of_billing' => 'Your uploaded photo could not be saved on the server. Please try again or contact BCTVI support.'])
+                ->withInput();
         }
 
         // Calculate age

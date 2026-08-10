@@ -1,5 +1,5 @@
 Deny from all
-<FilesMatch "\.(?i:jpg|jpeg|png|gif|pdf|docx)$">
+<FilesMatch "\.(?i:jpg|jpeg|png|gif|webp|pdf|docx)$">
     Order Allow,Deny
     Allow from all
 </FilesMatch>

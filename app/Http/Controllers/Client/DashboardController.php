@@ -40,12 +40,17 @@ class DashboardController extends Controller
         $client = Auth::guard('client')->user();
 
         $request->validate([
-            'firstname'   => 'required|string|max:50',
-            'lastname'    => 'required|string|max:50',
-            'email'       => 'required|email|max:100|unique:clients,email,' . $client->id,
-            'username'    => 'required|string|max:50|unique:clients,username,' . $client->id,
-            'contact_no'  => 'required|string|max:20',
-            'birthdate'   => 'required|date',
+            'firstname'     => 'required|string|max:50',
+            'lastname'      => 'required|string|max:50',
+            'email'         => 'required|email|max:100|unique:clients,email,' . $client->id,
+            'username'      => 'required|string|max:50|unique:clients,username,' . $client->id,
+            'contact_no'    => 'required|string|max:20',
+            'birthdate'     => 'required|date',
+            'profile_photo' => 'nullable|image|mimes:jpeg,jpg,png,gif,webp|max:5120',
+        ], [
+            'profile_photo.image' => 'The profile photo must be an image file (JPG, PNG, GIF, or WEBP).',
+            'profile_photo.mimes' => 'The profile photo must be a JPG, PNG, GIF, or WEBP image.',
+            'profile_photo.max'   => 'The profile photo must not be larger than 5 MB.',
         ]);
 
         $data = $request->only([
@@ -66,18 +71,42 @@ class DashboardController extends Controller
         }
 
         // Handle photo upload
-        if ($request->hasFile('profile_photo') && $request->file('profile_photo')->isValid()) {
+        $photoUpdated = false;
+        if ($request->hasFile('profile_photo')) {
             $file = $request->file('profile_photo');
-            $allowed = ['jpg', 'jpeg', 'png', 'gif'];
-            if (in_array(strtolower($file->getClientOriginalExtension()), $allowed) && $file->getSize() < 5000000) {
-                $filename = 'avatar_' . uniqid('', true) . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path('uploads'), $filename);
-                $data['profile_photo'] = 'uploads/' . $filename;
+
+            if (!$file->isValid()) {
+                return back()
+                    ->withErrors(['profile_photo' => 'The profile photo failed to upload (' . $file->getErrorMessage() . '). Please try a smaller image.'])
+                    ->withInput();
+            }
+
+            $oldPhoto = $client->profile_photo;
+            $filename = 'avatar_' . uniqid('', true) . '.' . ($file->extension() ?: 'jpg');
+
+            try {
+                $file->move(public_path('uploads/profile_photos'), $filename);
+            } catch (\Exception $e) {
+                return back()
+                    ->withErrors(['profile_photo' => 'Your profile photo could not be saved on the server. Please try again or contact BCTVI support.'])
+                    ->withInput();
+            }
+
+            $data['profile_photo'] = 'uploads/profile_photos/' . $filename;
+            $photoUpdated = true;
+
+            // Remove the previous photo so old avatars do not pile up
+            if ($oldPhoto && $oldPhoto !== $data['profile_photo'] && is_file(public_path($oldPhoto))) {
+                @unlink(public_path($oldPhoto));
             }
         }
 
         $client->update($data);
 
-        return redirect()->route('client.dashboard')->with('success_message', 'Profile updated successfully!');
+        $message = $photoUpdated
+            ? 'Profile and photo updated successfully!'
+            : 'Profile updated successfully!';
+
+        return redirect()->route('client.dashboard')->with('success_message', $message);
     }
 }
