@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#dc2626">
+    <meta name="theme-color" content="#2563eb">
     <title>@yield('title', 'CCTN / BCTVI Broadband Telecommunications')</title>
     <meta name="description" content="Official CCTN / BCTVI Broadband Client Portal & Mobile App. Book WiFi installation, manage statements, and receive installation updates.">
     
@@ -43,16 +43,69 @@
             font-family: 'Inter', sans-serif;
             font-size: 1.25rem;
             font-weight: 900;
-            color: #dc2626;
+            color: #0f172a;
             line-height: 1;
             letter-spacing: -0.5px;
         }
         .client-brand-sub {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: #64748b;
             font-weight: 700;
             display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
         }
+
+        /* Desktop Nav Links & Buttons */
+        .top-nav-link {
+            position: relative;
+            color: #334155;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 0.5rem 0.15rem;
+            transition: color 0.2s;
+        }
+        .top-nav-link:hover { color: #2563eb; }
+        .top-nav-link.active { color: #2563eb; }
+        .top-nav-link.active::after {
+            content: '';
+            position: absolute;
+            left: 0; right: 0; bottom: -4px;
+            height: 2.5px;
+            border-radius: 2px;
+            background: #2563eb;
+        }
+        .top-nav-btn-outline {
+            display: inline-flex;
+            align-items: center;
+            color: #0f172a;
+            background: #fff;
+            border: 1.5px solid #d7dfeb;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            padding: 0.55rem 1.35rem;
+            border-radius: 10px;
+            transition: border-color 0.2s, color 0.2s;
+        }
+        .top-nav-btn-outline:hover { border-color: #2563eb; color: #2563eb; }
+        .top-nav-btn-solid {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: #fff;
+            background: #2563eb;
+            border: none;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            padding: 0.6rem 1.4rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.28);
+            transition: background 0.2s, transform 0.2s;
+        }
+        .top-nav-btn-solid:hover { background: #1d4ed8; color: #fff; transform: translateY(-1px); }
 
         /* Drawer Overlay */
         .drawer-overlay {
@@ -106,7 +159,7 @@
             width: 44px;
             height: 44px;
             border-radius: 50%;
-            border: 2px solid #dc2626;
+            border: 2px solid #2563eb;
             object-fit: cover;
         }
         .drawer-user-name {
@@ -148,8 +201,8 @@
             transition: all 0.2s ease;
         }
         .drawer-item:hover, .drawer-item.active {
-            background: #fef2f2;
-            color: #dc2626;
+            background: #eff6ff;
+            color: #2563eb;
         }
         .drawer-item-icon {
             font-size: 1.2rem;
@@ -158,7 +211,7 @@
         }
         .drawer-badge {
             margin-left: auto;
-            background: #dc2626;
+            background: #2563eb;
             color: #fff;
             font-size: 0.7rem;
             font-weight: 800;
@@ -204,7 +257,7 @@
             padding: 4px 0;
         }
         .bottom-nav-item.active {
-            color: #dc2626;
+            color: #2563eb;
         }
         .bottom-nav-icon {
             font-size: 1.2rem;
@@ -242,32 +295,30 @@
             </div>
 
             <!-- Desktop Nav Links -->
-            <div class="desktop-nav-links" style="display: flex; align-items: center; gap: 1.5rem;">
-                <a href="{{ route('home') }}" class="drawer-item {{ request()->routeIs('home') ? 'active' : '' }}" style="padding: 0.4rem 0.8rem;">🏠 Home</a>
-                
+            <div class="desktop-nav-links" style="display: flex; align-items: center; gap: 1.75rem;">
                 @auth('client')
                     @php
                         $unreadCount = \App\Models\Notification::where('for_admin', false)
                             ->where(function($q){ $q->where('client_id', auth('client')->id())->orWhereNull('client_id'); })
                             ->where('is_read', false)->count();
                     @endphp
-                    <a href="{{ route('client.appointments') }}" class="drawer-item {{ request()->routeIs('client.appointments*') ? 'active' : '' }}" style="padding: 0.4rem 0.8rem;">📋 My Bookings</a>
-                    <a href="{{ route('client.billing') }}" class="drawer-item {{ request()->routeIs('client.billing*') ? 'active' : '' }}" style="padding: 0.4rem 0.8rem;">💳 Payments</a>
-                    <a href="{{ route('client.notifications') }}" class="drawer-item {{ request()->routeIs('client.notifications*') ? 'active' : '' }}" style="padding: 0.4rem 0.8rem; position:relative;">
-                        🔔 Notifications
+                    <a href="{{ route('home') }}" class="top-nav-link {{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
+                    <a href="{{ route('client.appointments') }}" class="top-nav-link {{ request()->routeIs('client.appointments*') ? 'active' : '' }}">My Bookings</a>
+                    <a href="{{ route('client.billing') }}" class="top-nav-link {{ request()->routeIs('client.billing*') ? 'active' : '' }}">Payments</a>
+                    <a href="{{ route('client.notifications') }}" class="top-nav-link {{ request()->routeIs('client.notifications*') ? 'active' : '' }}" style="display: inline-flex; align-items: center; gap: 4px;">
+                        Notifications
                         @if($unreadCount > 0)
-                            <span class="drawer-badge" style="margin-left: 4px;">{{ $unreadCount }}</span>
+                            <span class="drawer-badge" style="margin-left: 0;">{{ $unreadCount }}</span>
                         @endif
                     </a>
-                    <a href="{{ route('client.book') }}" class="btn-step btn-submit" style="padding: 0.5rem 1.25rem; font-size: 0.85rem; text-decoration: none; border-radius: 99px;">
-                        ⚡ Book Installation
-                    </a>
+                    <a href="{{ route('client.book') }}" class="top-nav-btn-solid">Book Installation</a>
                 @else
-                    <a href="{{ route('login') }}" class="drawer-item" style="padding: 0.4rem 0.8rem;">Login</a>
-                    <a href="{{ route('admin.login') }}" class="drawer-item" style="padding: 0.4rem 0.8rem; color: #64748b;">Admin Login</a>
-                    <a href="{{ route('register') }}" class="btn-step btn-submit" style="padding: 0.5rem 1.25rem; font-size: 0.85rem; text-decoration: none; border-radius: 99px;">
-                        Get Started
-                    </a>
+                    <a href="{{ route('home') }}" class="top-nav-link {{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
+                    <a href="{{ route('home') }}#plans" class="top-nav-link">Plans</a>
+                    <a href="{{ route('home') }}#support" class="top-nav-link">Support</a>
+                    <a href="{{ route('home') }}#about" class="top-nav-link">About</a>
+                    <a href="{{ route('login') }}" class="top-nav-btn-outline">Login</a>
+                    <a href="{{ route('register') }}" class="top-nav-btn-solid">Get Started</a>
                 @endauth
             </div>
         </div>
@@ -393,8 +444,8 @@
                     <span class="bottom-nav-icon">📋</span>
                     <span>Bookings</span>
                 </a>
-                <a href="{{ route('client.book') }}" class="bottom-nav-item {{ request()->routeIs('client.book*') ? 'active' : '' }}" style="color:#dc2626;">
-                    <span class="bottom-nav-icon" style="background:#dc2626; color:#fff; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-top:-10px; box-shadow:0 4px 10px rgba(220,38,38,0.3);">⚡</span>
+                <a href="{{ route('client.book') }}" class="bottom-nav-item {{ request()->routeIs('client.book*') ? 'active' : '' }}" style="color:#2563eb;">
+                    <span class="bottom-nav-icon" style="background:#2563eb; color:#fff; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-top:-10px; box-shadow:0 4px 10px rgba(37,99,235,0.3);">⚡</span>
                     <span style="margin-top:2px;">Book</span>
                 </a>
                 <a href="{{ route('client.billing') }}" class="bottom-nav-item {{ request()->routeIs('client.billing*') ? 'active' : '' }}">
@@ -410,8 +461,8 @@
                     <span class="bottom-nav-icon">🔑</span>
                     <span>Login</span>
                 </a>
-                <a href="{{ route('register') }}" class="bottom-nav-item" style="color:#dc2626;">
-                    <span class="bottom-nav-icon" style="background:#dc2626; color:#fff; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-top:-10px; box-shadow:0 4px 10px rgba(220,38,38,0.3);">✨</span>
+                <a href="{{ route('register') }}" class="bottom-nav-item" style="color:#2563eb;">
+                    <span class="bottom-nav-icon" style="background:#2563eb; color:#fff; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-top:-10px; box-shadow:0 4px 10px rgba(37,99,235,0.3);">✨</span>
                     <span>Join</span>
                 </a>
                 <a href="{{ route('home') }}#plans" class="bottom-nav-item">

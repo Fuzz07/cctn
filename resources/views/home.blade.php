@@ -1,50 +1,440 @@
 @extends('layouts.app')
 
+@push('styles')
+<style>
+    /* ═══════════ BCTVI Blue Landing Theme ═══════════ */
+    :root {
+        --bl-blue: #2563eb;
+        --bl-blue-dark: #1d4ed8;
+        --bl-navy: #0f172a;
+        --bl-slate: #64748b;
+        --bl-sky-bg: #eff6ff;
+        --bl-sky-soft: #dbeafe;
+    }
+
+    /* ── Hero ── */
+    .bl-hero {
+        background: linear-gradient(180deg, #f0f6ff 0%, #e3eefc 100%);
+        overflow: hidden;
+    }
+    .bl-hero-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 3.5rem 1.5rem 2.5rem;
+        display: grid;
+        grid-template-columns: 1.05fr 1fr;
+        gap: 2.5rem;
+        align-items: center;
+    }
+    .bl-badge {
+        display: inline-flex;
+        align-items: center;
+        background: var(--bl-sky-soft);
+        color: var(--bl-blue);
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        padding: 0.45rem 1.1rem;
+        border-radius: 50px;
+        margin-bottom: 1.5rem;
+    }
+    .bl-hero-title {
+        font-family: var(--font-heading, inherit);
+        font-size: 3.4rem;
+        font-weight: 800;
+        line-height: 1.12;
+        color: var(--bl-navy);
+        letter-spacing: -0.02em;
+        margin-bottom: 1.25rem;
+    }
+    .bl-hero-title .bl-accent { color: var(--bl-blue); }
+    .bl-hero-sub {
+        color: #475569;
+        font-size: 1.05rem;
+        line-height: 1.7;
+        max-width: 470px;
+        margin-bottom: 2rem;
+    }
+    .bl-hero-btns { display: flex; gap: 0.9rem; flex-wrap: wrap; }
+    .bl-btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--bl-blue);
+        color: #fff;
+        text-decoration: none;
+        padding: 0.85rem 1.75rem;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 0.98rem;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 6px 18px rgba(37, 99, 235, 0.28);
+        transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+    .bl-btn-primary:hover {
+        background: var(--bl-blue-dark);
+        color: #fff;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(37, 99, 235, 0.38);
+    }
+    .bl-btn-outline {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: #fff;
+        color: var(--bl-navy);
+        text-decoration: none;
+        padding: 0.85rem 1.6rem;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 0.98rem;
+        border: 1.5px solid #d7dfeb;
+        cursor: pointer;
+        transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+    .bl-btn-outline:hover {
+        border-color: var(--bl-blue);
+        color: var(--bl-blue);
+        background: var(--bl-sky-bg);
+    }
+    .bl-hero-visual { display: flex; justify-content: center; align-items: center; }
+    .bl-hero-visual svg { width: 100%; max-width: 560px; height: auto; display: block; }
+
+    /* ── Feature Bar ── */
+    .bl-features-wrap {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1.5rem 3rem;
+        position: relative;
+    }
+    .bl-features-bar {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 10px 35px rgba(15, 23, 42, 0.07);
+        padding: 1.6rem 1rem;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .bl-feature-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        padding: 0.25rem 1rem;
+    }
+    .bl-feature-item + .bl-feature-item { border-left: 1px solid #eef2f7; }
+    .bl-feature-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: var(--bl-blue);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+    .bl-feature-item strong { display: block; font-size: 1rem; font-weight: 800; color: var(--bl-navy); }
+    .bl-feature-item span { font-size: 0.85rem; color: var(--bl-slate); }
+
+    /* ── Plans ── */
+    .bl-plans-section { background: #fff; padding: 3.5rem 0 5rem; }
+    .bl-container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+    .bl-section-label {
+        text-align: center;
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--bl-blue);
+        margin-bottom: 0.6rem;
+    }
+    .bl-section-title {
+        text-align: center;
+        font-family: var(--font-heading, inherit);
+        font-size: 2.3rem;
+        font-weight: 800;
+        color: var(--bl-navy);
+        letter-spacing: -0.01em;
+        margin-bottom: 2.5rem;
+    }
+    .bl-plans-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.4rem;
+    }
+    .bl-plan-card {
+        background: #fff;
+        border: 1px solid #e5eaf2;
+        border-radius: 16px;
+        padding: 1.75rem 1.5rem;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+        transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+    }
+    .bl-plan-card:hover {
+        transform: translateY(-5px);
+        border-color: #bfd3f7;
+        box-shadow: 0 14px 40px rgba(37, 99, 235, 0.13);
+    }
+    .bl-plan-badge {
+        align-self: flex-start;
+        background: var(--bl-blue);
+        color: #fff;
+        font-size: 0.68rem;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        padding: 0.3rem 0.75rem;
+        border-radius: 6px;
+        margin-bottom: 1rem;
+    }
+    .bl-plan-name {
+        font-family: var(--font-heading, inherit);
+        font-size: 1.45rem;
+        font-weight: 800;
+        color: var(--bl-navy);
+        margin-bottom: 0.75rem;
+        white-space: nowrap;
+    }
+    .bl-plan-price {
+        display: flex;
+        align-items: baseline;
+        gap: 0.4rem;
+        margin-bottom: 1.25rem;
+    }
+    .bl-plan-amount {
+        font-family: var(--font-heading, inherit);
+        font-size: 1.9rem;
+        font-weight: 800;
+        color: var(--bl-blue);
+    }
+    .bl-plan-period { font-size: 0.88rem; color: var(--bl-slate); font-weight: 500; }
+    .bl-plan-features {
+        list-style: none;
+        margin: 0 0 1.5rem;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.7rem;
+        flex: 1;
+    }
+    .bl-plan-features li {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-size: 0.9rem;
+        color: #334155;
+        font-weight: 500;
+    }
+    .bl-check {
+        width: 19px;
+        height: 19px;
+        border-radius: 50%;
+        background: var(--bl-blue);
+        color: #fff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .bl-plan-btn {
+        display: block;
+        text-align: center;
+        text-decoration: none;
+        background: #fff;
+        color: var(--bl-blue);
+        border: 1.5px solid var(--bl-blue);
+        font-weight: 700;
+        font-size: 0.92rem;
+        padding: 0.7rem;
+        border-radius: 9px;
+        cursor: pointer;
+        transition: background 0.2s, color 0.2s;
+    }
+    .bl-plan-btn:hover { background: var(--bl-blue); color: #fff; }
+    .bl-no-plans { grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--bl-slate); }
+
+    /* ── App Download / Support / About ── */
+    .bl-download-section { background: var(--bl-sky-bg); padding: 4rem 0; }
+    .bl-download-inner {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 2.5rem;
+        align-items: center;
+        background: #fff;
+        border-radius: 20px;
+        padding: 2.5rem 3rem;
+        box-shadow: 0 10px 35px rgba(15, 23, 42, 0.06);
+    }
+    .bl-left-label { text-align: left; }
+    .bl-left-title { text-align: left; margin-bottom: 1rem; font-size: 1.8rem; }
+    .bl-download-sub { color: #475569; line-height: 1.7; font-size: 0.98rem; margin-bottom: 1.5rem; }
+
+    .bl-info-section { background: #fff; padding: 4rem 0; }
+    .bl-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; }
+    .bl-info-card {
+        background: #f8fafc;
+        border: 1px solid #e5eaf2;
+        border-radius: 16px;
+        padding: 2rem;
+    }
+    .bl-info-card h3 {
+        font-family: var(--font-heading, inherit);
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: var(--bl-navy);
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+    }
+    .bl-info-card p { color: #475569; font-size: 0.93rem; line-height: 1.7; margin: 0; }
+    .bl-info-phone {
+        display: inline-block;
+        margin-top: 1rem;
+        font-family: var(--font-heading, inherit);
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: var(--bl-blue);
+    }
+
+    /* ── Status banner (logged-in clients) ── */
+    .bl-status-banner {
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        color: #fff;
+        border-radius: 16px;
+        padding: 1.25rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 1000px) {
+        .bl-plans-grid { grid-template-columns: repeat(2, 1fr); }
+        .bl-hero-title { font-size: 2.6rem; }
+    }
+    @media (max-width: 860px) {
+        .bl-hero-inner { grid-template-columns: 1fr; text-align: center; padding-top: 2.5rem; }
+        .bl-hero-sub { margin-left: auto; margin-right: auto; }
+        .bl-hero-btns { justify-content: center; }
+        .bl-hero-visual { max-width: 440px; margin: 0 auto; }
+        .bl-features-bar { grid-template-columns: 1fr; gap: 1rem; }
+        .bl-feature-item { justify-content: flex-start; }
+        .bl-feature-item + .bl-feature-item { border-left: none; border-top: 1px solid #eef2f7; padding-top: 1rem; }
+        .bl-download-inner { grid-template-columns: 1fr; text-align: center; padding: 2rem 1.5rem; }
+        .bl-left-label, .bl-left-title { text-align: center; }
+        .bl-info-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+        .bl-plans-grid { grid-template-columns: 1fr; }
+        .bl-hero-title { font-size: 2.1rem; }
+        .bl-section-title { font-size: 1.8rem; }
+    }
+</style>
+@endpush
+
 @section('content')
-<!-- ========== MOBILE APP CLIENT LANDING HERO ========== -->
-<section class="lp-hero">
-    <div class="lp-hero-inner container" style="padding-top: 1.5rem; padding-bottom: 2rem;">
-        <!-- Left Column: Copy -->
-        <div class="lp-hero-copy">
-            <div class="lp-badge">
-                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1"/></svg>
-                BCTVI HIGH SPEED BROADBAND
-            </div>
-            <h1 class="lp-hero-title">
-                <span class="lp-red">BCTVI</span><br class="lp-hero-br">
-                Reliable Internet Connection for Your Home
+<!-- ========== HERO ========== -->
+<section class="bl-hero">
+    <div class="bl-hero-inner">
+        <!-- Left: Copy -->
+        <div>
+            <div class="bl-badge">Bantayan Island</div>
+            <h1 class="bl-hero-title">
+                Reliable Internet<br>
+                for <span class="bl-accent">Your Home</span>
             </h1>
-            <p class="lp-hero-sub">
-                Enjoy fast, unlimited fiber broadband across Bantayan Island. Manage bookings, monitor technician installation schedules, and view billing statements seamlessly from your phone.
+            <p class="bl-hero-sub">
+                Enjoy fast, unlimited fiber broadband across Bantayan Island.
+                Manage bookings, monitor technical installation schedules, and
+                view billing statements seamlessly from your phone.
             </p>
-            <div class="lp-hero-btns">
+            <div class="bl-hero-btns">
                 @auth('client')
-                    <a href="{{ route('client.book') }}" class="btn-step btn-submit" style="padding: 0.85rem 1.75rem; border-radius: 12px; text-decoration: none;" id="cta-book">
-                        ⚡ Book Installation
+                    <a href="{{ route('client.book') }}" class="bl-btn-primary" id="cta-book">
+                        Book Installation
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                     </a>
-                    <a href="{{ route('client.appointments') }}" class="btn-step btn-prev" style="padding: 0.85rem 1.5rem; border-radius: 12px; text-decoration: none;" id="cta-dash">
-                        📋 View My Bookings
+                    <a href="{{ route('client.appointments') }}" class="bl-btn-outline" id="cta-dash">
+                        View My Bookings
                     </a>
                 @else
-                    <a href="{{ route('register') }}" class="btn-step btn-submit" style="padding: 0.85rem 1.75rem; border-radius: 12px; text-decoration: none;" id="cta-get-started">
-                        Get Started &rarr;
+                    <a href="{{ route('register') }}" class="bl-btn-primary" id="cta-get-started">
+                        Get Started
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                     </a>
-                    <a href="#plans" class="btn-step btn-prev" style="padding: 0.85rem 1.5rem; border-radius: 12px; text-decoration: none;" id="cta-view-plans">
-                        📶 Browse WiFi Plans
+                    <a href="#plans" class="bl-btn-outline" id="cta-view-plans">
+                        View Plans
+                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1"/></svg>
                     </a>
                 @endauth
             </div>
         </div>
 
-        <!-- Right Column: Hero Image -->
-        <div class="lp-hero-visual">
-            <div class="lp-hero-img-wrap" style="text-align: center;">
-                <img src="{{ asset('assets/images/cctn-logo.png') }}" alt="BCTVI Broadband Logo" class="lp-hero-img" id="hero-img" style="max-height: 280px; object-fit: contain; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15));">
-            </div>
+        <!-- Right: House Illustration -->
+        <div class="bl-hero-visual">
+            <svg viewBox="0 0 640 480" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="House with WiFi connection illustration">
+                <!-- Blob background -->
+                <path d="M323 34 C 462 18, 588 82, 610 200 C 630 314, 566 420, 408 448 C 250 476, 78 434, 44 316 C 12 202, 148 54, 323 34 Z" fill="#d6e6fb"/>
+                <!-- Clouds -->
+                <g fill="#ffffff">
+                    <ellipse cx="112" cy="150" rx="42" ry="18"/>
+                    <ellipse cx="138" cy="138" rx="30" ry="16"/>
+                    <ellipse cx="530" cy="120" rx="52" ry="20"/>
+                    <ellipse cx="560" cy="106" rx="34" ry="17"/>
+                    <ellipse cx="495" cy="112" rx="28" ry="14"/>
+                </g>
+                <!-- WiFi signal -->
+                <g stroke="#2563eb" stroke-width="11" stroke-linecap="round" fill="none">
+                    <path d="M276 118 a 62 62 0 0 1 88 0"/>
+                    <path d="M296 142 a 34 34 0 0 1 48 0"/>
+                </g>
+                <circle cx="320" cy="162" r="8" fill="#2563eb"/>
+                <!-- Ground shadow -->
+                <rect x="130" y="404" width="390" height="12" rx="6" fill="#b9d3f5"/>
+                <!-- House body -->
+                <rect x="188" y="264" width="264" height="141" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+                <!-- Roof -->
+                <path d="M152 268 L 320 176 L 488 268 Z" fill="#1e3a8a" stroke="#1e3a8a" stroke-width="14" stroke-linejoin="round"/>
+                <!-- Door -->
+                <path d="M297 405 v-64 a 23 23 0 0 1 46 0 v64 Z" fill="#1e40af"/>
+                <circle cx="333" cy="360" r="3" fill="#93c5fd"/>
+                <!-- Windows -->
+                <g>
+                    <rect x="212" y="296" width="58" height="56" rx="5" fill="#bfdbfe" stroke="#1e40af" stroke-width="5"/>
+                    <line x1="241" y1="299" x2="241" y2="349" stroke="#1e40af" stroke-width="4"/>
+                    <rect x="370" y="296" width="58" height="56" rx="5" fill="#bfdbfe" stroke="#1e40af" stroke-width="5"/>
+                    <line x1="399" y1="299" x2="399" y2="349" stroke="#1e40af" stroke-width="4"/>
+                </g>
+                <!-- Left plant -->
+                <g>
+                    <path d="M142 404 C 140 380, 128 366, 110 358 M142 404 C 144 376, 156 362, 172 354 M142 404 C 141 386, 138 372, 140 356" stroke="#16a34a" stroke-width="5" fill="none" stroke-linecap="round"/>
+                    <ellipse cx="106" cy="354" rx="13" ry="7" fill="#22c55e" transform="rotate(-28 106 354)"/>
+                    <ellipse cx="176" cy="350" rx="13" ry="7" fill="#22c55e" transform="rotate(24 176 350)"/>
+                    <ellipse cx="140" cy="348" rx="8" ry="13" fill="#22c55e"/>
+                </g>
+                <!-- Right bushes -->
+                <g>
+                    <ellipse cx="500" cy="392" rx="30" ry="22" fill="#16a34a"/>
+                    <ellipse cx="536" cy="398" rx="24" ry="17" fill="#22c55e"/>
+                    <ellipse cx="472" cy="400" rx="18" ry="13" fill="#22c55e"/>
+                </g>
+                <!-- Small left bush -->
+                <ellipse cx="176" cy="398" rx="16" ry="11" fill="#22c55e"/>
+            </svg>
         </div>
     </div>
 
-    <!-- Announcement & Quick Status Bar -->
+    <!-- Logged-in client: latest booking status -->
     @auth('client')
         @php
             $activeAppt = \App\Models\Appointment::with('service')
@@ -53,140 +443,160 @@
                 ->first();
         @endphp
         @if ($activeAppt)
-            <div class="container" style="margin-top: 1rem; margin-bottom: 2rem;">
-                <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #ffffff; border-radius: 16px; padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; box-shadow: 0 8px 20px rgba(0,0,0,0.08);">
+            <div class="bl-features-wrap" style="padding-bottom: 1rem;">
+                <div class="bl-status-banner">
                     <div>
                         <div style="font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 700; letter-spacing: 0.05em;">Your Latest Booking Status</div>
-                        <div style="font-size: 1.1rem; font-weight: 800; color: #ffffff; margin-top: 2px;">
+                        <div style="font-size: 1.1rem; font-weight: 800; margin-top: 2px;">
                             {{ $activeAppt->service->service_name ?? 'WiFi Plan' }} &bull; Ref: {{ $activeAppt->booking_ref ?? ('#'.str_pad($activeAppt->id, 5, '0', STR_PAD_LEFT)) }}
                         </div>
                         <div style="font-size: 0.85rem; color: #cbd5e1; margin-top: 4px;">
                             Scheduled: <strong>{{ date('M d, Y', strtotime($activeAppt->preferred_date)) }} at {{ date('h:i A', strtotime($activeAppt->preferred_time)) }}</strong>
                         </div>
                     </div>
-                    <div>
-                        <span class="walkin-badge" style="background: {{ $activeAppt->status === 'approved' ? '#16a34a' : ($activeAppt->status === 'cancelled' ? '#dc2626' : '#ea580c') }}; padding: 0.4rem 1rem; font-size: 0.85rem;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+                        <span style="background: {{ $activeAppt->status === 'approved' ? '#16a34a' : ($activeAppt->status === 'cancelled' ? '#dc2626' : '#ea580c') }}; padding: 0.4rem 1rem; font-size: 0.85rem; border-radius: 50px; font-weight: 700;">
                             Status: {{ ucfirst($activeAppt->status) }}
                         </span>
-                        <a href="{{ route('client.appointments') }}" class="btn-step btn-prev" style="margin-left: 0.5rem; padding: 0.4rem 0.85rem; font-size: 0.8rem; text-decoration: none;">Details &rarr;</a>
+                        <a href="{{ route('client.appointments') }}" class="bl-btn-outline" style="padding: 0.45rem 1rem; font-size: 0.85rem;">Details &rarr;</a>
                     </div>
                 </div>
             </div>
         @endif
     @endauth
 
-    <!-- Feature Badges Bar -->
-    <div class="lp-features-bar">
-        <div class="container">
-            <div class="lp-features-grid">
-                <div class="lp-feature-item">
-                    <div class="lp-feature-icon lp-icon-red">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                    </div>
-                    <div>
-                        <strong>High-Speed Fiber</strong>
-                        <span>Up to 300 Mbps</span>
-                    </div>
+    <!-- Feature Bar -->
+    <div class="bl-features-wrap">
+        <div class="bl-features-bar">
+            <div class="bl-feature-item">
+                <div class="bl-feature-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>
                 </div>
-                <div class="lp-feature-item">
-                    <div class="lp-feature-icon lp-icon-red">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                    </div>
-                    <div>
-                        <strong>Fast Installation</strong>
-                        <span>Pick date & time</span>
-                    </div>
+                <div>
+                    <strong>High-Speed Fiber</strong>
+                    <span>Up to 300 Mbps</span>
                 </div>
-                <div class="lp-feature-item">
-                    <div class="lp-feature-icon lp-icon-red">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    </div>
-                    <div>
-                        <strong>Reliable Support</strong>
-                        <span>24/7 Local Support</span>
-                    </div>
+            </div>
+            <div class="bl-feature-item">
+                <div class="bl-feature-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+                <div>
+                    <strong>Fast Installation</strong>
+                    <span>Pick date &amp; time</span>
+                </div>
+            </div>
+            <div class="bl-feature-item">
+                <div class="bl-feature-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 0 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z"/></svg>
+                </div>
+                <div>
+                    <strong>Reliable Support</strong>
+                    <span>24/7 Local Support</span>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- ========== PLANS SECTION ========== -->
-<section class="lp-plans-section" id="plans">
-    <div class="container">
-        <div class="lp-section-label">SELECT BROADBAND PACKAGE</div>
-        <h2 class="lp-section-title">Available BCTVI Internet Plans</h2>
-        <div class="lp-section-divider"></div>
+<!-- ========== PLANS ========== -->
+<section class="bl-plans-section" id="plans">
+    <div class="bl-container">
+        <div class="bl-section-label">Choose Your Plan</div>
+        <h2 class="bl-section-title">BCTVI Internet Plans</h2>
 
-        <div class="lp-plans-grid">
-            @forelse ($services as $index => $service)
+        <div class="bl-plans-grid">
+            @forelse ($services as $service)
                 @php
-                    $instFee = $service->installation_fee ?? 1000.00;
-                    $speed = $service->speed ?? 'Fiber Fast';
+                    $displayName = preg_replace('/\s*Plan\s*$/i', '', $service->service_name);
+                    preg_match('/(\d+)\s*Mbps/i', $service->service_name . ' ' . ($service->speed ?? ''), $m);
+                    $mbps = $m[1] ?? null;
                 @endphp
-                <div class="lp-plan-card lp-plan-popular" id="plan-{{ $service->id }}" style="border-radius: 16px;">
-                    <div class="lp-plan-badge" style="background: #dc2626;">{{ $speed }}</div>
-                    
-                    <div class="lp-plan-speed">{{ $service->service_name }}</div>
-                    <div class="lp-plan-type">BCTVI UNLIMITED FIBER</div>
-
-                    <ul class="lp-plan-features">
+                <div class="bl-plan-card" id="plan-{{ $service->id }}">
+                    <span class="bl-plan-badge">Fiber Fast</span>
+                    <div class="bl-plan-name">{{ $displayName }}</div>
+                    <div class="bl-plan-price">
+                        <span class="bl-plan-amount">₱{{ number_format($service->price, 0) }}</span>
+                        <span class="bl-plan-period">/ month</span>
+                    </div>
+                    <ul class="bl-plan-features">
                         <li>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                            Speed: <strong>{{ $speed }}</strong>
+                            <span class="bl-check"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            {{ $mbps ? "Up to {$mbps} Mbps" : ($service->speed ?? 'High-Speed Fiber') }}
                         </li>
                         <li>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                            Installation Fee: <strong>₱{{ number_format($instFee, 2) }}</strong>
+                            <span class="bl-check"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            Unlimited Data
                         </li>
                         <li>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                            Unlimited Data &amp; WiFi Modem Included
+                            <span class="bl-check"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            24/7 Support
                         </li>
                     </ul>
-
-                    <div class="lp-plan-price">
-                        <span class="lp-price-currency">₱</span>{{ number_format($service->price, 0) }}<span class="lp-price-period">/mo</span>
-                    </div>
-
                     @auth('client')
-                        <a href="{{ route('client.book', ['service_id' => $service->id]) }}" class="btn-step btn-submit" style="display: block; text-align: center; text-decoration: none; border-radius: 10px; padding: 0.75rem;" id="book-plan-{{ $service->id }}">
-                            Book Installation
-                        </a>
+                        <a href="{{ route('client.book', ['service_id' => $service->id]) }}" class="bl-plan-btn" id="book-plan-{{ $service->id }}">Select Plan</a>
                     @else
-                        <a href="{{ route('register') }}" class="btn-step btn-submit" style="display: block; text-align: center; text-decoration: none; border-radius: 10px; padding: 0.75rem;" id="book-guest-{{ $service->id }}">
-                            Book Installation
-                        </a>
+                        <a href="{{ route('register') }}" class="bl-plan-btn" id="book-guest-{{ $service->id }}">Select Plan</a>
                     @endauth
                 </div>
             @empty
-                <div class="lp-no-plans">
-                    <p>No active plans available at the moment. Please contact BCTVI office.</p>
+                <div class="bl-no-plans">
+                    <p>No active plans available at the moment. Please contact the BCTVI office.</p>
                 </div>
             @endforelse
         </div>
     </div>
 </section>
 
-<!-- ========== MOBILE APP DOWNLOAD PROMO ========== -->
-<section class="lp-download-section" id="download">
-    <div class="container">
-        <div class="lp-download-inner" style="border-radius: 20px;">
-            <div class="lp-download-copy">
-                <div class="lp-section-label">CLIENT APP</div>
-                <h2 class="lp-section-title">BCTVI Client Companion App</h2>
-                <div class="lp-section-divider" style="margin-left: 0;"></div>
-                <p class="lp-section-sub" style="margin-left: 0; text-align: left;">
-                    Book WiFi installation, monitor technician schedules, view monthly statements, and receive real-time updates directly on your Android phone.
+<!-- ========== MOBILE APP DOWNLOAD ========== -->
+<section class="bl-download-section" id="download">
+    <div class="bl-container">
+        <div class="bl-download-inner">
+            <div>
+                <div class="bl-section-label bl-left-label">Client App</div>
+                <h2 class="bl-section-title bl-left-title">BCTVI Client Companion App</h2>
+                <p class="bl-download-sub">
+                    Book WiFi installation, monitor technician schedules, view monthly
+                    statements, and receive real-time updates directly on your Android phone.
                 </p>
-                <div style="margin-top: 1.5rem;">
-                    <a href="{{ route('download.apk') }}" class="btn-step btn-submit" style="padding: 0.85rem 1.75rem; border-radius: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;">
-                        📥 Download Official Android APK
-                    </a>
-                </div>
+                <a href="{{ route('download.apk') }}" class="bl-btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Download Official Android APK
+                </a>
             </div>
-            <div class="lp-download-visual" style="text-align: center;">
-                <img src="{{ asset('assets/images/cctn-logo.png') }}" alt="BCTVI Mobile App" style="max-height: 220px; object-fit: contain;">
+            <div style="text-align: center;">
+                <img src="{{ asset('assets/images/cctn-logo.png') }}" alt="BCTVI Mobile App" style="max-height: 200px; object-fit: contain;">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== SUPPORT & ABOUT ========== -->
+<section class="bl-info-section" id="support">
+    <div class="bl-container">
+        <div class="bl-info-grid">
+            <div class="bl-info-card">
+                <h3>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 0 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z"/></svg>
+                    24/7 Customer Support
+                </h3>
+                <p>
+                    Our local support team on Bantayan Island is ready to help with connection
+                    issues, billing questions, and installation schedules — any time, any day.
+                </p>
+                <span class="bl-info-phone">(032) 123-4567</span>
+            </div>
+            <div class="bl-info-card" id="about">
+                <h3>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                    About BCTVI
+                </h3>
+                <p>
+                    BCTVI Broadband Telecommunications delivers reliable, unlimited fiber
+                    internet to homes and businesses across Bantayan Island — with fast
+                    installation, transparent billing, and support from a team that lives
+                    right in your community.
+                </p>
             </div>
         </div>
     </div>
