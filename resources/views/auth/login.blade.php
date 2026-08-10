@@ -11,10 +11,20 @@
             background: linear-gradient(rgba(15, 23, 42, 0.55), rgba(15, 23, 42, 0.7)), url('{{ asset('assets/images/login-bg.jpg') }}') center / cover no-repeat fixed;
             min-height: 100vh; overflow-x: hidden; margin: 0;
         }
-        .auth-layout { display: flex; min-height: 100vh; width: 100%; }
-        .auth-left { width: 50%; background: transparent; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
+        .auth-layout {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            width: 100%;
+            padding: 5rem 1rem 3rem;
+            box-sizing: border-box;
+        }
+        /* Side panel retired: the office photo is now the full-page background */
+        .auth-left { display: none; }
         .auth-left-content { padding: 4rem 4rem 6rem 4rem; position: relative; z-index: 2; }
-        .auth-logo { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; margin-bottom: 3rem; }
+        .auth-logo { display: flex; align-items: center; justify-content: center; gap: 0.6rem; text-decoration: none; margin-bottom: 1.5rem; }
         .auth-logo-img { width: 44px; height: 44px; object-fit: contain; }
         .auth-logo-name { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 800; color: #ffffff; display: block; line-height: 1; text-shadow: 0 2px 8px rgba(0,0,0,0.4); }
         .auth-logo-sub { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.15em; color: #e2e8f0; text-transform: uppercase; }
@@ -26,8 +36,8 @@
         .auth-badge-text strong { display: block; font-size: 0.9rem; color: var(--text-dark); }
         .auth-badge-text span { font-size: 0.75rem; color: var(--text-muted); }
         .auth-image { display: none; }
-        .auth-right { width: 50%; background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; padding: 4rem 2rem 6rem 2rem; }
-        .auth-back-link { position: absolute; top: 2rem; right: 2rem; display: inline-flex; align-items: center; gap: 0.5rem; color: #e2e8f0; text-decoration: none; font-weight: 700; font-size: 0.88rem; transition: color 0.2s; z-index: 10; text-shadow: 0 1px 6px rgba(0,0,0,0.4); }
+        .auth-right { width: 100%; max-width: 440px; background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; position: static; padding: 0; }
+        .auth-back-link { position: fixed; top: 1.5rem; right: 1.5rem; display: inline-flex; align-items: center; gap: 0.5rem; color: #e2e8f0; text-decoration: none; font-weight: 700; font-size: 0.88rem; transition: color 0.2s; z-index: 10; text-shadow: 0 1px 6px rgba(0,0,0,0.4); }
         .auth-back-link:hover { color: #ffffff; }
         .auth-form-card { background: #fff; width: 100%; max-width: 440px; border-radius: 20px; padding: 3rem 2.5rem; box-shadow: 0 25px 60px rgba(0,0,0,0.35); border: 1px solid #e5e7eb; position: relative; z-index: 2; }
         .auth-avatar { width: 64px; height: 64px; background: #dc2626; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; margin: 0 auto 1.5rem; }
@@ -52,15 +62,14 @@
         .btn-auth-outline { width: 100%; background: #fff; color: var(--text-dark); padding: 0.85rem; border-radius: 8px; font-weight: 700; font-size: 1rem; border: 1px solid #cbd5e1; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 0.5rem; text-decoration: none; box-sizing: border-box;}
         .auth-help { text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-top: 1.5rem; }
         .auth-help a { color: var(--primary); font-weight: 600; text-decoration: none; }
-        .auth-copyright { position: absolute; bottom: 4rem; color: #e2e8f0; font-size: 0.75rem; text-align: center; text-shadow: 0 1px 6px rgba(0,0,0,0.4); }
-        
-        .bottom-bar { position: fixed; bottom: 0; width: 50%; height: 60px; display: flex; align-items: center; justify-content: center; gap: 2rem; z-index: 10; }
-        .bottom-bar-left { left: 0; background: var(--primary); border-top-right-radius: 12px; color: #fff; }
-        .bottom-bar-right { right: 0; background: #fff; color: var(--text-dark); border-top: 1px solid #e5e7eb; }
-        .bottom-bar-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; font-weight: 600; }
-        
-        @media (max-width: 1024px) { .auth-image { display: none; } .auth-left { padding: 2rem; } }
-        @media (max-width: 768px) { .auth-layout { flex-direction: column; } .auth-left, .auth-right { width: 100%; min-height: 50vh; } .bottom-bar { display: none; } .auth-copyright { position: static; margin-top: 2rem; } .auth-left-content, .auth-right { padding: 2rem 1.5rem; } }
+        .auth-copyright { position: static; margin-top: 1.5rem; color: #e2e8f0; font-size: 0.75rem; text-align: center; text-shadow: 0 1px 6px rgba(0,0,0,0.4); }
+
+        .bottom-bar { display: none; }
+
+        @media (max-width: 768px) {
+            .auth-layout { padding: 4.5rem 1rem 2.5rem; }
+            .auth-form-card { padding: 2rem 1.5rem; }
+        }
     </style>
 </head>
 <body>
@@ -119,6 +128,15 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
             Back to Home
         </a>
+
+        <a href="{{ route('home') }}" class="auth-logo">
+            <img src="{{ asset('assets/images/cctn-logo.png') }}" alt="BCTVI" class="auth-logo-img">
+            <div>
+                <span class="auth-logo-name">BCTVI</span>
+                <span class="auth-logo-sub">Bantayan</span>
+            </div>
+        </a>
+
         <div class="auth-form-card">
             <div class="auth-avatar">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>

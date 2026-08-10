@@ -11,10 +11,20 @@
             background: linear-gradient(rgba(15, 23, 42, 0.55), rgba(15, 23, 42, 0.7)), url('{{ asset('assets/images/login-bg.jpg') }}') center / cover no-repeat fixed;
             min-height: 100vh; overflow-x: hidden; margin: 0;
         }
-        .auth-layout { display: flex; min-height: 100vh; width: 100%; }
-        .auth-left { width: 45%; background: transparent; position: relative; display: flex; flex-direction: column; justify-content: space-between; position: fixed; top:0; left:0; height:100vh;}
+        .auth-layout {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            width: 100%;
+            padding: 5rem 1rem 3rem;
+            box-sizing: border-box;
+        }
+        /* Side panel retired: the office photo is now the full-page background */
+        .auth-left { display: none; }
         .auth-left-content { padding: 4rem 4rem 6rem 4rem; position: relative; z-index: 2; }
-        .auth-logo { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; margin-bottom: 3rem; }
+        .auth-logo { display: flex; align-items: center; justify-content: center; gap: 0.6rem; text-decoration: none; margin-bottom: 1.5rem; }
         .auth-logo-img { width: 44px; height: 44px; object-fit: contain; }
         .auth-logo-name { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 800; color: #ffffff; display: block; line-height: 1; text-shadow: 0 2px 8px rgba(0,0,0,0.4); }
         .auth-logo-sub { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.15em; color: #e2e8f0; text-transform: uppercase; }
@@ -22,10 +32,10 @@
         .auth-subtitle { color: #e2e8f0; font-size: 1.05rem; line-height: 1.6; max-width: 420px; margin-bottom: 2.5rem; text-shadow: 0 1px 8px rgba(0,0,0,0.4); }
         .auth-image { display: none; }
 
-        .auth-right { width: 55%; margin-left:45%; background: transparent; display: flex; flex-direction: column; align-items: center; position: relative; padding: 4rem 2rem 6rem 2rem; min-height: 100vh;}
-        .auth-back-link { position: absolute; top: 2rem; right: 2rem; display: inline-flex; align-items: center; gap: 0.5rem; color: #e2e8f0; text-decoration: none; font-weight: 700; font-size: 0.88rem; transition: color 0.2s; z-index: 10; text-shadow: 0 1px 6px rgba(0,0,0,0.4); }
+        .auth-right { width: 100%; max-width: 700px; margin: 0; background: transparent; display: flex; flex-direction: column; align-items: center; position: static; padding: 0; }
+        .auth-back-link { position: fixed; top: 1.5rem; right: 1.5rem; display: inline-flex; align-items: center; gap: 0.5rem; color: #e2e8f0; text-decoration: none; font-weight: 700; font-size: 0.88rem; transition: color 0.2s; z-index: 10; text-shadow: 0 1px 6px rgba(0,0,0,0.4); }
         .auth-back-link:hover { color: #ffffff; }
-        .auth-form-card { background: #fff; width: 100%; max-width: 700px; border-radius: 20px; padding: 3rem 2.5rem; box-shadow: 0 25px 60px rgba(0,0,0,0.35); border: 1px solid #e5e7eb; position: relative; z-index: 2; margin-top:2rem;}
+        .auth-form-card { background: #fff; width: 100%; max-width: 700px; border-radius: 20px; padding: 3rem 2.5rem; box-shadow: 0 25px 60px rgba(0,0,0,0.35); border: 1px solid #e5e7eb; position: relative; z-index: 2; margin-top: 0; }
         .auth-form-title { text-align: center; font-family: system-ui, sans-serif; font-size: 1.6rem; font-weight: 700; color: #0f172a; margin-bottom: 0.5rem; }
         .auth-form-sub { text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem; }
         
@@ -47,13 +57,11 @@
         .auth-login-link a:hover { text-decoration: underline; }
 
         @media (max-width: 1024px) {
-            .auth-layout { flex-direction: column; }
-            .auth-left { position: static; width: 100%; height: auto; min-height: 40vh; }
-            .auth-right { margin-left: 0; width: 100%; padding: 2rem 1.5rem; }
-            .auth-image { display: none; }
             .form-grid-3 { grid-template-columns: 1fr; }
         }
         @media (max-width: 768px) {
+            .auth-layout { padding: 4.5rem 1rem 2.5rem; }
+            .auth-form-card { padding: 2rem 1.5rem; }
             .form-grid { grid-template-columns: 1fr; }
         }
     </style>
@@ -89,6 +97,15 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
             Back to Home
         </a>
+
+        <a href="{{ route('home') }}" class="auth-logo">
+            <img src="{{ asset('assets/images/cctn-logo.png') }}" alt="BCTVI" class="auth-logo-img">
+            <div>
+                <span class="auth-logo-name">BCTVI</span>
+                <span class="auth-logo-sub">Bantayan</span>
+            </div>
+        </a>
+
         <div class="auth-form-card">
             <h2 class="auth-form-title">Client Registration</h2>
             <p class="auth-form-sub">Please fill in your details accurately to create an account.</p>
