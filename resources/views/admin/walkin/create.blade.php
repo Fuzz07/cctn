@@ -473,30 +473,28 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Barangay <span class="req">*</span></label>
-                        <select name="address_barangay" id="address_barangay" class="form-control" required>
-                            <option value="">Select Barangay</option>
-                            <option value="Poblacion" {{ old('address_barangay') == 'Poblacion' ? 'selected' : '' }}>Poblacion</option>
-                            <option value="Binaobao" {{ old('address_barangay') == 'Binaobao' ? 'selected' : '' }}>Binaobao</option>
-                            <option value="Suba" {{ old('address_barangay') == 'Suba' ? 'selected' : '' }}>Suba</option>
-                            <option value="Kampingganon" {{ old('address_barangay') == 'Kampingganon' ? 'selected' : '' }}>Kampingganon</option>
-                            <option value="Baigad" {{ old('address_barangay') == 'Baigad' ? 'selected' : '' }}>Baigad</option>
-                            <option value="Bantigue" {{ old('address_barangay') == 'Bantigue' ? 'selected' : '' }}>Bantigue</option>
-                            <option value="Doong" {{ old('address_barangay') == 'Doong' ? 'selected' : '' }}>Doong</option>
-                            <option value="Luyang" {{ old('address_barangay') == 'Luyang' ? 'selected' : '' }}>Luyang</option>
-                            <option value="Mojon" {{ old('address_barangay') == 'Mojon' ? 'selected' : '' }}>Mojon</option>
-                            <option value="Sillon" {{ old('address_barangay') == 'Sillon' ? 'selected' : '' }}>Sillon</option>
-                            <option value="Sulangan" {{ old('address_barangay') == 'Sulangan' ? 'selected' : '' }}>Sulangan</option>
-                            <option value="Sungko" {{ old('address_barangay') == 'Sungko' ? 'selected' : '' }}>Sungko</option>
-                            <option value="Tamiao" {{ old('address_barangay') == 'Tamiao' ? 'selected' : '' }}>Tamiao</option>
-                            <option value="Kawayan" {{ old('address_barangay') == 'Kawayan' ? 'selected' : '' }}>Kawayan</option>
+                        <label class="form-label">Municipality <span class="req">*</span></label>
+                        <select name="address_municipality" id="address_municipality" class="form-control" required>
+                            <option value="">Select Municipality</option>
+                            <option value="Bantayan" {{ old('address_municipality', 'Bantayan') == 'Bantayan' ? 'selected' : '' }}>Bantayan</option>
+                            <option value="Santa Fe" {{ old('address_municipality') == 'Santa Fe' ? 'selected' : '' }}>Santa Fe</option>
+                            <option value="Madridejos" {{ old('address_municipality') == 'Madridejos' ? 'selected' : '' }}>Madridejos</option>
                         </select>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label">Complete Home Address <span class="req">*</span></label>
-                    <input type="text" name="complete_address" id="complete_address" class="form-control" placeholder="Street / House No. / Landmark" value="{{ old('complete_address') }}" required>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Barangay <span class="req">*</span></label>
+                        <select name="address_barangay" id="address_barangay" class="form-control" required data-old="{{ old('address_barangay') }}">
+                            <option value="">Select Barangay</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Complete Home Address <span class="req">*</span></label>
+                        <input type="text" name="complete_address" id="complete_address" class="form-control" placeholder="Street / House No. / Landmark" value="{{ old('complete_address') }}" required>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -784,6 +782,10 @@
                         <td id="sum_installation_address">-</td>
                     </tr>
                     <tr>
+                        <th>Barangay / Municipality</th>
+                        <td id="sum_address_area">-</td>
+                    </tr>
+                    <tr>
                         <th>Selected Plan</th>
                         <td id="sum_plan_name">-</td>
                     </tr>
@@ -832,6 +834,91 @@
                 </div>
             </div>
 
+            <!-- STEP 6: Confirmation -->
+            <div class="form-step-pane" id="step-pane-6">
+                <div class="section-heading">
+                    <span>Step 6 — Confirmation</span>
+                    <span style="font-size:0.85rem; color:#64748b; font-weight:600;">Booking Recorded</span>
+                </div>
+
+                @if (!empty($confirmedBooking))
+                    <div style="text-align:center; padding:1.5rem 0 2rem;">
+                        <div style="width:76px; height:76px; border-radius:50%; background:#dcfce7; color:#16a34a; display:flex; align-items:center; justify-content:center; margin:0 auto 1.25rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <h3 style="font-size:1.4rem; font-weight:800; color:#0f172a; margin-bottom:0.4rem;">Booking Confirmed</h3>
+                        <p style="color:#64748b; margin:0;">
+                            The walk-in booking has been recorded and the client account is now active.
+                        </p>
+                    </div>
+
+                    <table class="summary-table">
+                        <tr>
+                            <th>Booking Reference</th>
+                            <td><strong style="color:#dc2626;">{{ $confirmedBooking->booking_ref ?? ('#' . str_pad($confirmedBooking->id, 5, '0', STR_PAD_LEFT)) }}</strong></td>
+                        </tr>
+                        <tr>
+                            <th>Client</th>
+                            <td>
+                                {{ $confirmedBooking->client->firstname ?? '' }} {{ $confirmedBooking->client->lastname ?? '' }}
+                                @if (!empty($confirmedBooking->client->account_number))
+                                    &middot; Acct {{ $confirmedBooking->client->account_number }}
+                                @endif
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Selected Plan</th>
+                            <td>{{ $confirmedBooking->service->service_name ?? 'WiFi Plan' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Installation Address</th>
+                            <td>{{ $confirmedBooking->installation_address }}</td>
+                        </tr>
+                        <tr>
+                            <th>Installation Date & Time</th>
+                            <td>
+                                {{ date('M d, Y', strtotime($confirmedBooking->preferred_date)) }}
+                                at {{ date('h:i A', strtotime($confirmedBooking->preferred_time)) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Amount Paid</th>
+                            <td>₱{{ number_format((float) $confirmedBooking->amount_paid, 2) }}</td>
+                        </tr>
+                        <tr>
+                            <th>Payment Status</th>
+                            <td>
+                                <span class="walkin-badge" style="background:{{ $confirmedBooking->payment_status === 'Payment Confirmed' ? '#16a34a' : '#ea580c' }};">
+                                    {{ $confirmedBooking->payment_status }}
+                                </span>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <div class="step-actions">
+                        <a href="{{ route('admin.walkin.create') }}" class="btn-step btn-prev">
+                            + New Walk-In Booking
+                        </a>
+                        <div>
+                            <a href="{{ route('admin.appointments') }}" class="btn-step btn-prev" style="margin-right:0.5rem;">
+                                View All Bookings
+                            </a>
+                            <a href="{{ route('admin.walkin.receipt', $confirmedBooking->id) }}" target="_blank" class="btn-step btn-submit">
+                                🖨️ Print Receipt
+                            </a>
+                        </div>
+                    </div>
+                @else
+                    <p style="color:#64748b;">Complete the booking summary to generate a confirmation.</p>
+                    <div class="step-actions">
+                        <button type="button" class="btn-step btn-prev" onclick="goToStep(5)">
+                            &larr; Back to Booking Summary
+                        </button>
+                        <div></div>
+                    </div>
+                @endif
+            </div>
+
         </form>
     </div>
 
@@ -848,44 +935,90 @@
         instFee: 0
     };
 
+    // Barangays per municipality on Bantayan Island
+    const BARANGAYS = {
+        'Bantayan': ['Atop-atop','Baigad','Bantigue','Baod','Binaobao','Botigues','Doong','Guiwanon','Hilotongan','Kabac','Kabangbang','Kampingganon','Kangkaibe','Lipayran','Luyongbaybay','Mojon','Obo-ob','Patao','Puting Bato','Sillion','Suba','Sulangan','Sungko','Ticad'],
+        'Santa Fe': ['Balidbid','Hagdan','Hilantagaan','Kinatarkan','Langub','Maricaban','Okoy','Poblacion','Pooc','Talisay'],
+        'Madridejos': ['Bunakan','Kangwayan','Kaongkod','Kodia','Maalat','Malbago','Mancilang','Pili','Poblacion','San Agustin','Tabagak','Talangnan','Tarong','Tugas']
+    };
+
+    function populateBarangays() {
+        const municipality = document.getElementById('address_municipality');
+        const barangay = document.getElementById('address_barangay');
+        const list = BARANGAYS[municipality.value] || [];
+        const previous = barangay.getAttribute('data-old') || '';
+
+        barangay.innerHTML = '<option value="">Select Barangay</option>';
+        list.forEach(function (brgy) {
+            const opt = document.createElement('option');
+            opt.value = brgy;
+            opt.textContent = brgy;
+            if (brgy === previous) opt.selected = true;
+            barangay.appendChild(opt);
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         // Auto select first plan card if available
         const firstCard = document.querySelector('.plan-card');
         if (firstCard) {
             firstCard.click();
         }
+
+        const municipality = document.getElementById('address_municipality');
+        municipality.addEventListener('change', function () {
+            document.getElementById('address_barangay').setAttribute('data-old', '');
+            populateBarangays();
+        });
+        populateBarangays();
+
+        // Required fields on hidden panes cannot be focused, which makes the browser
+        // block submit silently — so the wizard validates the panes itself instead.
+        const form = document.getElementById('walkinForm');
+        form.setAttribute('novalidate', 'novalidate');
+        form.addEventListener('submit', function (e) {
+            for (let step = 1; step <= 5; step++) {
+                if (!validateStep(step)) {
+                    e.preventDefault();
+                    return;
+                }
+            }
+        });
+
+        @if (!empty($confirmedBooking))
+            goToStep(6, true);
+        @endif
     });
 
-    function goToStep(step) {
-        // Validate Step 1
-        if (step > 1 && currentStep === 1) {
-            const name = document.getElementById('full_name').value.trim();
-            const contact = document.getElementById('contact_no').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const brgy = document.getElementById('address_barangay').value;
-            const addr = document.getElementById('installation_address').value.trim();
-            const idType = document.getElementById('valid_id_type').value;
-            const idNum = document.getElementById('valid_id_number').value.trim();
-
-            if (!name || !contact || !email || !brgy || !addr || !idType || !idNum) {
-                alert('Please fill out all required fields in Step 1 (Client Information).');
-                return;
-            }
+    function firstInvalidIn(step) {
+        const pane = document.getElementById(`step-pane-${step}`);
+        if (!pane) return null;
+        const controls = Array.from(pane.querySelectorAll('input, select, textarea'));
+        for (const control of controls) {
+            if (!control.checkValidity()) return control;
         }
+        return null;
+    }
 
-        // Validate Step 3
-        if (step > 3 && currentStep === 3) {
-            const prefDate = document.getElementById('preferred_date').value;
-            const prefTime = document.getElementById('preferred_time').value;
-            if (!prefDate || !prefTime) {
-                alert('Please select both Preferred Installation Date and Time Slot.');
-                return;
+    function validateStep(step) {
+        const invalid = firstInvalidIn(step);
+        if (!invalid) return true;
+        if (currentStep !== step) goToStep(step, true);
+        invalid.reportValidity();
+        return false;
+    }
+
+    function goToStep(step, skipValidation) {
+        // Moving forward only allowed once every step in between is complete
+        if (!skipValidation && step > currentStep) {
+            for (let i = currentStep; i < step; i++) {
+                if (!validateStep(i)) return;
             }
         }
 
         // Hide current pane
         document.querySelectorAll('.form-step-pane').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.step-item').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.step-item').forEach(el => el.classList.remove('active', 'completed'));
 
         currentStep = step;
 
@@ -900,6 +1033,8 @@
         if (step === 5) {
             buildSummary();
         }
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function selectPlanCard(cardEl, id, name, speed, monthly, instFee) {
@@ -959,6 +1094,9 @@
         document.getElementById('sum_customer_name').innerText = name;
         document.getElementById('sum_contact_no').innerText = contact;
         document.getElementById('sum_installation_address').innerText = addr;
+        document.getElementById('sum_address_area').innerText =
+            document.getElementById('address_barangay').value + ', ' +
+            document.getElementById('address_municipality').value + ', Cebu';
         document.getElementById('sum_plan_name').innerText = selectedPlan.name;
         document.getElementById('sum_speed').innerText = selectedPlan.speed;
         document.getElementById('sum_schedule').innerText = `${pDate} at ${pTime}`;

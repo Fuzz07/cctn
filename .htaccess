@@ -1,0 +1,20 @@
+# Hostinger / cPanel deployment
+#
+# Lets the whole Laravel project live inside public_html without changing the
+# document root: application folders are blocked and every other request is
+# routed into public/, where Laravel's own .htaccess takes over.
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Never serve application internals over HTTP
+    RewriteRule ^(app|bootstrap|config|database|resources|routes|storage|tests|vendor|android-app|api)/ - [F,L]
+    RewriteRule ^(\.env.*|\.git.*|composer\.(json|lock)|package(-lock)?\.json|artisan|phpunit\.xml|webpack\.mix\.js|vercel\.json|DEPLOYMENT\.md|README\.md)$ - [F,L]
+
+    # Send everything else through the front controller in public/
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# Do not list directory contents
+Options -Indexes

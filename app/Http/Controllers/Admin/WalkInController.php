@@ -14,12 +14,17 @@ use Illuminate\Support\Str;
 
 class WalkInController extends Controller
 {
-    public function create()
+    public function create(Request $request)
     {
         $services = Service::where('status', 'Active')->orderBy('price', 'asc')->get();
         $timeSlots = TimeSlot::where('is_available', true)->get();
 
-        return view('admin.walkin.create', compact('services', 'timeSlots'));
+        // Populates the confirmation step after a booking is stored
+        $confirmedBooking = $request->filled('confirmed_id')
+            ? Appointment::with(['client', 'service'])->find($request->get('confirmed_id'))
+            : null;
+
+        return view('admin.walkin.create', compact('services', 'timeSlots', 'confirmedBooking'));
     }
 
     public function store(Request $request)
@@ -30,6 +35,7 @@ class WalkInController extends Controller
             'contact_no'           => 'required|string|max:30',
             'email'                => 'required|email|max:100',
             'complete_address'     => 'required|string|max:255',
+            'address_municipality' => 'required|string|max:100|in:Bantayan,Santa Fe,Madridejos',
             'address_barangay'     => 'required|string|max:100',
             'installation_address' => 'required|string|max:255',
             'valid_id_type'        => 'required|string|max:50',
@@ -77,7 +83,7 @@ class WalkInController extends Controller
                 'email'              => $request->email,
                 'contact_no'         => $request->contact_no,
                 'address_barangay'   => $request->address_barangay,
-                'address_municipality' => 'Bantayan',
+                'address_municipality' => $request->address_municipality,
                 'address_province'   => 'Cebu',
                 'username'           => strtolower(str_replace(' ', '', $firstname)) . rand(100, 999),
                 'password'           => bcrypt(Str::random(10)),
