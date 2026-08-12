@@ -82,8 +82,7 @@ The migrations include the client `proof_of_billing` column and the current plan
 pricing (10–150 Mbps at ₱799–₱1,699 with free installation), so **the site will
 not show the right plans until `migrate` has run.**
 
-No SSH? Export your local database to SQL and import it through hPanel →
-**Databases → phpMyAdmin**.
+No SSH? Access `https://your-domain.com/migration.php` in your browser to run migrations and seeders remotely. Alternatively, export your local database to SQL and import it through hPanel → **Databases → phpMyAdmin**.
 
 ## 8. Cache the configuration
 
