@@ -48,9 +48,12 @@ if ($ext && isset($staticMimeTypes[$ext])) {
 $_ENV['LOG_CHANNEL'] = 'stderr';
 putenv('LOG_CHANNEL=stderr');
 
-// Dynamically set APP_URL to match the current Vercel request host
+// Dynamically set APP_URL to match the current Vercel request host. Only local
+// development runs on plain HTTP, so anything else stays https:// even when the
+// forwarded scheme is missing — otherwise generated links downgrade to http://.
 if (isset($_SERVER['HTTP_HOST'])) {
-    $proto = (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') ? 'https' : 'http';
+    $isLocal = (bool) preg_match('/^(localhost|127\.0\.0\.1|10\.0\.2\.2)(:|$)/', $_SERVER['HTTP_HOST']);
+    $proto = $isLocal ? 'http' : 'https';
     $_ENV['APP_URL'] = $proto . '://' . $_SERVER['HTTP_HOST'];
     putenv('APP_URL=' . $_ENV['APP_URL']);
 }

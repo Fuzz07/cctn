@@ -108,8 +108,14 @@ It must match `GOOGLE_REDIRECT_URI` in `.env` exactly, including `https`.
 
 ## 10. Enable HTTPS
 
-hPanel → **Security → SSL** → install the free certificate and turn on *Force
-HTTPS*. Then confirm `APP_URL` in `.env` starts with `https://`.
+hPanel → **Security → SSL** → install the free certificate. Then confirm
+`APP_URL` in `.env` starts with `https://`.
+
+Install the certificate **before** pointing traffic at the domain: the root
+`.htaccess` already redirects every plain-HTTP request to `https://`, so without
+a valid certificate visitors land on a browser security warning instead of the
+site. The redirect leaves `/.well-known/` alone so certificate issuance and
+renewal keep working over HTTP.
 
 ---
 
@@ -134,3 +140,5 @@ HTTPS*. Then confirm `APP_URL` in `.env` starts with `https://`.
 | Plans show old prices | `php artisan migrate --force` has not been run. |
 | Photo uploads fail | `public/uploads` is not writable — re-apply `775`. |
 | CSS or images missing | Confirm the root `.htaccess` uploaded; hidden files must be visible in File Manager. |
+| "Too many redirects" | Turn *off* hPanel's own **Force HTTPS** — the root `.htaccess` already does it, and running both can loop. |
+| App shows a blank page but the site works | The app refuses plain HTTP. Every URL the site emits must be `https://`; check `APP_URL`. |

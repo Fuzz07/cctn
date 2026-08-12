@@ -16,6 +16,8 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.webkit.WebSettingsCompat
+import androidx.webkit.WebViewFeature
 import com.cctn.app.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -75,6 +77,15 @@ class MainActivity : AppCompatActivity() {
         settings.setSupportZoom(false)
         settings.builtInZoomControls = false
         settings.textZoom = 100
+        // The site is HTTPS-only: never pull a sub-resource over plain HTTP
+        settings.mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
+
+        // Google Safe Browsing, checked through the compat layer so it also
+        // covers devices whose WebView predates the framework setting. A flagged
+        // page shows Google's warning screen instead of loading.
+        if (WebViewFeature.isFeatureSupported(WebViewFeature.SAFE_BROWSING_ENABLE)) {
+            WebSettingsCompat.setSafeBrowsingEnabled(settings, true)
+        }
         settings.cacheMode = WebSettings.LOAD_DEFAULT
         settings.mediaPlaybackRequiresUserGesture = false
 
@@ -141,8 +152,19 @@ class MainActivity : AppCompatActivity() {
                     return true
                 }
 
-                // If URL belongs to the CCTN domain, load inside WebView
-                if (url.contains("cctn-two.vercel.app") || url.contains("localhost") || url.contains("10.0.2.2")) {
+                // Our own pages stay inside the WebView, and always over HTTPS:
+                // an http:// link is re-loaded on the secure scheme instead of
+                // failing against the cleartext block in the network config.
+                if (url.contains(SITE_HOST)) {
+                    if (url.startsWith("http://")) {
+                        binding.webView.loadUrl("https://" + url.removePrefix("http://"))
+                        return true
+                    }
+                    return false
+                }
+
+                // Local development servers keep their plain-HTTP scheme
+                if (url.contains("localhost") || url.contains("10.0.2.2")) {
                     return false
                 }
 
@@ -174,7 +196,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Load the production website
-        webView.loadUrl("https://cctn-two.vercel.app")
+        webView.loadUrl(SITE_URL)
     }
 
     private fun setupBackPressed() {
@@ -189,5 +211,10 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+
+    private companion object {
+        const val SITE_HOST = "cctn-two.vercel.app"
+        const val SITE_URL = "https://$SITE_HOST"
     }
 }

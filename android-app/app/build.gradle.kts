@@ -58,6 +58,9 @@ dependencies {
     // SwipeRefreshLayout (pull-to-refresh in WebView)
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
+    // WebKit compat (Safe Browsing on every supported WebView, not just recent ones)
+    implementation("androidx.webkit:webkit:1.10.0")
+
     // Testing
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
