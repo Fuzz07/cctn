@@ -4,9 +4,13 @@
  * Remote Database Migration Runner for Laravel
  */
 
-define('LARAVEL_START', microtime(true));
+if (!defined('LARAVEL_START')) {
+    define('LARAVEL_START', microtime(true));
+}
 
-header('Content-Type: text/html; charset=utf-8');
+if (!headers_sent()) {
+    header('Content-Type: text/html; charset=utf-8');
+}
 
 $vendorPath = __DIR__ . '/../vendor/autoload.php';
 $appPath    = __DIR__ . '/../bootstrap/app.php';
@@ -19,8 +23,11 @@ if (!file_exists($appPath)) {
     die("<h1>Error</h1><p>bootstrap/app.php not found.</p>");
 }
 
-require $vendorPath;
-$app = require_once $appPath;
+require_once $vendorPath;
+
+if (!isset($app) || !($app instanceof \Illuminate\Contracts\Foundation\Application)) {
+    $app = require_once $appPath;
+}
 
 $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 

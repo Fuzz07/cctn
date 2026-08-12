@@ -24,6 +24,9 @@ use App\Http\Controllers\Admin\WalkInController as AdminWalkIn;
 
 // ─── Public Routes ───────────────────────────────────────────────────────────
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/migration', function () {
+    require public_path('migration.php');
+});
 Route::get('/download-apk', [HomeController::class, 'downloadApk'])->name('download.apk');
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
