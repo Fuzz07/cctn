@@ -48,6 +48,10 @@ dependencies {
     // Lifecycle (used by Activity scope)
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
 
+    // Coroutines (connectivity is exposed as a Flow). Pinned to the version
+    // lifecycle-runtime-ktx already pulls in, so this adds no new resolution.
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
     // Hilt (Dependency Injection)
     implementation("com.google.dagger:hilt-android:2.51")
     ksp("com.google.dagger:hilt-android-compiler:2.51")

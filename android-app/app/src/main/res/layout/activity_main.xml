@@ -29,4 +29,101 @@
         android:progressBackgroundTint="@android:color/transparent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!--
+        Full-screen offline state. Only shown when the page itself could not
+        load, so a page the user can still read is never covered up. It is
+        clickable so it swallows touches instead of letting them reach the
+        WebView underneath.
+    -->
+    <LinearLayout
+        android:id="@+id/offlineView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="32dp"
+        android:background="@color/background"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:src="@drawable/ic_cloud_off"
+            android:tint="@color/on_surface_variant"
+            android:importantForAccessibility="no" />
+
+        <TextView
+            android:id="@+id/offlineTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/offline_title"
+            android:textColor="@color/on_background"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/offlineBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="@string/offline_body"
+            android:textColor="@color/on_surface_variant"
+            android:textSize="15sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/retryButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:paddingStart="28dp"
+            android:paddingEnd="28dp"
+            android:text="@string/offline_retry"
+            app:backgroundTint="@color/primary" />
+
+    </LinearLayout>
+
+    <!--
+        Connection indicator, pinned to the top of the screen and drawn last so
+        it sits above both the WebView and the offline state.
+    -->
+    <LinearLayout
+        android:id="@+id/connectionBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:background="@color/connection_offline"
+        android:accessibilityLiveRegion="polite"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/bannerIcon"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/ic_cloud_off"
+            android:contentDescription="@string/connection_status" />
+
+        <TextView
+            android:id="@+id/bannerText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/offline_message"
+            android:textColor="@color/connection_on_banner"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

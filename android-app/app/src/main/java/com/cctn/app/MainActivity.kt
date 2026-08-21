@@ -2,30 +2,57 @@ package com.cctn.app
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.webkit.CookieManager
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
+import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
 import com.cctn.app.databinding.ActivityMainBinding
+import com.cctn.app.network.NetworkMonitor
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
+    @Inject
+    lateinit var networkMonitor: NetworkMonitor
+
     private lateinit var binding: ActivityMainBinding
     private var fileUploadCallback: ValueCallback<Array<Uri>>? = null
+
+    /** True while the current page failed to load, so it is worth retrying. */
+    private var pageLoadFailed = false
+
+    /** True once the user has actually seen the offline state this session. */
+    private var sawOffline = false
+
+    private val mainHandler = Handler(Looper.getMainLooper())
+    private val hideBannerRunnable = Runnable { hideBanner() }
 
     private val fileUploadActivityResultLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -59,6 +86,7 @@ class MainActivity : AppCompatActivity() {
 
         setupWebView()
         setupBackPressed()
+        observeConnectivity()
     }
 
     private fun setupWebView() {
@@ -134,6 +162,29 @@ class MainActivity : AppCompatActivity() {
 
         // WebViewClient (For intercepting navigation and handling external links)
         webView.webViewClient = object : WebViewClient() {
+            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                pageLoadFailed = false
+            }
+
+            override fun onPageFinished(view: WebView?, url: String?) {
+                swipeRefreshLayout.isRefreshing = false
+                // Only reveal the page once it actually arrived, otherwise the
+                // offline state stays up over the WebView's own error page.
+                if (!pageLoadFailed) binding.offlineView.visibility = View.GONE
+            }
+
+            override fun onReceivedError(
+                view: WebView?,
+                request: WebResourceRequest?,
+                error: WebResourceError?
+            ) {
+                // A failed image or script should not replace a readable page:
+                // only a failed main document counts as the page being down.
+                if (request?.isForMainFrame != true) return
+                pageLoadFailed = true
+                showOfflineScreen()
+            }
+
             @Deprecated("Deprecated in Java")
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
                 return handleUrlOverride(url)
@@ -195,8 +246,119 @@ class MainActivity : AppCompatActivity() {
             webView.reload()
         }
 
+        binding.retryButton.setOnClickListener {
+            if (networkMonitor.isCurrentlyOnline()) {
+                retryLoad()
+            } else {
+                // Nothing to connect to yet: say so rather than flashing the
+                // WebView and dropping straight back to this screen.
+                Toast.makeText(this, R.string.offline_still_offline, Toast.LENGTH_SHORT).show()
+            }
+        }
+
         // Load the production website
         webView.loadUrl(SITE_URL)
+    }
+
+    // ── Connectivity ───────────────────────────────────────────────────
+
+    /**
+     * Watches the connection for as long as the activity is on screen. The
+     * collection stops in onStop and resumes in onStart, so a backgrounded app
+     * is not holding a network callback open.
+     */
+    private fun observeConnectivity() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                networkMonitor.isOnline.collect(::renderConnectionState)
+            }
+        }
+    }
+
+    private fun renderConnectionState(online: Boolean) {
+        if (!online) {
+            sawOffline = true
+            showBanner(
+                background = R.color.connection_offline,
+                icon = R.drawable.ic_cloud_off,
+                message = R.string.offline_message,
+                autoHide = false
+            )
+            // Nothing loaded to fall back on: replace the WebView's error page.
+            if (pageLoadFailed) showOfflineScreen()
+            return
+        }
+
+        if (sawOffline) {
+            sawOffline = false
+            showBanner(
+                background = R.color.connection_online,
+                icon = R.drawable.ic_check_circle,
+                message = R.string.online_message,
+                autoHide = true
+            )
+            // A page that died while offline comes back on its own. One that
+            // loaded fine is left alone so the user does not lose their place.
+            if (pageLoadFailed) retryLoad()
+        } else {
+            // Online from the start: no banner, nothing to announce.
+            hideBanner()
+        }
+    }
+
+    private fun showBanner(
+        @ColorRes background: Int,
+        @DrawableRes icon: Int,
+        @StringRes message: Int,
+        autoHide: Boolean
+    ) {
+        val banner = binding.connectionBanner
+        mainHandler.removeCallbacks(hideBannerRunnable)
+
+        banner.setBackgroundColor(ContextCompat.getColor(this, background))
+        binding.bannerIcon.setImageResource(icon)
+        binding.bannerText.setText(message)
+
+        if (banner.visibility != View.VISIBLE) {
+            banner.alpha = 0f
+            banner.visibility = View.VISIBLE
+            banner.animate().alpha(1f).setDuration(BANNER_FADE_MS).start()
+        }
+
+        if (autoHide) mainHandler.postDelayed(hideBannerRunnable, ONLINE_BANNER_MS)
+    }
+
+    private fun hideBanner() {
+        val banner = binding.connectionBanner
+        mainHandler.removeCallbacks(hideBannerRunnable)
+        if (banner.visibility != View.VISIBLE) return
+        banner.animate()
+            .alpha(0f)
+            .setDuration(BANNER_FADE_MS)
+            .withEndAction { banner.visibility = View.GONE }
+            .start()
+    }
+
+    private fun showOfflineScreen() {
+        binding.swipeRefreshLayout.isRefreshing = false
+        binding.progressBar.visibility = View.GONE
+        binding.offlineView.visibility = View.VISIBLE
+    }
+
+    private fun retryLoad() {
+        pageLoadFailed = false
+        binding.offlineView.visibility = View.GONE
+        val current = binding.webView.url
+        if (current.isNullOrEmpty() || current == "about:blank") {
+            binding.webView.loadUrl(SITE_URL)
+        } else {
+            binding.webView.reload()
+        }
+    }
+
+    override fun onDestroy() {
+        mainHandler.removeCallbacks(hideBannerRunnable)
+        super.onDestroy()
     }
 
     private fun setupBackPressed() {
@@ -216,5 +378,9 @@ class MainActivity : AppCompatActivity() {
     private companion object {
         const val SITE_HOST = "cctn-two.vercel.app"
         const val SITE_URL = "https://$SITE_HOST"
+
+        /** How long the green "Online" confirmation stays up before fading. */
+        const val ONLINE_BANNER_MS = 2_000L
+        const val BANNER_FADE_MS = 200L
     }
 }
