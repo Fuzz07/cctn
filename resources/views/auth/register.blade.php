@@ -110,6 +110,9 @@
         .auth-input-group label { display: block; font-size: 0.85rem; font-weight: 700; color: var(--text-dark); margin-bottom: 0.5rem; }
         .auth-input { width: 100%; padding: 0.8rem 1rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; color: var(--text-dark); transition: border-color 0.2s; box-sizing: border-box;}
         .auth-input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(220,38,38,0.1); }
+        .auth-input.name-invalid { border-color: #dc2626 !important; box-shadow: 0 0 0 3px rgba(220,38,38,0.12) !important; }
+        .name-error-msg { display: none; font-size: 0.78rem; color: #dc2626; font-weight: 600; margin-top: 0.35rem; align-items: center; gap: 0.3rem; }
+        .name-error-msg.visible { display: flex; }
         select.auth-input { background: #fff url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 1rem center; -webkit-appearance: none; -moz-appearance: none; appearance: none; padding-right: 2.5rem; }
 
         .form-section-title { font-size: 1.1rem; font-weight: 700; color: #0f172a; margin: 2rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid #f1f5f9; display: flex; align-items: center; gap: 0.5rem; }
@@ -224,16 +227,28 @@
 
                     <div class="form-grid-3">
                         <div class="auth-input-group">
-                            <label>First Name *</label>
-                            <input type="text" name="firstname" class="auth-input" value="{{ old('firstname') }}" required>
+                            <label for="firstname">First Name *</label>
+                            <input type="text" id="firstname" name="firstname" class="auth-input" value="{{ old('firstname') }}" required data-name-field autocomplete="given-name">
+                            <span class="name-error-msg" id="firstname-error">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                Please enter letters only.
+                            </span>
                         </div>
                         <div class="auth-input-group">
-                            <label>Middle Name</label>
-                            <input type="text" name="middlename" class="auth-input" value="{{ old('middlename') }}">
+                            <label for="middlename">Middle Name</label>
+                            <input type="text" id="middlename" name="middlename" class="auth-input" value="{{ old('middlename') }}" data-name-field autocomplete="additional-name">
+                            <span class="name-error-msg" id="middlename-error">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                Please enter letters only.
+                            </span>
                         </div>
                         <div class="auth-input-group">
-                            <label>Last Name *</label>
-                            <input type="text" name="lastname" class="auth-input" value="{{ old('lastname') }}" required>
+                            <label for="lastname">Last Name *</label>
+                            <input type="text" id="lastname" name="lastname" class="auth-input" value="{{ old('lastname') }}" required data-name-field autocomplete="family-name">
+                            <span class="name-error-msg" id="lastname-error">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                Please enter letters only.
+                            </span>
                         </div>
                     </div>
 
@@ -258,8 +273,12 @@
 
                     <div class="form-grid">
                         <div class="auth-input-group">
-                            <label>Place of Birth</label>
-                            <input type="text" name="place_of_birth" class="auth-input" value="{{ old('place_of_birth') }}">
+                            <label for="place_of_birth">Place of Birth</label>
+                            <input type="text" id="place_of_birth" name="place_of_birth" class="auth-input" value="{{ old('place_of_birth') }}" data-name-field>
+                            <span class="name-error-msg" id="place_of_birth-error">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                Please enter letters only.
+                            </span>
                         </div>
                         <div class="auth-input-group">
                             <label>Civil Status *</label>
@@ -283,8 +302,14 @@
 
                     <div class="form-grid">
                         <div class="auth-input-group">
-                            <label>Mobile Number *</label>
-                            <input type="text" name="contact_no" class="auth-input" placeholder="e.g. 09123456789" value="{{ old('contact_no') }}" required>
+                            <label for="contact_no">Mobile Number *</label>
+                            <input type="tel" id="contact_no" name="contact_no" class="auth-input" placeholder="09123456789" value="{{ old('contact_no') }}" required
+                                   data-mobile-field inputmode="numeric" maxlength="11" pattern="09[0-9]{9}" autocomplete="tel"
+                                   title="Enter an 11-digit Philippine mobile number starting with 09 (e.g. 09123456789).">
+                            <span class="name-error-msg" id="contact_no-error">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                Enter 11 digits starting with 09 (e.g. 09123456789).
+                            </span>
                         </div>
                         <div class="auth-input-group">
                             <label>Email Address *</label>
@@ -377,6 +402,125 @@
 </div>
 
 <script>
+    // ── Real-time name-field validation ──────────────────────────────────────────
+    // Allowed: Unicode letters (\p{L}), spaces, hyphens, apostrophes
+    // Rejected: digits, symbols, and all other special characters
+    (function () {
+        var NAME_PATTERN = /^[\p{L}\s\-']*$/u;
+
+        function validateNameField(input) {
+            var val = input.value;
+            var errorEl = document.getElementById(input.id + '-error');
+            if (!errorEl) return true;
+
+            // Empty optional fields are fine
+            if (val === '') {
+                input.classList.remove('name-invalid');
+                errorEl.classList.remove('visible');
+                return true;
+            }
+
+            if (!NAME_PATTERN.test(val)) {
+                input.classList.add('name-invalid');
+                errorEl.classList.add('visible');
+                return false;
+            } else {
+                input.classList.remove('name-invalid');
+                errorEl.classList.remove('visible');
+                return true;
+            }
+        }
+
+        // Strip invalid characters as the user types (prevent-input approach)
+        document.querySelectorAll('[data-name-field]').forEach(function (input) {
+            input.addEventListener('input', function () {
+                // Remove any character that is NOT a letter, space, hyphen, or apostrophe
+                var cleaned = input.value.replace(/[^\p{L}\s\-']/gu, '');
+                if (cleaned !== input.value) {
+                    // Preserve cursor position
+                    var pos = input.selectionStart - (input.value.length - cleaned.length);
+                    input.value = cleaned;
+                    try { input.setSelectionRange(pos, pos); } catch(e) {}
+                }
+                validateNameField(input);
+            });
+
+            // Also validate on blur for a final check
+            input.addEventListener('blur', function () {
+                validateNameField(input);
+            });
+
+            // Mark pre-filled old() values on page load if they are invalid
+            if (input.value) validateNameField(input);
+        });
+
+        // Hook into the wizard's Next button so name errors block step advance
+        var origFirstInvalid;
+        window.__nameFieldsValid = function (stepEl) {
+            var valid = true;
+            stepEl.querySelectorAll('[data-name-field]').forEach(function (input) {
+                if (!validateNameField(input)) valid = false;
+            });
+            return valid;
+        };
+    })();
+
+    // ── Real-time mobile-number validation ──────────────────────────────
+    // Philippine format: exactly 11 digits beginning with 09 (e.g. 09123456789)
+    (function () {
+        var MOBILE_PATTERN = /^09[0-9]{9}$/;
+
+        function validateMobileField(input) {
+            var errorEl = document.getElementById(input.id + '-error');
+
+            // An empty field is left to the native "required" check so the wizard
+            // still reports it instead of blocking Next with no visible feedback.
+            var valid = input.value === '' || MOBILE_PATTERN.test(input.value);
+
+            if (errorEl) errorEl.classList.toggle('visible', !valid);
+            input.classList.toggle('name-invalid', !valid);
+            return valid;
+        }
+
+        document.querySelectorAll('[data-mobile-field]').forEach(function (input) {
+            input.addEventListener('input', function () {
+                // Digits only, capped at 11 characters
+                var cleaned = input.value.replace(/\D/g, '').slice(0, 11);
+                if (cleaned !== input.value) {
+                    var pos = input.selectionStart - (input.value.length - cleaned.length);
+                    input.value = cleaned;
+                    try { input.setSelectionRange(pos, pos); } catch (e) {}
+                }
+                validateMobileField(input);
+            });
+
+            input.addEventListener('blur', function () {
+                validateMobileField(input);
+            });
+
+            // Normalise pasted values such as +639123456789 or 0912 345 6789
+            input.addEventListener('paste', function (e) {
+                e.preventDefault();
+                var text = (e.clipboardData || window.clipboardData).getData('text') || '';
+                var digits = text.replace(/\D/g, '');
+                if (digits.indexOf('639') === 0) digits = '0' + digits.slice(2);
+                else if (digits.indexOf('9') === 0) digits = '0' + digits;
+                input.value = digits.slice(0, 11);
+                validateMobileField(input);
+            });
+
+            if (input.value) validateMobileField(input);
+        });
+
+        window.__mobileFieldsValid = function (stepEl) {
+            var valid = true;
+            stepEl.querySelectorAll('[data-mobile-field]').forEach(function (input) {
+                if (!validateMobileField(input)) valid = false;
+            });
+            return valid;
+        };
+    })();
+
     // Barangays per municipality on Bantayan Island
     var BARANGAYS = {
         'Bantayan': ['Atop-atop','Baigad','Bantigue','Baod','Binaobao','Botigues','Doong','Guiwanon','Hilotongan','Kabac','Kabangbang','Kampingganon','Kangkaibe','Lipayran','Luyongbaybay','Mojon','Obo-ob','Patao','Puting Bato','Sillion','Suba','Sulangan','Sungko','Ticad'],
@@ -486,12 +630,36 @@
 
         form.addEventListener('submit', function (e) {
             for (var n = 1; n <= total; n++) {
+                // Check name/mobile-field validity for this step before native validation
+                if (window.__nameFieldsValid && !window.__nameFieldsValid(steps[n - 1])) {
+                    if (current !== n) showStep(n);
+                    e.preventDefault();
+                    return;
+                }
+                if (window.__mobileFieldsValid && !window.__mobileFieldsValid(steps[n - 1])) {
+                    if (current !== n) showStep(n);
+                    e.preventDefault();
+                    return;
+                }
                 if (!validateStep(n)) {
                     e.preventDefault();
                     return;
                 }
             }
         });
+
+        // Also block Next if name or mobile fields on the current step are invalid
+        var _origNext = btnNext.onclick;
+        btnNext.addEventListener('click', function (e) {
+            var stepEl = steps[current - 1];
+            if (window.__nameFieldsValid && !window.__nameFieldsValid(stepEl)) {
+                e.stopImmediatePropagation();
+                return;
+            }
+            if (window.__mobileFieldsValid && !window.__mobileFieldsValid(stepEl)) {
+                e.stopImmediatePropagation();
+            }
+        }, true);
 
         // Let the markers jump back freely, but forward only through completed steps
         markers.forEach(function (marker) {

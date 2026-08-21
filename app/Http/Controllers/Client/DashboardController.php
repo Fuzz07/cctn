@@ -44,10 +44,12 @@ class DashboardController extends Controller
             'lastname'      => 'required|string|max:50',
             'email'         => 'required|email|max:100|unique:clients,email,' . $client->id,
             'username'      => 'required|string|max:50|unique:clients,username,' . $client->id,
-            'contact_no'    => 'required|string|max:20',
+            'contact_no'    => ['required', 'digits:11', 'regex:/^09[0-9]{9}$/'],
             'birthdate'     => 'required|date',
             'profile_photo' => 'nullable|image|mimes:jpeg,jpg,png,gif,webp|max:5120',
         ], [
+            'contact_no.digits'   => 'Mobile number must be exactly 11 digits in the Philippine format (e.g. 09123456789).',
+            'contact_no.regex'    => 'Mobile number must be exactly 11 digits in the Philippine format (e.g. 09123456789).',
             'profile_photo.image' => 'The profile photo must be an image file (JPG, PNG, GIF, or WEBP).',
             'profile_photo.mimes' => 'The profile photo must be a JPG, PNG, GIF, or WEBP image.',
             'profile_photo.max'   => 'The profile photo must not be larger than 5 MB.',

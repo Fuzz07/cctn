@@ -32,7 +32,7 @@ class WalkInController extends Controller
         $request->validate([
             // Step 1: Client Info
             'full_name'            => 'required|string|max:150',
-            'contact_no'           => 'required|string|max:30',
+            'contact_no'           => ['required', 'digits:11', 'regex:/^09[0-9]{9}$/'],
             'email'                => 'required|email|max:100',
             'complete_address'     => 'required|string|max:255',
             'address_municipality' => 'required|string|max:100|in:Bantayan,Santa Fe,Madridejos',
@@ -61,6 +61,9 @@ class WalkInController extends Controller
             'bank_date'            => 'nullable|date',
             'pay_later_due_date'   => 'nullable|date',
             'payment_proof'        => 'nullable|image|mimes:jpeg,png,jpg|max:4096',
+        ], [
+            'contact_no.digits' => 'Mobile number must be exactly 11 digits in the Philippine format (e.g. 09171234567).',
+            'contact_no.regex'  => 'Mobile number must be exactly 11 digits in the Philippine format (e.g. 09171234567).',
         ]);
 
         // Check slot conflict

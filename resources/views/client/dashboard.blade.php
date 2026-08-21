@@ -229,7 +229,9 @@
                     <div class="c-form-grid-3">
                         <div class="c-field">
                             <label class="c-label">Contact No.</label>
-                            <input type="text" name="contact_no" class="c-input" value="{{ old('contact_no', $client->contact_no) }}" required>
+                            <input type="tel" name="contact_no" class="c-input" value="{{ old('contact_no', $client->contact_no) }}" required
+                                   data-mobile-field inputmode="numeric" maxlength="11" pattern="09[0-9]{9}" placeholder="09123456789" autocomplete="tel"
+                                   title="Enter an 11-digit Philippine mobile number starting with 09 (e.g. 09123456789).">
                         </div>
                         <div class="c-field">
                             <label class="c-label">Birth Date</label>
@@ -334,3 +336,35 @@
 
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    // ── Mobile number: digits only, exactly 11, Philippine 09XXXXXXXXX format ──
+    document.querySelectorAll('[data-mobile-field]').forEach(function (input) {
+        input.addEventListener('input', function () {
+            var cleaned = input.value.replace(/\D/g, '').slice(0, 11);
+            if (cleaned !== input.value) {
+                var pos = input.selectionStart - (input.value.length - cleaned.length);
+                input.value = cleaned;
+                try { input.setSelectionRange(pos, pos); } catch (e) {}
+            }
+            input.setCustomValidity(
+                input.value === '' || /^09[0-9]{9}$/.test(input.value)
+                    ? ''
+                    : 'Enter an 11-digit mobile number starting with 09 (e.g. 09123456789).'
+            );
+        });
+
+        // Normalise pasted values such as +639123456789 or 0912 345 6789
+        input.addEventListener('paste', function (e) {
+            e.preventDefault();
+            var text = (e.clipboardData || window.clipboardData).getData('text') || '';
+            var digits = text.replace(/\D/g, '');
+            if (digits.indexOf('639') === 0) digits = '0' + digits.slice(2);
+            else if (digits.indexOf('9') === 0) digits = '0' + digits;
+            input.value = digits.slice(0, 11);
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        });
+    });
+</script>
+@endpush

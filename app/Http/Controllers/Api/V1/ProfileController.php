@@ -29,8 +29,11 @@ class ProfileController extends Controller
             'lastname'   => 'required|string|max:50',
             'email'      => 'required|email|max:100|unique:clients,email,' . $client->id,
             'username'   => 'required|string|max:50|unique:clients,username,' . $client->id,
-            'contact_no' => 'required|string|max:20',
+            'contact_no' => ['required', 'digits:11', 'regex:/^09[0-9]{9}$/'],
             'birthdate'  => 'nullable|date',
+        ], [
+            'contact_no.digits' => 'Mobile number must be exactly 11 digits in the Philippine format (e.g. 09123456789).',
+            'contact_no.regex'  => 'Mobile number must be exactly 11 digits in the Philippine format (e.g. 09123456789).',
         ]);
 
         $data = $request->only([

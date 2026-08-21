@@ -55,10 +55,13 @@ class AuthController extends Controller
             'email'                => 'required|email|max:100|unique:clients,email',
             'username'             => 'required|string|max:50|unique:clients,username',
             'password'             => 'required|string|min:8|confirmed',
-            'contact_no'           => 'required|string|max:20',
+            'contact_no'           => ['required', 'digits:11', 'regex:/^09[0-9]{9}$/'],
             'address_barangay'     => 'required|string|max:100',
             'address_municipality' => 'required|string|max:100',
             'address_province'     => 'required|string|max:100',
+        ], [
+            'contact_no.digits' => 'Mobile number must be exactly 11 digits in the Philippine format (e.g. 09123456789).',
+            'contact_no.regex'  => 'Mobile number must be exactly 11 digits in the Philippine format (e.g. 09123456789).',
         ]);
 
         $accountNumber = Client::nextAccountNumber();
