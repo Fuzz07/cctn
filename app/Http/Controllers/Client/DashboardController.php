@@ -7,6 +7,7 @@ use App\Models\Appointment;
 use App\Models\Client;
 use App\Models\BillingAccount;
 use App\Models\MaintenanceRequest;
+use App\Support\InputRules;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -39,21 +40,25 @@ class DashboardController extends Controller
     {
         $client = Auth::guard('client')->user();
 
+        // Character rules mirror public/assets/js/form-restrictions.js.
         $request->validate([
-            'firstname'     => 'required|string|max:50',
-            'lastname'      => 'required|string|max:50',
-            'email'         => 'required|email|max:100|unique:clients,email,' . $client->id,
-            'username'      => 'required|string|max:50|unique:clients,username,' . $client->id,
-            'contact_no'    => ['required', 'digits:11', 'regex:/^09[0-9]{9}$/'],
-            'birthdate'     => 'required|date',
-            'profile_photo' => 'nullable|image|mimes:jpeg,jpg,png,gif,webp|max:5120',
-        ], [
-            'contact_no.digits'   => 'Mobile number must be exactly 11 digits in the Philippine format (e.g. 09123456789).',
-            'contact_no.regex'    => 'Mobile number must be exactly 11 digits in the Philippine format (e.g. 09123456789).',
+            'firstname'      => InputRules::name(true, 50),
+            'middlename'     => InputRules::name(false, 50),
+            'lastname'       => InputRules::name(true, 50),
+            'place_of_birth' => InputRules::name(false, 100),
+            'email'          => 'required|email|max:100|unique:clients,email,' . $client->id,
+            'username'       => 'required|string|max:50|unique:clients,username,' . $client->id,
+            'contact_no'     => InputRules::mobile(),
+            'birthdate'      => 'required|date',
+            'profile_photo'  => 'nullable|image|mimes:jpeg,jpg,png,gif,webp|max:5120',
+        ], array_merge(InputRules::messages([
+            'name'   => ['firstname', 'middlename', 'lastname', 'place_of_birth'],
+            'mobile' => ['contact_no'],
+        ]), [
             'profile_photo.image' => 'The profile photo must be an image file (JPG, PNG, GIF, or WEBP).',
             'profile_photo.mimes' => 'The profile photo must be a JPG, PNG, GIF, or WEBP image.',
             'profile_photo.max'   => 'The profile photo must not be larger than 5 MB.',
-        ]);
+        ]));
 
         $data = $request->only([
             'firstname', 'middlename', 'lastname', 'email', 'username',

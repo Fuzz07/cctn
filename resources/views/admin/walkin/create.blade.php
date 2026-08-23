@@ -457,13 +457,14 @@
                 <div class="grid-2">
                     <div class="form-group">
                         <label class="form-label">Full Name <span class="req">*</span></label>
-                        <input type="text" name="full_name" id="full_name" class="form-control" placeholder="e.g. Juan De La Cruz" value="{{ old('full_name') }}" required>
+                        <input type="text" name="full_name" id="full_name" class="form-control" placeholder="e.g. Juan De La Cruz" value="{{ old('full_name') }}" required
+                               data-restrict="name" autocomplete="name">
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">Contact Number <span class="req">*</span></label>
                         <input type="tel" name="contact_no" id="contact_no" class="form-control" placeholder="09171234567" value="{{ old('contact_no') }}" required
-                               data-mobile-field inputmode="numeric" maxlength="11" pattern="09[0-9]{9}" autocomplete="tel"
+                               data-restrict="mobile" inputmode="numeric" maxlength="11" pattern="09[0-9]{9}" autocomplete="tel"
                                title="Enter an 11-digit Philippine mobile number starting with 09 (e.g. 09171234567).">
                     </div>
                 </div>
@@ -495,13 +496,15 @@
 
                     <div class="form-group">
                         <label class="form-label">Complete Home Address <span class="req">*</span></label>
-                        <input type="text" name="complete_address" id="complete_address" class="form-control" placeholder="Street / House No. / Landmark" value="{{ old('complete_address') }}" required>
+                        <input type="text" name="complete_address" id="complete_address" class="form-control" placeholder="Street / House No. / Landmark" value="{{ old('complete_address') }}" required
+                               data-restrict="address">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Installation Address <span class="req">*</span></label>
-                    <input type="text" name="installation_address" id="installation_address" class="form-control" placeholder="Exact address where CBTVI WiFi Router will be installed" value="{{ old('installation_address') }}" required>
+                    <input type="text" name="installation_address" id="installation_address" class="form-control" placeholder="Exact address where CBTVI WiFi Router will be installed" value="{{ old('installation_address') }}" required
+                           data-restrict="address">
                 </div>
 
                 <div class="grid-2">
@@ -522,7 +525,8 @@
 
                     <div class="form-group">
                         <label class="form-label">Valid ID Number <span class="req">*</span></label>
-                        <input type="text" name="valid_id_number" id="valid_id_number" class="form-control" placeholder="e.g. N01-12-345678" value="{{ old('valid_id_number') }}" required>
+                        <input type="text" name="valid_id_number" id="valid_id_number" class="form-control" placeholder="e.g. N01-12-345678" value="{{ old('valid_id_number') }}" required
+                               data-restrict="idnumber" style="text-transform:uppercase;">
                     </div>
                 </div>
 
@@ -927,6 +931,7 @@
 </div>
 
 @push('scripts')
+<script src="{{ asset('assets/js/form-restrictions.js') }}?v={{ filemtime(public_path('assets/js/form-restrictions.js')) }}"></script>
 <script>
     let currentStep = 1;
     let selectedPlan = {
@@ -1003,6 +1008,18 @@
     }
 
     function validateStep(step) {
+        const pane = document.getElementById(`step-pane-${step}`);
+
+        // Restricted fields report through their own red inline message, so
+        // check them first and let that message stand instead of a browser
+        // tooltip firing on top of it.
+        if (pane && window.FieldRestrict && !window.FieldRestrict.validateWithin(pane)) {
+            if (currentStep !== step) goToStep(step, true);
+            const flagged = pane.querySelector('[data-restrict].fr-invalid');
+            if (flagged) flagged.focus();
+            return false;
+        }
+
         const invalid = firstInvalidIn(step);
         if (!invalid) return true;
         if (currentStep !== step) goToStep(step, true);
@@ -1127,33 +1144,6 @@
             : `<span class="walkin-badge" style="background:#ea580c;">Pending Payment</span>`;
     }
 
-    // ── Mobile number: digits only, exactly 11, Philippine 09XXXXXXXXX format ──
-    document.querySelectorAll('[data-mobile-field]').forEach(function (input) {
-        input.addEventListener('input', function () {
-            const cleaned = input.value.replace(/\D/g, '').slice(0, 11);
-            if (cleaned !== input.value) {
-                const pos = input.selectionStart - (input.value.length - cleaned.length);
-                input.value = cleaned;
-                try { input.setSelectionRange(pos, pos); } catch (e) {}
-            }
-            input.setCustomValidity(
-                input.value === '' || /^09[0-9]{9}$/.test(input.value)
-                    ? ''
-                    : 'Enter an 11-digit mobile number starting with 09 (e.g. 09171234567).'
-            );
-        });
-
-        // Normalise pasted values such as +639171234567 or 0917 123 4567
-        input.addEventListener('paste', function (e) {
-            e.preventDefault();
-            const text = (e.clipboardData || window.clipboardData).getData('text') || '';
-            let digits = text.replace(/\D/g, '');
-            if (digits.indexOf('639') === 0) digits = '0' + digits.slice(2);
-            else if (digits.indexOf('9') === 0) digits = '0' + digits;
-            input.value = digits.slice(0, 11);
-            input.dispatchEvent(new Event('input', { bubbles: true }));
-        });
-    });
 </script>
 @endpush
 @endsection

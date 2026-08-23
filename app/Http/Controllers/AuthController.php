@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Support\InputRules;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -65,40 +66,37 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        // Regex: letters (including accented), spaces, hyphens, apostrophes only
-        $nameRegex = ['regex:/^[\pL\s\-\']+$/u'];
-
-        // Philippine mobile number: exactly 11 digits beginning with 09
-        $mobileRules = ['required', 'digits:11', 'regex:/^09[0-9]{9}$/'];
-
+        // Character rules mirror public/assets/js/form-restrictions.js, which
+        // filters the same fields as the user types. That layer is bypassable,
+        // so these are the checks that decide what reaches the database.
         $request->validate([
-            'firstname'         => array_merge(['required', 'string', 'max:50'], $nameRegex),
-            'middlename'        => array_merge(['nullable', 'string', 'max:50'], $nameRegex),
-            'lastname'          => array_merge(['required', 'string', 'max:50'], $nameRegex),
-            'place_of_birth'    => array_merge(['nullable', 'string', 'max:100'], $nameRegex),
+            'firstname'         => InputRules::name(true, 50),
+            'middlename'        => InputRules::name(false, 50),
+            'lastname'          => InputRules::name(true, 50),
+            'place_of_birth'    => InputRules::name(false, 100),
+            'age'               => InputRules::number(false, 1, 120),
             'email'             => 'required|email|max:100|unique:clients,email',
             'username'          => 'required|string|max:50|unique:clients,username',
             'password'          => 'required|string|min:8|confirmed',
-            'contact_no'        => $mobileRules,
-            'address_barangay'  => 'required|string|max:100',
+            'contact_no'        => InputRules::mobile(),
+            'address_barangay'  => InputRules::address(true, 100),
             'address_municipality' => 'required|string|max:100|in:Bantayan,Santa Fe,Madridejos',
-            'address_province'  => 'required|string|max:100',
+            'address_province'  => InputRules::address(true, 100),
             'proof_of_billing'  => 'required|image|mimes:jpeg,jpg,png,webp|max:5120',
             'profile_photo'     => 'nullable|image|mimes:jpeg,jpg,png,gif,webp|max:5120',
-        ], [
-            'contact_no.digits'         => 'Mobile number must be exactly 11 digits in the Philippine format (e.g. 09123456789).',
-            'contact_no.regex'          => 'Mobile number must be exactly 11 digits in the Philippine format (e.g. 09123456789).',
-            'firstname.regex'           => 'First name must contain letters only (spaces, hyphens, and apostrophes are allowed).',
-            'middlename.regex'          => 'Middle name must contain letters only (spaces, hyphens, and apostrophes are allowed).',
-            'lastname.regex'            => 'Last name must contain letters only (spaces, hyphens, and apostrophes are allowed).',
-            'place_of_birth.regex'      => 'Place of birth must contain letters only (spaces, hyphens, and apostrophes are allowed).',
+        ], array_merge(InputRules::messages([
+            'name'    => ['firstname', 'middlename', 'lastname', 'place_of_birth'],
+            'number'  => ['age'],
+            'address' => ['address_barangay', 'address_province'],
+            'mobile'  => ['contact_no'],
+        ]), [
             'profile_photo.image'       => 'The profile photo must be an image file (JPG, PNG, GIF, or WEBP).',
             'profile_photo.mimes'       => 'The profile photo must be a JPG, PNG, GIF, or WEBP image.',
             'profile_photo.max'         => 'The profile photo must not be larger than 5 MB.',
             'proof_of_billing.required' => 'Please attach a photo of your proof of billing for account verification.',
             'proof_of_billing.image'    => 'The proof of billing must be a photo (JPG, PNG, or WEBP).',
             'proof_of_billing.max'      => 'The proof of billing photo must not be larger than 5 MB.',
-        ]);
+        ]));
 
         // Auto-generate account number (YYYY-MM-NN series, e.g. 2026-01-01)
         $accountNumber = Client::nextAccountNumber();

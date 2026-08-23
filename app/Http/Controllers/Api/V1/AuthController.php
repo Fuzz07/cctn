@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ClientResource;
 use App\Models\Client;
+use App\Support\InputRules;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -49,20 +50,24 @@ class AuthController extends Controller
     // ─── POST /api/v1/auth/register ──────────────────────────────────────────
     public function register(Request $request)
     {
+        // Same character rules as the web forms; the mobile app has no
+        // client-side filter of its own, so these are the only check.
         $request->validate([
-            'firstname'            => 'required|string|max:50',
-            'lastname'             => 'required|string|max:50',
+            'firstname'            => InputRules::name(true, 50),
+            'middlename'           => InputRules::name(false, 50),
+            'lastname'             => InputRules::name(true, 50),
             'email'                => 'required|email|max:100|unique:clients,email',
             'username'             => 'required|string|max:50|unique:clients,username',
             'password'             => 'required|string|min:8|confirmed',
-            'contact_no'           => ['required', 'digits:11', 'regex:/^09[0-9]{9}$/'],
-            'address_barangay'     => 'required|string|max:100',
-            'address_municipality' => 'required|string|max:100',
-            'address_province'     => 'required|string|max:100',
-        ], [
-            'contact_no.digits' => 'Mobile number must be exactly 11 digits in the Philippine format (e.g. 09123456789).',
-            'contact_no.regex'  => 'Mobile number must be exactly 11 digits in the Philippine format (e.g. 09123456789).',
-        ]);
+            'contact_no'           => InputRules::mobile(),
+            'address_barangay'     => InputRules::address(true, 100),
+            'address_municipality' => InputRules::address(true, 100),
+            'address_province'     => InputRules::address(true, 100),
+        ], InputRules::messages([
+            'name'    => ['firstname', 'middlename', 'lastname'],
+            'address' => ['address_barangay', 'address_municipality', 'address_province'],
+            'mobile'  => ['contact_no'],
+        ]));
 
         $accountNumber = Client::nextAccountNumber();
 

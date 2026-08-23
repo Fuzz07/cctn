@@ -203,15 +203,18 @@
                     <div class="c-form-grid-3">
                         <div class="c-field">
                             <label class="c-label">First Name</label>
-                            <input type="text" name="firstname" class="c-input" value="{{ old('firstname', $client->firstname) }}" required>
+                            <input type="text" name="firstname" id="firstname" class="c-input" value="{{ old('firstname', $client->firstname) }}" required
+                                   data-restrict="name" autocomplete="given-name">
                         </div>
                         <div class="c-field">
                             <label class="c-label">Middle Name</label>
-                            <input type="text" name="middlename" class="c-input" value="{{ old('middlename', $client->middlename) }}">
+                            <input type="text" name="middlename" id="middlename" class="c-input" value="{{ old('middlename', $client->middlename) }}"
+                                   data-restrict="name" autocomplete="additional-name">
                         </div>
                         <div class="c-field">
                             <label class="c-label">Last Name</label>
-                            <input type="text" name="lastname" class="c-input" value="{{ old('lastname', $client->lastname) }}" required>
+                            <input type="text" name="lastname" id="lastname" class="c-input" value="{{ old('lastname', $client->lastname) }}" required
+                                   data-restrict="name" autocomplete="family-name">
                         </div>
                     </div>
 
@@ -229,8 +232,8 @@
                     <div class="c-form-grid-3">
                         <div class="c-field">
                             <label class="c-label">Contact No.</label>
-                            <input type="tel" name="contact_no" class="c-input" value="{{ old('contact_no', $client->contact_no) }}" required
-                                   data-mobile-field inputmode="numeric" maxlength="11" pattern="09[0-9]{9}" placeholder="09123456789" autocomplete="tel"
+                            <input type="tel" name="contact_no" id="contact_no" class="c-input" value="{{ old('contact_no', $client->contact_no) }}" required
+                                   data-restrict="mobile" inputmode="numeric" maxlength="11" pattern="09[0-9]{9}" placeholder="09123456789" autocomplete="tel"
                                    title="Enter an 11-digit Philippine mobile number starting with 09 (e.g. 09123456789).">
                         </div>
                         <div class="c-field">
@@ -258,7 +261,8 @@
                         </div>
                         <div class="c-field">
                             <label class="c-label">Place of Birth</label>
-                            <input type="text" name="place_of_birth" class="c-input" value="{{ old('place_of_birth', $client->place_of_birth) }}">
+                            <input type="text" name="place_of_birth" id="place_of_birth" class="c-input" value="{{ old('place_of_birth', $client->place_of_birth) }}"
+                                   data-restrict="name">
                         </div>
                     </div>
 
@@ -338,33 +342,5 @@
 @endsection
 
 @push('scripts')
-<script>
-    // ── Mobile number: digits only, exactly 11, Philippine 09XXXXXXXXX format ──
-    document.querySelectorAll('[data-mobile-field]').forEach(function (input) {
-        input.addEventListener('input', function () {
-            var cleaned = input.value.replace(/\D/g, '').slice(0, 11);
-            if (cleaned !== input.value) {
-                var pos = input.selectionStart - (input.value.length - cleaned.length);
-                input.value = cleaned;
-                try { input.setSelectionRange(pos, pos); } catch (e) {}
-            }
-            input.setCustomValidity(
-                input.value === '' || /^09[0-9]{9}$/.test(input.value)
-                    ? ''
-                    : 'Enter an 11-digit mobile number starting with 09 (e.g. 09123456789).'
-            );
-        });
-
-        // Normalise pasted values such as +639123456789 or 0912 345 6789
-        input.addEventListener('paste', function (e) {
-            e.preventDefault();
-            var text = (e.clipboardData || window.clipboardData).getData('text') || '';
-            var digits = text.replace(/\D/g, '');
-            if (digits.indexOf('639') === 0) digits = '0' + digits.slice(2);
-            else if (digits.indexOf('9') === 0) digits = '0' + digits;
-            input.value = digits.slice(0, 11);
-            input.dispatchEvent(new Event('input', { bubbles: true }));
-        });
-    });
-</script>
+<script src="{{ asset('assets/js/form-restrictions.js') }}?v={{ filemtime(public_path('assets/js/form-restrictions.js')) }}"></script>
 @endpush

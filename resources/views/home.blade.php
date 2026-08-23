@@ -14,7 +14,7 @@
 
     /* ── Hero ── */
     .bl-hero {
-        background: linear-gradient(180deg, #fff5f5 0%, #fdeaea 100%);
+        background: #fff;
         overflow: hidden;
     }
     .bl-hero-inner {
@@ -111,6 +111,7 @@
     }
     .bl-features-bar {
         background: #fff;
+        border: 1px solid #f1f5f9;
         border-radius: 16px;
         box-shadow: 0 10px 35px rgba(15, 23, 42, 0.07);
         padding: 1.6rem 1rem;
@@ -262,7 +263,7 @@
     .bl-no-plans { grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--bl-slate); }
 
     /* ── App Download / Support / About ── */
-    .bl-download-section { background: var(--bl-sky-bg); padding: 4rem 0; }
+    .bl-download-section { background: #fff; padding: 4rem 0; }
     .bl-download-inner {
         display: grid;
         grid-template-columns: 1.2fr 0.8fr;

@@ -9,6 +9,7 @@ use App\Models\Service;
 use App\Models\TimeSlot;
 use App\Models\BillingAccount;
 use App\Models\Payment;
+use App\Support\InputRules;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -30,16 +31,17 @@ class WalkInController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            // Step 1: Client Info
-            'full_name'            => 'required|string|max:150',
-            'contact_no'           => ['required', 'digits:11', 'regex:/^09[0-9]{9}$/'],
+            // Step 1: Client Info — character rules mirror the real-time
+            // filtering in public/assets/js/form-restrictions.js.
+            'full_name'            => InputRules::name(true, 150),
+            'contact_no'           => InputRules::mobile(),
             'email'                => 'required|email|max:100',
-            'complete_address'     => 'required|string|max:255',
+            'complete_address'     => InputRules::address(true, 255),
             'address_municipality' => 'required|string|max:100|in:Bantayan,Santa Fe,Madridejos',
-            'address_barangay'     => 'required|string|max:100',
-            'installation_address' => 'required|string|max:255',
+            'address_barangay'     => InputRules::address(true, 100),
+            'installation_address' => InputRules::address(true, 255),
             'valid_id_type'        => 'required|string|max:50',
-            'valid_id_number'      => 'required|string|max:50',
+            'valid_id_number'      => InputRules::idNumber(true, 50),
 
             // Step 2: WiFi Plan
             'service_id'           => 'required|exists:services,id',
@@ -61,10 +63,12 @@ class WalkInController extends Controller
             'bank_date'            => 'nullable|date',
             'pay_later_due_date'   => 'nullable|date',
             'payment_proof'        => 'nullable|image|mimes:jpeg,png,jpg|max:4096',
-        ], [
-            'contact_no.digits' => 'Mobile number must be exactly 11 digits in the Philippine format (e.g. 09171234567).',
-            'contact_no.regex'  => 'Mobile number must be exactly 11 digits in the Philippine format (e.g. 09171234567).',
-        ]);
+        ], InputRules::messages([
+            'name'     => ['full_name'],
+            'address'  => ['complete_address', 'address_barangay', 'installation_address'],
+            'idnumber' => ['valid_id_number'],
+            'mobile'   => ['contact_no'],
+        ]));
 
         // Check slot conflict
         if (Appointment::hasConflict($request->preferred_date, $request->preferred_time)) {
