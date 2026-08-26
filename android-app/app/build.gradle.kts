@@ -1,9 +1,30 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.dagger.hilt.android")
     id("com.google.devtools.ksp")
 }
+
+// Release signing is read from keystore.properties, which is deliberately not
+// in version control. Without it a release build is still produced, just
+// unsigned, so CI and a fresh clone never fail on a missing secret.
+val keystorePropertiesFile = rootProject.file("keystore.properties")
+val keystoreProperties = Properties().apply {
+    if (keystorePropertiesFile.exists()) {
+        keystorePropertiesFile.inputStream().use { load(it) }
+    }
+}
+val hasSigningConfig = keystoreProperties.getProperty("storeFile") != null
+
+val productionApiBaseUrl = "https://bctibantayan.com/api/v1/"
+
+// Debug builds can be pointed elsewhere without editing this file, e.g.
+//   ./gradlew assembleDebug -PapiBaseUrl=http://10.0.2.2:8000/api/v1/
+// Release is always the production API; there is no property to override it.
+val debugApiBaseUrl = (project.findProperty("apiBaseUrl") as String?) ?: productionApiBaseUrl
 
 android {
     namespace = "com.cctn.app"
@@ -17,12 +38,35 @@ android {
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        resourceConfigurations += setOf("en")
+    }
+
+    signingConfigs {
+        if (hasSigningConfig) {
+            create("release") {
+                storeFile = rootProject.file(keystoreProperties.getProperty("storeFile"))
+                storePassword = keystoreProperties.getProperty("storePassword")
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+            }
+        }
     }
 
     buildTypes {
+        debug {
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+            isMinifyEnabled = false
+            buildConfigField("String", "API_BASE_URL", "\"$debugApiBaseUrl\"")
+        }
         release {
             isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            buildConfigField("String", "API_BASE_URL", "\"$productionApiBaseUrl\"")
+            if (hasSigningConfig) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
 
@@ -34,39 +78,74 @@ android {
         jvmTarget = "17"
     }
     buildFeatures {
-        viewBinding = true
+        compose = true
+        buildConfig = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.8"
+    }
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+    lint {
+        warningsAsErrors = false
+        abortOnError = true
+        disable += setOf("GradleDependency", "ObsoleteLintCustomCheck")
     }
 }
 
 dependencies {
-    // AndroidX Core
-    implementation("androidx.core:core-ktx:1.12.0")
+    // AndroidX core
+    implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.11.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-
-    // Lifecycle (used by Activity scope)
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
-
-    // Coroutines (connectivity is exposed as a Flow). Pinned to the version
-    // lifecycle-runtime-ktx already pulls in, so this adds no new resolution.
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-
-    // Hilt (Dependency Injection)
-    implementation("com.google.dagger:hilt-android:2.51")
-    ksp("com.google.dagger:hilt-android-compiler:2.51")
-
-    // Splash Screen
+    implementation("androidx.activity:activity-compose:1.9.0")
     implementation("androidx.core:core-splashscreen:1.0.1")
 
-    // SwipeRefreshLayout (pull-to-refresh in WebView)
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    // Compose
+    implementation(platform("androidx.compose:compose-bom:2024.06.00"))
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-graphics")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material:material-icons-extended")
+    debugImplementation("androidx.compose.ui:ui-tooling")
 
-    // WebKit compat (Safe Browsing on every supported WebView, not just recent ones)
-    implementation("androidx.webkit:webkit:1.10.0")
+    // Lifecycle / ViewModel
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.3")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.3")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.3")
+
+    // Navigation
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+
+    // Hilt
+    implementation("com.google.dagger:hilt-android:2.51")
+    ksp("com.google.dagger:hilt-android-compiler:2.51")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
+    // Networking
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+    implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
+
+    // Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
+    // Encrypted token storage
+    implementation("androidx.security:security-crypto:1.1.0-alpha06")
+
+    // Images
+    implementation("io.coil-kt:coil-compose:2.6.0")
 
     // Testing
     testImplementation("junit:junit:4.13.2")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation(platform("androidx.compose:compose-bom:2024.06.00"))
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
 }

@@ -16,7 +16,13 @@
     RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
     # Never serve application internals over HTTP
-    RewriteRule ^(app|bootstrap|config|database|resources|routes|storage|tests|vendor|android-app|api)/ - [F,L]
+    RewriteRule ^(app|bootstrap|config|database|resources|routes|storage|tests|vendor|android-app)/ - [F,L]
+
+    # api/ holds the Vercel entry point, which must not be reachable here — but
+    # /api/v1/... is the mobile app's route prefix, served by Laravel. Blocking
+    # the whole api/ prefix would take the mobile API down with it, so only the
+    # physical file is refused.
+    RewriteRule ^api/index\.php$ - [F,L]
     RewriteRule ^(\.env.*|\.git.*|composer\.(json|lock)|package(-lock)?\.json|artisan|phpunit\.xml|webpack\.mix\.js|vercel\.json|DEPLOYMENT\.md|README\.md)$ - [F,L]
 
     # Send everything else through the front controller in public/
