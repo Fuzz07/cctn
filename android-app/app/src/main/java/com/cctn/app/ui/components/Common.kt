@@ -1,6 +1,7 @@
 package com.cctn.app.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,7 +34,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.cctn.app.ui.theme.ConnectionOffline
-import com.cctn.app.ui.theme.statusColor
+import com.cctn.app.ui.theme.statusColors
 
 /** Fills the content area while a screen's first load is in flight. */
 @Composable
@@ -122,19 +123,25 @@ fun EmptyState(
     }
 }
 
-/** Status word from the API, coloured by what it means. */
+/**
+ * Status word from the API, drawn as the site draws it: a tinted ground with a
+ * dark label and a matching border (the .badge-* rules in style.css).
+ */
 @Composable
 fun StatusChip(status: String?, modifier: Modifier = Modifier) {
-    val color = statusColor(status)
+    val colors = statusColors(status)
+    val shape = RoundedCornerShape(50)
+
     Box(
         modifier = modifier
-            .background(color.copy(alpha = 0.14f), RoundedCornerShape(50))
+            .background(colors.container, shape)
+            .border(1.dp, colors.border, shape)
             .padding(horizontal = 10.dp, vertical = 4.dp),
     ) {
         Text(
             text = (status ?: "unknown").replace('_', ' ').replaceFirstChar { it.uppercase() },
             style = MaterialTheme.typography.labelMedium,
-            color = color,
+            color = colors.content,
         )
     }
 }
@@ -146,7 +153,7 @@ fun SectionCard(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
     ) {
@@ -167,7 +174,7 @@ fun LoadingButton(
         onClick = onClick,
         modifier = modifier.height(52.dp),
         enabled = enabled && !loading,
-        shape = RoundedCornerShape(12.dp),
+        shape = MaterialTheme.shapes.medium,
         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
     ) {
         if (loading) {

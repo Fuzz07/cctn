@@ -935,6 +935,7 @@
 
 @push('scripts')
 <script src="{{ asset('assets/js/form-restrictions.js') }}?v={{ filemtime(public_path('assets/js/form-restrictions.js')) }}"></script>
+@include('partials.address-age-scripts')
 <script>
     let currentStep = 1;
     let selectedPlan = {
@@ -954,13 +955,6 @@
         if (firstCard) {
             firstCard.click();
         }
-
-        const municipality = document.getElementById('address_municipality');
-        municipality.addEventListener('change', function () {
-            document.getElementById('address_barangay').setAttribute('data-old', '');
-            populateBarangays();
-        });
-        populateBarangays();
 
         // Required fields on hidden panes cannot be focused, which makes the browser
         // block submit silently — so the wizard validates the panes itself instead.

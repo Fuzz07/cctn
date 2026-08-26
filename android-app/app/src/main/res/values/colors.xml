@@ -5,7 +5,8 @@
         exist for the parts the framework draws before Compose starts: the
         splash screen and the window background behind it.
     -->
-    <color name="window_background">#F4F7FB</color>
+    <!-- The bg-page custom property in public/assets/css/style.css -->
+    <color name="window_background">#F8FAFC</color>
     <color name="splash_background">#FFFFFF</color>
     <color name="ic_launcher_background">#FFFFFF</color>
 </resources>
