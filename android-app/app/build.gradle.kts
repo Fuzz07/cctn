@@ -34,8 +34,10 @@ android {
         applicationId = "com.cctn.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0.0"
+        // 1 was the WebView shell that shipped in August 2026; this is the
+        // native customer app that replaced it.
+        versionCode = 2
+        versionName = "2.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         resourceConfigurations += setOf("en")

@@ -277,6 +277,7 @@
     .bl-left-label { text-align: left; }
     .bl-left-title { text-align: left; margin-bottom: 1rem; font-size: 1.8rem; }
     .bl-download-sub { color: #475569; line-height: 1.7; font-size: 0.98rem; margin-bottom: 1.5rem; }
+    .bl-download-note { color: #64748b; line-height: 1.6; font-size: 0.85rem; margin-top: 0.9rem; max-width: 34rem; }
 
     .bl-info-section { background: #fff; padding: 4rem 0; }
     .bl-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; }
@@ -575,6 +576,13 @@
                     <i class="bi bi-download"></i>
                     Download Official Android APK
                 </a>
+                {{-- The August 2026 build was signed with a different key, so Android
+                     refuses to install this one over it. Saying so here is cheaper
+                     than fielding "App not installed" calls. --}}
+                <p class="bl-download-note">
+                    Android 8.0 or later. If you installed an earlier version of this app,
+                    please uninstall it first — Android will not replace it otherwise.
+                </p>
             </div>
             <div style="text-align: center;">
                 <img src="{{ asset('assets/images/cctn-logo.png') }}" alt="BCTVI Mobile App" style="max-height: 200px; object-fit: contain;">

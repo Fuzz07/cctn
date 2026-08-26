@@ -65,16 +65,60 @@ Without that file the release build still succeeds and produces
 secret. An unsigned APK **cannot be installed** — the file must be signed
 before it is handed to customers.
 
+### The current key
+
+A release keystore has already been generated and used for `versionCode 2`:
+
+```
+file         android-app/bctvi-release.jks   (gitignored)
+alias        bctvi
+subject      CN=Bantayan Cable TV and Internet, O=BCTVI, L=Bantayan, ST=Cebu, C=PH
+SHA-256      78:50:0F:B5:8A:D4:70:45:1F:46:D7:F0:A8:2A:B7:62:88:7A:E4:AE:D3:1F:6F:4E:F4:4A:9E:45:B8:DA:7D:DB
+valid        10,000 days
+```
+
+**Back up `bctvi-release.jks` and `keystore.properties` somewhere outside this
+folder.** They are deliberately not in version control, so nothing else holds a
+copy. If that key is lost, every future update has to be signed with a new one,
+and every customer has to uninstall and reinstall to take it — the same
+one-time break described under Distribution. To use your own key instead, do it
+now rather than later: replace the keystore, change the passwords in
+`keystore.properties`, and rebuild.
+
 Bump `versionCode` (and usually `versionName`) in `app/build.gradle.kts` for
 every release; Android refuses to install an APK whose `versionCode` is not
 higher than the installed one.
 
 ## Distribution
 
-The website serves the APK from `public/downloads/cctn-app.apk`, via
-`/download-apk` (`HomeController::downloadApk`). On Vercel that route redirects
-to the static path, because a serverless response is capped at 4.5 MB. Publishing
-a new version means copying the **signed** release APK over that file.
+`/download-apk` (`HomeController::downloadApk`) is the one download button, on
+the home page. It serves the APK from **two** places, and both have to be
+updated together:
+
+| File | Used by |
+| --- | --- |
+| `resources/apk/cctn-app.apk` | Hostinger and local — streamed by the controller |
+| `public/downloads/cctn-app.apk` | the Vercel redirect, and any direct link |
+
+```bash
+cd android-app && ./gradlew assembleRelease
+cp app/build/outputs/apk/release/app-release.apk ../public/downloads/cctn-app.apk
+cp app/build/outputs/apk/release/app-release.apk ../resources/apk/cctn-app.apk
+```
+
+Keep the file name `cctn-app.apk` — the route and any links already point at it.
+
+### The August 2026 build was signed with the Android debug key
+
+Everything up to `versionCode 1` was distributed debug-signed, which means
+anyone holding the standard debug keystore could have signed an update to it.
+`versionCode 2` onwards is signed with the BCTVI release key below.
+
+The consequence is that Android will not install this build over the old one —
+it fails with `INSTALL_FAILED_UPDATE_INCOMPATIBLE`. **Anyone who installed the
+earlier APK has to uninstall it once**, which is what the note under the
+download button on the home page tells them. This is a one-time cost; updates
+signed with the same key from here on install over each other normally.
 
 ## How it is put together
 
@@ -110,33 +154,33 @@ A few decisions worth knowing about:
   surfaces with the primary colour by default, which with a primary this red
   turns every card and the navigation bar pink.
 
-## Backend prerequisites
+## Backend notes
 
-The app is only as available as the API, and these were the findings when it
-was built.
+The API on `bctibantayan.com` is healthy: `/api/v1/services` answers `401
+Unauthenticated` without a token, and a bad login answers `422` with per-field
+errors and no stack trace — so the database is reachable and `APP_DEBUG` is off.
 
-**On `bctibantayan.com`, every `/api/*` request returned `403 Forbidden`** — an
-HTML error page, not JSON — while the website itself served normally. The cause
-was a rule in the repository's root `.htaccess`:
+Two things are still worth knowing.
+
+**Do not put `api` back in the blocked-prefix rule.** The root `.htaccess`
+refuses application folders over HTTP, and `api` was in that list:
 
 ```apache
 RewriteRule ^(app|bootstrap|config|...|android-app|api)/ - [F,L]
 ```
 
-It is there to keep the physical `api/` directory (the Vercel entry point) from
-being served, but `/api/` is also the mobile API's route prefix, so it refused
-every request the app makes. The rule now blocks only `api/index.php`, which
-leaves Laravel's `/api/v1/...` routes reachable. **That fix has to be deployed
-before the app can talk to this host**, and it is worth re-checking `/api/v1/services`
-returns JSON (a 401 is the correct answer without a token) once it is.
+It was meant to hide the physical `api/` directory (the Vercel entry point), but
+`/api/` is also the mobile API's route prefix, so that rule returns `403
+Forbidden` for every request this app makes. It now blocks `api/index.php`
+alone, which hides the entry point and leaves `/api/v1/...` reachable. Deploying
+a copy of `.htaccess` without that change would take the mobile app offline
+while leaving the website working — a failure that is easy to misread.
 
-**On the older `cctn-two.vercel.app` deployment**, two further problems were
-visible, and are worth confirming on this host once the API responds:
-
-1. **The database was unreachable** — every query failed with
-   `SQLSTATE[HY000] [2006] MySQL server has gone away`, so login could not succeed.
-2. **`APP_DEBUG` was on in production** — errors came back as a full stack trace
-   including file paths and the failing SQL. It should be `false`.
+**The older `cctn-two.vercel.app` deployment was in worse shape** when this app
+was built: its database was unreachable (`SQLSTATE[HY000] [2006] MySQL server has
+gone away`) and `APP_DEBUG` was on, so errors came back as stack traces with the
+failing SQL. Neither applies to `bctibantayan.com`, but if that Vercel
+deployment is still live it is serving a broken API and leaking internals.
 
 The app degrades correctly in all of these cases: it reports that the server is
 having trouble and never displays a 5xx body.
