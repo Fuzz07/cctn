@@ -238,8 +238,20 @@
                         </div>
                         <div class="c-field">
                             <label class="c-label">Birth Date</label>
-                            <input type="date" name="birthdate" class="c-input" value="{{ old('birthdate', $client->birthdate) }}" required>
+                            {{-- The model casts birthdate to a date, so it stringifies with a
+                                 time component that a date input refuses to show. --}}
+                            <input type="date" name="birthdate" id="profile_birthdate" class="c-input"
+                                   value="{{ old('birthdate', optional($client->birthdate)->format('Y-m-d')) }}" required>
                         </div>
+                        <div class="c-field">
+                            <label class="c-label">Age</label>
+                            {{-- Filled from the birth date; the server recomputes it on submit. --}}
+                            <input type="number" class="c-input" readonly data-age-for="profile_birthdate"
+                                   style="background:#f1f5f9; cursor:not-allowed;">
+                        </div>
+                    </div>
+
+                    <div class="c-form-grid-3">
                         <div class="c-field">
                             <label class="c-label">Gender</label>
                             <select name="gender" class="c-input" required>
@@ -247,9 +259,6 @@
                                 <option value="Female" {{ old('gender', $client->gender) == 'Female' ? 'selected' : '' }}>Female</option>
                             </select>
                         </div>
-                    </div>
-
-                    <div class="c-form-grid-2">
                         <div class="c-field">
                             <label class="c-label">Civil Status</label>
                             <select name="civil_status" class="c-input" required>
@@ -268,19 +277,20 @@
 
                     <div class="c-form-grid-3">
                         <div class="c-field">
-                            <label class="c-label">Barangay</label>
-                            <select name="address_barangay" class="c-input" required>
-                                @php
-                                    $brgys = ['Atop-atop','Baigad','Bantigue','Baod','Binaobao','Botigues','Doong','Guiwanon','Hilotongan','Kabac','Kabangbang','Kampingganon','Kangkaibe','Lipayran','Luyongbaybay','Mojon','Obo-ob','Patao','Puting Bato','Sillion','Suba','Sulangan','Sungko','Ticad'];
-                                @endphp
-                                @foreach ($brgys as $brgy)
-                                    <option value="{{ $brgy }}" {{ old('address_barangay', $client->address_barangay) == $brgy ? 'selected' : '' }}>{{ $brgy }}</option>
+                            <label class="c-label">Municipality</label>
+                            <select name="address_municipality" id="profile_municipality" class="c-input" required>
+                                @foreach (\App\Support\ServiceArea::municipalities() as $municipality)
+                                    <option value="{{ $municipality }}" {{ old('address_municipality', $client->address_municipality) == $municipality ? 'selected' : '' }}>{{ $municipality }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="c-field">
-                            <label class="c-label">Municipality</label>
-                            <input type="text" name="address_municipality" class="c-input" value="Bantayan" readonly>
+                            <label class="c-label">Barangay</label>
+                            {{-- Filled from the municipality beside it; see partials/address-age-scripts. --}}
+                            <select name="address_barangay" class="c-input" required
+                                    data-barangay-for="profile_municipality"
+                                    data-old="{{ old('address_barangay', $client->address_barangay) }}">
+                            </select>
                         </div>
                         <div class="c-field">
                             <label class="c-label">Province</label>
@@ -343,4 +353,5 @@
 
 @push('scripts')
 <script src="{{ asset('assets/js/form-restrictions.js') }}?v={{ filemtime(public_path('assets/js/form-restrictions.js')) }}"></script>
+@include('partials.address-age-scripts')
 @endpush

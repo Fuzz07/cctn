@@ -259,7 +259,9 @@
                         </div>
                         <div class="auth-input-group">
                             <label>Age *</label>
-                            <input type="number" name="age" id="age" class="auth-input" value="{{ old('age') }}" readonly style="background:#f1f5f9; cursor:not-allowed;">
+                            {{-- Filled from the birth date above; the server recomputes it on submit. --}}
+                            <input type="number" name="age" id="age" class="auth-input" value="{{ old('age') }}" readonly
+                                   data-age-for="birthdate" style="background:#f1f5f9; cursor:not-allowed;">
                         </div>
                         <div class="auth-input-group">
                             <label>Gender *</label>
@@ -326,14 +328,17 @@
                             <label>Municipality *</label>
                             <select name="address_municipality" id="municipality" class="auth-input" required>
                                 <option value="">Select Municipality</option>
-                                <option value="Bantayan" {{ old('address_municipality', 'Bantayan') == 'Bantayan' ? 'selected' : '' }}>Bantayan</option>
-                                <option value="Santa Fe" {{ old('address_municipality') == 'Santa Fe' ? 'selected' : '' }}>Santa Fe</option>
-                                <option value="Madridejos" {{ old('address_municipality') == 'Madridejos' ? 'selected' : '' }}>Madridejos</option>
+                                @foreach (\App\Support\ServiceArea::municipalities() as $municipality)
+                                    <option value="{{ $municipality }}" {{ old('address_municipality', 'Bantayan') == $municipality ? 'selected' : '' }}>{{ $municipality }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="auth-input-group">
                             <label>Barangay *</label>
-                            <select name="address_barangay" id="barangay" class="auth-input" required data-old="{{ old('address_barangay') }}">
+                            {{-- Filled from the municipality above; see partials/address-age-scripts. --}}
+                            <select name="address_barangay" id="barangay" class="auth-input" required
+                                    data-barangay-for="municipality" data-placeholder="Select Brgy"
+                                    data-old="{{ old('address_barangay') }}">
                                 <option value="">Select Brgy</option>
                             </select>
                         </div>
@@ -402,6 +407,7 @@
 </div>
 
 <script src="{{ asset('assets/js/form-restrictions.js') }}?v={{ filemtime(public_path('assets/js/form-restrictions.js')) }}"></script>
+@include('partials.address-age-scripts')
 <script>
     // ── Step-by-step registration ──
     (function () {

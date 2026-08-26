@@ -479,9 +479,9 @@
                         <label class="form-label">Municipality <span class="req">*</span></label>
                         <select name="address_municipality" id="address_municipality" class="form-control" required>
                             <option value="">Select Municipality</option>
-                            <option value="Bantayan" {{ old('address_municipality', 'Bantayan') == 'Bantayan' ? 'selected' : '' }}>Bantayan</option>
-                            <option value="Santa Fe" {{ old('address_municipality') == 'Santa Fe' ? 'selected' : '' }}>Santa Fe</option>
-                            <option value="Madridejos" {{ old('address_municipality') == 'Madridejos' ? 'selected' : '' }}>Madridejos</option>
+                            @foreach (\App\Support\ServiceArea::municipalities() as $municipality)
+                                <option value="{{ $municipality }}" {{ old('address_municipality', 'Bantayan') == $municipality ? 'selected' : '' }}>{{ $municipality }}</option>
+                            @endforeach
                         </select>
                     </div>
                 </div>
@@ -489,7 +489,10 @@
                 <div class="grid-2">
                     <div class="form-group">
                         <label class="form-label">Barangay <span class="req">*</span></label>
-                        <select name="address_barangay" id="address_barangay" class="form-control" required data-old="{{ old('address_barangay') }}">
+                        {{-- Filled from the municipality above; see partials/address-age-scripts. --}}
+                        <select name="address_barangay" id="address_barangay" class="form-control" required
+                                data-barangay-for="address_municipality" data-placeholder="Select Barangay"
+                                data-old="{{ old('address_barangay') }}">
                             <option value="">Select Barangay</option>
                         </select>
                     </div>
@@ -942,28 +945,8 @@
         instFee: 0
     };
 
-    // Barangays per municipality on Bantayan Island
-    const BARANGAYS = {
-        'Bantayan': ['Atop-atop','Baigad','Bantigue','Baod','Binaobao','Botigues','Doong','Guiwanon','Hilotongan','Kabac','Kabangbang','Kampingganon','Kangkaibe','Lipayran','Luyongbaybay','Mojon','Obo-ob','Patao','Puting Bato','Sillion','Suba','Sulangan','Sungko','Ticad'],
-        'Santa Fe': ['Balidbid','Hagdan','Hilantagaan','Kinatarkan','Langub','Maricaban','Okoy','Poblacion','Pooc','Talisay'],
-        'Madridejos': ['Bunakan','Kangwayan','Kaongkod','Kodia','Maalat','Malbago','Mancilang','Pili','Poblacion','San Agustin','Tabagak','Talangnan','Tarong','Tugas']
-    };
-
-    function populateBarangays() {
-        const municipality = document.getElementById('address_municipality');
-        const barangay = document.getElementById('address_barangay');
-        const list = BARANGAYS[municipality.value] || [];
-        const previous = barangay.getAttribute('data-old') || '';
-
-        barangay.innerHTML = '<option value="">Select Barangay</option>';
-        list.forEach(function (brgy) {
-            const opt = document.createElement('option');
-            opt.value = brgy;
-            opt.textContent = brgy;
-            if (brgy === previous) opt.selected = true;
-            barangay.appendChild(opt);
-        });
-    }
+    // The municipality -> barangay cascade lives in assets/js/address-age.js and
+    // is wired by the data attributes on the two selects.
 
     document.addEventListener('DOMContentLoaded', function() {
         // Auto select first plan card if available
