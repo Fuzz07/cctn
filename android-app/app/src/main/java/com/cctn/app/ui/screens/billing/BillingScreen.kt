@@ -43,7 +43,10 @@ import com.cctn.app.ui.theme.BrandRed
 import com.cctn.app.ui.theme.BrandRedDark
 
 @Composable
-fun BillingScreen(viewModel: BillingViewModel = hiltViewModel()) {
+fun BillingScreen(
+    onOpenAssistant: () -> Unit,
+    viewModel: BillingViewModel = hiltViewModel(),
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     Scaffold(
@@ -56,6 +59,7 @@ fun BillingScreen(viewModel: BillingViewModel = hiltViewModel()) {
             CctnTopBar(
                 refreshing = state.refreshing,
                 onRefresh = viewModel::refresh,
+                onOpenAssistant = onOpenAssistant,
             )
         },
     ) { padding ->

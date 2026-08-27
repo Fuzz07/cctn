@@ -70,6 +70,7 @@ fun HomeScreen(
     onSeeAppointments: () -> Unit,
     onSeeBilling: () -> Unit,
     onSupport: () -> Unit,
+    onOpenAssistant: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -82,7 +83,11 @@ fun HomeScreen(
         // add either a second time.
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
-            CctnTopBar(refreshing = state.refreshing, onRefresh = viewModel::refresh)
+            CctnTopBar(
+                refreshing = state.refreshing,
+                onRefresh = viewModel::refresh,
+                onOpenAssistant = onOpenAssistant,
+            )
         },
     ) { padding ->
         if (state.loading) {

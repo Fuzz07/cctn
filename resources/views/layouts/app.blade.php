@@ -8,6 +8,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#dc2626">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'BCTVI Broadband Telecommunications')</title>
     <meta name="description" content="Official BCTVI Broadband Client Portal & Mobile App. Book WiFi installation, manage statements, and receive installation updates.">
     
@@ -497,6 +498,8 @@
             }
         }
     </script>
+    @include('partials.chatbot')
+
     @stack('scripts')
 </body>
 </html>

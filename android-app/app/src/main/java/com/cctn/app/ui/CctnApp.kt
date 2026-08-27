@@ -39,6 +39,7 @@ import com.cctn.app.ui.screens.appointments.BookScreen
 import com.cctn.app.ui.screens.auth.LoginScreen
 import com.cctn.app.ui.screens.auth.RegisterScreen
 import com.cctn.app.ui.screens.billing.BillingScreen
+import com.cctn.app.ui.screens.chat.ChatScreen
 import com.cctn.app.ui.screens.home.HomeScreen
 import com.cctn.app.ui.screens.profile.ProfileScreen
 import com.cctn.app.ui.screens.support.SupportScreen
@@ -114,9 +115,9 @@ private fun MainNavHost(navController: NavHostController = rememberNavController
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
 
-    // Booking is a focused task: the tab bar goes away so the flow has the
-    // whole screen and one obvious way back.
-    val showBottomBar = currentRoute != Routes.BOOK
+    // Booking and the assistant are focused tasks: the tab bar goes away so each
+    // has the whole screen and one obvious way back.
+    val showBottomBar = currentRoute != Routes.BOOK && currentRoute != Routes.CHAT
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -175,20 +176,43 @@ private fun MainNavHost(navController: NavHostController = rememberNavController
             startDestination = Routes.HOME,
             modifier = Modifier.padding(innerPadding),
         ) {
+            val openAssistant = { navController.navigate(Routes.CHAT) }
+
             composable(Routes.HOME) {
                 HomeScreen(
                     onBook = { navController.navigate(Routes.BOOK) },
                     onSeeAppointments = { navController.navigateToTab(Routes.APPOINTMENTS) },
                     onSeeBilling = { navController.navigateToTab(Routes.BILLING) },
                     onSupport = { navController.navigateToTab(Routes.SUPPORT) },
+                    onOpenAssistant = openAssistant,
                 )
             }
             composable(Routes.APPOINTMENTS) {
-                AppointmentsScreen(onBook = { navController.navigate(Routes.BOOK) })
+                AppointmentsScreen(
+                    onBook = { navController.navigate(Routes.BOOK) },
+                    onOpenAssistant = openAssistant,
+                )
             }
-            composable(Routes.BILLING) { BillingScreen() }
-            composable(Routes.SUPPORT) { SupportScreen() }
-            composable(Routes.PROFILE) { ProfileScreen() }
+            composable(Routes.BILLING) { BillingScreen(onOpenAssistant = openAssistant) }
+            composable(Routes.SUPPORT) { SupportScreen(onOpenAssistant = openAssistant) }
+            composable(Routes.PROFILE) { ProfileScreen(onOpenAssistant = openAssistant) }
+            composable(Routes.CHAT) {
+                ChatScreen(
+                    onBack = { navController.popBackStack() },
+                    // The assistant answers but never acts, so a link on a reply
+                    // leaves the chat and opens the screen that does the thing.
+                    onOpenScreen = { screen ->
+                        navController.popBackStack()
+                        when (screen) {
+                            "billing" -> navController.navigateToTab(Routes.BILLING)
+                            "appointments" -> navController.navigateToTab(Routes.APPOINTMENTS)
+                            "support" -> navController.navigateToTab(Routes.SUPPORT)
+                            "profile" -> navController.navigateToTab(Routes.PROFILE)
+                            "book" -> navController.navigate(Routes.BOOK)
+                        }
+                    },
+                )
+            }
             composable(Routes.BOOK) {
                 BookScreen(
                     onDone = {

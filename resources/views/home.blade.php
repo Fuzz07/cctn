@@ -500,8 +500,8 @@
                     <i class="bi bi-headset"></i>
                 </div>
                 <div>
-                    <strong>Reliable Support</strong>
-                    <span>24/7 Local Support</span>
+                    <strong>Built-in Chatbot</strong>
+                    <span>Mobile and web help</span>
                 </div>
             </div>
         </div>
@@ -570,7 +570,8 @@
                 <h2 class="bl-section-title bl-left-title">BCTVI Client Companion App</h2>
                 <p class="bl-download-sub">
                     Book WiFi installation, monitor technician schedules, view monthly
-                    statements, and receive real-time updates directly on your Android phone.
+                    statements, chat with the built-in BCTVI Assistant, and receive
+                    real-time updates directly on your Android phone.
                 </p>
                 <a href="{{ route('download.apk') }}" class="bl-btn-primary">
                     <i class="bi bi-download"></i>
@@ -602,7 +603,8 @@
                 </h3>
                 <p>
                     Our local support team on Bantayan Island is ready to help with connection
-                    issues, billing questions, and installation schedules — any time, any day.
+                    issues, billing questions, and installation schedules. The built-in
+                    chatbot is also available on both mobile and web for quick assistance.
                 </p>
                 <span class="bl-info-phone">0999 998 8209</span>
             </div>

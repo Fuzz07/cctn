@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\Client\DashboardController as ClientDashboard;
 use App\Http\Controllers\Client\AppointmentController as ClientAppointment;
 use App\Http\Controllers\Client\BillingController as ClientBilling;
@@ -28,6 +29,10 @@ Route::get('/migration', function () {
     require public_path('migration.php');
 });
 Route::get('/download-apk', [HomeController::class, 'downloadApk'])->name('download.apk');
+
+// The chat bubble, on every page including the public ones. The assistant
+// decides for itself which answers need a signed-in client.
+Route::post('/chat', [ChatbotController::class, 'reply'])->name('chat.reply');
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');

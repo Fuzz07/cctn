@@ -8,6 +8,8 @@ import com.cctn.app.data.remote.dto.AppointmentDto
 import com.cctn.app.data.remote.dto.BillingResponse
 import com.cctn.app.data.remote.dto.BookAppointmentRequest
 import com.cctn.app.data.remote.dto.BookAppointmentResponse
+import com.cctn.app.data.remote.dto.ChatMessageBody
+import com.cctn.app.data.remote.dto.ChatResponse
 import com.cctn.app.data.remote.dto.ClientDto
 import com.cctn.app.data.remote.dto.LoginRequest
 import com.cctn.app.data.remote.dto.MaintenanceDto
@@ -139,4 +141,14 @@ class MaintenanceRepository @Inject constructor(
             MaintenanceRequestBody(subject.trim(), description.trim(), priority)
         )
     }.map { it.message ?: "Request submitted." }
+}
+
+@Singleton
+class ChatRepository @Inject constructor(
+    private val api: CctnApi,
+    private val json: Json,
+) {
+    /** An empty message asks the assistant to introduce itself. */
+    suspend fun send(message: String = ""): AppResult<ChatResponse> =
+        apiCall(json) { api.chat(ChatMessageBody(message.trim())) }
 }

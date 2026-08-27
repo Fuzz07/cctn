@@ -5,6 +5,8 @@ import com.cctn.app.data.remote.dto.AuthResponse
 import com.cctn.app.data.remote.dto.BillingResponse
 import com.cctn.app.data.remote.dto.BookAppointmentRequest
 import com.cctn.app.data.remote.dto.BookAppointmentResponse
+import com.cctn.app.data.remote.dto.ChatMessageBody
+import com.cctn.app.data.remote.dto.ChatResponse
 import com.cctn.app.data.remote.dto.LoginRequest
 import com.cctn.app.data.remote.dto.MaintenanceCreateResponse
 import com.cctn.app.data.remote.dto.MaintenanceListResponse
@@ -70,4 +72,8 @@ interface CctnApi {
 
     @POST("maintenance")
     suspend fun submitMaintenance(@Body body: MaintenanceRequestBody): MaintenanceCreateResponse
+
+    // ── Assistant ────────────────────────────────────────────────────────────
+    @POST("chat")
+    suspend fun chat(@Body body: ChatMessageBody): ChatResponse
 }

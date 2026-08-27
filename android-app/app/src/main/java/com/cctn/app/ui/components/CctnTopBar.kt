@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -41,6 +42,7 @@ fun CctnTopBar(
     modifier: Modifier = Modifier,
     refreshing: Boolean = false,
     onRefresh: (() -> Unit)? = null,
+    onOpenAssistant: (() -> Unit)? = null,
 ) {
     Column(modifier.fillMaxWidth()) {
         Row(
@@ -52,6 +54,17 @@ fun CctnTopBar(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             BrandWordmark()
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+            if (onOpenAssistant != null) {
+                IconButton(onClick = onOpenAssistant) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.Chat,
+                        contentDescription = "Open the BCTVI assistant",
+                        tint = MaterialTheme.colorScheme.primary,
+                    )
+                }
+            }
 
             if (onRefresh != null) {
                 if (refreshing) {
@@ -73,6 +86,7 @@ fun CctnTopBar(
                         )
                     }
                 }
+            }
             }
         }
 

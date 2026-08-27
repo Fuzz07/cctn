@@ -24,6 +24,9 @@ object Routes {
     const val PROFILE = "profile"
 
     const val BOOK = "book"
+
+    /** The assistant. Reachable from the bar on every tab, like the site's bubble. */
+    const val CHAT = "chat"
 }
 
 /** The five tabs of the signed-in app. Admin areas have no route here at all. */

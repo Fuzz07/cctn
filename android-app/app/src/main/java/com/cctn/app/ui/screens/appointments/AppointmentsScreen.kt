@@ -50,6 +50,7 @@ import com.cctn.app.ui.components.StatusChip
 @Composable
 fun AppointmentsScreen(
     onBook: () -> Unit,
+    onOpenAssistant: () -> Unit,
     viewModel: AppointmentsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -72,6 +73,7 @@ fun AppointmentsScreen(
             CctnTopBar(
                 refreshing = state.refreshing,
                 onRefresh = viewModel::refresh,
+                onOpenAssistant = onOpenAssistant,
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },

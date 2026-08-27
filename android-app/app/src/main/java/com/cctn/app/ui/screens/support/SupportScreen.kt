@@ -51,7 +51,10 @@ import com.cctn.app.ui.components.SectionCard
 import com.cctn.app.ui.components.StatusChip
 
 @Composable
-fun SupportScreen(viewModel: SupportViewModel = hiltViewModel()) {
+fun SupportScreen(
+    onOpenAssistant: () -> Unit,
+    viewModel: SupportViewModel = hiltViewModel(),
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -72,6 +75,7 @@ fun SupportScreen(viewModel: SupportViewModel = hiltViewModel()) {
             CctnTopBar(
                 refreshing = state.refreshing,
                 onRefresh = viewModel::refresh,
+                onOpenAssistant = onOpenAssistant,
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },

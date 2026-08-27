@@ -17,6 +17,7 @@ no admin endpoint is declared in the API interface.
 | Book a service — service, date, slot | `GET /services`, `GET /appointments/slots`, `POST /appointments` |
 | Billing — balance and statements | `GET /billing` |
 | Support — report a fault, track it | `GET /maintenance`, `POST /maintenance` |
+| Assistant - chatbot help | `POST /chat` |
 | Account — view/edit profile, password, sign out | `GET /profile`, `PUT /profile`, `POST /auth/logout` |
 
 ## Building

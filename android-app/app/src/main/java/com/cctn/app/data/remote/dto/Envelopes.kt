@@ -59,6 +59,12 @@ data class BookAppointmentRequest(
 )
 
 @Serializable
+data class ChatMessageBody(
+    /** Empty asks the assistant for its opening greeting. */
+    val message: String = "",
+)
+
+@Serializable
 data class MaintenanceRequestBody(
     val subject: String,
     val description: String,
@@ -133,6 +139,31 @@ data class MaintenanceCreateResponse(
     val success: Boolean = false,
     val message: String? = null,
     val request: MaintenanceDto? = null,
+)
+
+/**
+ * One answer from the assistant.
+ *
+ * The rules live on the server so the app and the website cannot drift apart;
+ * this is only what the screen renders. [link] points at whatever screen does
+ * the thing being discussed — the assistant never acts on the account itself.
+ */
+@Serializable
+data class ChatResponse(
+    val success: Boolean = false,
+    val reply: String = "",
+    val intent: String = "",
+    val suggestions: List<String> = emptyList(),
+    val link: ChatLinkDto? = null,
+)
+
+@Serializable
+data class ChatLinkDto(
+    val label: String = "",
+    /** The website's address for this, which the app ignores. */
+    val url: String? = null,
+    /** A tab in this app: billing, appointments, book, support or profile. */
+    val screen: String? = null,
 )
 
 /** Laravel's validation / error shape: {"message": "...", "errors": {"field": ["..."]}}. */

@@ -58,7 +58,10 @@ import com.cctn.app.ui.components.LoadingState
 import com.cctn.app.ui.components.SectionCard
 
 @Composable
-fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
+fun ProfileScreen(
+    onOpenAssistant: () -> Unit,
+    viewModel: ProfileViewModel = hiltViewModel(),
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val client by viewModel.client.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -80,6 +83,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
             CctnTopBar(
                 refreshing = state.refreshing,
                 onRefresh = viewModel::refresh,
+                onOpenAssistant = onOpenAssistant,
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },

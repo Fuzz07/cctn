@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\AppointmentController;
 use App\Http\Controllers\Api\V1\ServiceController;
 use App\Http\Controllers\Api\V1\BillingController;
 use App\Http\Controllers\Api\V1\MaintenanceController;
+use App\Http\Controllers\Api\V1\ChatbotController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,5 +47,8 @@ Route::prefix('v1')->group(function () {
         // Maintenance
         Route::get('/maintenance',  [MaintenanceController::class, 'index']);
         Route::post('/maintenance', [MaintenanceController::class, 'store']);
+
+        // Assistant — the same rules the website's chat bubble runs on
+        Route::post('/chat', [ChatbotController::class, 'reply']);
     });
 });
