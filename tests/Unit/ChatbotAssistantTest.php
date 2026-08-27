@@ -97,8 +97,13 @@ class ChatbotAssistantTest extends TestCase
             ['no internet since this morning',  'report_fault'],
             ['how long does installation take', 'installation_time'],
             ['what time slots are available',   'installation_time'],
-            ['where is your office',            'contact'],
+            ['where is your office',            'location'],
+            ['where are you located',           'location'],
+            ['asa inyong office',               'location'],
+            ['saan ang office nyo',             'location'],
             ['i want to talk to a person',      'contact'],
+            ['what is your contact number',     'contact'],
+            ['what is your hotline',            'contact'],
 
             // ── Small talk ──────────────────────────────────────────────────
             ['hello',                           'greeting'],

@@ -217,7 +217,8 @@ private fun MessageRow(message: ChatMessage, onOpenScreen: (String) -> Unit) {
         }
 
         val link = message.link
-        if (link != null && !link.screen.isNullOrBlank()) {
+        if (link != null && (!link.screen.isNullOrBlank() || !link.url.isNullOrBlank())) {
+            val uriHandler = androidx.compose.ui.platform.LocalUriHandler.current
             Spacer(Modifier.height(6.dp))
             Row(
                 modifier = Modifier
@@ -230,7 +231,13 @@ private fun MessageRow(message: ChatMessage, onOpenScreen: (String) -> Unit) {
                         MaterialTheme.colorScheme.primary.copy(alpha = 0.45f),
                         RoundedCornerShape(8.dp),
                     )
-                    .clickable { onOpenScreen(link.screen) }
+                    .clickable {
+                        if (!link.screen.isNullOrBlank()) {
+                            onOpenScreen(link.screen)
+                        } else if (!link.url.isNullOrBlank()) {
+                            runCatching { uriHandler.openUri(link.url) }
+                        }
+                    }
                     .padding(horizontal = 12.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {

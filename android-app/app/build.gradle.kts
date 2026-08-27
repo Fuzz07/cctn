@@ -50,8 +50,8 @@ android {
         applicationId = "com.cctn.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 5
-        versionName = "2.0.3"
+        versionCode = 6
+        versionName = "2.0.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         resourceConfigurations += setOf("en")

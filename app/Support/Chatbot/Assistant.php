@@ -147,13 +147,24 @@ class Assistant
             ],
             'keywords' => ['slots', 'timeslot'],
         ],
+        'location' => [
+            'phrases' => [
+                'where is your office', 'where are you located', 'office location', 'office address',
+                'physical office', 'store location', 'shop location', 'where is bctvi', 'where can i find you',
+                'asa inyong office', 'asa ang opisina', 'asa dapit ang office', 'asa mo dapit', 'asa inyong opisina',
+                'saan ang office', 'saan kayo located', 'saan ang opisina nyo', 'saan matatagpuan ang office',
+                'saan kayo banda', 'branch location', 'our location', 'your location',
+            ],
+            'keywords' => ['location', 'address', 'office', 'opisina', 'lokasyon', 'dapit', 'branch', 'map', 'maps'],
+        ],
         'contact' => [
             'phrases' => [
-                'contact number', 'phone number', 'office hours', 'where is your office',
-                'talk to a person', 'talk to someone', 'speak to staff', 'customer service',
-                'office address',
+                'contact number', 'phone number', 'hotline', 'office hours', 'opening hours',
+                'business hours', 'operating hours', 'talk to a person', 'talk to someone',
+                'speak to staff', 'customer service', 'telephone number', 'cellphone number',
+                'unsa inyong contact number', 'anong contact number', 'oras ng opisina',
             ],
-            'keywords' => ['contact', 'hotline', 'office'],
+            'keywords' => ['contact', 'hotline', 'phone', 'telephone', 'cellphone', 'hours'],
         ],
         'greeting' => [
             'phrases' => ['good morning', 'good afternoon', 'good evening', 'maayong buntag', 'maayong hapon'],
@@ -206,6 +217,7 @@ class Assistant
             'how_to_pay'        => $this->howToPay($client),
             'report_fault'      => $this->reportFault($client),
             'installation_time' => $this->installationTime($client),
+            'location'          => $this->location($client),
             'contact'           => $this->contact($client),
             'greeting'          => $this->opening($client),
             'thanks'            => $this->simple('thanks', 'Anytime! Anything else I can check for you?', $client),
@@ -600,14 +612,33 @@ class Assistant
         );
     }
 
+    private function location(?Client $client): array
+    {
+        $reply = "📍 BCTVI Office Location & Service Area:\n\n"
+            . "• Office Address: Poblacion, Bantayan, Cebu (Bantayan Island)\n"
+            . "• Coverage: Entire Bantayan Island — Bantayan, Madridejos, and Santa Fe (all 49 barangays)\n"
+            . "• Office Hours: Monday – Saturday, 8:00 AM – 5:00 PM (Closed on Sundays)\n"
+            . "• Customer Hotline: 0999 998 8209\n\n"
+            . "You can visit our main office for payments, applications, and support, or apply and book visits right here online!";
+
+        return $this->answer(
+            'location',
+            $reply,
+            $client,
+            $client ? $this->link('Book a visit', 'client.book', 'book') : $this->link('View plans', 'home', null),
+        );
+    }
+
     private function contact(?Client $client): array
     {
-        // There is no phone number or opening time recorded anywhere in this
-        // system, so the assistant does not have one to give. Saying so and
-        // pointing at the channel that does reach a person beats inventing it.
-        $reply = "I don't have the office's phone number or opening hours on file. "
-            . 'The surest way to reach a person is a support request from the BCTVI app — those go straight '
-            . 'to the team and you can follow the reply there.';
+        $reply = "📞 BCTVI Customer Support & Office Details:\n\n"
+            . "• Customer Helpline: 0999 998 8209\n"
+            . "• Office Location: Poblacion, Bantayan, Cebu (Bantayan Island)\n"
+            . "• Office Hours: Monday – Saturday, 8:00 AM – 5:00 PM\n"
+            . "• 24/7 Digital Assistant: Available anytime on Web & Mobile App\n\n"
+            . ($this->platform === self::APP
+                ? "For connection issues or technical problems, you can also file a ticket directly under the Support tab."
+                : "For technical assistance or installation inquiries, feel free to contact us or sign in to book your service online.");
 
         return $this->answer(
             'contact',
@@ -621,9 +652,9 @@ class Assistant
     {
         $reply = $client
             ? "I can check your balance, your next visit, your bookings and your open reports. "
-                . 'I can also explain our plans, our coverage, and how booking and payment work. '
+                . 'I can also explain our plans, office location, coverage, and how booking and payment work. '
                 . "I can't change anything on your account — I'll point you at the screen that can."
-            : "I can explain our plans, our coverage, how to sign up and how payment works. "
+            : "I can explain our plans, office location, coverage, how to sign up and how payment works. "
                 . 'Sign in and I can also check your balance, your bookings and your reports.';
 
         return $this->answer('help', $reply, $client);
@@ -676,17 +707,21 @@ class Assistant
         $pool = $client
             ? [
                 'balance'          => 'How much do I owe?',
+                'location'         => 'Where is your office?',
                 'next_appointment' => 'When is my next visit?',
                 'tickets'          => 'Any updates on my report?',
                 'plans'            => 'What plans do you offer?',
                 'how_to_pay'       => 'How do I pay?',
                 'report_fault'     => 'My internet is slow',
+                'contact'          => 'What is your contact number?',
             ]
             : [
-                'plans'      => 'What plans do you offer?',
-                'coverage'   => 'Do you cover my area?',
+                'location'    => 'Where is your office located?',
+                'plans'       => 'What plans do you offer?',
+                'coverage'    => 'Do you cover my area?',
                 'how_to_book' => 'How do I apply?',
-                'how_to_pay' => 'How do I pay?',
+                'how_to_pay'  => 'How do I pay?',
+                'contact'     => 'What is your contact number?',
             ];
 
         unset($pool[$answered]);
