@@ -106,7 +106,7 @@ fun LoginScreen(
         }
     }
 
-    val handleGoogleSignIn = {
+    val handleGoogleSignIn: () -> Unit = {
         val clientId = BuildConfig.GOOGLE_WEB_CLIENT_ID
         if (clientId.isNotBlank()) {
             val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

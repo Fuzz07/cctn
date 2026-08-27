@@ -116,7 +116,7 @@ class RegisterViewModel @Inject constructor(
                     _state.update {
                         it.copy(
                             submitting = false,
-                            formError = result.error.message ?: "Google sign-in failed. Please try again.",
+                            formError = result.error.message,
                         )
                     }
                 }
