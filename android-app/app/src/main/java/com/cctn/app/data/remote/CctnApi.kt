@@ -7,6 +7,7 @@ import com.cctn.app.data.remote.dto.BookAppointmentRequest
 import com.cctn.app.data.remote.dto.BookAppointmentResponse
 import com.cctn.app.data.remote.dto.ChatMessageBody
 import com.cctn.app.data.remote.dto.ChatResponse
+import com.cctn.app.data.remote.dto.GoogleLoginRequest
 import com.cctn.app.data.remote.dto.LoginRequest
 import com.cctn.app.data.remote.dto.MaintenanceCreateResponse
 import com.cctn.app.data.remote.dto.MaintenanceListResponse
@@ -31,6 +32,9 @@ interface CctnApi {
     // ── Auth ─────────────────────────────────────────────────────────────────
     @POST("auth/login")
     suspend fun login(@Body body: LoginRequest): AuthResponse
+
+    @POST("auth/google")
+    suspend fun googleLogin(@Body body: GoogleLoginRequest): AuthResponse
 
     @POST("auth/register")
     suspend fun register(@Body body: RegisterRequest): AuthResponse

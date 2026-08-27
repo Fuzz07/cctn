@@ -47,6 +47,68 @@ class AuthController extends Controller
         ]);
     }
 
+    // --- POST /api/v1/auth/google -------------------------------------------
+    public function google(Request $request)
+    {
+        $request->validate([
+            'id_token' => 'required|string',
+        ]);
+
+        $googleClientId = config('services.google.android_client_id') ?: config('services.google.client_id');
+        if (!$googleClientId) {
+            throw ValidationException::withMessages([
+                'id_token' => ['Google sign-in is not configured for this app.'],
+            ]);
+        }
+
+        $profile = Http::acceptJson()->get('https://oauth2.googleapis.com/tokeninfo', [
+            'id_token' => $request->input('id_token'),
+        ]);
+
+        $email = $profile->json('email');
+        if (!$profile->successful()
+            || !$email
+            || $profile->json('aud') !== $googleClientId
+            || !filter_var($email, FILTER_VALIDATE_EMAIL)
+            || !filter_var($profile->json('email_verified'), FILTER_VALIDATE_BOOLEAN)) {
+            throw ValidationException::withMessages([
+                'id_token' => ['Google sign-in could not be verified. Please try again.'],
+            ]);
+        }
+
+        $client = Client::where('email', $email)->first();
+
+        if (!$client) {
+            $base = preg_replace('/[^a-z0-9_.]/', '', strtolower(strstr($email, '@', true) ?: 'client')) ?: 'client';
+            $username = $base;
+            $suffix = 1;
+            while (Client::where('username', $username)->exists()) {
+                $username = $base . $suffix++;
+            }
+
+            $client = Client::create([
+                'account_number'    => Client::nextAccountNumber(),
+                'firstname'         => $profile->json('given_name') ?: ($profile->json('name') ?: 'Google'),
+                'lastname'          => $profile->json('family_name') ?: 'Client',
+                'email'             => $email,
+                'username'          => $username,
+                'password'          => Hash::make(bin2hex(random_bytes(16))),
+                'address_province'  => 'Cebu',
+                'email_verified_at' => now(),
+            ]);
+        } elseif (empty($client->email_verified_at)) {
+            $client->update(['email_verified_at' => now()]);
+        }
+
+        $token = $client->createToken('mobile-app')->plainTextToken;
+
+        return response()->json([
+            'success' => true,
+            'message' => "Welcome back, {$client->firstname}!",
+            'token'   => $token,
+            'client'  => new ClientResource($client->fresh()),
+        ]);
+    }
     // ─── POST /api/v1/auth/register ──────────────────────────────────────────
     public function register(Request $request)
     {

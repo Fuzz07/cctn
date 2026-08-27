@@ -14,6 +14,11 @@ data class LoginRequest(
 )
 
 @Serializable
+data class GoogleLoginRequest(
+    @SerialName("id_token") val idToken: String,
+)
+
+@Serializable
 data class RegisterRequest(
     val firstname: String,
     val middlename: String? = null,

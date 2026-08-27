@@ -11,6 +11,7 @@ import com.cctn.app.data.remote.dto.BookAppointmentResponse
 import com.cctn.app.data.remote.dto.ChatMessageBody
 import com.cctn.app.data.remote.dto.ChatResponse
 import com.cctn.app.data.remote.dto.ClientDto
+import com.cctn.app.data.remote.dto.GoogleLoginRequest
 import com.cctn.app.data.remote.dto.LoginRequest
 import com.cctn.app.data.remote.dto.MaintenanceDto
 import com.cctn.app.data.remote.dto.MaintenanceRequestBody
@@ -38,6 +39,14 @@ class AuthRepository @Inject constructor(
             }
             .map { it.client }
 
+    suspend fun googleLogin(idToken: String): AppResult<ClientDto> =
+        apiCall(json) { api.googleLogin(GoogleLoginRequest(idToken)) }
+            .also { result ->
+                if (result is AppResult.Success) {
+                    session.signIn(result.data.token, result.data.client)
+                }
+            }
+            .map { it.client }
     suspend fun register(body: RegisterRequest): AppResult<ClientDto> =
         apiCall(json) { api.register(body) }
             .also { result ->

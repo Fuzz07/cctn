@@ -21,6 +21,7 @@ Route::prefix('v1')->group(function () {
 
     // ── Auth (public) ─────────────────────────────────────────────────────
     Route::post('/auth/login',    [AuthController::class, 'login']);
+    Route::post('/auth/google',   [AuthController::class, 'google']);
     Route::post('/auth/register', [AuthController::class, 'register']);
 
     // ── Protected (requires Bearer token via Sanctum) ─────────────────────

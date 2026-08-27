@@ -19,6 +19,16 @@ val keystoreProperties = Properties().apply {
 }
 val hasSigningConfig = keystoreProperties.getProperty("storeFile") != null
 
+val localPropertiesFile = rootProject.file("local.properties")
+val localProperties = Properties().apply {
+    if (localPropertiesFile.exists()) {
+        localPropertiesFile.inputStream().use { load(it) }
+    }
+}
+val googleWebClientId = (project.findProperty("googleWebClientId") as String?)
+    ?: localProperties.getProperty("googleWebClientId")
+    ?: ""
+
 val productionApiBaseUrl = "https://bctibantayan.com/api/v1/"
 
 // Debug builds can be pointed elsewhere without editing this file, e.g.
@@ -65,6 +75,7 @@ android {
             isMinifyEnabled = false
             buildConfigField("String", "API_BASE_URL", "\"$debugApiBaseUrl\"")
             buildConfigField("String", "WEB_BASE_URL", "\"${webBaseUrlOf(debugApiBaseUrl)}\"")
+            buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"$googleWebClientId\"")
         }
         release {
             isMinifyEnabled = true
@@ -72,6 +83,7 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             buildConfigField("String", "API_BASE_URL", "\"$productionApiBaseUrl\"")
             buildConfigField("String", "WEB_BASE_URL", "\"${webBaseUrlOf(productionApiBaseUrl)}\"")
+            buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"$googleWebClientId\"")
             if (hasSigningConfig) {
                 signingConfig = signingConfigs.getByName("release")
             }
@@ -148,6 +160,7 @@ dependencies {
 
     // Images
     implementation("io.coil-kt:coil-compose:2.6.0")
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
 
     // Testing
     testImplementation("junit:junit:4.13.2")
