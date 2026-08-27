@@ -355,10 +355,9 @@ fun SecondaryButton(
         ),
     ) {
         if (painter != null) {
-            Icon(
+            Image(
                 painter = painter,
                 contentDescription = null,
-                tint = iconTint ?: Color.Unspecified,
                 modifier = Modifier.size(18.dp),
             )
             Spacer(Modifier.width(8.dp))

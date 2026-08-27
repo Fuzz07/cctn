@@ -49,6 +49,12 @@
 # ─── Coil ────────────────────────────────────────────────────────────────────
 -dontwarn coil.**
 
+# ─── Google Play Services / Auth ─────────────────────────────────────────────
+-keep class com.google.android.gms.auth.api.signin.** { *; }
+-keep class com.google.android.gms.common.** { *; }
+-keep class com.google.android.gms.tasks.** { *; }
+-dontwarn com.google.android.gms.**
+
 # ─── Crash reports stay readable ─────────────────────────────────────────────
 -keepattributes SourceFile,LineNumberTable
 -renamesourcefileattribute SourceFile

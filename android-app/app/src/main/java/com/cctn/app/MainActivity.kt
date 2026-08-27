@@ -50,11 +50,13 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun handleAuthIntent(intent: Intent?) {
-        val data = intent?.data ?: return
-        if (data.scheme == "cctn" && data.host == "auth") {
-            val token = data.getQueryParameter("token")
-            if (!token.isNullOrBlank()) {
-                viewModel.handleAuthToken(token)
+        runCatching {
+            val data = intent?.data ?: return
+            if (data.scheme == "cctn" && data.host == "auth") {
+                val token = data.getQueryParameter("token")
+                if (!token.isNullOrBlank()) {
+                    viewModel.handleAuthToken(token)
+                }
             }
         }
     }
