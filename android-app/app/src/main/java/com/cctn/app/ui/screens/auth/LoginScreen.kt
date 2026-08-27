@@ -2,6 +2,8 @@ package com.cctn.app.ui.screens.auth
 
 import android.content.Intent
 import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -30,6 +32,8 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonAddAlt1
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -61,18 +65,15 @@ import com.cctn.app.ui.theme.AuthOnScrim
 import com.cctn.app.ui.theme.AuthScrimBottom
 import com.cctn.app.ui.theme.AuthScrimTop
 import com.cctn.app.ui.theme.LightSystemBarIcons
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import java.time.Year
 
 /**
- * Sign in, laid out as `auth/login.blade.php` lays it out: the office photo
- * behind a slate scrim, the lockup over it, and a single white card holding
- * the form.
- *
- * Two controls the page has are deliberately absent. "Continue with Google"
- * has no counterpart in `/api/v1` — there is no OAuth endpoint to call — and
- * "Remember me" would be a switch that does nothing, because the token this
- * screen receives is always persisted. The admin link is absent for the reason
- * the whole app is: nothing under `/admin` is reachable from here.
+ * Sign in, laid out to match `auth/login.blade.php`: the office photo
+ * behind a slate scrim, the lockup over it, and a white card holding
+ * the form, remember-me checkbox, Google sign-in, and account registration.
  */
 @Composable
 fun LoginScreen(
@@ -84,13 +85,53 @@ fun LoginScreen(
     LightSystemBarIcons()
     val context = LocalContext.current
 
+    val googleSignInLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            val idToken = account?.idToken
+            if (!idToken.isNullOrBlank()) {
+                viewModel.onGoogleIdToken(idToken)
+            } else {
+                viewModel.onGoogleSignInError("Google sign-in token could not be retrieved.")
+            }
+        } catch (e: ApiException) {
+            if (e.statusCode != 12501 && e.statusCode != 12502) {
+                viewModel.onGoogleSignInError("Google sign-in failed: ${e.localizedMessage ?: "Status ${e.statusCode}"}")
+            }
+        } catch (e: Exception) {
+            viewModel.onGoogleSignInError("Google sign-in failed: ${e.localizedMessage ?: "Please try again."}")
+        }
+    }
+
+    val handleGoogleSignIn = {
+        val clientId = BuildConfig.GOOGLE_WEB_CLIENT_ID
+        if (clientId.isNotBlank()) {
+            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(clientId)
+                .requestEmail()
+                .build()
+            val client = GoogleSignIn.getClient(context, gso)
+            client.signOut().addOnCompleteListener {
+                googleSignInLauncher.launch(client.signInIntent)
+            }
+        } else {
+            context.startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse(BuildConfig.WEB_BASE_URL + "auth/google"),
+                )
+            )
+        }
+    }
+
     Box(Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(R.drawable.login_bg),
             contentDescription = null,
             contentScale = ContentScale.Crop,
-            // Cover on a phone shows barely a third of a 4:3 photo. Left of
-            // centre is where the BCTVI office is; dead centre is the wires.
             alignment = BiasAlignment(horizontalBias = -0.55f, verticalBias = 0f),
             modifier = Modifier.fillMaxSize(),
         )
@@ -103,9 +144,6 @@ fun LoginScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                // Outside the scroll, so the top inset holds the content clear
-                // of the status bar instead of scrolling away under it. The
-                // photo behind is a sibling and stays full-bleed.
                 .statusBarsPadding()
                 .verticalScroll(rememberScrollState())
                 .imePadding()
@@ -151,8 +189,6 @@ fun LoginScreen(
 
                 Spacer(Modifier.height(26.dp))
 
-                // The page prints whatever the server rejected in a red block
-                // above the fields; a field-level message stays on its field.
                 if (state.formError != null && state.loginInputError == null) {
                     FormErrorBanner(state.formError.orEmpty())
                     Spacer(Modifier.height(16.dp))
@@ -182,8 +218,27 @@ fun LoginScreen(
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.clickable { viewModel.onRememberMeChange(!state.rememberMe) },
+                    ) {
+                        Checkbox(
+                            checked = state.rememberMe,
+                            onCheckedChange = viewModel::onRememberMeChange,
+                            colors = CheckboxDefaults.colors(
+                                checkedColor = MaterialTheme.colorScheme.primary,
+                            ),
+                        )
+                        Text(
+                            text = "Remember me",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+
                     Text(
                         text = "Forgot Password?",
                         style = MaterialTheme.typography.labelMedium,
@@ -199,7 +254,7 @@ fun LoginScreen(
                     )
                 }
 
-                Spacer(Modifier.height(18.dp))
+                Spacer(Modifier.height(14.dp))
 
                 LoadingButton(
                     text = "Sign In",
@@ -210,9 +265,19 @@ fun LoginScreen(
                     icon = Icons.AutoMirrored.Filled.ArrowForward,
                 )
 
-                Spacer(Modifier.height(20.dp))
+                Spacer(Modifier.height(18.dp))
                 OrDivider()
-                Spacer(Modifier.height(20.dp))
+                Spacer(Modifier.height(18.dp))
+
+                SecondaryButton(
+                    text = "Continue with Google",
+                    onClick = handleGoogleSignIn,
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = !state.submitting,
+                    painter = painterResource(R.drawable.ic_google),
+                )
+
+                Spacer(Modifier.height(12.dp))
 
                 SecondaryButton(
                     text = "Create an Account",
@@ -221,6 +286,33 @@ fun LoginScreen(
                     enabled = !state.submitting,
                     icon = Icons.Filled.PersonAddAlt1,
                 )
+
+                Spacer(Modifier.height(20.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = "Are you staff or admin? ",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Text(
+                        text = "Admin Login Here",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.clickable {
+                            context.startActivity(
+                                Intent(
+                                    Intent.ACTION_VIEW,
+                                    Uri.parse(BuildConfig.WEB_BASE_URL + "admin/login"),
+                                )
+                            )
+                        },
+                    )
+                }
             }
 
             Spacer(Modifier.height(18.dp))

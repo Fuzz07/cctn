@@ -16,6 +16,7 @@ import javax.inject.Inject
 data class LoginUiState(
     val loginInput: String = "",
     val password: String = "",
+    val rememberMe: Boolean = true,
     val loginInputError: String? = null,
     val passwordError: String? = null,
     val formError: String? = null,
@@ -39,6 +40,38 @@ class LoginViewModel @Inject constructor(
 
     fun onPasswordChange(value: String) = _state.update {
         it.copy(password = value, passwordError = null, formError = null)
+    }
+
+    fun onRememberMeChange(value: Boolean) = _state.update {
+        it.copy(rememberMe = value)
+    }
+
+    fun onGoogleIdToken(idToken: String) {
+        val current = _state.value
+        if (current.submitting) return
+
+        _state.update { it.copy(submitting = true, formError = null) }
+
+        viewModelScope.launch {
+            when (val result = authRepository.googleLogin(idToken)) {
+                is AppResult.Success -> {
+                    _state.update { it.copy(submitting = false) }
+                }
+
+                is AppResult.Failure -> {
+                    _state.update {
+                        it.copy(
+                            submitting = false,
+                            formError = result.error.message ?: "Google sign-in failed. Please try again.",
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    fun onGoogleSignInError(error: String) = _state.update {
+        it.copy(formError = error, submitting = false)
     }
 
     fun submit() {

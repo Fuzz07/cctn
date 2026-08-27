@@ -34,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -339,6 +340,7 @@ fun SecondaryButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     icon: ImageVector? = null,
+    painter: Painter? = null,
     iconTint: Color? = null,
 ) {
     OutlinedButton(
@@ -352,7 +354,15 @@ fun SecondaryButton(
             contentColor = MaterialTheme.colorScheme.onSurface,
         ),
     ) {
-        if (icon != null) {
+        if (painter != null) {
+            Icon(
+                painter = painter,
+                contentDescription = null,
+                tint = iconTint ?: Color.Unspecified,
+                modifier = Modifier.size(18.dp),
+            )
+            Spacer(Modifier.width(8.dp))
+        } else if (icon != null) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,

@@ -100,6 +100,34 @@ class RegisterViewModel @Inject constructor(
 
     fun onBarangay(v: String) = update("address_barangay") { it.copy(barangay = v) }
 
+    fun onGoogleIdToken(idToken: String) {
+        val current = _state.value
+        if (current.submitting) return
+
+        _state.update { it.copy(submitting = true, formError = null) }
+
+        viewModelScope.launch {
+            when (val result = authRepository.googleLogin(idToken)) {
+                is AppResult.Success -> {
+                    _state.update { it.copy(submitting = false) }
+                }
+
+                is AppResult.Failure -> {
+                    _state.update {
+                        it.copy(
+                            submitting = false,
+                            formError = result.error.message ?: "Google sign-in failed. Please try again.",
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    fun onGoogleSignInError(error: String) = _state.update {
+        it.copy(formError = error, submitting = false)
+    }
+
     // ── Steps ────────────────────────────────────────────────────────────────
 
     fun back() {

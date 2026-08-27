@@ -1,5 +1,9 @@
 package com.cctn.app.ui.screens.auth
 
+import android.content.Intent
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -40,6 +44,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -47,6 +52,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.cctn.app.BuildConfig
 import com.cctn.app.R
 import com.cctn.app.core.ServiceArea
 import com.cctn.app.ui.components.BirthdateAndAge
@@ -56,20 +62,21 @@ import com.cctn.app.ui.components.CctnPasswordField
 import com.cctn.app.ui.components.CctnReadOnlyField
 import com.cctn.app.ui.components.CctnTextField
 import com.cctn.app.ui.components.LoadingButton
+import com.cctn.app.ui.components.OrDivider
 import com.cctn.app.ui.components.SecondaryButton
 import com.cctn.app.ui.theme.AuthOnScrim
 import com.cctn.app.ui.theme.AuthScrimBottom
 import com.cctn.app.ui.theme.AuthScrimTop
 import com.cctn.app.ui.theme.LightSystemBarIcons
 import com.cctn.app.ui.theme.LightOnSurfaceFaint
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 
 /**
  * Registration, laid out as `auth/register.blade.php` lays it out: the same
  * photo and scrim as sign-in, one white card, and the three-step wizard with
- * its numbered markers across the top.
- *
- * "Sign up with Google" is absent for the same reason it is on the sign-in
- * screen — `/api/v1` has no OAuth endpoint to send anyone to.
+ * its numbered markers across the top and Google signup option.
  */
 @Composable
 fun RegisterScreen(
@@ -79,14 +86,55 @@ fun RegisterScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     LightSystemBarIcons()
+    val context = LocalContext.current
+
+    val googleSignInLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            val idToken = account?.idToken
+            if (!idToken.isNullOrBlank()) {
+                viewModel.onGoogleIdToken(idToken)
+            } else {
+                viewModel.onGoogleSignInError("Google sign-in token could not be retrieved.")
+            }
+        } catch (e: ApiException) {
+            if (e.statusCode != 12501 && e.statusCode != 12502) {
+                viewModel.onGoogleSignInError("Google sign-in failed: ${e.localizedMessage ?: "Status ${e.statusCode}"}")
+            }
+        } catch (e: Exception) {
+            viewModel.onGoogleSignInError("Google sign-in failed: ${e.localizedMessage ?: "Please try again."}")
+        }
+    }
+
+    val handleGoogleSignUp = {
+        val clientId = BuildConfig.GOOGLE_WEB_CLIENT_ID
+        if (clientId.isNotBlank()) {
+            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(clientId)
+                .requestEmail()
+                .build()
+            val client = GoogleSignIn.getClient(context, gso)
+            client.signOut().addOnCompleteListener {
+                googleSignInLauncher.launch(client.signInIntent)
+            }
+        } else {
+            context.startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse(BuildConfig.WEB_BASE_URL + "auth/google"),
+                )
+            )
+        }
+    }
 
     Box(Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(R.drawable.login_bg),
             contentDescription = null,
             contentScale = ContentScale.Crop,
-            // Cover on a phone shows barely a third of a 4:3 photo. Left of
-            // centre is where the BCTVI office is; dead centre is the wires.
             alignment = BiasAlignment(horizontalBias = -0.55f, verticalBias = 0f),
             modifier = Modifier.fillMaxSize(),
         )
@@ -99,9 +147,6 @@ fun RegisterScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                // Outside the scroll, so the top inset holds the content clear
-                // of the status bar instead of scrolling away under it. The
-                // photo behind is a sibling and stays full-bleed.
                 .statusBarsPadding()
                 .verticalScroll(rememberScrollState())
                 .imePadding()
@@ -136,6 +181,22 @@ fun RegisterScreen(
                 Spacer(Modifier.height(24.dp))
 
                 WizardSteps(current = state.step)
+
+                Spacer(Modifier.height(20.dp))
+
+                if (state.step == 1) {
+                    SecondaryButton(
+                        text = "Sign up with Google",
+                        onClick = handleGoogleSignUp,
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = !state.submitting,
+                        painter = painterResource(R.drawable.ic_google),
+                    )
+
+                    Spacer(Modifier.height(16.dp))
+                    OrDivider(text = "or fill in the form below")
+                    Spacer(Modifier.height(16.dp))
+                }
 
                 Spacer(Modifier.height(24.dp))
 

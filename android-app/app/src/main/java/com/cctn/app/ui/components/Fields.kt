@@ -389,8 +389,8 @@ fun CctnDropdownField(
                 hasError = error != null,
                 enabled = enabled,
                 modifier = Modifier
-                    .menuAnchor()
-                    .clickable(enabled = enabled) { expanded = !expanded },
+                    .fillMaxWidth()
+                    .menuAnchor(),
             ) {
                 Text(
                     text = value.ifBlank { placeholder ?: "Select" },
