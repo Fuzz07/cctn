@@ -1,8 +1,6 @@
 package com.cctn.app.ui.components
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
@@ -10,10 +8,7 @@ import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -94,6 +89,13 @@ fun Long.toUtcLocalDate(): LocalDate =
     Instant.ofEpochMilli(this).atZone(ZoneOffset.UTC).toLocalDate()
 
 /**
+ * Birth date beside the age it implies, as the registration form pairs them.
+ *
+ * Age is never typed and never stored — it is read off the chosen birth date
+ * and refreshes the moment that changes, so the two can never disagree. The
+ * server recomputes it the same way from the date it is sent.
+ */
+/**
  * Birth date beside the age it implies.
  *
  * Age is never typed and never stored — it is read off the chosen birth date
@@ -116,48 +118,25 @@ fun BirthdateAndAge(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Box(Modifier.weight(1.6f)) {
-            OutlinedTextField(
-                value = birthdate?.let { Formatters.date(it.format(Formatters.API_DATE)) }.orEmpty(),
-                onValueChange = {},
-                readOnly = true,
-                enabled = false,
-                isError = error != null,
-                label = { Text("Birth date") },
-                placeholder = { Text("Select") },
-                trailingIcon = {
-                    Icon(Icons.Filled.CalendarMonth, contentDescription = null)
-                },
-                // A disabled field is not clickable, so the tap target sits on
-                // top of it. Disabling it is what stops the keyboard appearing.
-                colors = readOnlyFieldColors(isError = error != null),
-                supportingText = error?.let {
-                    {
-                        Text(
-                            text = it,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.error,
-                        )
-                    }
-                },
-                modifier = Modifier.fillMaxWidth(),
-            )
+        CctnReadOnlyField(
+            value = birthdate?.let { Formatters.date(it.format(Formatters.API_DATE)) }.orEmpty(),
+            label = "Birth Date *",
+            placeholder = "mm/dd/yyyy",
+            error = error,
+            enabled = enabled,
+            trailingIcon = Icons.Filled.CalendarMonth,
+            onClick = { showPicker = true },
+            modifier = Modifier.weight(1.55f),
+        )
 
-            Box(
-                Modifier
-                    .matchParentSize()
-                    .clickable(enabled = enabled) { showPicker = true }
-            )
-        }
-
-        OutlinedTextField(
-            value = age?.toString() ?: "",
-            onValueChange = {},
-            readOnly = true,
+        // Read off the birth date beside it, never typed, so the two can never
+        // disagree. The server recomputes it the same way from the date it is
+        // sent, which is why the page greys this field out too.
+        CctnReadOnlyField(
+            value = age?.toString().orEmpty(),
+            label = "Age *",
+            placeholder = "—",
             enabled = false,
-            label = { Text("Age") },
-            placeholder = { Text("—") },
-            colors = readOnlyFieldColors(isError = false),
             modifier = Modifier.weight(1f),
         )
     }
@@ -177,24 +156,3 @@ fun BirthdateAndAge(
         )
     }
 }
-
-/**
- * A disabled field that should still read as filled in rather than greyed out:
- * the value is real, it just cannot be typed over.
- */
-@Composable
-private fun readOnlyFieldColors(isError: Boolean) = OutlinedTextFieldDefaults.colors(
-    disabledTextColor = MaterialTheme.colorScheme.onSurface,
-    disabledLabelColor = if (isError) {
-        MaterialTheme.colorScheme.error
-    } else {
-        MaterialTheme.colorScheme.onSurfaceVariant
-    },
-    disabledBorderColor = if (isError) {
-        MaterialTheme.colorScheme.error
-    } else {
-        MaterialTheme.colorScheme.outline
-    },
-    disabledTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-    disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
-)

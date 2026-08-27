@@ -5,10 +5,9 @@ import androidx.compose.ui.graphics.Color
 /**
  * The web app's palette, transcribed.
  *
- * Every value below is one of the custom properties in
- * public/assets/css/style.css, named after the variable it comes from so the
- * two can be diffed by eye. Change a colour there and change it here; the app
- * and the site are meant to read as one product.
+ * Every value below comes from a rule in the site's own CSS, named after where
+ * it is used so the two can be diffed by eye. Change a colour on the site and
+ * change it here; the app and the site are meant to read as one product.
  */
 
 // ── Brand: --primary, --primary-dark, --primary-light ────────────────────────
@@ -29,8 +28,18 @@ val LightOnSurface = Color(0xFF0F172A)
 val LightOnSurfaceBody = Color(0xFF334155)
 val LightOnSurfaceVariant = Color(0xFF64748B)
 
-// ── Lines: --border ──────────────────────────────────────────────────────────
-val LightOutline = Color(0xFFCBD5E1)
+/** slate-400 — the eyebrow labels in the profile card and the "or" rule. */
+val LightOnSurfaceFaint = Color(0xFF94A3B8)
+
+// ── Lines ────────────────────────────────────────────────────────────────────
+/** --border, and the 1px edge every .c-card draws. */
+val LightOutline = Color(0xFFE2E8F0)
+
+/** The heavier line an input draws: `.auth-input` / `.c-input` border. */
+val FieldOutline = Color(0xFFCBD5E1)
+
+/** The ground `.c-input` sits on until it takes focus. */
+val FieldFill = Color(0xFFF8FAFC)
 
 // ── Feedback: --success, --warning, --danger, --info ─────────────────────────
 val FeedbackSuccess = Color(0xFF10B981)
@@ -48,6 +57,19 @@ val DarkOnSurface = Color(0xFFE9EDF5)
 val DarkOnSurfaceVariant = Color(0xFF9AA5B8)
 val DarkOutline = Color(0xFF39414F)
 
+// ── The auth screens ─────────────────────────────────────────────────────────
+/**
+ * The scrim over the office photo behind the sign-in card.
+ *
+ * `login.blade.php` lays `linear-gradient(rgba(15,23,42,0.55), rgba(15,23,42,0.7))`
+ * over the same JPEG, so the two ends are the same slate at the same two alphas.
+ */
+val AuthScrimTop = Color(0xFF0F172A).copy(alpha = 0.55f)
+val AuthScrimBottom = Color(0xFF0F172A).copy(alpha = 0.70f)
+
+/** The wordmark and copyright over the photo: slate-200 on a dark ground. */
+val AuthOnScrim = Color(0xFFE2E8F0)
+
 // ── Status ───────────────────────────────────────────────────────────────────
 // Solid accents, used where a single colour is needed (bars, dots, borders).
 val StatusPending = FeedbackWarning
@@ -60,30 +82,42 @@ val ConnectionOffline = Color(0xFFDC2626)
 val ConnectionOnline = Color(0xFF10B981)
 
 /**
- * A status badge: tinted ground, dark label, matching border.
+ * A status pill: a tinted ground and a saturated label, no border.
  *
- * These are the .badge-* rules in style.css. Each triplet is one Tailwind
- * ramp at 50 / 800 / 300, which is how the web ones were picked, so the
- * "completed" and "neutral" variants the site has no badge for follow the
- * same construction rather than being invented.
+ * These are the `.status-pill` rules in `client/dashboard.blade.php` — the
+ * treatment the dashboard actually ships — rather than the older bordered
+ * `.badge-*` rules elsewhere in style.css. Each pair is one Tailwind ramp at
+ * 100 / 600, so the two statuses the dashboard has no pill for follow the same
+ * construction instead of being invented.
  */
 data class StatusColors(
     val container: Color,
     val content: Color,
-    val border: Color,
 )
 
-// .badge-pending — amber 50 / 800 / 300
-val StatusPendingColors = StatusColors(Color(0xFFFFFBEB), Color(0xFF92400E), Color(0xFFFCD34D))
+// .status-pill.pending — amber 100 / 600
+val StatusPendingColors = StatusColors(Color(0xFFFEF3C7), Color(0xFFD97706))
 
-// .badge-approved — emerald 50 / 800 / 300
-val StatusApprovedColors = StatusColors(Color(0xFFECFDF5), Color(0xFF065F46), Color(0xFF6EE7B7))
+// .status-pill.approved — green 100 / 600
+val StatusApprovedColors = StatusColors(Color(0xFFDCFCE7), Color(0xFF16A34A))
 
-// .badge-cancelled — red 50 / 800 / 300
-val StatusCancelledColors = StatusColors(Color(0xFFFEF2F2), Color(0xFF991B1B), Color(0xFFFCA5A5))
+// .status-pill.cancelled — red 100 / 600
+val StatusCancelledColors = StatusColors(Color(0xFFFEE2E2), Color(0xFFDC2626))
 
-// blue 50 / 800 / 300, matching --info
-val StatusCompletedColors = StatusColors(Color(0xFFEFF6FF), Color(0xFF1E40AF), Color(0xFF93C5FD))
+// blue 100 / 600, matching --info
+val StatusCompletedColors = StatusColors(Color(0xFFDBEAFE), Color(0xFF2563EB))
 
-// slate 50 / 700 / 300
-val StatusNeutralColors = StatusColors(Color(0xFFF8FAFC), Color(0xFF334155), Color(0xFFCBD5E1))
+// slate 100 / 600
+val StatusNeutralColors = StatusColors(Color(0xFFF1F5F9), Color(0xFF475569))
+
+/**
+ * The four tinted icon squares on the dashboard, in the order they appear.
+ *
+ * Taken from the inline `style` on each `.c-stat-icon`.
+ */
+data class TintPair(val container: Color, val content: Color)
+
+val TintTotal = TintPair(Color(0xFFFEF2F2), Color(0xFFDC2626))
+val TintPendingStat = TintPair(Color(0xFFFFF7ED), Color(0xFFEA580C))
+val TintApprovedStat = TintPair(Color(0xFFF0FDF4), Color(0xFF16A34A))
+val TintCancelledStat = TintPair(Color(0xFFFEF2F2), Color(0xFFEF4444))

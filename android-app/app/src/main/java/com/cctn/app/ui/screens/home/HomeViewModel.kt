@@ -29,9 +29,15 @@ data class HomeUiState(
     val balance: Double = 0.0,
     val unpaidCount: Int = 0,
     val upcoming: AppointmentDto? = null,
+    val recent: List<AppointmentDto> = emptyList(),
     val pendingCount: Int = 0,
+    val approvedCount: Int = 0,
+    val cancelledCount: Int = 0,
     val totalAppointments: Int = 0,
 )
+
+/** How many rows the dashboard's "Recent Appointments" card shows. */
+private const val RECENT_LIMIT = 5
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -86,7 +92,10 @@ class HomeViewModel @Inject constructor(
                     val list = appointments.data
                     next = next.copy(
                         upcoming = list.nextUpcoming(),
+                        recent = list.take(RECENT_LIMIT),
                         pendingCount = list.count { it.status.equals("pending", true) },
+                        approvedCount = list.count { it.status.equals("approved", true) },
+                        cancelledCount = list.count { it.status.equals("cancelled", true) },
                         totalAppointments = list.size,
                     )
                 }

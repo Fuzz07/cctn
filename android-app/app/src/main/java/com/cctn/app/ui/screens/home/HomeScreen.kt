@@ -3,24 +3,26 @@ package com.cctn.app.ui.screens.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.AddCircleOutline
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.Receipt
-import androidx.compose.material.icons.filled.SupportAgent
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -29,21 +31,39 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cctn.app.core.Formatters
+import com.cctn.app.data.remote.dto.AppointmentDto
+import com.cctn.app.data.remote.dto.ClientDto
+import com.cctn.app.ui.components.CardHeader
 import com.cctn.app.ui.components.CctnTopBar
+import com.cctn.app.ui.components.ClientAvatar
+import com.cctn.app.ui.components.InfoItem
+import com.cctn.app.ui.components.LoadingButton
 import com.cctn.app.ui.components.LoadingState
+import com.cctn.app.ui.components.PageHeading
 import com.cctn.app.ui.components.SectionCard
+import com.cctn.app.ui.components.StatCard
 import com.cctn.app.ui.components.StatusChip
-import com.cctn.app.ui.theme.BrandRed
-import com.cctn.app.ui.theme.BrandRedDark
+import com.cctn.app.ui.theme.TintApprovedStat
+import com.cctn.app.ui.theme.TintCancelledStat
+import com.cctn.app.ui.theme.TintPendingStat
+import com.cctn.app.ui.theme.TintTotal
 
+/**
+ * The customer dashboard, laid out as `client/dashboard.blade.php` lays it
+ * out: the welcome line and its one red action, the four counters, then the
+ * recent bookings and the profile summary.
+ *
+ * The web puts the counters in a single row of four and the two cards
+ * side by side. Its own stylesheet already answers what to do when there is
+ * no room for that — `repeat(2, 1fr)` under 1024px, one column under 640px —
+ * so the counters are two across here and the cards are stacked.
+ */
 @Composable
 fun HomeScreen(
     onBook: () -> Unit,
@@ -62,11 +82,7 @@ fun HomeScreen(
         // add either a second time.
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
-            CctnTopBar(
-                title = "Home",
-                refreshing = state.refreshing,
-                onRefresh = viewModel::refresh,
-            )
+            CctnTopBar(refreshing = state.refreshing, onRefresh = viewModel::refresh)
         },
     ) { padding ->
         if (state.loading) {
@@ -79,12 +95,76 @@ fun HomeScreen(
                 .fillMaxSize()
                 .padding(padding),
             contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             item {
-                AccountHeader(
-                    name = client?.firstname.orEmpty(),
-                    accountNumber = client?.accountNumber,
+                PageHeading(
+                    title = "Welcome back, ${client?.firstname.orEmpty().ifBlank { "there" }}! 👋",
+                    subtitle = "Manage your profile, monitor booking requests, and view service details.",
+                )
+            }
+
+            item {
+                LoadingButton(
+                    text = "Book New Appointment",
+                    onClick = onBook,
+                    modifier = Modifier.fillMaxWidth(),
+                    icon = Icons.Filled.Add,
+                )
+            }
+
+            item {
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    StatCard(
+                        title = "Total Bookings",
+                        value = state.totalAppointments.toString(),
+                        icon = Icons.Filled.Description,
+                        tint = TintTotal,
+                        onClick = onSeeAppointments,
+                        modifier = Modifier.weight(1f),
+                    )
+                    StatCard(
+                        title = "Pending",
+                        value = state.pendingCount.toString(),
+                        icon = Icons.Filled.Schedule,
+                        tint = TintPendingStat,
+                        onClick = onSeeAppointments,
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+            }
+
+            item {
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    StatCard(
+                        title = "Approved",
+                        value = state.approvedCount.toString(),
+                        icon = Icons.Filled.Check,
+                        tint = TintApprovedStat,
+                        onClick = onSeeAppointments,
+                        modifier = Modifier.weight(1f),
+                    )
+                    StatCard(
+                        title = "Cancelled",
+                        value = state.cancelledCount.toString(),
+                        icon = Icons.Filled.Close,
+                        tint = TintCancelledStat,
+                        onClick = onSeeAppointments,
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+            }
+
+            item {
+                RecentAppointmentsCard(
+                    recent = state.recent,
+                    onSeeAll = onSeeAppointments,
+                    onBook = onBook,
+                )
+            }
+
+            item {
+                BalanceCard(
                     balance = state.balance,
                     unpaidCount = state.unpaidCount,
                     onSeeBilling = onSeeBilling,
@@ -92,83 +172,24 @@ fun HomeScreen(
             }
 
             item {
-                Text(
-                    text = "Quick actions",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onBackground,
-                )
+                client?.let { ProfileSummaryCard(it) }
             }
 
             item {
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    QuickAction(
-                        icon = Icons.Filled.AddCircleOutline,
-                        label = "Book service",
-                        onClick = onBook,
-                        modifier = Modifier.weight(1f),
-                    )
-                    QuickAction(
-                        icon = Icons.Filled.Receipt,
-                        label = "My bills",
-                        onClick = onSeeBilling,
-                        modifier = Modifier.weight(1f),
-                    )
-                    QuickAction(
-                        icon = Icons.Filled.SupportAgent,
-                        label = "Get help",
-                        onClick = onSupport,
-                        modifier = Modifier.weight(1f),
-                    )
-                }
-            }
-
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = "Next appointment",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onBackground,
-                    )
-                    Text(
-                        text = "See all",
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.clickable(onClick = onSeeAppointments),
-                    )
-                }
-            }
-
-            item {
-                UpcomingCard(
-                    upcoming = state.upcoming,
-                    onBook = onBook,
-                )
-            }
-
-            item {
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    StatTile(
-                        value = state.pendingCount.toString(),
-                        label = "Pending",
-                        modifier = Modifier.weight(1f),
-                        onClick = onSeeAppointments,
-                    )
-                    StatTile(
-                        value = state.totalAppointments.toString(),
-                        label = "Bookings",
-                        modifier = Modifier.weight(1f),
-                        onClick = onSeeAppointments,
-                    )
-                    StatTile(
-                        value = state.unpaidCount.toString(),
-                        label = "Unpaid bills",
-                        modifier = Modifier.weight(1f),
-                        onClick = onSeeBilling,
-                    )
+                SectionCard(onClick = onSupport) {
+                    Column(Modifier.padding(18.dp)) {
+                        Text(
+                            text = "Need help with your connection?",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface,
+                        )
+                        Spacer(Modifier.height(4.dp))
+                        Text(
+                            text = "Report a fault and track it from the Support tab.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
                 }
             }
 
@@ -185,191 +206,213 @@ fun HomeScreen(
     }
 }
 
+/**
+ * The dashboard's table of recent bookings.
+ *
+ * The web has four columns and lets the table scroll sideways when it does not
+ * fit. Sideways scrolling inside a phone-width list is the wrong trade, so each
+ * booking becomes one row that still carries all four values: the service and
+ * when it is, against the status and the reference.
+ */
 @Composable
-private fun UpcomingCard(
-    upcoming: com.cctn.app.data.remote.dto.AppointmentDto?,
+private fun RecentAppointmentsCard(
+    recent: List<AppointmentDto>,
+    onSeeAll: () -> Unit,
     onBook: () -> Unit,
 ) {
     SectionCard {
-        if (upcoming == null) {
-            Column(Modifier.padding(18.dp)) {
-                Text(
-                    text = "No upcoming appointment",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    text = "Book an installation or a service visit and it will show up here.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Spacer(Modifier.height(14.dp))
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.clickable(onClick = onBook),
+        Column(Modifier.padding(18.dp)) {
+            CardHeader(
+                title = "Recent Appointments",
+                icon = Icons.Filled.CalendarMonth,
+                linkText = "View History →",
+                onLink = onSeeAll,
+            )
+
+            Spacer(Modifier.height(6.dp))
+
+            if (recent.isEmpty()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
-                        text = "Book now",
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
-                    Spacer(Modifier.size(4.dp))
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(16.dp),
-                    )
-                }
-            }
-        } else {
-            Column(Modifier.padding(18.dp)) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.Top,
-                ) {
-                    Text(
-                        text = upcoming.service?.name ?: "Service visit",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.weight(1f),
-                    )
-                    StatusChip(upcoming.status)
-                }
-                Spacer(Modifier.height(10.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Filled.CalendarMonth,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(16.dp),
-                    )
-                    Spacer(Modifier.size(8.dp))
-                    Text(
-                        text = Formatters.date(upcoming.preferredDate) + "  ·  " +
-                            Formatters.time(upcoming.preferredTime),
+                        text = "No recent appointments found.",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                    )
+                    Spacer(Modifier.height(12.dp))
+                    Text(
+                        text = "Book your first visit →",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.clickable(onClick = onBook),
                     )
                 }
+                return@Column
+            }
+
+            recent.forEachIndexed { index, appointment ->
+                if (index > 0) {
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .height(1.dp)
+                            .background(MaterialTheme.colorScheme.outlineVariant)
+                    )
+                }
+                AppointmentRow(appointment)
             }
         }
     }
 }
 
 @Composable
-private fun AccountHeader(
-    name: String,
-    accountNumber: String?,
-    balance: Double,
-    unpaidCount: Int,
-    onSeeBilling: () -> Unit,
-) {
-    Column(
+private fun AppointmentRow(appointment: AppointmentDto) {
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(18.dp))
-            .background(Brush.linearGradient(listOf(BrandRed, BrandRedDark)))
-            .clickable(onClick = onSeeBilling)
-            .padding(20.dp),
+            .padding(vertical = 14.dp),
+        verticalAlignment = Alignment.Top,
     ) {
-        Text(
-            text = if (name.isBlank()) "Welcome" else "Hello, $name",
-            style = MaterialTheme.typography.titleLarge,
-            color = Color.White,
-        )
-        if (!accountNumber.isNullOrBlank()) {
-            Spacer(Modifier.height(2.dp))
+        Column(Modifier.weight(1f)) {
             Text(
-                text = "Account $accountNumber",
-                style = MaterialTheme.typography.bodySmall,
-                color = Color.White.copy(alpha = 0.85f),
+                text = appointment.service?.name ?: "Service visit",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurface,
             )
+            Spacer(Modifier.height(3.dp))
+            Text(
+                text = Formatters.date(appointment.preferredDate) +
+                    "  ·  " + Formatters.time(appointment.preferredTime),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            appointment.service?.durationMin?.let { minutes ->
+                Spacer(Modifier.height(2.dp))
+                Text(
+                    text = "~$minutes mins",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
 
-        Spacer(Modifier.height(18.dp))
+        Spacer(Modifier.width(10.dp))
 
-        Text(
-            text = "Outstanding balance",
-            style = MaterialTheme.typography.bodySmall,
-            color = Color.White.copy(alpha = 0.85f),
-        )
-        Spacer(Modifier.height(2.dp))
-        Text(
-            text = Formatters.peso(balance),
-            style = MaterialTheme.typography.headlineMedium,
-            color = Color.White,
-        )
-        Spacer(Modifier.height(4.dp))
-        Text(
-            text = when (unpaidCount) {
-                0 -> "You are all paid up."
-                1 -> "1 statement awaiting payment"
-                else -> "$unpaidCount statements awaiting payment"
-            },
-            style = MaterialTheme.typography.bodySmall,
-            color = Color.White.copy(alpha = 0.85f),
-        )
+        Column(horizontalAlignment = Alignment.End) {
+            StatusChip(appointment.status)
+            Spacer(Modifier.height(6.dp))
+            Text(
+                // The web pads the id to five digits and sets it in a mono face.
+                text = "#" + appointment.id.toString().padStart(5, '0'),
+                style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
     }
 }
 
+/**
+ * Outstanding balance.
+ *
+ * The web dashboard has no such panel — billing is its own page there — but the
+ * app already loads the figure for this screen and billing is one of its five
+ * tabs, so it is shown in the same card the rest of the page uses.
+ */
 @Composable
-private fun QuickAction(
-    icon: ImageVector,
-    label: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier
-            .clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.surface)
-            .clickable(onClick = onClick)
-            .padding(vertical = 16.dp, horizontal = 8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(26.dp),
-        )
-        Spacer(Modifier.height(8.dp))
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurface,
-        )
+private fun BalanceCard(balance: Double, unpaidCount: Int, onSeeBilling: () -> Unit) {
+    SectionCard(onClick = onSeeBilling) {
+        Column(Modifier.padding(18.dp)) {
+            CardHeader(
+                title = "Outstanding Balance",
+                icon = Icons.Filled.Description,
+                linkText = "View Billing →",
+                onLink = onSeeBilling,
+            )
+
+            Spacer(Modifier.height(14.dp))
+
+            Text(
+                text = Formatters.peso(balance),
+                style = MaterialTheme.typography.headlineMedium,
+                color = if (balance > 0) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.onSurface
+                },
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = when (unpaidCount) {
+                    0 -> "You are all paid up."
+                    1 -> "1 statement awaiting payment"
+                    else -> "$unpaidCount statements awaiting payment"
+                },
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
     }
 }
 
+/** The right-hand card on the web dashboard (`.c-profile-card`). */
 @Composable
-private fun StatTile(
-    value: String,
-    label: String,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit,
-) {
-    Column(
-        modifier = modifier
-            .clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.surface)
-            .clickable(onClick = onClick)
-            .padding(vertical = 16.dp, horizontal = 10.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text(
-            text = value,
-            style = MaterialTheme.typography.headlineSmall,
-            color = MaterialTheme.colorScheme.primary,
-        )
-        Spacer(Modifier.height(2.dp))
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+private fun ProfileSummaryCard(client: ClientDto) {
+    SectionCard {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(18.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            ClientAvatar(
+                photoUrl = client.profilePhoto,
+                initials = Formatters.initials(client.firstname, client.lastname),
+                size = 96.dp,
+            )
+
+            Spacer(Modifier.height(12.dp))
+
+            Text(
+                text = client.fullName.ifBlank { "${client.firstname} ${client.lastname}".trim() },
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+            Spacer(Modifier.height(3.dp))
+            Text(
+                text = "@" + client.username,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.primary,
+            )
+
+            Spacer(Modifier.height(18.dp))
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(MaterialTheme.colorScheme.outlineVariant)
+            )
+            Spacer(Modifier.height(16.dp))
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(14.dp),
+            ) {
+                InfoItem("Email", client.email)
+                InfoItem("Phone", client.contactNo.orEmpty())
+                InfoItem(
+                    label = "Address",
+                    value = listOfNotNull(
+                        client.addressBarangay?.takeIf { it.isNotBlank() },
+                        client.addressMunicipality?.takeIf { it.isNotBlank() },
+                    ).joinToString(", "),
+                )
+                InfoItem("Member Since", Formatters.timestamp(client.createdAt))
+            }
+        }
     }
 }

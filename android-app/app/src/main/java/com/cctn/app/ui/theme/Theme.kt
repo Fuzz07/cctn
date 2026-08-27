@@ -8,7 +8,7 @@ import androidx.compose.material3.Shapes
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
@@ -27,7 +27,7 @@ private val LightColors = lightColorScheme(
     onSurface = LightOnSurface,
     surfaceVariant = LightSurfaceVariant,
     onSurfaceVariant = LightOnSurfaceVariant,
-    outline = LightOutline,
+    outline = FieldOutline,
     outlineVariant = LightOutline,
     error = FeedbackDanger,
     onError = Color.White,
@@ -70,7 +70,11 @@ fun CctnTheme(
     val view = LocalView.current
 
     if (!view.isInEditMode) {
-        SideEffect {
+        // Keyed rather than a SideEffect: this must set the appearance once per
+        // theme change and then leave it alone, so a screen that needs the
+        // opposite contrast — see [LightSystemBarIcons] — is not overwritten on
+        // the next recomposition.
+        DisposableEffect(view, darkTheme) {
             val window = (view.context as Activity).window
             // The bars are drawn behind by the scaffold, so only the icon
             // contrast has to follow the theme.
@@ -78,6 +82,7 @@ fun CctnTheme(
                 isAppearanceLightStatusBars = !darkTheme
                 isAppearanceLightNavigationBars = !darkTheme
             }
+            onDispose {}
         }
     }
 
@@ -87,6 +92,37 @@ fun CctnTheme(
         shapes = CctnShapes,
         content = content,
     )
+}
+
+/**
+ * Light system-bar icons for as long as this is in the composition.
+ *
+ * The sign-in and registration screens put a dark photo behind the bars, where
+ * the light theme's dark-on-light icons all but disappear. Whatever was set
+ * before is restored on the way out, so a screen that does not ask for this is
+ * unaffected.
+ */
+@Composable
+fun LightSystemBarIcons() {
+    val view = LocalView.current
+    if (view.isInEditMode) return
+
+    DisposableEffect(view) {
+        val controller = WindowCompat.getInsetsController(
+            (view.context as Activity).window,
+            view,
+        )
+        val hadLightStatusBars = controller.isAppearanceLightStatusBars
+        val hadLightNavBars = controller.isAppearanceLightNavigationBars
+
+        controller.isAppearanceLightStatusBars = false
+        controller.isAppearanceLightNavigationBars = false
+
+        onDispose {
+            controller.isAppearanceLightStatusBars = hadLightStatusBars
+            controller.isAppearanceLightNavigationBars = hadLightNavBars
+        }
+    }
 }
 
 /** The solid accent for a status string, for bars, dots and rules. */
@@ -99,12 +135,12 @@ fun statusAccent(status: String?): Color = when (status?.lowercase()) {
 }
 
 /**
- * The badge treatment for a status: ground, label and border.
+ * The pill treatment for a status: tinted ground and saturated label.
  *
- * Light mode uses the site's .badge-* values verbatim. Dark mode cannot —
- * those grounds are near-white — so it keeps the same accent and sits it on a
- * translucent version of itself, which is the same idea rendered for a dark
- * surface.
+ * Light mode uses the dashboard's .status-pill values verbatim. Dark mode
+ * cannot — those grounds are near-white — so it keeps the same accent and sits
+ * it on a translucent version of itself, which is the same idea rendered for a
+ * dark surface.
  */
 @Composable
 fun statusColors(status: String?): StatusColors {
@@ -122,6 +158,5 @@ fun statusColors(status: String?): StatusColors {
     return StatusColors(
         container = accent.copy(alpha = 0.16f),
         content = accent,
-        border = accent.copy(alpha = 0.45f),
     )
 }

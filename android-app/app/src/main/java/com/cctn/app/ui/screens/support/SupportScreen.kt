@@ -42,6 +42,7 @@ import com.cctn.app.core.Formatters
 import com.cctn.app.data.remote.dto.MaintenanceDto
 import com.cctn.app.ui.components.CctnTextField
 import com.cctn.app.ui.components.CctnTopBar
+import com.cctn.app.ui.components.PageHeading
 import com.cctn.app.ui.components.EmptyState
 import com.cctn.app.ui.components.ErrorState
 import com.cctn.app.ui.components.LoadingButton
@@ -69,7 +70,6 @@ fun SupportScreen(viewModel: SupportViewModel = hiltViewModel()) {
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
             CctnTopBar(
-                title = "Support",
                 refreshing = state.refreshing,
                 onRefresh = viewModel::refresh,
             )
@@ -114,6 +114,13 @@ fun SupportScreen(viewModel: SupportViewModel = hiltViewModel()) {
                 contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 92.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
+                item {
+                    PageHeading(
+                        title = "Support",
+                        subtitle = "Report a fault and follow what the team does about it.",
+                    )
+                }
+
                 items(state.requests, key = { it.id }) { request -> RequestCard(request) }
             }
         }

@@ -26,6 +26,12 @@ val productionApiBaseUrl = "https://bctibantayan.com/api/v1/"
 // Release is always the production API; there is no property to override it.
 val debugApiBaseUrl = (project.findProperty("apiBaseUrl") as String?) ?: productionApiBaseUrl
 
+// The website behind that API. The app is customer-only and has no screen for
+// password recovery — there is no endpoint for it — so the one link that leaves
+// the app hands that page to a browser, on whichever host the build points at.
+fun webBaseUrlOf(apiBaseUrl: String): String =
+    apiBaseUrl.removeSuffix("/").removeSuffix("/api/v1") + "/"
+
 android {
     namespace = "com.cctn.app"
     compileSdk = 34
@@ -58,12 +64,14 @@ android {
             versionNameSuffix = "-debug"
             isMinifyEnabled = false
             buildConfigField("String", "API_BASE_URL", "\"$debugApiBaseUrl\"")
+            buildConfigField("String", "WEB_BASE_URL", "\"${webBaseUrlOf(debugApiBaseUrl)}\"")
         }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             buildConfigField("String", "API_BASE_URL", "\"$productionApiBaseUrl\"")
+            buildConfigField("String", "WEB_BASE_URL", "\"${webBaseUrlOf(productionApiBaseUrl)}\"")
             if (hasSigningConfig) {
                 signingConfig = signingConfigs.getByName("release")
             }

@@ -51,6 +51,7 @@ import com.cctn.app.ui.components.CctnDropdownField
 import com.cctn.app.ui.components.CctnPasswordField
 import com.cctn.app.ui.components.CctnTextField
 import com.cctn.app.ui.components.CctnTopBar
+import com.cctn.app.ui.components.PageHeading
 import com.cctn.app.ui.components.DetailRow
 import com.cctn.app.ui.components.LoadingButton
 import com.cctn.app.ui.components.LoadingState
@@ -77,7 +78,6 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
             CctnTopBar(
-                title = "My account",
                 refreshing = state.refreshing,
                 onRefresh = viewModel::refresh,
             )
@@ -98,6 +98,13 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
+            item {
+                PageHeading(
+                    title = "My account",
+                    subtitle = "Your details, your password, and the way out.",
+                )
+            }
+
             item { ProfileHeader(current) }
 
             if (state.editing) {

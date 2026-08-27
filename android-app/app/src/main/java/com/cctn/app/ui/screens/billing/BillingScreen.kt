@@ -32,6 +32,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cctn.app.core.Formatters
 import com.cctn.app.data.remote.dto.BillingStatementDto
 import com.cctn.app.ui.components.CctnTopBar
+import com.cctn.app.ui.components.PageHeading
 import com.cctn.app.ui.components.DetailRow
 import com.cctn.app.ui.components.EmptyState
 import com.cctn.app.ui.components.ErrorState
@@ -53,7 +54,6 @@ fun BillingScreen(viewModel: BillingViewModel = hiltViewModel()) {
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
             CctnTopBar(
-                title = "Billing",
                 refreshing = state.refreshing,
                 onRefresh = viewModel::refresh,
             )
@@ -77,6 +77,13 @@ fun BillingScreen(viewModel: BillingViewModel = hiltViewModel()) {
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
+                item {
+                    PageHeading(
+                        title = "Billing",
+                        subtitle = "Your balance and every statement BCTVI has issued.",
+                    )
+                }
+
                 item {
                     BalanceCard(
                         balance = state.balance,

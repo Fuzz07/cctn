@@ -2,6 +2,11 @@ package com.cctn.app.ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
+import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -53,23 +59,39 @@ fun CctnApp(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background,
     ) {
-        // The window is drawn edge to edge, so the status bar is cleared once
-        // here for the whole app. Everything below — including each screen's
-        // Scaffold — then runs with its own insets switched off, and the bottom
-        // bar keeps its inset so its background still reaches the screen edge.
-        Column(
-            Modifier
-                .fillMaxSize()
-                .statusBarsPadding()
-        ) {
-            AnimatedVisibility(visible = !isOnline) { OfflineBanner() }
+        when (sessionState) {
+            // The splash screen stays up until the persisted session is read,
+            // so there is nothing to draw here.
+            SessionState.Loading -> Unit
 
-            when (sessionState) {
-                // The splash screen stays up until the persisted session is read,
-                // so there is nothing to draw here.
-                SessionState.Loading -> Unit
-                SessionState.SignedOut -> AuthNavHost()
-                is SessionState.SignedIn -> MainNavHost()
+            // The auth screens put the office photo behind the status bar, the
+            // way the site puts it behind the whole page, so they are laid out
+            // edge to edge and pad their own content. The offline banner floats
+            // over the top of the photo rather than pushing it down.
+            SessionState.SignedOut -> Box(Modifier.fillMaxSize()) {
+                AuthNavHost()
+
+                AnimatedVisibility(
+                    visible = !isOnline,
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .statusBarsPadding(),
+                ) {
+                    OfflineBanner()
+                }
+            }
+
+            // Signed in, the status bar is cleared once here for the whole
+            // graph. Everything below — including each screen's Scaffold — then
+            // runs with its own insets switched off, and the bottom bar keeps
+            // its inset so its background still reaches the screen edge.
+            is SessionState.SignedIn -> Column(
+                Modifier
+                    .fillMaxSize()
+                    .statusBarsPadding()
+            ) {
+                AnimatedVisibility(visible = !isOnline) { OfflineBanner() }
+                MainNavHost()
             }
         }
     }
@@ -103,7 +125,19 @@ private fun MainNavHost(navController: NavHostController = rememberNavController
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
             if (showBottomBar) {
-                NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
+                // The site's navbar is white with a slate rule against the page;
+                // the tab bar is that same edge, read from below.
+                Column {
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .height(1.dp)
+                            .background(MaterialTheme.colorScheme.outlineVariant)
+                    )
+                    NavigationBar(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        tonalElevation = 0.dp,
+                    ) {
                     TopLevelDestination.entries.forEach { destination ->
                         val selected = backStackEntry?.destination?.hierarchy
                             ?.any { it.route == destination.route } == true
@@ -125,9 +159,12 @@ private fun MainNavHost(navController: NavHostController = rememberNavController
                             colors = NavigationBarItemDefaults.colors(
                                 selectedIconColor = MaterialTheme.colorScheme.primary,
                                 selectedTextColor = MaterialTheme.colorScheme.primary,
+                                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
                                 indicatorColor = MaterialTheme.colorScheme.primaryContainer,
                             ),
                         )
+                        }
                     }
                 }
             }

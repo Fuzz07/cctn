@@ -40,6 +40,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cctn.app.core.Formatters
 import com.cctn.app.data.remote.dto.AppointmentDto
 import com.cctn.app.ui.components.CctnTopBar
+import com.cctn.app.ui.components.PageHeading
 import com.cctn.app.ui.components.EmptyState
 import com.cctn.app.ui.components.ErrorState
 import com.cctn.app.ui.components.LoadingState
@@ -69,7 +70,6 @@ fun AppointmentsScreen(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
             CctnTopBar(
-                title = "My bookings",
                 refreshing = state.refreshing,
                 onRefresh = viewModel::refresh,
             )
@@ -115,6 +115,13 @@ fun AppointmentsScreen(
                 contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 92.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
+                item {
+                    PageHeading(
+                        title = "My bookings",
+                        subtitle = "Track every installation and service visit you have requested.",
+                    )
+                }
+
                 items(state.appointments, key = { it.id }) { appointment ->
                     AppointmentCard(
                         appointment = appointment,
