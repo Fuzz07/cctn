@@ -41,6 +41,7 @@ import com.cctn.app.ui.screens.auth.RegisterScreen
 import com.cctn.app.ui.screens.billing.BillingScreen
 import com.cctn.app.ui.screens.chat.ChatScreen
 import com.cctn.app.ui.screens.home.HomeScreen
+import com.cctn.app.ui.screens.notifications.NotificationsScreen
 import com.cctn.app.ui.screens.profile.ProfileScreen
 import com.cctn.app.ui.screens.support.SupportScreen
 
@@ -115,9 +116,9 @@ private fun MainNavHost(navController: NavHostController = rememberNavController
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
 
-    // Booking and the assistant are focused tasks: the tab bar goes away so each
+    // Booking, notifications, and the assistant are focused tasks: the tab bar goes away so each
     // has the whole screen and one obvious way back.
-    val showBottomBar = currentRoute != Routes.BOOK && currentRoute != Routes.CHAT
+    val showBottomBar = currentRoute != Routes.BOOK && currentRoute != Routes.CHAT && currentRoute != Routes.NOTIFICATIONS
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -177,6 +178,7 @@ private fun MainNavHost(navController: NavHostController = rememberNavController
             modifier = Modifier.padding(innerPadding),
         ) {
             val openAssistant = { navController.navigate(Routes.CHAT) }
+            val openNotifications = { navController.navigate(Routes.NOTIFICATIONS) }
 
             composable(Routes.HOME) {
                 HomeScreen(
@@ -185,6 +187,7 @@ private fun MainNavHost(navController: NavHostController = rememberNavController
                     onSeeBilling = { navController.navigateToTab(Routes.BILLING) },
                     onSupport = { navController.navigateToTab(Routes.SUPPORT) },
                     onOpenAssistant = openAssistant,
+                    onOpenNotifications = openNotifications,
                 )
             }
             composable(Routes.APPOINTMENTS) {
@@ -196,6 +199,21 @@ private fun MainNavHost(navController: NavHostController = rememberNavController
             composable(Routes.BILLING) { BillingScreen(onOpenAssistant = openAssistant) }
             composable(Routes.SUPPORT) { SupportScreen(onOpenAssistant = openAssistant) }
             composable(Routes.PROFILE) { ProfileScreen(onOpenAssistant = openAssistant) }
+            composable(Routes.NOTIFICATIONS) {
+                NotificationsScreen(
+                    onBack = { navController.popBackStack() },
+                    onOpenScreen = { screen ->
+                        navController.popBackStack()
+                        when (screen) {
+                            "billing" -> navController.navigateToTab(Routes.BILLING)
+                            "appointments" -> navController.navigateToTab(Routes.APPOINTMENTS)
+                            "support" -> navController.navigateToTab(Routes.SUPPORT)
+                            "profile" -> navController.navigateToTab(Routes.PROFILE)
+                            "book" -> navController.navigate(Routes.BOOK)
+                        }
+                    },
+                )
+            }
             composable(Routes.CHAT) {
                 ChatScreen(
                     onBack = { navController.popBackStack() },

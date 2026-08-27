@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\ServiceController;
 use App\Http\Controllers\Api\V1\BillingController;
 use App\Http\Controllers\Api\V1\MaintenanceController;
 use App\Http\Controllers\Api\V1\ChatbotController;
+use App\Http\Controllers\Api\V1\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +33,11 @@ Route::prefix('v1')->group(function () {
         // Profile
         Route::get('/profile',  [ProfileController::class, 'show']);
         Route::put('/profile',  [ProfileController::class, 'update']);
+
+        // Notifications
+        Route::get('/notifications',           [NotificationController::class, 'index']);
+        Route::post('/notifications/{id}/read', [NotificationController::class, 'markRead']);
+        Route::post('/notifications/read-all',  [NotificationController::class, 'markAllRead']);
 
         // Appointments
         Route::get('/appointments',           [AppointmentController::class, 'index']);

@@ -163,10 +163,17 @@ class AuthController extends Controller
     // ─── Google Sign-In / Sign-Up ────────────────────────────────────────────────
     public function googleRedirect(Request $request)
     {
-        $state = bin2hex(random_bytes(16));
+        $random = bin2hex(random_bytes(16));
         $fromApp = $request->query('from') === 'app' || $request->query('from') === 'mobile';
+        
+        $stateData = [
+            'r' => $random,
+            'f' => $fromApp ? 'app' : 'web',
+        ];
+        $encodedState = base64_encode(json_encode($stateData));
+
         session([
-            'google_oauth_state' => $state,
+            'google_oauth_state'    => $random,
             'google_oauth_from_app' => $fromApp,
         ]);
 
@@ -175,7 +182,7 @@ class AuthController extends Controller
             'redirect_uri'  => config('services.google.redirect'),
             'response_type' => 'code',
             'scope'         => 'openid email profile',
-            'state'         => $state,
+            'state'         => $encodedState,
             'prompt'        => 'select_account',
         ]);
 
@@ -184,9 +191,27 @@ class AuthController extends Controller
 
     public function googleCallback(Request $request)
     {
-        $fromApp = session()->pull('google_oauth_from_app', false);
+        $rawState = $request->input('state');
+        $fromApp = false;
+        $stateRandom = null;
 
-        if (!$request->filled('state') || $request->input('state') !== session()->pull('google_oauth_state')) {
+        if ($rawState) {
+            $decoded = json_decode(base64_decode($rawState), true);
+            if (is_array($decoded)) {
+                $stateRandom = $decoded['r'] ?? null;
+                $fromApp = ($decoded['f'] ?? '') === 'app';
+            } else {
+                $stateRandom = $rawState;
+            }
+        }
+
+        if (!$fromApp && session()->pull('google_oauth_from_app', false)) {
+            $fromApp = true;
+        }
+
+        $sessionState = session()->pull('google_oauth_state');
+        // Validate CSRF state if session is available
+        if (!$request->filled('state') || ($sessionState && $stateRandom !== $sessionState)) {
             if ($fromApp) {
                 return $this->redirectToApp(null, 'Google sign-in could not be verified. Please try again.');
             }
@@ -283,16 +308,89 @@ class AuthController extends Controller
         if ($error) {
             $params['error'] = $error;
         }
-        $appUrl = 'cctn://auth/callback?' . http_build_query($params);
-        $title = $token ? 'Login Successful!' : 'Sign-In Error';
-        $message = $token ? 'Redirecting back to BCTVI Mobile App...' : htmlspecialchars($error ?? 'An error occurred.');
+        $query = http_build_query($params);
+        $customSchemeUrl = 'cctn://auth/callback?' . $query;
+        $intentUrl = 'intent://auth/callback?' . $query . '#Intent;scheme=cctn;package=com.cctn.app;end';
+        $title = $token ? 'Login Successful!' : 'Sign-In Notice';
+        $message = $token ? 'Redirecting back to BCTVI App...' : htmlspecialchars($error ?? 'An error occurred.');
 
         return response(
-            "<!DOCTYPE html><html><head><meta charset='utf-8'><title>{$title}</title>" .
-            "<meta name='viewport' content='width=device-width, initial-scale=1.0'>" .
-            "<meta http-equiv='refresh' content='0;url={$appUrl}'>" .
-            "<style>body{font-family:system-ui,-apple-system,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#0f172a;color:#fff;text-align:center;padding:20px;box-sizing:border-box;}h2{margin-bottom:8px;}p{color:#94a3b8;margin-bottom:24px;}a{display:inline-block;background:#dc2626;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:700;box-shadow:0 4px 12px rgba(220,38,38,0.3);}</style></head>" .
-            "<body><h2>{$title}</h2><p>{$message}</p><a href='{$appUrl}'>Tap here to open BCTVI App</a><script>window.location.href='{$appUrl}';</script></body></html>"
+            "<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>{$title}</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #0f172a;
+            color: #ffffff;
+            text-align: center;
+            padding: 24px;
+        }
+        .card {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 32px 24px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5);
+            border: 1px solid #334155;
+        }
+        .icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: " . ($token ? "#22c55e" : "#ef4444") . ";
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin: 0 auto 20px;
+        }
+        h2 { margin: 0 0 10px; font-size: 22px; }
+        p { color: #94a3b8; font-size: 14px; margin: 0 0 24px; line-height: 1.5; }
+        .btn {
+            display: block;
+            width: 100%;
+            background: #dc2626;
+            color: #ffffff;
+            padding: 14px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 15px;
+            box-shadow: 0 4px 12px rgba(220,38,38,0.35);
+        }
+        .btn:active { background: #b91c1c; }
+    </style>
+</head>
+<body>
+    <div class='card'>
+        <div class='icon'>" . ($token ? "✓" : "!") . "</div>
+        <h2>{$title}</h2>
+        <p>{$message}</p>
+        <a id='open-btn' href='{$intentUrl}' class='btn'>Open BCTVI App</a>
+    </div>
+    <script>
+        function openApp() {
+            window.location.href = '{$intentUrl}';
+            setTimeout(function() {
+                window.location.href = '{$customSchemeUrl}';
+            }, 600);
+        }
+        openApp();
+    </script>
+</body>
+</html>"
         );
     }
 

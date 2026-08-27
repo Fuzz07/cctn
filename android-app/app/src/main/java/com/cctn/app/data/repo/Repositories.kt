@@ -15,6 +15,8 @@ import com.cctn.app.data.remote.dto.GoogleLoginRequest
 import com.cctn.app.data.remote.dto.LoginRequest
 import com.cctn.app.data.remote.dto.MaintenanceDto
 import com.cctn.app.data.remote.dto.MaintenanceRequestBody
+import com.cctn.app.data.remote.dto.NotificationsPayload
+import com.cctn.app.data.remote.dto.NotificationDto
 import com.cctn.app.data.remote.dto.RegisterRequest
 import com.cctn.app.data.remote.dto.ServiceDto
 import com.cctn.app.data.remote.dto.SlotDto
@@ -160,4 +162,19 @@ class ChatRepository @Inject constructor(
     /** An empty message asks the assistant to introduce itself. */
     suspend fun send(message: String = ""): AppResult<ChatResponse> =
         apiCall(json) { api.chat(ChatMessageBody(message.trim())) }
+}
+
+@Singleton
+class NotificationRepository @Inject constructor(
+    private val api: CctnApi,
+    private val json: Json,
+) {
+    suspend fun list(): AppResult<NotificationsPayload> =
+        apiCall(json) { api.notifications() }.map { it.data }
+
+    suspend fun markRead(id: Long): AppResult<String> =
+        apiCall(json) { api.markNotificationRead(id) }.map { it.message ?: "Marked as read." }
+
+    suspend fun markAllRead(): AppResult<String> =
+        apiCall(json) { api.markAllNotificationsRead() }.map { it.message ?: "All notifications marked as read." }
 }

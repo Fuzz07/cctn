@@ -146,6 +146,28 @@ data class MaintenanceCreateResponse(
     val request: MaintenanceDto? = null,
 )
 
+@Serializable
+data class NotificationDto(
+    val id: Long,
+    val title: String,
+    val message: String,
+    val link: String? = null,
+    @SerialName("is_read") val isRead: Boolean = false,
+    @SerialName("created_at") val createdAt: String? = null,
+)
+
+@Serializable
+data class NotificationsPayload(
+    val notifications: List<NotificationDto> = emptyList(),
+    @SerialName("unread_count") val unreadCount: Int = 0,
+)
+
+@Serializable
+data class NotificationsResponse(
+    val status: String = "success",
+    val data: NotificationsPayload = NotificationsPayload(),
+)
+
 /**
  * One answer from the assistant.
  *

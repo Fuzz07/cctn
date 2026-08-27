@@ -24,6 +24,7 @@ object Routes {
     const val PROFILE = "profile"
 
     const val BOOK = "book"
+    const val NOTIFICATIONS = "notifications"
 
     /** The assistant. Reachable from the bar on every tab, like the site's bubble. */
     const val CHAT = "chat"

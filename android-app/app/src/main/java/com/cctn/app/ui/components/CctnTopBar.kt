@@ -37,14 +37,17 @@ import androidx.compose.ui.unit.dp
  * visible control is the one affordance that is also reachable with a
  * screen reader and a switch device.
  */
+import androidx.compose.material.icons.filled.Notifications
+
 @Composable
 fun CctnTopBar(
     modifier: Modifier = Modifier,
     refreshing: Boolean = false,
     onRefresh: (() -> Unit)? = null,
     onOpenAssistant: (() -> Unit)? = null,
+    onOpenNotifications: (() -> Unit)? = null,
 ) {
-    Column(modifier.fillMaxWidth()) {
+    Column(modifier = modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -56,37 +59,47 @@ fun CctnTopBar(
             BrandWordmark()
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-            if (onOpenAssistant != null) {
-                IconButton(onClick = onOpenAssistant) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.Chat,
-                        contentDescription = "Open the BCTVI assistant",
-                        tint = MaterialTheme.colorScheme.primary,
-                    )
-                }
-            }
-
-            if (onRefresh != null) {
-                if (refreshing) {
-                    // Occupies the same box as the button, so nothing shifts
-                    // sideways every time a refresh starts.
-                    IconButton(onClick = {}, enabled = false) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(20.dp),
-                            strokeWidth = 2.dp,
-                            color = MaterialTheme.colorScheme.primary,
-                        )
-                    }
-                } else {
-                    IconButton(onClick = onRefresh) {
+                if (onOpenNotifications != null) {
+                    IconButton(onClick = onOpenNotifications) {
                         Icon(
-                            imageVector = Icons.Filled.Refresh,
-                            contentDescription = "Refresh",
+                            imageVector = Icons.Filled.Notifications,
+                            contentDescription = "Notifications",
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                 }
-            }
+
+                if (onOpenAssistant != null) {
+                    IconButton(onClick = onOpenAssistant) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Chat,
+                            contentDescription = "Open the BCTVI assistant",
+                            tint = MaterialTheme.colorScheme.primary,
+                        )
+                    }
+                }
+
+                if (onRefresh != null) {
+                    if (refreshing) {
+                        // Occupies the same box as the button, so nothing shifts
+                        // sideways every time a refresh starts.
+                        IconButton(onClick = {}, enabled = false) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(20.dp),
+                                strokeWidth = 2.dp,
+                                color = MaterialTheme.colorScheme.primary,
+                            )
+                        }
+                    } else {
+                        IconButton(onClick = onRefresh) {
+                            Icon(
+                                imageVector = Icons.Filled.Refresh,
+                                contentDescription = "Refresh",
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    }
+                }
             }
         }
 

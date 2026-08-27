@@ -71,6 +71,7 @@ fun HomeScreen(
     onSeeBilling: () -> Unit,
     onSupport: () -> Unit,
     onOpenAssistant: () -> Unit,
+    onOpenNotifications: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -87,6 +88,7 @@ fun HomeScreen(
                 refreshing = state.refreshing,
                 onRefresh = viewModel::refresh,
                 onOpenAssistant = onOpenAssistant,
+                onOpenNotifications = onOpenNotifications,
             )
         },
     ) { padding ->
