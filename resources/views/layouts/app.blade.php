@@ -112,6 +112,23 @@
             transition: background 0.2s, transform 0.2s;
         }
         .top-nav-btn-solid:hover { background: #b91c1c; color: #fff; transform: translateY(-1px); }
+        .top-nav-logout-form { margin: 0; }
+        .top-nav-logout {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: #ef4444;
+            background: #fff;
+            border: 1.5px solid #fecaca;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            padding: 0.55rem 1.15rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: border-color 0.2s, color 0.2s, background 0.2s;
+        }
+        .top-nav-logout:hover { border-color: #ef4444; color: #dc2626; background: #fef2f2; }
 
         /* Drawer Overlay */
         .drawer-overlay {
@@ -331,6 +348,13 @@
                         @endif
                     </a>
                     <a href="{{ route('client.book') }}" class="top-nav-btn-solid">Book Installation</a>
+                    <form action="{{ route('logout') }}" method="POST" class="top-nav-logout-form">
+                        @csrf
+                        <button type="submit" class="top-nav-logout">
+                            <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
+                            Logout
+                        </button>
+                    </form>
                 @else
                     <a href="{{ route('home') }}" class="top-nav-link {{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
                     <a href="{{ route('home') }}#plans" class="top-nav-link">Plans</a>
