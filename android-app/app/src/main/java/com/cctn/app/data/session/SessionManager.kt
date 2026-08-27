@@ -43,6 +43,10 @@ class SessionManager @Inject constructor(
         }
     }
 
+    fun setTokenOnly(token: String) {
+        store.setTokenOnly(token)
+    }
+
     fun signIn(token: String, client: ClientDto) {
         store.save(token, client)
         _state.value = SessionState.SignedIn(client)

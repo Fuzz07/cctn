@@ -124,7 +124,7 @@ fun RegisterScreen(
             context.startActivity(
                 Intent(
                     Intent.ACTION_VIEW,
-                    Uri.parse(BuildConfig.WEB_BASE_URL + "auth/google"),
+                    Uri.parse(BuildConfig.WEB_BASE_URL + "auth/google?from=app"),
                 )
             )
         }

@@ -39,6 +39,10 @@ class SessionStore @Inject constructor(
         return runCatching { json.decodeFromString(ClientDto.serializer(), raw) }.getOrNull()
     }
 
+    fun setTokenOnly(token: String) {
+        this.token = token
+    }
+
     fun save(token: String, client: ClientDto) {
         this.token = token
         saveClient(client)

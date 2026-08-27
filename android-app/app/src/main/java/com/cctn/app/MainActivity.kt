@@ -1,5 +1,6 @@
 package com.cctn.app
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -23,6 +24,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        handleAuthIntent(intent)
+
         // Hold the splash screen until the stored session has been read, so the
         // app opens straight onto the right screen instead of flashing the
         // login form at someone who is already signed in.
@@ -36,6 +39,22 @@ class MainActivity : ComponentActivity() {
                 val isOnline by viewModel.isOnline.collectAsStateWithLifecycle()
 
                 CctnApp(sessionState = sessionState, isOnline = isOnline)
+            }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleAuthIntent(intent)
+    }
+
+    private fun handleAuthIntent(intent: Intent?) {
+        val data = intent?.data ?: return
+        if (data.scheme == "cctn" && data.host == "auth") {
+            val token = data.getQueryParameter("token")
+            if (!token.isNullOrBlank()) {
+                viewModel.handleAuthToken(token)
             }
         }
     }

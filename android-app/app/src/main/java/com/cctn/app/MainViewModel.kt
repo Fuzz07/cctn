@@ -41,4 +41,11 @@ class MainViewModel @Inject constructor(
             viewModelScope.launch { profileRepository.refresh() }
         }
     }
+
+    fun handleAuthToken(token: String) {
+        viewModelScope.launch {
+            session.setTokenOnly(token)
+            profileRepository.refresh()
+        }
+    }
 }

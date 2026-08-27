@@ -161,10 +161,14 @@ class AuthController extends Controller
     }
 
     // ─── Google Sign-In / Sign-Up ────────────────────────────────────────────────
-    public function googleRedirect()
+    public function googleRedirect(Request $request)
     {
         $state = bin2hex(random_bytes(16));
-        session(['google_oauth_state' => $state]);
+        $fromApp = $request->query('from') === 'app' || $request->query('from') === 'mobile';
+        session([
+            'google_oauth_state' => $state,
+            'google_oauth_from_app' => $fromApp,
+        ]);
 
         $query = http_build_query([
             'client_id'     => config('services.google.client_id'),
@@ -180,12 +184,20 @@ class AuthController extends Controller
 
     public function googleCallback(Request $request)
     {
+        $fromApp = session()->pull('google_oauth_from_app', false);
+
         if (!$request->filled('state') || $request->input('state') !== session()->pull('google_oauth_state')) {
+            if ($fromApp) {
+                return $this->redirectToApp(null, 'Google sign-in could not be verified. Please try again.');
+            }
             return redirect()->route('login')
                 ->withErrors(['login_input' => 'Google sign-in could not be verified. Please try again.']);
         }
 
         if (!$request->filled('code')) {
+            if ($fromApp) {
+                return $this->redirectToApp(null, 'Google sign-in was cancelled.');
+            }
             return redirect()->route('login')
                 ->withErrors(['login_input' => 'Google sign-in was cancelled.']);
         }
@@ -199,6 +211,9 @@ class AuthController extends Controller
         ]);
 
         if (!$tokenResponse->successful() || !$tokenResponse->json('access_token')) {
+            if ($fromApp) {
+                return $this->redirectToApp(null, 'Google sign-in failed. Please try again or log in with your password.');
+            }
             return redirect()->route('login')
                 ->withErrors(['login_input' => 'Google sign-in failed. Please try again or log in with your password.']);
         }
@@ -208,6 +223,9 @@ class AuthController extends Controller
 
         $email = $profile->json('email');
         if (!$profile->successful() || !$email) {
+            if ($fromApp) {
+                return $this->redirectToApp(null, 'Could not read your Google profile. Please try again.');
+            }
             return redirect()->route('login')
                 ->withErrors(['login_input' => 'Could not read your Google profile. Please try again.']);
         }
@@ -234,16 +252,48 @@ class AuthController extends Controller
                 'email_verified_at' => now(),
             ]);
 
+            if ($fromApp) {
+                $token = $client->createToken('mobile-app')->plainTextToken;
+                return $this->redirectToApp($token);
+            }
+
             Auth::guard('client')->login($client);
             session()->flash('success_message', "Welcome, {$client->firstname}! Your BCTVI account has been created with Google. Your account number is {$client->account_number}. Please complete your address and contact details in your profile.");
 
             return redirect()->route('client.dashboard');
         }
 
+        if ($fromApp) {
+            $token = $client->createToken('mobile-app')->plainTextToken;
+            return $this->redirectToApp($token);
+        }
+
         Auth::guard('client')->login($client);
         session()->flash('success_message', "Welcome back, {$client->firstname}!");
 
         return redirect()->route('client.dashboard');
+    }
+
+    private function redirectToApp(?string $token, ?string $error = null)
+    {
+        $params = [];
+        if ($token) {
+            $params['token'] = $token;
+        }
+        if ($error) {
+            $params['error'] = $error;
+        }
+        $appUrl = 'cctn://auth/callback?' . http_build_query($params);
+        $title = $token ? 'Login Successful!' : 'Sign-In Error';
+        $message = $token ? 'Redirecting back to BCTVI Mobile App...' : htmlspecialchars($error ?? 'An error occurred.');
+
+        return response(
+            "<!DOCTYPE html><html><head><meta charset='utf-8'><title>{$title}</title>" .
+            "<meta name='viewport' content='width=device-width, initial-scale=1.0'>" .
+            "<meta http-equiv='refresh' content='0;url={$appUrl}'>" .
+            "<style>body{font-family:system-ui,-apple-system,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#0f172a;color:#fff;text-align:center;padding:20px;box-sizing:border-box;}h2{margin-bottom:8px;}p{color:#94a3b8;margin-bottom:24px;}a{display:inline-block;background:#dc2626;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:700;box-shadow:0 4px 12px rgba(220,38,38,0.3);}</style></head>" .
+            "<body><h2>{$title}</h2><p>{$message}</p><a href='{$appUrl}'>Tap here to open BCTVI App</a><script>window.location.href='{$appUrl}';</script></body></html>"
+        );
     }
 
     // ─── Logout ──────────────────────────────────────────────────────────────────
