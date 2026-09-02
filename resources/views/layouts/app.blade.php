@@ -85,17 +85,17 @@
         .top-nav-btn-outline {
             display: inline-flex;
             align-items: center;
-            color: #0f172a;
+            color: #dc2626;
             background: #fff;
-            border: 1.5px solid #d1d5db;
+            border: 1.5px solid #dc2626;
             text-decoration: none;
             font-weight: 700;
             font-size: 0.9rem;
-            padding: 0.55rem 1.35rem;
-            border-radius: 10px;
-            transition: border-color 0.2s, color 0.2s;
+            padding: 0.55rem 1.6rem;
+            border-radius: 50px;
+            transition: border-color 0.2s, color 0.2s, background 0.2s;
         }
-        .top-nav-btn-outline:hover { border-color: #dc2626; color: #dc2626; }
+        .top-nav-btn-outline:hover { border-color: #b91c1c; color: #b91c1c; background: #fef2f2; }
         .top-nav-btn-solid {
             display: inline-flex;
             align-items: center;
@@ -106,10 +106,10 @@
             text-decoration: none;
             font-weight: 700;
             font-size: 0.9rem;
-            padding: 0.6rem 1.4rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 14px rgba(220, 38, 38, 0.28);
-            transition: background 0.2s, transform 0.2s;
+            padding: 0.6rem 1.6rem;
+            border-radius: 50px;
+            box-shadow: 0 4px 14px rgba(220, 38, 38, 0.25);
+            transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
         }
         .top-nav-btn-solid:hover { background: #b91c1c; color: #fff; transform: translateY(-1px); }
         .top-nav-logout-form { margin: 0; }

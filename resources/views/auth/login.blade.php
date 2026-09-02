@@ -195,9 +195,6 @@
                     Create an Account
                 </a>
 
-                <div class="auth-help" style="margin-top: 1.5rem; text-align: center;">
-                    Are you staff or admin? <a href="{{ route('admin.login') }}" style="color: var(--primary); font-weight: 700; text-decoration: none;">Admin Login Here</a>
-                </div>
             </form>
         </div>
         
