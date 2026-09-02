@@ -1,7 +1,5 @@
 package com.cctn.app.ui.screens.auth
 
-import android.content.Intent
-import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -53,7 +51,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.cctn.app.BuildConfig
 import com.cctn.app.R
 import com.cctn.app.ui.components.BrandWordmark
 import com.cctn.app.ui.components.CctnPasswordField
@@ -287,32 +284,6 @@ fun LoginScreen(
                     icon = Icons.Filled.PersonAddAlt1,
                 )
 
-                Spacer(Modifier.height(20.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = "Are you staff or admin? ",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                    Text(
-                        text = "Admin Login Here",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.clickable {
-                            context.startActivity(
-                                Intent(
-                                    Intent.ACTION_VIEW,
-                                    Uri.parse(BuildConfig.WEB_BASE_URL + "admin/login"),
-                                )
-                            )
-                        },
-                    )
-                }
             }
 
             Spacer(Modifier.height(18.dp))
