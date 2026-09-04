@@ -199,9 +199,71 @@ sequenceDiagram
     Kiosk->>WalkIn: Trigger Window Print / Output Receipt
 ```
 
+
 ---
 
-## 5. Security & Reliability Controls
+## 5. End-to-End Whole Process Flowchart (Website & Mobile App)
+
+```mermaid
+flowchart TD
+    subgraph Phase1 ["1. User Entry & Authentication"]
+        U([User / Subscriber]) --> Channel{Access Channel}
+        Channel -->|Web Portal| WebAuth[Laravel Web Auth / Cookie Guard]
+        Channel -->|Android Mobile App| MobileAuth[Sanctum Bearer Token API]
+        Channel -->|Walk-In Kiosk| WalkInAuth[Walk-In Portal Session]
+
+        WebAuth --> Security[Security & SingleSession Middleware]
+        MobileAuth --> Security
+        WalkInAuth --> Security
+        Security --> DB_Auth[(MySQL: clients / admins / tokens)]
+        DB_Auth --> SessionActive[Active Session & Dashboard]
+    end
+
+    subgraph Phase2 ["2. Service Booking & Walk-In Registration"]
+        SessionActive --> Browse[Browse Plans & Services]
+        Browse --> SlotCheck{Fetch Slot Availability}
+        SlotCheck -->|Capacity Exceeded| SlotFull[Prompt Re-select Date/Time]
+        SlotFull --> Browse
+        SlotCheck -->|Slot Available| ValidateInput[Input Validation & Sanitization]
+        ValidateInput --> SaveAppt[(Save Appointment to DB)]
+        SaveAppt --> PrintReceipt[Generate Booking Confirmation / Walk-In Thermal Receipt]
+    end
+
+    subgraph Phase3 ["3. Digital Payment & Admin Proof Verification"]
+        PrintReceipt --> PayInit[Initiate Payment / View Invoice]
+        PayInit --> PayMethod[Select Saved Payment Method / GCash / Maya / Bank]
+        PayMethod --> FetchInstructions[Fetch Official Business Payment Account]
+        FetchInstructions --> UploadProof[Submit Ref # & Upload Receipt Screenshot]
+        UploadProof --> SavePay[(Save Payment: Status Pending & Storage File)]
+        SavePay --> AdminConsole[Admin Management Console Notification]
+        AdminConsole --> VerifyDecision{Admin Proof Verification}
+        VerifyDecision -->|Reject| Rejected[Notify Client & Prompt Re-upload]
+        Rejected --> UploadProof
+        VerifyDecision -->|Approve| Approved[Update Balance & Mark Paid]
+        Approved --> SalesEngine[Record Sales Revenue & Print Official Sales Receipt]
+    end
+
+    subgraph Phase4 ["4. Service Dispatch & Maintenance"]
+        SalesEngine --> Dispatch[Schedule Operations & Assign Manpower / Equipment]
+        Dispatch --> FieldTech[Field Technician Installation / Service Repair]
+        FieldTech --> CompleteJob[Mark Maintenance Request Completed]
+        CompleteJob --> ActiveSub[Active Subscription & Restored Cable Signal]
+    end
+
+    subgraph Phase5 ["5. Chatbot Assistant & Self-Service"]
+        Query[User Ask Question in Chat Bubble / Mobile Screen] --> ChatController[POST /chat]
+        ChatController --> ChatEngine[Chatbot Assistant Rule Engine]
+        ChatEngine --> IntentDecision{Intent Type}
+        IntentDecision -->|Public Inquiry| StaticInfo[Return Plans, Hours & Coverage]
+        IntentDecision -->|Account Inquiry| FetchAccountData[(Fetch Client Balance & Bookings)]
+        StaticInfo --> RenderChat[Render Bot Reply on UI]
+        FetchAccountData --> RenderChat
+    end
+```
+
+---
+
+## 6. Security & Reliability Controls
 
 | Security Boundary | Strategy & Implementation |
 | :--- | :--- |
@@ -214,7 +276,7 @@ sequenceDiagram
 
 ---
 
-## 6. Project Directory Architecture
+## 7. Project Directory Architecture
 
 ```
 cctn/
@@ -234,7 +296,12 @@ cctn/
 │   ├── migrations/          # DB Schema Definitions
 │   └── seeders/             # Initial Data & Slot Seeders
 ├── docs/                    # System Documentation & Diagrams
-│   ├── diagrams/            # Draw.io Architectural Diagrams (System, ERD, DFD)
+│   ├── diagrams/            # Draw.io Architectural Diagrams:
+│   │   ├── CCTN-Whole-Process-Flowchart.drawio  # Full End-to-End Flowchart
+│   │   ├── CCTN-System-Architecture.drawio        # System Architecture Layer Diagram
+│   │   ├── CCTN-DFD.drawio                       # Data Flow Diagram (Levels 0 & 1)
+│   │   ├── CCTN-ERD.drawio                       # Entity Relationship Diagram
+│   │   └── CCTN-Directory-Architecture.drawio   # Directory Architecture Diagram
 │   └── SYSTEM_ARCHITECTURE.md # (This File)
 ├── public/                  # Document Root (Assets, Symlinks, Index entry)
 ├── resources/
@@ -243,3 +310,4 @@ cctn/
 │   └── views/               # Laravel Blade Templates (Client & Admin)
 └── routes/                  # Web and REST API Route Definitions
 ```
+

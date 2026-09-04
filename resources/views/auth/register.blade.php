@@ -22,11 +22,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Account - BCTVI Bantayan</title>
     <link rel="icon" type="image/png" href="{{ asset('assets/images/favicon.png') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <style>
         body {
             background: linear-gradient(rgba(15, 23, 42, 0.55), rgba(15, 23, 42, 0.7)), url('{{ asset('assets/images/login-bg.jpg') }}') center / cover no-repeat fixed;
             min-height: 100vh; overflow-x: hidden; margin: 0;
+            font-family: var(--font-body);
         }
         .auth-layout {
             display: flex;
@@ -54,7 +58,7 @@
         .auth-back-link:hover { color: #ffffff; }
         .auth-form-card { background: #fff; width: 100%; max-width: 720px; border-radius: 20px; padding: 3rem 2.5rem; box-shadow: 0 25px 60px rgba(0,0,0,0.35); border: 1px solid #e5e7eb; position: relative; z-index: 2; margin-top: 0; }
         .auth-card-head { margin-bottom: 2rem; }
-        .auth-form-title { text-align: center; font-family: system-ui, sans-serif; font-size: 1.6rem; font-weight: 700; color: #0f172a; margin-bottom: 0.5rem; }
+        .auth-form-title { text-align: center; font-family: var(--font-heading); font-size: 1.6rem; font-weight: 800; color: #0f172a; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
         .auth-form-sub { text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem; }
         
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 1.25rem; margin-bottom: 1.5rem; }

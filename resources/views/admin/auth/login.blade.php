@@ -5,9 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login - BCTVI Bantayan</title>
     <link rel="icon" type="image/png" href="{{ asset('assets/images/favicon.png') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <style>
-        body { background: #f8fafc; min-height: 100vh; overflow-x: hidden; font-family: system-ui, sans-serif; margin: 0; }
+        body { background: #f8fafc; min-height: 100vh; overflow-x: hidden; font-family: var(--font-body, sans-serif); margin: 0; }
         .admin-auth-layout { display: flex; min-height: 100vh; width: 100%; }
         
         .admin-auth-left { width: 50%; background: #060d1b; position: relative; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; color: #ffffff; }

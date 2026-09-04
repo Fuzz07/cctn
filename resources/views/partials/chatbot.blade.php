@@ -42,7 +42,7 @@
 </div>
 
 <style>
-    .bctvi-chat { position: fixed; right: 20px; bottom: 24px; z-index: 1200; font-family: system-ui, -apple-system, sans-serif; }
+    .bctvi-chat { position: fixed; right: 20px; bottom: 24px; z-index: 1200; font-family: var(--font-body, 'Inter', sans-serif); }
 
     .bctvi-chat-launcher {
         width: 56px; height: 56px; border-radius: 50%; border: none; cursor: pointer;
