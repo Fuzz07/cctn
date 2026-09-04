@@ -495,28 +495,10 @@
         font-weight: 500;
     }
 
-    .bl-app-banner-badges {
+    .bl-app-banner-action {
         display: flex;
         align-items: center;
-        gap: 0.75rem;
         flex-shrink: 0;
-    }
-
-    .bl-store-badge {
-        display: inline-flex;
-        align-items: center;
-        background: #000000;
-        color: #ffffff !important;
-        text-decoration: none;
-        padding: 0.45rem 0.95rem;
-        border-radius: 8px;
-        transition: transform 0.2s, opacity 0.2s;
-    }
-
-    .bl-store-badge:hover {
-        transform: translateY(-2px);
-        opacity: 0.92;
-        color: #ffffff !important;
     }
 
     /* ── Plans Section ── */
@@ -729,8 +711,8 @@
         .bl-feature-item { justify-content: flex-start; }
         .bl-plans-grid { grid-template-columns: 1fr; }
         .bl-section-title { font-size: 1.85rem; }
-        .bl-app-banner-badges { flex-direction: column; width: 100%; }
-        .bl-store-badge { width: 100%; justify-content: center; }
+        .bl-app-banner-action { width: 100%; justify-content: center; }
+        .bl-app-banner-action a { width: 100%; justify-content: center; }
     }
 </style>
 @endpush
@@ -907,33 +889,11 @@
                     <span>Manage your account, check your bills, request support and more — all in one app.</span>
                 </div>
             </div>
-            <div class="bl-app-banner-badges">
-                <!-- Google Play Badge -->
-                <a href="{{ route('download.apk') }}" class="bl-store-badge" title="Get it on Google Play">
-                    <svg viewBox="0 0 135 40" width="135" height="40" xmlns="http://www.w3.org/2000/svg">
-                        <g fill="#ffffff">
-                            <path d="M21.2 19.8l-7.4-7.4c-.2-.2-.5-.3-.8-.3-.4 0-.7.2-.9.5L12 12.8c-.1.2-.2.5-.2.8v12.8c0 .3.1.6.2.8l.1.2 7.7-7.4-4.6 4.6 6-4z" fill="#00e676" opacity=".2"/>
-                            <!-- Play Triangle -->
-                            <path d="M12.1 13.5l10.3 5.9-4.8 4.8-5.5-10.7z" fill="#00e676"/>
-                            <path d="M22.4 19.4L12.1 25.3l5.5-10.7 4.8 4.8z" fill="#ff3d00"/>
-                            <path d="M12.1 13.5v11.8l5.5-5.9-5.5-5.9z" fill="#ffc107"/>
-                            <path d="M25.2 21l-2.8-1.6-4.8 4.8 4.8 4.8 2.8-1.6c.8-.5 1.3-1.4 1.3-2.4 0-1-.5-1.9-1.3-2.4z" fill="#2979ff"/>
-                            <!-- Text: GET IT ON / Google Play -->
-                            <text x="36" y="14" font-size="8" font-weight="600" fill="#ffffff" letter-spacing="0.5">GET IT ON</text>
-                            <text x="36" y="27" font-size="13" font-weight="800" fill="#ffffff">Google Play</text>
-                        </g>
-                    </svg>
-                </a>
-
-                <!-- App Store Badge -->
-                <a href="{{ route('download.apk') }}" class="bl-store-badge" title="Download on the App Store">
-                    <svg viewBox="0 0 135 40" width="135" height="40" xmlns="http://www.w3.org/2000/svg">
-                        <g fill="#ffffff">
-                            <path d="M24.2 20.3c0-3.3 2.7-4.9 2.8-5-1.5-2.2-3.9-2.5-4.8-2.6-2-.2-4 1.2-5.1 1.2-1 0-2.6-1.2-4.3-1.2-2.2 0-4.3 1.3-5.4 3.3-2.3 4-0.6 10 1.6 13.3 1.1 1.6 2.4 3.3 4.1 3.2 1.7-.1 2.3-1.1 4.3-1.1 2 0 2.5 1.1 4.3 1.1 1.8 0 2.9-1.6 4-3.2 1.3-1.9 1.8-3.7 1.8-3.8-.1 0-3.4-1.3-3.4-5.2zM20.9 10.9c.9-1.1 1.5-2.6 1.3-4.1-1.3.1-2.8.9-3.7 1.9-.8.9-1.5 2.4-1.3 3.9 1.4.1 2.8-.6 3.7-1.7z" fill="#ffffff"/>
-                            <text x="36" y="14" font-size="7.5" font-weight="600" fill="#ffffff" letter-spacing="0.4">Download on the</text>
-                            <text x="36" y="27" font-size="13.5" font-weight="800" fill="#ffffff">App Store</text>
-                        </g>
-                    </svg>
+            <div class="bl-app-banner-action">
+                <a href="{{ route('download.apk') }}" class="bl-btn-primary" style="padding: 0.85rem 1.85rem; font-size: 0.95rem; white-space: nowrap; box-shadow: 0 4px 14px rgba(220, 38, 38, 0.3);">
+                    <i class="bi bi-android2" style="font-size: 1.25rem;"></i>
+                    Download APK
+                    <i class="bi bi-download" style="font-size: 0.9rem; margin-left: 2px;"></i>
                 </a>
             </div>
         </div>
