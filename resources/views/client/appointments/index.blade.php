@@ -88,12 +88,70 @@
                         <span class="appt-label">Schedule Date & Time</span>
                         <span class="appt-value" style="color: #dc2626;">{{ date('l, M d, Y', strtotime($appt->preferred_date)) }} at {{ date('h:i A', strtotime($appt->preferred_time)) }}</span>
                     </div>
+                    <div class="appt-detail">
+                        <span class="appt-label">Payment Method</span>
+                        <span class="appt-value" style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                            <span style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.85rem; font-weight: 700; color: #0f172a;">
+                                {{ $appt->payment_method ?: 'GCash (Digital Payment)' }}
+                            </span>
+                            @if($appt->reference_number)
+                                <span style="font-size: 0.8rem; color: #64748b;">Ref: {{ $appt->reference_number }}</span>
+                            @endif
+                            @if($appt->payment_proof)
+                                <a href="{{ asset('storage/' . $appt->payment_proof) }}" target="_blank" style="font-size: 0.8rem; color: #dc2626; text-decoration: underline; font-weight: 600;">View Receipt</a>
+                            @endif
+                        </span>
+                    </div>
                     @if($appt->message)
-                        <div class="appt-detail" style="grid-column: 1 / -1;">
+                        <div class="appt-detail">
                             <span class="appt-label">Your Note</span>
                             <span class="appt-value" style="font-weight: 500; font-size: 0.9rem;">{{ $appt->message }}</span>
                         </div>
                     @endif
+                </div>
+
+                <!-- Footer Action: Payment Method Update -->
+                <div class="appt-footer" style="display: flex; justify-content: space-between; align-items: center;">
+                    <button type="button" class="btn-action" style="background: #fef2f2; color: #dc2626; border-color: #fecaca; font-weight: 700;" onclick="togglePaymentForm({{ $appt->id }})">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px; vertical-align: -2px;"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                        {{ $appt->payment_method ? 'Update Payment Method' : 'Set Digital Payment Method' }}
+                    </button>
+                    @if($appt->admin_notes)
+                        <span style="font-size: 0.8rem; color: #64748b;"><strong>Note:</strong> {{ $appt->admin_notes }}</span>
+                    @endif
+                </div>
+
+                <!-- Collapsible Payment Method Form -->
+                <div id="payment-form-{{ $appt->id }}" style="display: none; padding: 1.25rem 1.5rem; background: #fafafa; border-top: 1px solid #e2e8f0;">
+                    <form action="{{ route('client.appointments.payment-method', $appt->id) }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div style="font-size: 0.9rem; font-weight: 700; color: #0f172a; margin-bottom: 0.75rem;">
+                            Update Payment Method for Appointment #{{ str_pad($appt->id, 6, '0', STR_PAD_LEFT) }}
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                            <div>
+                                <label style="display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.35rem; color: #334155;">Digital Payment Method</label>
+                                <select name="payment_method" class="form-control" style="width: 100%; padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: 600;" required>
+                                    <option value="GCash" {{ ($appt->payment_method == 'GCash' || !$appt->payment_method || $appt->payment_method == 'Cash') ? 'selected' : '' }}>GCash (E-Wallet)</option>
+                                    <option value="Maya" {{ $appt->payment_method == 'Maya' ? 'selected' : '' }}>Maya (E-Wallet)</option>
+                                    <option value="Bank Transfer" {{ $appt->payment_method == 'Bank Transfer' ? 'selected' : '' }}>Bank Transfer</option>
+                                    <option value="Credit/Debit Card" {{ $appt->payment_method == 'Credit/Debit Card' ? 'selected' : '' }}>Credit / Debit Card</option>
+                                </select>
+                            </div>
+                            <div id="ref-field-{{ $appt->id }}">
+                                <label style="display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.35rem; color: #334155;">Reference / Transaction No.</label>
+                                <input type="text" name="reference_number" class="form-control" style="width: 100%; padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid #cbd5e1;" placeholder="e.g. 10029384756" value="{{ $appt->reference_number }}">
+                            </div>
+                            <div id="proof-field-{{ $appt->id }}">
+                                <label style="display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.35rem; color: #334155;">Upload Payment Proof (Receipt)</label>
+                                <input type="file" name="payment_proof" class="form-control" style="width: 100%; padding: 0.4rem 0.75rem; border-radius: 6px; border: 1px solid #cbd5e1;" accept="image/*">
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+                            <button type="button" class="btn-action" style="background: #fff; border-color: #cbd5e1; color: #475569;" onclick="togglePaymentForm({{ $appt->id }})">Cancel</button>
+                            <button type="submit" class="btn-action" style="background: #dc2626; color: #fff; font-weight: 700;">Save Payment Method</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         @empty
@@ -105,4 +163,15 @@
         @endforelse
     </div>
 </div>
+
+@push('scripts')
+<script>
+    function togglePaymentForm(id) {
+        const formEl = document.getElementById('payment-form-' + id);
+        if (formEl) {
+            formEl.style.display = formEl.style.display === 'none' ? 'block' : 'none';
+        }
+    }
+</script>
+@endpush
 @endsection

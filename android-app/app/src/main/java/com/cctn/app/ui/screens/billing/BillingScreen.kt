@@ -42,9 +42,15 @@ import com.cctn.app.ui.components.StatusChip
 import com.cctn.app.ui.theme.BrandRed
 import com.cctn.app.ui.theme.BrandRedDark
 
+import androidx.compose.material.icons.outlined.CreditCard
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.Icon
+
 @Composable
 fun BillingScreen(
     onOpenAssistant: () -> Unit,
+    onPaymentMethods: () -> Unit = {},
     viewModel: BillingViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -92,6 +98,7 @@ fun BillingScreen(
                     BalanceCard(
                         balance = state.balance,
                         unpaidCount = state.unpaid.size,
+                        onPaymentMethods = onPaymentMethods,
                     )
                 }
 
@@ -135,7 +142,11 @@ fun BillingScreen(
 }
 
 @Composable
-private fun BalanceCard(balance: Double, unpaidCount: Int) {
+private fun BalanceCard(
+    balance: Double,
+    unpaidCount: Int,
+    onPaymentMethods: () -> Unit = {},
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -166,10 +177,29 @@ private fun BalanceCard(balance: Double, unpaidCount: Int) {
         )
         Spacer(Modifier.height(14.dp))
         Text(
-            text = "Payments are settled at the BCTVI office. This screen reflects what the office has recorded.",
+            text = "Digital payment methods (GCash, Maya, Bank Transfer, Card) can be configured in your account.",
             style = MaterialTheme.typography.bodySmall,
-            color = Color.White.copy(alpha = 0.75f),
+            color = Color.White.copy(alpha = 0.85f),
         )
+        Spacer(Modifier.height(12.dp))
+        ElevatedButton(
+            onClick = onPaymentMethods,
+            colors = ButtonDefaults.elevatedButtonColors(
+                containerColor = Color.White,
+                contentColor = BrandRedDark,
+            ),
+            shape = RoundedCornerShape(10.dp),
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.CreditCard,
+                contentDescription = null,
+                modifier = Modifier.padding(end = 6.dp),
+            )
+            Text(
+                text = "Manage Payment Methods",
+                style = MaterialTheme.typography.labelLarge,
+            )
+        }
     }
 }
 

@@ -13,13 +13,17 @@ import com.cctn.app.data.remote.dto.ChatResponse
 import com.cctn.app.data.remote.dto.ClientDto
 import com.cctn.app.data.remote.dto.GoogleLoginRequest
 import com.cctn.app.data.remote.dto.LoginRequest
+import com.cctn.app.data.remote.dto.CreatePaymentMethodRequest
 import com.cctn.app.data.remote.dto.MaintenanceDto
 import com.cctn.app.data.remote.dto.MaintenanceRequestBody
 import com.cctn.app.data.remote.dto.NotificationsPayload
 import com.cctn.app.data.remote.dto.NotificationDto
+import com.cctn.app.data.remote.dto.PaymentMethodDto
 import com.cctn.app.data.remote.dto.RegisterRequest
 import com.cctn.app.data.remote.dto.ServiceDto
 import com.cctn.app.data.remote.dto.SlotDto
+import com.cctn.app.data.remote.dto.UpdatePaymentMethodDetailsRequest
+import com.cctn.app.data.remote.dto.UpdatePaymentMethodRequest
 import com.cctn.app.data.remote.dto.UpdateProfileRequest
 import com.cctn.app.data.session.SessionManager
 import kotlinx.serialization.json.Json
@@ -102,6 +106,8 @@ class AppointmentRepository @Inject constructor(
         date: String,
         time: String,
         message: String?,
+        paymentMethod: String? = null,
+        referenceNumber: String? = null,
     ): AppResult<BookAppointmentResponse> = apiCall(json) {
         api.book(
             BookAppointmentRequest(
@@ -109,13 +115,83 @@ class AppointmentRepository @Inject constructor(
                 preferredDate = date,
                 preferredTime = time,
                 message = message?.takeIf { it.isNotBlank() },
+                paymentMethod = paymentMethod?.takeIf { it.isNotBlank() },
+                referenceNumber = referenceNumber?.takeIf { it.isNotBlank() },
             )
         )
     }
 
+    suspend fun updatePaymentMethod(
+        id: Int,
+        paymentMethod: String,
+        referenceNumber: String? = null,
+    ): AppResult<String> = apiCall(json) {
+        api.updateAppointmentPaymentMethod(
+            id = id,
+            body = UpdatePaymentMethodRequest(paymentMethod, referenceNumber),
+        )
+    }.map { it.message ?: "Payment method updated." }
+
     suspend fun cancel(id: Int): AppResult<String> =
         apiCall(json) { api.cancelAppointment(id) }
             .map { it.message ?: "Appointment cancelled." }
+}
+
+@Singleton
+class PaymentMethodRepository @Inject constructor(
+    private val api: CctnApi,
+    private val json: Json,
+) {
+    suspend fun list(): AppResult<List<PaymentMethodDto>> =
+        apiCall(json) { api.paymentMethods() }.map { it.paymentMethods }
+
+    suspend fun create(
+        paymentType: String,
+        providerName: String,
+        accountName: String,
+        accountNumber: String,
+        isDefault: Boolean = false,
+        notes: String? = null,
+    ): AppResult<PaymentMethodDto> = apiCall(json) {
+        api.createPaymentMethod(
+            CreatePaymentMethodRequest(
+                paymentType = paymentType.trim(),
+                providerName = providerName.trim(),
+                accountName = accountName.trim(),
+                accountNumber = accountNumber.trim(),
+                isDefault = isDefault,
+                notes = notes?.trim()?.takeIf { it.isNotBlank() },
+            )
+        )
+    }.map { it.paymentMethod ?: error("Missing payment method payload") }
+
+    suspend fun update(
+        id: Int,
+        providerName: String,
+        accountName: String,
+        accountNumber: String,
+        isDefault: Boolean = false,
+        notes: String? = null,
+    ): AppResult<PaymentMethodDto> = apiCall(json) {
+        api.updatePaymentMethod(
+            id = id,
+            body = UpdatePaymentMethodDetailsRequest(
+                providerName = providerName.trim(),
+                accountName = accountName.trim(),
+                accountNumber = accountNumber.trim(),
+                isDefault = isDefault,
+                notes = notes?.trim()?.takeIf { it.isNotBlank() },
+            )
+        )
+    }.map { it.paymentMethod ?: error("Missing payment method payload") }
+
+    suspend fun delete(id: Int): AppResult<String> =
+        apiCall(json) { api.deletePaymentMethod(id) }
+            .map { it.message ?: "Payment method removed." }
+
+    suspend fun setDefault(id: Int): AppResult<PaymentMethodDto> =
+        apiCall(json) { api.setDefaultPaymentMethod(id) }
+            .map { it.paymentMethod ?: error("Missing payment method payload") }
 }
 
 @Singleton

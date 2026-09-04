@@ -18,10 +18,14 @@ class AppointmentResource extends JsonResource
             ]),
             'preferred_date' => $this->preferred_date?->format('Y-m-d'),
             'preferred_time' => $this->preferred_time?->format('H:i'),
-            'message'        => $this->message,
-            'status'         => $this->status,
-            'admin_notes'    => $this->admin_notes,
-            'created_at'     => $this->created_at?->toIso8601String(),
+            'message'          => $this->message,
+            'status'           => $this->status,
+            'payment_method'   => $this->payment_method ?: 'GCash',
+            'payment_status'   => $this->payment_status ?: 'unpaid',
+            'reference_number' => $this->reference_number,
+            'payment_proof'    => $this->payment_proof ? asset('storage/' . $this->payment_proof) : null,
+            'admin_notes'      => $this->admin_notes,
+            'created_at'       => $this->created_at?->toIso8601String(),
         ];
     }
 }

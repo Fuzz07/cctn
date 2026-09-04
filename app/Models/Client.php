@@ -47,6 +47,16 @@ class Client extends Authenticatable
         return $this->hasMany(MaintenanceRequest::class);
     }
 
+    public function paymentMethods()
+    {
+        return $this->hasMany(ClientPaymentMethod::class);
+    }
+
+    public function defaultPaymentMethod()
+    {
+        return $this->hasOne(ClientPaymentMethod::class)->where('is_default', true);
+    }
+
     public function getFullNameAttribute(): string
     {
         return trim("{$this->firstname} {$this->middlename} {$this->lastname}");

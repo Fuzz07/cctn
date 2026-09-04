@@ -61,6 +61,33 @@ data class BookAppointmentRequest(
     @SerialName("preferred_date") val preferredDate: String,
     @SerialName("preferred_time") val preferredTime: String,
     val message: String? = null,
+    @SerialName("payment_method") val paymentMethod: String? = null,
+    @SerialName("reference_number") val referenceNumber: String? = null,
+)
+
+@Serializable
+data class UpdatePaymentMethodRequest(
+    @SerialName("payment_method") val paymentMethod: String,
+    @SerialName("reference_number") val referenceNumber: String? = null,
+)
+
+@Serializable
+data class CreatePaymentMethodRequest(
+    @SerialName("payment_type") val paymentType: String,
+    @SerialName("provider_name") val providerName: String,
+    @SerialName("account_name") val accountName: String,
+    @SerialName("account_number") val accountNumber: String,
+    @SerialName("is_default") val isDefault: Boolean = false,
+    val notes: String? = null,
+)
+
+@Serializable
+data class UpdatePaymentMethodDetailsRequest(
+    @SerialName("provider_name") val providerName: String,
+    @SerialName("account_name") val accountName: String,
+    @SerialName("account_number") val accountNumber: String,
+    @SerialName("is_default") val isDefault: Boolean = false,
+    val notes: String? = null,
 )
 
 @Serializable
@@ -124,6 +151,19 @@ data class BookAppointmentResponse(
 data class ServicesResponse(
     val success: Boolean = false,
     val services: List<ServiceDto> = emptyList(),
+)
+
+@Serializable
+data class PaymentMethodsResponse(
+    val success: Boolean = false,
+    @SerialName("payment_methods") val paymentMethods: List<PaymentMethodDto> = emptyList(),
+)
+
+@Serializable
+data class PaymentMethodResponse(
+    val success: Boolean = false,
+    val message: String? = null,
+    @SerialName("payment_method") val paymentMethod: PaymentMethodDto? = null,
 )
 
 @Serializable

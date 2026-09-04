@@ -27,22 +27,34 @@
                     <strong style="font-size: 1.1rem; color: #dc2626; font-family: monospace;">{{ $client->account_number ?? 'N/A' }}</strong>
                 </div>
             </div>
-            <a href="{{ route('client.dashboard') }}" class="btn btn-secondary" style="border-radius: 10px; font-weight: 700; font-size: 0.85rem;">← Back to Dashboard</a>
+            <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                <a href="{{ route('client.payment-methods') }}" class="btn" style="background: #dc2626; color: #fff; border-radius: 10px; font-weight: 700; font-size: 0.85rem; text-decoration: none; padding: 0.6rem 1.15rem; display: inline-flex; align-items: center; gap: 0.4rem;">
+                    <i class="bi bi-wallet2"></i> Manage Payment Methods
+                </a>
+                <a href="{{ route('client.dashboard') }}" class="btn btn-secondary" style="border-radius: 10px; font-weight: 700; font-size: 0.85rem;">← Back to Dashboard</a>
+            </div>
         </div>
     </div>
 
-    <!-- IN-OFFICE SHOP PAYMENT INSTRUCTION BANNER -->
+    <!-- DIGITAL PAYMENT INSTRUCTION BANNER -->
     <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #ffffff; border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.06); display: flex; align-items: flex-start; gap: 1.25rem;">
         <div style="width: 48px; height: 48px; background: #dc2626; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; box-shadow: 0 4px 12px rgba(220,38,38,0.4);">
-            🏪
+            💳
         </div>
-        <div>
-            <h4 style="font-size: 1.05rem; font-weight: 800; margin: 0 0 0.35rem; color: #ffffff;">How to Pay Your Bill (In-Office Cash Payment)</h4>
-            <p style="font-size: 0.88rem; color: #cbd5e1; margin: 0 0 0.5rem; line-height: 1.5;">
-                To pay your bill, simply visit the <strong>BCTVI Bantayan Office / Shop</strong> and present your Account Number (<strong style="color: #f87171; font-family: monospace;">{{ $client->account_number ?? 'N/A' }}</strong>) at the counter.
+        <div style="flex: 1;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem;">
+                <h4 style="font-size: 1.05rem; font-weight: 800; margin: 0 0 0.35rem; color: #ffffff;">How to Pay Your Bill (Digital Payments Only)</h4>
+                <a href="{{ route('client.payment-methods') }}" style="color: #fca5a5; font-size: 0.8rem; font-weight: 700; text-decoration: none;">
+                    Add / View Saved Methods &rarr;
+                </a>
+            </div>
+            <p style="font-size: 0.88rem; color: #cbd5e1; margin: 0 0 0.6rem; line-height: 1.5;">
+                We accept secure digital payments via <strong>GCash, Maya, and Online Bank Transfers (BDO, BPI, UnionBank)</strong>. Always use your Account Number (<strong style="color: #f87171; font-family: monospace;">{{ $client->account_number ?? 'N/A' }}</strong>) as reference.
             </p>
-            <div style="font-size: 0.8rem; color: #94a3b8; font-weight: 600;">
-                ✓ Our office staff will receive your payment and immediately issue your official printed receipt.
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.8rem; color: #94a3b8; font-weight: 600;">
+                <span>✓ Instant verification with saved methods</span>
+                <span>✓ GCash / Maya E-Wallet Transfer</span>
+                <span>✓ Official digital statement tracking</span>
             </div>
         </div>
     </div>
@@ -87,11 +99,11 @@
                                 </span>
                                 @if ($st === 'paid' && !empty($row->paid_at))
                                     <div style="font-size: 0.72rem; color: #16a34a; margin-top: 0.25rem; font-weight: 700;">
-                                        ✓ Paid at BCTVI Shop counter on {{ date('M d, Y', strtotime($row->paid_at)) }}
+                                        ✓ Settled via digital payment on {{ date('M d, Y', strtotime($row->paid_at)) }}
                                     </div>
                                 @elseif ($st !== 'paid')
                                     <div style="font-size: 0.7rem; color: #64748b; margin-top: 0.25rem;">
-                                        Pay at shop counter using Acc#
+                                        Pay via digital method with Acc#
                                     </div>
                                 @endif
                             </td>

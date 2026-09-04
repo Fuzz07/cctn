@@ -86,7 +86,7 @@
             <p>Schedule a WiFi installation, subscription inquiry, or technical support visit</p>
         </div>
 
-        <form action="{{ route('client.book.submit') }}" method="POST" id="booking-form">
+        <form action="{{ route('client.book.submit') }}" method="POST" id="booking-form" enctype="multipart/form-data">
             @csrf
 
             <!-- Service Selection -->
@@ -151,6 +151,60 @@
                 </div>
             </div>
 
+            <!-- Payment Method Selection -->
+            <div class="form-group" style="background: #fafafa; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+                    <label class="form-label" for="payment_method" style="margin: 0; display: flex; align-items: center; gap: 0.5rem; color: #0f172a;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                        Select Digital Payment Method *
+                    </label>
+                    <a href="{{ route('client.payment-methods') }}" target="_blank" style="font-size: 0.78rem; font-weight: 700; color: #dc2626; text-decoration: none;">
+                        + Manage Saved Methods
+                    </a>
+                </div>
+
+                @if(isset($paymentMethods) && $paymentMethods->count() > 0)
+                    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 1rem;">
+                        <span style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 0.35rem;">
+                            Your Saved Payment Methods
+                        </span>
+                        <div style="display: grid; gap: 0.5rem;">
+                            @foreach($paymentMethods as $pm)
+                                <label style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.75rem; border: 1px solid {{ $pm->is_default ? '#fca5a5' : '#e2e8f0' }}; background: {{ $pm->is_default ? '#fff5f5' : '#f8fafc' }}; border-radius: 6px; cursor: pointer;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <input type="radio" name="saved_payment_method_id" value="{{ $pm->id }}" {{ $pm->is_default ? 'checked' : '' }} onchange="selectSavedMethod('{{ $pm->provider_name }}', '{{ $pm->account_number }}')" style="accent-color: #dc2626;">
+                                        <span style="font-weight: 700; font-size: 0.88rem; color: #0f172a;">{{ $pm->provider_name }}</span>
+                                        <span style="font-size: 0.8rem; color: #64748b;">({{ $pm->masked_account_number }})</span>
+                                    </div>
+                                    @if($pm->is_default)
+                                        <span style="font-size: 0.7rem; font-weight: 800; background: #dc2626; color: #fff; padding: 0.15rem 0.45rem; border-radius: 4px;">Default</span>
+                                    @endif
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+
+                <select name="payment_method" id="payment_method" class="form-control" required style="font-weight: 600;">
+                    <option value="GCash" {{ old('payment_method', ($defaultMethod->provider_name ?? 'GCash')) == 'GCash' ? 'selected' : '' }}>GCash (E-Wallet)</option>
+                    <option value="Maya" {{ old('payment_method', ($defaultMethod->provider_name ?? '')) == 'Maya' ? 'selected' : '' }}>Maya (E-Wallet)</option>
+                    <option value="Bank Transfer" {{ old('payment_method', ($defaultMethod->provider_name ?? '')) == 'Bank Transfer' ? 'selected' : '' }}>Bank Transfer (BDO, BPI, UnionBank)</option>
+                    <option value="Credit/Debit Card" {{ old('payment_method', ($defaultMethod->provider_name ?? '')) == 'Credit/Debit Card' ? 'selected' : '' }}>Credit / Debit Card</option>
+                </select>
+
+                <!-- Digital Payment Details (GCash / Maya / Bank) -->
+                <div id="digital_payment_fields" style="margin-top: 1rem;">
+                    <div style="margin-bottom: 1rem;">
+                        <label class="form-label" for="reference_number" style="font-size: 0.85rem;">Reference / Transaction No. (Optional)</label>
+                        <input type="text" name="reference_number" id="reference_number" class="form-control" placeholder="e.g. 10029384756" value="{{ old('reference_number') }}">
+                    </div>
+                    <div>
+                        <label class="form-label" for="payment_proof" style="font-size: 0.85rem;">Upload Payment Receipt / Proof (Optional)</label>
+                        <input type="file" name="payment_proof" id="payment_proof" class="form-control" accept="image/jpeg,image/png,image/jpg,image/webp">
+                    </div>
+                </div>
+            </div>
+
             <!-- Additional Message -->
             <div class="form-group">
                 <label class="form-label" for="message">Additional Message (Optional)</label>
@@ -178,5 +232,23 @@
         }
         window.location.href = url.toString();
     });
+
+    function selectSavedMethod(provider, accountNum) {
+        const pmSelect = document.getElementById('payment_method');
+        if (!pmSelect) return;
+        
+        let matched = false;
+        for (let i = 0; i < pmSelect.options.length; i++) {
+            if (pmSelect.options[i].value.toLowerCase() === provider.toLowerCase() || 
+                pmSelect.options[i].text.toLowerCase().includes(provider.toLowerCase())) {
+                pmSelect.selectedIndex = i;
+                matched = true;
+                break;
+            }
+        }
+        if (!matched && provider.toLowerCase().includes('bank')) {
+            pmSelect.value = 'Bank Transfer';
+        }
+    }
 </script>
 @endpush

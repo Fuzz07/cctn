@@ -51,6 +51,8 @@ data class AppointmentDto(
     @SerialName("preferred_time") val preferredTime: String? = null,
     val message: String? = null,
     val status: String = "pending",
+    @SerialName("payment_method") val paymentMethod: String? = null,
+    @SerialName("reference_number") val referenceNumber: String? = null,
     @SerialName("admin_notes") val adminNotes: String? = null,
     @SerialName("created_at") val createdAt: String? = null,
 )
@@ -96,4 +98,19 @@ data class SlotDto(
     val time: String,
     val label: String,
     val available: Boolean,
+)
+
+@Serializable
+data class PaymentMethodDto(
+    val id: Int,
+    @SerialName("payment_type") val paymentType: String = "gcash",
+    @SerialName("provider_name") val providerName: String = "",
+    @SerialName("formatted_type") val formattedType: String = "",
+    @SerialName("account_name") val accountName: String = "",
+    @SerialName("account_number") val accountNumber: String = "",
+    @SerialName("masked_account_number") val maskedAccountNumber: String = "",
+    @SerialName("is_default") val isDefault: Boolean = false,
+    val notes: String? = null,
+    @SerialName("theme_color") val themeColor: String? = null,
+    @SerialName("created_at") val createdAt: String? = null,
 )

@@ -52,6 +52,7 @@ import com.cctn.app.ui.components.CctnPasswordField
 import com.cctn.app.ui.components.CctnTextField
 import com.cctn.app.ui.components.CctnTopBar
 import com.cctn.app.ui.components.PageHeading
+import androidx.compose.material.icons.filled.CreditCard
 import com.cctn.app.ui.components.DetailRow
 import com.cctn.app.ui.components.LoadingButton
 import com.cctn.app.ui.components.LoadingState
@@ -60,6 +61,7 @@ import com.cctn.app.ui.components.SectionCard
 @Composable
 fun ProfileScreen(
     onOpenAssistant: () -> Unit,
+    onPaymentMethods: () -> Unit = {},
     viewModel: ProfileViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -105,7 +107,7 @@ fun ProfileScreen(
             item {
                 PageHeading(
                     title = "My account",
-                    subtitle = "Your details, your password, and the way out.",
+                    subtitle = "Your details, your password, and your payment options.",
                 )
             }
 
@@ -115,6 +117,25 @@ fun ProfileScreen(
                 item { EditForm(state, viewModel) }
             } else {
                 item { DetailsCard(current, onEdit = viewModel::startEditing) }
+            }
+
+            item {
+                OutlinedButton(
+                    onClick = onPaymentMethods,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp),
+                    shape = RoundedCornerShape(12.dp),
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.CreditCard,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp),
+                        tint = MaterialTheme.colorScheme.primary,
+                    )
+                    Spacer(Modifier.size(8.dp))
+                    Text("Manage Payment Methods", color = MaterialTheme.colorScheme.primary)
+                }
             }
 
             item {

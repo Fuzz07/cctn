@@ -553,15 +553,15 @@ class Assistant
 
     private function howToPay(?Client $client): array
     {
-        $reply = 'The office records payments as cash, GCash or bank transfer, and issues a receipt against '
-            . 'your statement. Settling up is done with the office rather than in the app — '
-            . 'what you can see here is what you owe and what has already been receipted.';
+        $reply = 'We process payments via secure digital payment methods (GCash, Maya, and Bank Transfers). '
+            . 'You can manage and save your preferred payment methods in your portal or mobile app, '
+            . 'and track all your statements and payments in real-time.';
 
         return $this->answer(
             'how_to_pay',
             $reply,
             $client,
-            $client ? $this->link('View billing', 'client.billing', 'billing') : null,
+            $client ? $this->link('Manage Payment Methods', 'client.payment-methods', 'profile') : null,
         );
     }
 

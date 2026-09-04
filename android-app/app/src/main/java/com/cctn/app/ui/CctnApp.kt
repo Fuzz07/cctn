@@ -42,6 +42,7 @@ import com.cctn.app.ui.screens.billing.BillingScreen
 import com.cctn.app.ui.screens.chat.ChatScreen
 import com.cctn.app.ui.screens.home.HomeScreen
 import com.cctn.app.ui.screens.notifications.NotificationsScreen
+import com.cctn.app.ui.screens.profile.PaymentMethodsScreen
 import com.cctn.app.ui.screens.profile.ProfileScreen
 import com.cctn.app.ui.screens.support.SupportScreen
 
@@ -116,9 +117,11 @@ private fun MainNavHost(navController: NavHostController = rememberNavController
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
 
-    // Booking, notifications, and the assistant are focused tasks: the tab bar goes away so each
-    // has the whole screen and one obvious way back.
-    val showBottomBar = currentRoute != Routes.BOOK && currentRoute != Routes.CHAT && currentRoute != Routes.NOTIFICATIONS
+    // Focused tasks without tab bar
+    val showBottomBar = currentRoute != Routes.BOOK && 
+                        currentRoute != Routes.CHAT && 
+                        currentRoute != Routes.NOTIFICATIONS &&
+                        currentRoute != Routes.PAYMENT_METHODS
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -196,9 +199,24 @@ private fun MainNavHost(navController: NavHostController = rememberNavController
                     onOpenAssistant = openAssistant,
                 )
             }
-            composable(Routes.BILLING) { BillingScreen(onOpenAssistant = openAssistant) }
+            composable(Routes.BILLING) {
+                BillingScreen(
+                    onOpenAssistant = openAssistant,
+                    onPaymentMethods = { navController.navigate(Routes.PAYMENT_METHODS) },
+                )
+            }
             composable(Routes.SUPPORT) { SupportScreen(onOpenAssistant = openAssistant) }
-            composable(Routes.PROFILE) { ProfileScreen(onOpenAssistant = openAssistant) }
+            composable(Routes.PROFILE) {
+                ProfileScreen(
+                    onOpenAssistant = openAssistant,
+                    onPaymentMethods = { navController.navigate(Routes.PAYMENT_METHODS) },
+                )
+            }
+            composable(Routes.PAYMENT_METHODS) {
+                PaymentMethodsScreen(
+                    onBack = { navController.popBackStack() },
+                )
+            }
             composable(Routes.NOTIFICATIONS) {
                 NotificationsScreen(
                     onBack = { navController.popBackStack() },
@@ -209,6 +227,7 @@ private fun MainNavHost(navController: NavHostController = rememberNavController
                             "appointments" -> navController.navigateToTab(Routes.APPOINTMENTS)
                             "support" -> navController.navigateToTab(Routes.SUPPORT)
                             "profile" -> navController.navigateToTab(Routes.PROFILE)
+                            "payment_methods" -> navController.navigate(Routes.PAYMENT_METHODS)
                             "book" -> navController.navigate(Routes.BOOK)
                         }
                     },
@@ -226,6 +245,7 @@ private fun MainNavHost(navController: NavHostController = rememberNavController
                             "appointments" -> navController.navigateToTab(Routes.APPOINTMENTS)
                             "support" -> navController.navigateToTab(Routes.SUPPORT)
                             "profile" -> navController.navigateToTab(Routes.PROFILE)
+                            "payment_methods" -> navController.navigate(Routes.PAYMENT_METHODS)
                             "book" -> navController.navigate(Routes.BOOK)
                         }
                     },

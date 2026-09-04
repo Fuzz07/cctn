@@ -9,15 +9,20 @@ import com.cctn.app.data.remote.dto.ChatMessageBody
 import com.cctn.app.data.remote.dto.ChatResponse
 import com.cctn.app.data.remote.dto.GoogleLoginRequest
 import com.cctn.app.data.remote.dto.LoginRequest
+import com.cctn.app.data.remote.dto.CreatePaymentMethodRequest
 import com.cctn.app.data.remote.dto.MaintenanceCreateResponse
 import com.cctn.app.data.remote.dto.MaintenanceListResponse
 import com.cctn.app.data.remote.dto.MaintenanceRequestBody
 import com.cctn.app.data.remote.dto.NotificationsResponse
+import com.cctn.app.data.remote.dto.PaymentMethodResponse
+import com.cctn.app.data.remote.dto.PaymentMethodsResponse
 import com.cctn.app.data.remote.dto.ProfileResponse
 import com.cctn.app.data.remote.dto.RegisterRequest
 import com.cctn.app.data.remote.dto.ServicesResponse
 import com.cctn.app.data.remote.dto.SimpleResponse
 import com.cctn.app.data.remote.dto.SlotsResponse
+import com.cctn.app.data.remote.dto.UpdatePaymentMethodDetailsRequest
+import com.cctn.app.data.remote.dto.UpdatePaymentMethodRequest
 import com.cctn.app.data.remote.dto.UpdateProfileRequest
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -60,8 +65,33 @@ interface CctnApi {
     @POST("appointments")
     suspend fun book(@Body body: BookAppointmentRequest): BookAppointmentResponse
 
+    @POST("appointments/{id}/payment-method")
+    suspend fun updateAppointmentPaymentMethod(
+        @Path("id") id: Int,
+        @Body body: UpdatePaymentMethodRequest,
+    ): BookAppointmentResponse
+
     @DELETE("appointments/{id}")
     suspend fun cancelAppointment(@Path("id") id: Int): SimpleResponse
+
+    // ── Payment Methods ──────────────────────────────────────────────────────
+    @GET("payment-methods")
+    suspend fun paymentMethods(): PaymentMethodsResponse
+
+    @POST("payment-methods")
+    suspend fun createPaymentMethod(@Body body: CreatePaymentMethodRequest): PaymentMethodResponse
+
+    @PUT("payment-methods/{id}")
+    suspend fun updatePaymentMethod(
+        @Path("id") id: Int,
+        @Body body: UpdatePaymentMethodDetailsRequest,
+    ): PaymentMethodResponse
+
+    @DELETE("payment-methods/{id}")
+    suspend fun deletePaymentMethod(@Path("id") id: Int): SimpleResponse
+
+    @POST("payment-methods/{id}/set-default")
+    suspend fun setDefaultPaymentMethod(@Path("id") id: Int): PaymentMethodResponse
 
     // ── Services ─────────────────────────────────────────────────────────────
     @GET("services")

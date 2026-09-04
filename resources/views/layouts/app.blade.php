@@ -341,6 +341,7 @@
                     <a href="{{ route('home') }}" class="top-nav-link {{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
                     <a href="{{ route('client.appointments') }}" class="top-nav-link {{ request()->routeIs('client.appointments*') ? 'active' : '' }}">My Bookings</a>
                     <a href="{{ route('client.billing') }}" class="top-nav-link {{ request()->routeIs('client.billing*') ? 'active' : '' }}">Payments</a>
+                    <a href="{{ route('client.payment-methods') }}" class="top-nav-link {{ request()->routeIs('client.payment-methods*') ? 'active' : '' }}">Payment Methods</a>
                     <a href="{{ route('client.notifications') }}" class="top-nav-link {{ request()->routeIs('client.notifications*') ? 'active' : '' }}" style="display: inline-flex; align-items: center; gap: 4px;">
                         Notifications
                         @if($unreadCount > 0)
@@ -404,7 +405,10 @@
                         <span class="drawer-item-icon"><i class="bi bi-journal-text"></i></span> My Bookings
                     </a>
                     <a href="{{ route('client.billing') }}" class="drawer-item {{ request()->routeIs('client.billing*') ? 'active' : '' }}">
-                        <span class="drawer-item-icon"><i class="bi bi-credit-card"></i></span> Payments
+                        <span class="drawer-item-icon"><i class="bi bi-credit-card"></i></span> Payments &amp; Statements
+                    </a>
+                    <a href="{{ route('client.payment-methods') }}" class="drawer-item {{ request()->routeIs('client.payment-methods*') ? 'active' : '' }}">
+                        <span class="drawer-item-icon"><i class="bi bi-wallet2"></i></span> Payment Methods
                     </a>
                     <a href="{{ route('client.notifications') }}" class="drawer-item {{ request()->routeIs('client.notifications*') ? 'active' : '' }}">
                         <span class="drawer-item-icon"><i class="bi bi-bell"></i></span> Notifications

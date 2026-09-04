@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\BillingController;
 use App\Http\Controllers\Api\V1\MaintenanceController;
 use App\Http\Controllers\Api\V1\ChatbotController;
 use App\Http\Controllers\Api\V1\NotificationController;
+use App\Http\Controllers\Api\V1\PaymentMethodController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,10 +41,18 @@ Route::prefix('v1')->group(function () {
         Route::post('/notifications/read-all',  [NotificationController::class, 'markAllRead']);
 
         // Appointments
-        Route::get('/appointments',           [AppointmentController::class, 'index']);
-        Route::post('/appointments',          [AppointmentController::class, 'store']);
-        Route::delete('/appointments/{id}',   [AppointmentController::class, 'destroy']);
-        Route::get('/appointments/slots',     [AppointmentController::class, 'slots']);
+        Route::get('/appointments',                      [AppointmentController::class, 'index']);
+        Route::post('/appointments',                     [AppointmentController::class, 'store']);
+        Route::post('/appointments/{id}/payment-method', [AppointmentController::class, 'updatePaymentMethod']);
+        Route::delete('/appointments/{id}',              [AppointmentController::class, 'destroy']);
+        Route::get('/appointments/slots',                [AppointmentController::class, 'slots']);
+
+        // Payment Methods
+        Route::get('/payment-methods',                      [PaymentMethodController::class, 'index']);
+        Route::post('/payment-methods',                     [PaymentMethodController::class, 'store']);
+        Route::put('/payment-methods/{id}',                 [PaymentMethodController::class, 'update']);
+        Route::delete('/payment-methods/{id}',              [PaymentMethodController::class, 'destroy']);
+        Route::post('/payment-methods/{id}/set-default',    [PaymentMethodController::class, 'setDefault']);
 
         // Services
         Route::get('/services', [ServiceController::class, 'index']);

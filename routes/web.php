@@ -8,6 +8,7 @@ use App\Http\Controllers\Client\DashboardController as ClientDashboard;
 use App\Http\Controllers\Client\AppointmentController as ClientAppointment;
 use App\Http\Controllers\Client\BillingController as ClientBilling;
 use App\Http\Controllers\Client\NotificationController as ClientNotification;
+use App\Http\Controllers\Client\PaymentMethodController as ClientPaymentMethod;
 use App\Http\Controllers\Admin\AuthController as AdminAuth;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\AppointmentController as AdminAppointment;
@@ -53,11 +54,18 @@ Route::middleware('auth.client')->group(function () {
     Route::post('/dashboard/update-profile', [ClientDashboard::class, 'updateProfile'])->name('client.update-profile');
 
     Route::get('/my-appointments', [ClientAppointment::class, 'index'])->name('client.appointments');
+    Route::post('/my-appointments/{id}/payment-method', [ClientAppointment::class, 'updatePaymentMethod'])->name('client.appointments.payment-method');
     Route::get('/book', [ClientAppointment::class, 'create'])->name('client.book');
     Route::post('/book', [ClientAppointment::class, 'store'])->name('client.book.submit');
     Route::get('/api/booked-slots', [ClientAppointment::class, 'getBookedSlots'])->name('api.booked-slots');
 
     Route::get('/billing', [ClientBilling::class, 'index'])->name('client.billing');
+
+    Route::get('/payment-methods', [ClientPaymentMethod::class, 'index'])->name('client.payment-methods');
+    Route::post('/payment-methods', [ClientPaymentMethod::class, 'store'])->name('client.payment-methods.store');
+    Route::put('/payment-methods/{id}', [ClientPaymentMethod::class, 'update'])->name('client.payment-methods.update');
+    Route::delete('/payment-methods/{id}', [ClientPaymentMethod::class, 'destroy'])->name('client.payment-methods.destroy');
+    Route::post('/payment-methods/{id}/default', [ClientPaymentMethod::class, 'setDefault'])->name('client.payment-methods.default');
 
     Route::get('/notifications', [ClientNotification::class, 'index'])->name('client.notifications');
     Route::post('/notifications/{id}/read', [ClientNotification::class, 'markRead'])->name('client.notifications.read');

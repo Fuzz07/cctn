@@ -345,6 +345,25 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Quick Access: Payment Methods -->
+            <div class="c-card" style="padding: 1.25rem;">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+                    <div style="width: 38px; height: 38px; background: #fef2f2; color: #dc2626; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                        <i class="bi bi-credit-card-2-front-fill"></i>
+                    </div>
+                    <div>
+                        <h4 style="margin: 0; font-size: 0.95rem; font-weight: 800; color: #0f172a;">Digital Payment Methods</h4>
+                        <span style="font-size: 0.75rem; color: #64748b;">GCash, Maya, Bank Transfer</span>
+                    </div>
+                </div>
+                <p style="font-size: 0.8rem; color: #64748b; margin: 0 0 1rem 0; line-height: 1.4;">
+                    Set up your preferred digital payment method for quick appointment checkout and billing settlement.
+                </p>
+                <a href="{{ route('client.payment-methods') }}" class="btn" style="display: block; text-align: center; background: #0f172a; color: #ffffff; padding: 0.6rem; border-radius: 8px; font-weight: 700; font-size: 0.82rem; text-decoration: none;">
+                    Manage Payment Methods &rarr;
+                </a>
+            </div>
         </div>
     </div>
 

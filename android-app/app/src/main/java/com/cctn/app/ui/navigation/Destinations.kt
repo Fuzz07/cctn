@@ -25,6 +25,7 @@ object Routes {
 
     const val BOOK = "book"
     const val NOTIFICATIONS = "notifications"
+    const val PAYMENT_METHODS = "payment_methods"
 
     /** The assistant. Reachable from the bar on every tab, like the site's bubble. */
     const val CHAT = "chat"

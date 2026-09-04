@@ -189,7 +189,60 @@ fun BookScreen(
             }
 
             Spacer(Modifier.height(6.dp))
-            SectionTitle("4. Anything we should know?")
+            SectionTitle("4. Digital Payment Method")
+
+            val digitalOptions = listOf("GCash", "Maya", "Bank Transfer", "Credit/Debit Card")
+            val availableMethods = if (state.paymentMethods.isNotEmpty()) {
+                state.paymentMethods.map { it.providerName }.distinct() + digitalOptions.filter { opt ->
+                    state.paymentMethods.none { it.providerName.equals(opt, ignoreCase = true) }
+                }
+            } else digitalOptions
+
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                availableMethods.chunked(2).forEach { row ->
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        row.forEach { method ->
+                            val selected = state.selectedPaymentMethod.equals(method, ignoreCase = true)
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(46.dp)
+                                    .border(
+                                        width = if (selected) 2.dp else 1.dp,
+                                        color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                                        shape = RoundedCornerShape(10.dp),
+                                    )
+                                    .background(
+                                        color = if (selected) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.35f) else MaterialTheme.colorScheme.surface,
+                                        shape = RoundedCornerShape(10.dp),
+                                    )
+                                    .clickable(enabled = !state.submitting) {
+                                        viewModel.selectPaymentMethod(method)
+                                    },
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Text(
+                                    text = method,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                                )
+                            }
+                        }
+                        repeat(2 - row.size) { Spacer(Modifier.weight(1f)) }
+                    }
+                }
+            }
+
+            CctnTextField(
+                value = state.referenceNumber,
+                onValueChange = viewModel::onReferenceNumberChange,
+                label = "Transaction / Ref No. (optional)",
+                placeholder = "e.g. 10029384756",
+                enabled = !state.submitting,
+            )
+
+            Spacer(Modifier.height(6.dp))
+            SectionTitle("5. Anything we should know?")
 
             CctnTextField(
                 value = state.message,

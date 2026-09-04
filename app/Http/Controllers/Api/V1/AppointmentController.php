@@ -60,13 +60,26 @@ class AppointmentController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'service_id'     => 'required|exists:services,id',
-            'preferred_date' => 'required|date|after_or_equal:today',
-            'preferred_time' => 'required|string',
-            'message'        => 'nullable|string|max:500',
+            'service_id'       => 'required|exists:services,id',
+            'preferred_date'   => 'required|date|after_or_equal:today',
+            'preferred_time'   => 'required|string',
+            'message'          => 'nullable|string|max:500',
+            'payment_method'   => 'nullable|string|max:50|not_in:Cash,cash',
+            'reference_number' => 'nullable|string|max:100',
+            'payment_proof'    => 'nullable|image|mimes:jpeg,png,jpg,webp|max:4096',
+        ], [
+            'payment_method.not_in' => 'Cash is not available. Please select a digital payment method (GCash, Maya, Bank Transfer, or Card).',
         ]);
 
         $client = $request->user();
+
+        $paymentProofPath = null;
+        if ($request->hasFile('payment_proof')) {
+            $paymentProofPath = $request->file('payment_proof')->store('payments', 'public');
+        }
+
+        $defaultMethod = $client->defaultPaymentMethod?->provider_name;
+        $paymentMethod = $request->input('payment_method') ?: ($defaultMethod ?: 'GCash');
 
         // Check conflict → auto-reschedule
         if (Appointment::hasConflict($request->preferred_date, $request->preferred_time)) {
@@ -80,12 +93,15 @@ class AppointmentController extends Controller
             }
 
             $appointment = Appointment::create([
-                'client_id'      => $client->id,
-                'service_id'     => $request->service_id,
-                'preferred_date' => $next['date'],
-                'preferred_time' => $next['time'],
-                'message'        => $request->input('message', ''),
-                'status'         => 'pending',
+                'client_id'        => $client->id,
+                'service_id'       => $request->service_id,
+                'preferred_date'   => $next['date'],
+                'preferred_time'   => $next['time'],
+                'message'          => $request->input('message', ''),
+                'status'           => 'pending',
+                'payment_method'   => $paymentMethod,
+                'reference_number' => $request->input('reference_number'),
+                'payment_proof'    => $paymentProofPath,
             ]);
 
             Notification::create([
@@ -104,12 +120,15 @@ class AppointmentController extends Controller
         }
 
         $appointment = Appointment::create([
-            'client_id'      => $client->id,
-            'service_id'     => $request->service_id,
-            'preferred_date' => $request->preferred_date,
-            'preferred_time' => $request->preferred_time,
-            'message'        => $request->input('message', ''),
-            'status'         => 'pending',
+            'client_id'        => $client->id,
+            'service_id'       => $request->service_id,
+            'preferred_date'   => $request->preferred_date,
+            'preferred_time'   => $request->preferred_time,
+            'message'          => $request->input('message', ''),
+            'status'           => 'pending',
+            'payment_method'   => $paymentMethod,
+            'reference_number' => $request->input('reference_number'),
+            'payment_proof'    => $paymentProofPath,
         ]);
 
         Notification::create([
@@ -125,6 +144,38 @@ class AppointmentController extends Controller
             'message'     => 'Appointment booked successfully! Awaiting admin confirmation.',
             'appointment' => new AppointmentResource($appointment->load('service')),
         ], 201);
+    }
+
+    // ─── POST /api/v1/appointments/{id}/payment-method ──────────────────────
+    public function updatePaymentMethod(Request $request, int $id)
+    {
+        $request->validate([
+            'payment_method'   => 'required|string|max:50|not_in:Cash,cash',
+            'reference_number' => 'nullable|string|max:100',
+            'payment_proof'    => 'nullable|image|mimes:jpeg,png,jpg,webp|max:4096',
+        ], [
+            'payment_method.not_in' => 'Cash is not available. Please select a digital payment method.',
+        ]);
+
+        $client      = $request->user();
+        $appointment = Appointment::where('client_id', $client->id)->findOrFail($id);
+
+        $data = [
+            'payment_method'   => $request->payment_method,
+            'reference_number' => $request->input('reference_number'),
+        ];
+
+        if ($request->hasFile('payment_proof')) {
+            $data['payment_proof'] = $request->file('payment_proof')->store('payments', 'public');
+        }
+
+        $appointment->update($data);
+
+        return response()->json([
+            'success'     => true,
+            'message'     => 'Payment method updated successfully.',
+            'appointment' => new AppointmentResource($appointment->load('service')),
+        ]);
     }
 
     // ─── DELETE /api/v1/appointments/{id} ────────────────────────────────────
