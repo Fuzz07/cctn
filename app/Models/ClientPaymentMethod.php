@@ -23,6 +23,30 @@ class ClientPaymentMethod extends Model
         'is_default' => 'boolean',
     ];
 
+    /**
+     * Auto-heal / ensure client_payment_methods table exists in database
+     */
+    public static function ensureTableExists(): void
+    {
+        try {
+            if (!\Illuminate\Support\Facades\Schema::hasTable('client_payment_methods')) {
+                \Illuminate\Support\Facades\Schema::create('client_payment_methods', function (\Illuminate\Database\Schema\Blueprint $table) {
+                    $table->id();
+                    $table->foreignId('client_id')->constrained('clients')->onDelete('cascade');
+                    $table->string('payment_type', 50)->default('gcash');
+                    $table->string('provider_name', 100);
+                    $table->string('account_name', 150);
+                    $table->string('account_number', 100);
+                    $table->boolean('is_default')->default(false);
+                    $table->text('notes')->nullable();
+                    $table->timestamps();
+                });
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('ClientPaymentMethod table check failed: ' . $e->getMessage());
+        }
+    }
+
     public function client()
     {
         return $this->belongsTo(Client::class);

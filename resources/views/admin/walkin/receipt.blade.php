@@ -192,7 +192,7 @@
                 <h4>Installation Schedule</h4>
                 <p>Date: <strong>{{ date('F j, Y', strtotime($appointment->preferred_date)) }}</strong></p>
                 <p>Time: <strong>{{ date('h:i A', strtotime($appointment->preferred_time)) }}</strong></p>
-                <p>Address: {{ $appointment->installation_address ?? $appointment->client->complete_address }}</p>
+                <p>Address: {{ $appointment->installation_address ?? ($appointment->client?->complete_address ?? 'N/A') }}</p>
                 <p>Status: <span style="color:#16a34a; font-weight:800;">{{ strtoupper($appointment->installation_status ?? 'Scheduled') }}</span></p>
             </div>
         </div>

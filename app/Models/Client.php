@@ -49,17 +49,25 @@ class Client extends Authenticatable
 
     public function paymentMethods()
     {
+        ClientPaymentMethod::ensureTableExists();
         return $this->hasMany(ClientPaymentMethod::class);
     }
 
     public function defaultPaymentMethod()
     {
+        ClientPaymentMethod::ensureTableExists();
         return $this->hasOne(ClientPaymentMethod::class)->where('is_default', true);
     }
 
     public function getFullNameAttribute(): string
     {
         return trim("{$this->firstname} {$this->middlename} {$this->lastname}");
+    }
+
+    public function getCompleteAddressAttribute(): string
+    {
+        $parts = array_filter([$this->address_barangay, $this->address_municipality, $this->address_province]);
+        return !empty($parts) ? implode(', ', $parts) : 'N/A';
     }
 
     /**

@@ -12,6 +12,8 @@ use App\Models\Payment;
 use App\Support\InputRules;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class WalkInController extends Controller
 {
@@ -31,8 +33,7 @@ class WalkInController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            // Step 1: Client Info — character rules mirror the real-time
-            // filtering in public/assets/js/form-restrictions.js.
+            // Step 1: Client Info
             'full_name'            => InputRules::name(true, 150),
             'contact_no'           => InputRules::mobile(),
             'email'                => 'required|email|max:100',
@@ -75,140 +76,160 @@ class WalkInController extends Controller
             return back()->withErrors(['preferred_time' => 'The selected date and time slot is already fully booked. Please select another slot.'])->withInput();
         }
 
-        // 1. Find or create Client
-        $nameParts = explode(' ', trim($request->full_name), 2);
-        $firstname = $nameParts[0];
-        $lastname  = $nameParts[1] ?? 'Walk-In';
+        DB::beginTransaction();
 
-        $client = Client::where('email', $request->email)->first();
-        if (!$client) {
-            $acctNo = Client::nextAccountNumber();
-            $client = Client::create([
-                'account_number'     => $acctNo,
-                'firstname'          => $firstname,
-                'lastname'           => $lastname,
-                'email'              => $request->email,
-                'contact_no'         => $request->contact_no,
-                'address_barangay'   => $request->address_barangay,
-                'address_municipality' => $request->address_municipality,
-                'address_province'   => 'Cebu',
-                'username'           => strtolower(str_replace(' ', '', $firstname)) . rand(100, 999),
-                'password'           => bcrypt(Str::random(10)),
-            ]);
-        }
+        try {
+            // 1. Find or create Client
+            $nameParts = explode(' ', trim($request->full_name), 2);
+            $firstname = $nameParts[0];
+            $lastname  = $nameParts[1] ?? 'Walk-In';
 
-        $service = Service::findOrFail($request->service_id);
-        $monthlyFee = (float) $service->price;
-        $installationFee = (float) ($service->installation_fee ?? 1000.00);
-        $totalAmountDue = $installationFee + $monthlyFee;
+            $client = Client::where('email', $request->email)->first();
+            if (!$client) {
+                $acctNo = Client::nextAccountNumber();
+                $baseUsername = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $firstname)) ?: 'client';
+                $username = $baseUsername . rand(1000, 9999);
+                while (Client::where('username', $username)->exists()) {
+                    $username = $baseUsername . rand(10000, 99999);
+                }
 
-        // Payment status & calculations
-        $paymentStatus = 'Pending Payment';
-        $amountPaid = 0.00;
-        $changeAmount = 0.00;
-        $refNo = null;
-        $bankName = null;
-        $dueDate = null;
-        $paymentDate = null;
-        $paymentProofPath = null;
-
-        if ($request->hasFile('payment_proof')) {
-            $paymentProofPath = $request->file('payment_proof')->store('payment_proofs', 'public');
-        }
-
-        if ($request->payment_method === 'Cash') {
-            $amountReceived = (float) ($request->cash_received ?? $totalAmountDue);
-            $amountPaid = $amountReceived;
-            if ($amountReceived >= $totalAmountDue) {
-                $paymentStatus = 'Payment Confirmed';
-                $changeAmount = $amountReceived - $totalAmountDue;
+                $client = Client::create([
+                    'account_number'     => $acctNo,
+                    'firstname'          => $firstname,
+                    'lastname'           => $lastname,
+                    'email'              => $request->email,
+                    'contact_no'         => $request->contact_no,
+                    'address_barangay'   => $request->address_barangay,
+                    'address_municipality' => $request->address_municipality,
+                    'address_province'   => 'Cebu',
+                    'username'           => $username,
+                    'password'           => bcrypt(Str::random(10)),
+                ]);
             }
-            $paymentDate = now();
-            $refNo = 'CASH-' . strtoupper(Str::random(8));
-        } elseif ($request->payment_method === 'GCash') {
-            $amountPaid = (float) ($request->gcash_amount ?? $totalAmountDue);
-            if ($amountPaid >= $totalAmountDue) {
-                $paymentStatus = 'Payment Confirmed';
-            }
-            $refNo = $request->gcash_ref;
-            $paymentDate = $request->gcash_date ? \Carbon\Carbon::parse($request->gcash_date) : now();
-        } elseif ($request->payment_method === 'Bank Transfer') {
-            $amountPaid = (float) ($request->bank_amount ?? $totalAmountDue);
-            if ($amountPaid >= $totalAmountDue) {
-                $paymentStatus = 'Payment Confirmed';
-            }
-            $bankName = $request->bank_name;
-            $refNo = $request->bank_ref;
-            $paymentDate = $request->bank_date ? \Carbon\Carbon::parse($request->bank_date) : now();
-        } elseif ($request->payment_method === 'Pay Later') {
+
+            $service = Service::findOrFail($request->service_id);
+            $monthlyFee = (float) $service->price;
+            $installationFee = (float) ($service->installation_fee ?? 1000.00);
+            $totalAmountDue = $installationFee + $monthlyFee;
+
+            // Payment status & calculations
             $paymentStatus = 'Pending Payment';
             $amountPaid = 0.00;
-            $dueDate = $request->pay_later_due_date ? \Carbon\Carbon::parse($request->pay_later_due_date) : now()->addDays(7);
-        }
+            $changeAmount = 0.00;
+            $refNo = null;
+            $bankName = null;
+            $dueDate = null;
+            $paymentDate = null;
+            $paymentProofPath = null;
 
-        // Generate unique CBTVI Reference Number
-        $bookingRef = 'CBTVI-BK-' . date('Y') . '-' . str_pad(Appointment::count() + 1, 4, '0', STR_PAD_LEFT);
+            if ($request->hasFile('payment_proof')) {
+                $paymentProofPath = $request->file('payment_proof')->store('payment_proofs', 'public');
+            }
 
-        $appointment = Appointment::create([
-            'booking_ref'          => $bookingRef,
-            'is_walkin'            => true,
-            'client_id'            => $client->id,
-            'service_id'           => $service->id,
-            'preferred_date'       => $request->preferred_date,
-            'preferred_time'       => $request->preferred_time,
-            'installation_address' => $request->installation_address,
-            'message'              => $request->installation_notes,
-            'status'               => 'approved',
-            'installation_status'  => 'Scheduled',
-            'payment_status'       => $paymentStatus,
-            'payment_method'       => $request->payment_method,
-            'amount_paid'          => $amountPaid,
-            'amount_due'           => $totalAmountDue,
-            'change_amount'        => $changeAmount,
-            'bank_name'            => $bankName,
-            'reference_number'     => $refNo,
-            'due_date'             => $dueDate,
-            'payment_date'         => $paymentDate,
-            'valid_id_type'        => $request->valid_id_type,
-            'valid_id_number'      => $request->valid_id_number,
-            'payment_proof'        => $paymentProofPath,
-            'admin_notes'          => 'Registered via Walk-In Portal by Staff.',
-        ]);
+            if ($request->payment_method === 'Cash') {
+                $amountReceived = (float) ($request->cash_received ?? $totalAmountDue);
+                $amountPaid = $amountReceived;
+                if ($amountReceived >= $totalAmountDue) {
+                    $paymentStatus = 'Payment Confirmed';
+                    $changeAmount = $amountReceived - $totalAmountDue;
+                }
+                $paymentDate = now();
+                $refNo = 'CASH-' . strtoupper(Str::random(8));
+            } elseif ($request->payment_method === 'GCash') {
+                $amountPaid = (float) ($request->gcash_amount ?? $totalAmountDue);
+                if ($amountPaid >= $totalAmountDue) {
+                    $paymentStatus = 'Payment Confirmed';
+                }
+                $refNo = $request->gcash_ref;
+                $paymentDate = $request->gcash_date ? \Carbon\Carbon::parse($request->gcash_date) : now();
+            } elseif ($request->payment_method === 'Bank Transfer') {
+                $amountPaid = (float) ($request->bank_amount ?? $totalAmountDue);
+                if ($amountPaid >= $totalAmountDue) {
+                    $paymentStatus = 'Payment Confirmed';
+                }
+                $bankName = $request->bank_name;
+                $refNo = $request->bank_ref;
+                $paymentDate = $request->bank_date ? \Carbon\Carbon::parse($request->bank_date) : now();
+            } elseif ($request->payment_method === 'Pay Later') {
+                $paymentStatus = 'Pending Payment';
+                $amountPaid = 0.00;
+                $dueDate = $request->pay_later_due_date ? \Carbon\Carbon::parse($request->pay_later_due_date) : now()->addDays(7);
+            }
 
-        // Create billing account record for ledger; backfill the client's account number if missing
-        if (!$client->account_number) {
-            $client->update(['account_number' => Client::nextAccountNumber()]);
-        }
-        $billing = BillingAccount::create([
-            'client_id'         => $client->id,
-            'account_number'    => $client->account_number,
-            'statement_period'  => date('F Y'),
-            'amount_due'        => $totalAmountDue,
-            'penalty_amount'    => 0.00,
-            'total_amount_due'  => $totalAmountDue,
-            'status'            => $paymentStatus === 'Payment Confirmed' ? 'paid' : 'unpaid',
-            'due_date'          => $dueDate ?? now()->addDays(7),
-            'notes'             => "Initial Walk-In WiFi Installation Booking (#{$bookingRef})",
-            'paid_at'           => $paymentStatus === 'Payment Confirmed' ? now() : null,
-        ]);
+            // Generate guaranteed unique CBTVI Reference Number
+            do {
+                $bookingRef = 'CBTVI-BK-' . date('Y') . '-' . str_pad(mt_rand(1, 99999), 5, '0', STR_PAD_LEFT);
+            } while (Appointment::where('booking_ref', $bookingRef)->exists());
 
-        if ($amountPaid > 0) {
-            Payment::create([
-                'billing_id'       => $billing->id,
-                'client_id'        => $client->id,
-                'account_number'   => $billing->account_number,
-                'amount_paid'      => $amountPaid,
-                'payment_method'   => strtolower(str_replace(' ', '_', $request->payment_method)),
-                'reference_number' => $refNo ?? 'WALKIN-' . strtoupper(Str::random(6)),
-                'received_by'      => auth('admin')->user()->username ?? 'Staff',
-                'notes'            => "Walk-in WiFi Installation Payment for {$service->service_name}",
-                'payment_date'     => $paymentDate ?? now(),
-                'receipt_no'       => 'RCT-' . date('Ymd') . '-' . rand(1000, 9999),
+            $appointment = Appointment::create([
+                'booking_ref'          => $bookingRef,
+                'is_walkin'            => true,
+                'client_id'            => $client->id,
+                'service_id'           => $service->id,
+                'preferred_date'       => $request->preferred_date,
+                'preferred_time'       => $request->preferred_time,
+                'installation_address' => $request->installation_address,
+                'message'              => $request->installation_notes,
+                'status'               => 'approved',
+                'installation_status'  => 'Scheduled',
+                'payment_status'       => $paymentStatus,
+                'payment_method'       => $request->payment_method,
+                'amount_paid'          => $amountPaid,
+                'amount_due'           => $totalAmountDue,
+                'change_amount'        => $changeAmount,
+                'bank_name'            => $bankName,
+                'reference_number'     => $refNo,
+                'due_date'             => $dueDate,
+                'payment_date'         => $paymentDate,
+                'valid_id_type'        => $request->valid_id_type,
+                'valid_id_number'      => $request->valid_id_number,
+                'payment_proof'        => $paymentProofPath,
+                'admin_notes'          => 'Registered via Walk-In Portal by Staff.',
             ]);
-        }
 
-        return redirect()->route('admin.walkin.create', ['confirmed_id' => $appointment->id])
-            ->with('success_message', "Walk-In Client Booking successful! Reference: {$bookingRef}");
+            // Create billing account record for ledger; backfill the client's account number if missing
+            if (!$client->account_number) {
+                $client->update(['account_number' => Client::nextAccountNumber()]);
+            }
+
+            $billing = BillingAccount::create([
+                'client_id'         => $client->id,
+                'account_number'    => $client->account_number,
+                'statement_period'  => date('F Y'),
+                'amount_due'        => $totalAmountDue,
+                'penalty_amount'    => 0.00,
+                'total_amount_due'  => $totalAmountDue,
+                'status'            => $paymentStatus === 'Payment Confirmed' ? 'paid' : 'unpaid',
+                'due_date'          => $dueDate ?? now()->addDays(7),
+                'notes'             => "Initial Walk-In WiFi Installation Booking (#{$bookingRef})",
+                'paid_at'           => $paymentStatus === 'Payment Confirmed' ? now() : null,
+            ]);
+
+            if ($amountPaid > 0) {
+                Payment::create([
+                    'billing_id'       => $billing->id,
+                    'client_id'        => $client->id,
+                    'account_number'   => $billing->account_number,
+                    'amount_paid'      => $amountPaid,
+                    'payment_method'   => strtolower(str_replace(' ', '_', $request->payment_method)),
+                    'reference_number' => $refNo ?? 'WALKIN-' . strtoupper(Str::random(6)),
+                    'received_by'      => auth('admin')->user()?->username ?? auth('admin')->user()?->fullname ?? 'Staff',
+                    'notes'            => "Walk-in WiFi Installation Payment for {$service->service_name}",
+                    'payment_date'     => $paymentDate ?? now(),
+                    'receipt_no'       => 'RCT-' . date('Ymd') . '-' . rand(1000, 9999),
+                ]);
+            }
+
+            DB::commit();
+
+            return redirect()->route('admin.walkin.create', ['confirmed_id' => $appointment->id])
+                ->with('success_message', "Walk-In Client Booking successful! Reference: {$bookingRef}");
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error('WalkIn registration failed: ' . $e->getMessage(), ['exception' => $e]);
+
+            return back()->withErrors(['error' => 'Unable to record walk-in booking: ' . $e->getMessage()])->withInput();
+        }
     }
 
     public function receipt($id)
