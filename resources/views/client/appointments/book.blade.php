@@ -185,22 +185,51 @@
                     </div>
                 @endif
 
-                <select name="payment_method" id="payment_method" class="form-control" required style="font-weight: 600;">
+                <select name="payment_method" id="payment_method" class="form-control" required style="font-weight: 600;" onchange="updatePaymentInstructions()">
                     <option value="GCash" {{ old('payment_method', ($defaultMethod->provider_name ?? 'GCash')) == 'GCash' ? 'selected' : '' }}>GCash (E-Wallet)</option>
                     <option value="Maya" {{ old('payment_method', ($defaultMethod->provider_name ?? '')) == 'Maya' ? 'selected' : '' }}>Maya (E-Wallet)</option>
                     <option value="Bank Transfer" {{ old('payment_method', ($defaultMethod->provider_name ?? '')) == 'Bank Transfer' ? 'selected' : '' }}>Bank Transfer (BDO, BPI, UnionBank)</option>
                     <option value="Credit/Debit Card" {{ old('payment_method', ($defaultMethod->provider_name ?? '')) == 'Credit/Debit Card' ? 'selected' : '' }}>Credit / Debit Card</option>
                 </select>
 
-                <!-- Digital Payment Details (GCash / Maya / Bank) -->
-                <div id="digital_payment_fields" style="margin-top: 1rem;">
-                    <div style="margin-bottom: 1rem;">
-                        <label class="form-label" for="reference_number" style="font-size: 0.85rem;">Reference / Transaction No. (Optional)</label>
-                        <input type="text" name="reference_number" id="reference_number" class="form-control" placeholder="e.g. 10029384756" value="{{ old('reference_number') }}">
+                <!-- DYNAMIC PAYMENT INSTRUCTIONS CARD -->
+                <div id="payment_instructions_box" style="margin-top: 1.25rem; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 1.25rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                        <span style="font-size: 0.85rem; font-weight: 800; color: #dc2626; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.4rem;">
+                            <i class="bi bi-info-circle-fill"></i> Payment Account Instructions
+                        </span>
+                        <span id="instruction_provider_badge" style="background: #dbeafe; color: #1d4ed8; font-size: 0.75rem; font-weight: 800; padding: 0.2rem 0.65rem; border-radius: 99px;">
+                            GCash
+                        </span>
                     </div>
+
+                    <!-- Dynamic Account Info Display -->
+                    <div id="account_details_content" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 1rem; margin-bottom: 1rem;">
+                        <!-- Injected via JavaScript -->
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label class="form-label" for="reference_number" style="font-size: 0.85rem; font-weight: 700; color: #334155;">
+                            Reference / Transaction Number <span style="color: #dc2626;">*</span>
+                        </label>
+                        <input type="text" name="reference_number" id="reference_number" class="form-control" placeholder="e.g. 10029384756" value="{{ old('reference_number') }}" style="font-family: monospace; font-size: 0.95rem; font-weight: 700;">
+                        <small style="color: #64748b; font-size: 0.78rem; display: block; margin-top: 0.25rem;">Enter the reference or reference ID from your payment confirmation screen.</small>
+                    </div>
+
                     <div>
-                        <label class="form-label" for="payment_proof" style="font-size: 0.85rem;">Upload Payment Receipt / Proof (Optional)</label>
+                        <label class="form-label" for="payment_proof" style="font-size: 0.85rem; font-weight: 700; color: #334155;">
+                            Upload Payment Receipt or Screenshot <span style="color: #dc2626;">*</span>
+                        </label>
                         <input type="file" name="payment_proof" id="payment_proof" class="form-control" accept="image/jpeg,image/png,image/jpg,image/webp">
+                        <small style="color: #64748b; font-size: 0.78rem; display: block; margin-top: 0.25rem;">Upload a clear screenshot or photo of your payment receipt.</small>
+                    </div>
+
+                    <!-- Pending Status Notice -->
+                    <div style="margin-top: 1rem; background: #fffbebf8; border: 1px solid #fde68a; border-radius: 8px; padding: 0.75rem 1rem; font-size: 0.8rem; color: #92400e; display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1rem;">⏳</span>
+                        <span>
+                            <strong>Note:</strong> After booking, your payment status will remain <strong>Pending Verification</strong> until our administrator verifies your submitted transaction reference and screenshot.
+                        </span>
                     </div>
                 </div>
             </div>
@@ -222,16 +251,94 @@
 
 @push('scripts')
 <script>
-    document.getElementById('preferred_date').addEventListener('change', function() {
-        let selectedDate = this.value;
-        let serviceId = document.getElementById('service_id').value;
-        let url = new URL(window.location.href);
-        url.searchParams.set('date', selectedDate);
-        if (serviceId) {
-            url.searchParams.set('service_id', serviceId);
+    const PAYMENT_ACCOUNTS = {
+        'GCash': {
+            badge: 'GCash E-Wallet',
+            badgeBg: '#dbeafe',
+            badgeFg: '#1d4ed8',
+            name: 'Bogo Cable Television Inc. (BCTVI)',
+            accountNumber: '0917 888 2099',
+            typeLabel: 'GCash Number',
+            instructions: 'Send exact payment to the GCash account above. Enter your Name or Account No. in the message/notes field.'
+        },
+        'Maya': {
+            badge: 'Maya E-Wallet',
+            badgeBg: '#dcfce7',
+            badgeFg: '#15803d',
+            name: 'Bogo Cable Television Inc. (BCTVI)',
+            accountNumber: '0917 888 2099',
+            typeLabel: 'Maya Number',
+            instructions: 'Transfer exact amount to the official Maya account details above.'
+        },
+        'Bank Transfer': {
+            badge: 'Bank Transfer (BDO / BPI)',
+            badgeBg: '#f3e8ff',
+            badgeFg: '#6b21a8',
+            name: 'Bogo Cable Television Inc.',
+            accountNumber: '0012-3456-7890 (BDO Unibank) / 1234-5678-90 (BPI)',
+            typeLabel: 'Bank Account Number',
+            instructions: 'Execute online bank transfer or over-the-counter deposit to BCTVI BDO/BPI account.'
+        },
+        'Credit/Debit Card': {
+            badge: 'Credit / Debit Card',
+            badgeBg: '#e0f2fe',
+            badgeFg: '#0369a1',
+            name: 'BCTVI Payment Channel',
+            accountNumber: 'Online Card Portal Transfer',
+            typeLabel: 'Payment Channel',
+            instructions: 'Process your card payment via our verified online payment account channel.'
         }
-        window.location.href = url.toString();
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+        updatePaymentInstructions();
+        
+        document.getElementById('preferred_date').addEventListener('change', function() {
+            let selectedDate = this.value;
+            let serviceId = document.getElementById('service_id').value;
+            let url = new URL(window.location.href);
+            url.searchParams.set('date', selectedDate);
+            if (serviceId) {
+                url.searchParams.set('service_id', serviceId);
+            }
+            window.location.href = url.toString();
+        });
     });
+
+    function updatePaymentInstructions() {
+        const pmSelect = document.getElementById('payment_method');
+        if (!pmSelect) return;
+
+        let selectedVal = pmSelect.value;
+        let details = PAYMENT_ACCOUNTS[selectedVal] || PAYMENT_ACCOUNTS['GCash'];
+
+        const badgeEl = document.getElementById('instruction_provider_badge');
+        if (badgeEl) {
+            badgeEl.innerText = details.badge;
+            badgeEl.style.background = details.badgeBg;
+            badgeEl.style.color = details.badgeFg;
+        }
+
+        const contentEl = document.getElementById('account_details_content');
+        if (contentEl) {
+            contentEl.innerHTML = `
+                <div style="font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.35rem;">${details.badge} Official Account</div>
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 0.5rem;">
+                    <div>
+                        <div style="font-size: 0.8rem; color: #475569;">Account Name:</div>
+                        <strong style="font-size: 1rem; color: #0f172a;">${details.name}</strong>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 0.8rem; color: #475569;">${details.typeLabel}:</div>
+                        <strong style="font-size: 1.15rem; color: #dc2626; font-family: monospace;">${details.accountNumber}</strong>
+                    </div>
+                </div>
+                <div style="font-size: 0.82rem; color: #475569; border-top: 1px dashed #e2e8f0; padding-top: 0.5rem; margin-top: 0.5rem;">
+                    <strong>Instructions:</strong> ${details.instructions}
+                </div>
+            `;
+        }
+    }
 
     function selectSavedMethod(provider, accountNum) {
         const pmSelect = document.getElementById('payment_method');
@@ -249,6 +356,7 @@
         if (!matched && provider.toLowerCase().includes('bank')) {
             pmSelect.value = 'Bank Transfer';
         }
+        updatePaymentInstructions();
     }
 </script>
 @endpush

@@ -126,8 +126,28 @@
                     <form action="{{ route('client.appointments.payment-method', $appt->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div style="font-size: 0.9rem; font-weight: 700; color: #0f172a; margin-bottom: 0.75rem;">
-                            Update Payment Method for Appointment #{{ str_pad($appt->id, 6, '0', STR_PAD_LEFT) }}
+                            Update Payment Details for Appointment #{{ str_pad($appt->id, 6, '0', STR_PAD_LEFT) }}
                         </div>
+
+                        <!-- Payment Instructions Box -->
+                        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1rem; margin-bottom: 1rem;">
+                            <div style="font-size: 0.8rem; font-weight: 800; color: #dc2626; text-transform: uppercase; margin-bottom: 0.4rem;">
+                                💡 Official BCTVI Payment Accounts
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; font-size: 0.8rem;">
+                                <div style="background: #f8fafc; padding: 0.6rem 0.75rem; border-radius: 6px; border: 1px solid #cbd5e1;">
+                                    <strong style="color: #007DFE;">GCash / Maya:</strong><br>
+                                    Acc Name: <strong>BCTVI Broadband</strong><br>
+                                    Number: <strong style="font-family: monospace; color: #dc2626;">0917 888 2099</strong>
+                                </div>
+                                <div style="background: #f8fafc; padding: 0.6rem 0.75rem; border-radius: 6px; border: 1px solid #cbd5e1;">
+                                    <strong style="color: #6b21a8;">Bank Transfer (BDO):</strong><br>
+                                    Acc Name: <strong>Bogo Cable Television Inc.</strong><br>
+                                    Acc #: <strong style="font-family: monospace; color: #dc2626;">0012-3456-7890</strong>
+                                </div>
+                            </div>
+                        </div>
+
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
                             <div>
                                 <label style="display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.35rem; color: #334155;">Digital Payment Method</label>
@@ -140,16 +160,22 @@
                             </div>
                             <div id="ref-field-{{ $appt->id }}">
                                 <label style="display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.35rem; color: #334155;">Reference / Transaction No.</label>
-                                <input type="text" name="reference_number" class="form-control" style="width: 100%; padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid #cbd5e1;" placeholder="e.g. 10029384756" value="{{ $appt->reference_number }}">
+                                <input type="text" name="reference_number" class="form-control" style="width: 100%; padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid #cbd5e1; font-family: monospace; font-weight: 700;" placeholder="e.g. 10029384756" value="{{ $appt->reference_number }}">
                             </div>
                             <div id="proof-field-{{ $appt->id }}">
                                 <label style="display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.35rem; color: #334155;">Upload Payment Proof (Receipt)</label>
                                 <input type="file" name="payment_proof" class="form-control" style="width: 100%; padding: 0.4rem 0.75rem; border-radius: 6px; border: 1px solid #cbd5e1;" accept="image/*">
                             </div>
                         </div>
+
+                        <!-- Pending status advisory -->
+                        <div style="background: #fffbebf8; border: 1px solid #fde68a; border-radius: 6px; padding: 0.6rem 0.85rem; font-size: 0.78rem; color: #92400e; margin-bottom: 1rem;">
+                            ⏳ <strong>Status Notice:</strong> Your payment will remain marked as <strong>Pending Verification</strong> until verified by our administrator.
+                        </div>
+
                         <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
                             <button type="button" class="btn-action" style="background: #fff; border-color: #cbd5e1; color: #475569;" onclick="togglePaymentForm({{ $appt->id }})">Cancel</button>
-                            <button type="submit" class="btn-action" style="background: #dc2626; color: #fff; font-weight: 700;">Save Payment Method</button>
+                            <button type="submit" class="btn-action" style="background: #dc2626; color: #fff; font-weight: 700;">Save &amp; Submit Payment</button>
                         </div>
                     </form>
                 </div>

@@ -37,24 +37,48 @@
     </div>
 
     <!-- DIGITAL PAYMENT INSTRUCTION BANNER -->
-    <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #ffffff; border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.06); display: flex; align-items: flex-start; gap: 1.25rem;">
-        <div style="width: 48px; height: 48px; background: #dc2626; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; box-shadow: 0 4px 12px rgba(220,38,38,0.4);">
-            💳
-        </div>
-        <div style="flex: 1;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem;">
-                <h4 style="font-size: 1.05rem; font-weight: 800; margin: 0 0 0.35rem; color: #ffffff;">How to Pay Your Bill (Digital Payments Only)</h4>
-                <a href="{{ route('client.payment-methods') }}" style="color: #fca5a5; font-size: 0.8rem; font-weight: 700; text-decoration: none;">
-                    Add / View Saved Methods &rarr;
-                </a>
+    <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #ffffff; border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.06);">
+        <div style="display: flex; align-items: flex-start; gap: 1.25rem; margin-bottom: 1.25rem;">
+            <div style="width: 48px; height: 48px; background: #dc2626; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; box-shadow: 0 4px 12px rgba(220,38,38,0.4);">
+                💳
             </div>
-            <p style="font-size: 0.88rem; color: #cbd5e1; margin: 0 0 0.6rem; line-height: 1.5;">
-                We accept secure digital payments via <strong>GCash, Maya, and Online Bank Transfers (BDO, BPI, UnionBank)</strong>. Always use your Account Number (<strong style="color: #f87171; font-family: monospace;">{{ $client->account_number ?? 'N/A' }}</strong>) as reference.
-            </p>
-            <div style="display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.8rem; color: #94a3b8; font-weight: 600;">
-                <span>✓ Instant verification with saved methods</span>
-                <span>✓ GCash / Maya E-Wallet Transfer</span>
-                <span>✓ Official digital statement tracking</span>
+            <div style="flex: 1;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem;">
+                    <h4 style="font-size: 1.05rem; font-weight: 800; margin: 0 0 0.35rem; color: #ffffff;">How to Pay Your Bill &amp; Official Payment Accounts</h4>
+                    <a href="{{ route('client.payment-methods') }}" style="color: #fca5a5; font-size: 0.8rem; font-weight: 700; text-decoration: none;">
+                        Manage Saved Methods &rarr;
+                    </a>
+                </div>
+                <p style="font-size: 0.88rem; color: #cbd5e1; margin: 0 0 0.6rem; line-height: 1.5;">
+                    Send your payments directly to our official digital accounts below. Always use your Account Number (<strong style="color: #f87171; font-family: monospace;">{{ $client->account_number ?? 'N/A' }}</strong>) as reference.
+                </p>
+            </div>
+        </div>
+
+        <!-- Official Accounts Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem;">
+            <div style="background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 1rem;">
+                <div style="font-size: 0.75rem; font-weight: 800; color: #60a5fa; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">● GCash Official Account</div>
+                <div style="font-size: 0.82rem; color: #94a3b8;">Account Name:</div>
+                <strong style="font-size: 0.95rem; color: #ffffff;">Bogo Cable Television Inc. (BCTVI)</strong>
+                <div style="font-size: 0.82rem; color: #94a3b8; margin-top: 0.35rem;">GCash Number:</div>
+                <strong style="font-size: 1.1rem; color: #38bdf8; font-family: monospace;">0917 888 2099</strong>
+            </div>
+
+            <div style="background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 1rem;">
+                <div style="font-size: 0.75rem; font-weight: 800; color: #4ade80; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">● Maya Official Account</div>
+                <div style="font-size: 0.82rem; color: #94a3b8;">Account Name:</div>
+                <strong style="font-size: 0.95rem; color: #ffffff;">Bogo Cable Television Inc. (BCTVI)</strong>
+                <div style="font-size: 0.82rem; color: #94a3b8; margin-top: 0.35rem;">Maya Number:</div>
+                <strong style="font-size: 1.1rem; color: #4ade80; font-family: monospace;">0917 888 2099</strong>
+            </div>
+
+            <div style="background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 1rem;">
+                <div style="font-size: 0.75rem; font-weight: 800; color: #c084fc; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">● BDO / BPI Bank Account</div>
+                <div style="font-size: 0.82rem; color: #94a3b8;">Account Name:</div>
+                <strong style="font-size: 0.95rem; color: #ffffff;">Bogo Cable Television Inc.</strong>
+                <div style="font-size: 0.82rem; color: #94a3b8; margin-top: 0.35rem;">Account Number:</div>
+                <strong style="font-size: 1rem; color: #e9d5ff; font-family: monospace;">0012-3456-7890 (BDO)</strong>
             </div>
         </div>
     </div>
