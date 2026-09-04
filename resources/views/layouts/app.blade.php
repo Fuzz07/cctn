@@ -364,8 +364,8 @@
                     <a href="{{ route('home') }}#plans" class="top-nav-link">Plans</a>
                     <a href="{{ route('home') }}#support" class="top-nav-link">Support</a>
                     <a href="{{ route('home') }}#about" class="top-nav-link">About</a>
-                    <a href="{{ route('login') }}" class="top-nav-btn-outline">Login</a>
-                    <a href="{{ route('register') }}" class="top-nav-btn-solid">Get Started</a>
+                    <a href="{{ route('login') }}" class="top-nav-btn-outline"><i class="bi bi-person-fill" style="font-size: 1.05rem;"></i> Login</a>
+                    <a href="{{ route('register') }}" class="top-nav-btn-solid"><i class="bi bi-rocket-takeoff-fill"></i> Get Started</a>
                 @endauth
             </div>
         </div>
