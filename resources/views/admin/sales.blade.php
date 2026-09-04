@@ -22,12 +22,54 @@
     .badge-cash { background:#dcfce7; color:#15803d; }
     .badge-gcash { background:#dbeafe; color:#1d4ed8; }
     .badge-other { background:#f1f5f9; color:#475569; }
+
+    .btn-print-action {
+        background: #fef2f2;
+        color: #dc2626;
+        border: 1px solid #fecaca;
+        font-size: 0.8rem;
+        font-weight: 700;
+        padding: 0.4rem 0.85rem;
+        border-radius: 8px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        transition: all 0.2s ease;
+    }
+    .btn-print-action:hover {
+        background: #dc2626;
+        color: #ffffff;
+        border-color: #dc2626;
+    }
+
+    .btn-summary-print {
+        background: #dc2626;
+        color: #ffffff;
+        padding: 0.65rem 1.25rem;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
+        transition: all 0.2s ease;
+    }
+    .btn-summary-print:hover {
+        background: #b91c1c;
+        color: #ffffff;
+    }
 </style>
 @endpush
 
 @section('content')
 <div class="page-header">
     <h1 class="page-title">Sales & Revenue Report</h1>
+    <a href="{{ route('admin.sales.print-summary') }}" target="_blank" class="btn-summary-print">
+        🖨️ Print Sales Report Statement
+    </a>
 </div>
 
 <div class="revenue-banner">
@@ -59,6 +101,7 @@
                 <th>Method</th>
                 <th>Received By</th>
                 <th>Date</th>
+                <th style="text-align:center;">Action</th>
             </tr>
         </thead>
         <tbody>
@@ -73,7 +116,7 @@
                 <tr>
                     <td><strong style="color:#dc2626; font-family:monospace; font-size:.85rem;">{{ $pay->receipt_no }}</strong></td>
                     <td>
-                        <div style="font-weight:700; color:#0f172a;">{{ $pay->client->firstname ?? '' }} {{ $pay->client->lastname ?? '' }}</div>
+                        <div style="font-weight:700; color:#0f172a;">{{ $pay->client->firstname ?? 'Walk-In' }} {{ $pay->client->lastname ?? 'Client' }}</div>
                     </td>
                     <td style="font-family:monospace; font-size:.85rem; color:#64748b;">{{ $pay->account_number }}</td>
                     <td style="color:#475569;">{{ $pay->billing->statement_period ?? '—' }}</td>
@@ -81,10 +124,15 @@
                     <td><span class="badge-method {{ $methodClass }}">{{ $pay->payment_method }}</span></td>
                     <td style="color:#64748b;">{{ $pay->received_by ?? '—' }}</td>
                     <td style="color:#64748b;">{{ $pay->payment_date ? date('M d, Y', strtotime($pay->payment_date)) : '—' }}</td>
+                    <td style="text-align:center;">
+                        <a href="{{ route('admin.sales.receipt', $pay->id) }}" target="_blank" class="btn-print-action">
+                            🖨️ Receipt
+                        </a>
+                    </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="8" style="text-align:center; padding:3rem; color:#94a3b8;">No payment records found.</td>
+                    <td colspan="9" style="text-align:center; padding:3rem; color:#94a3b8;">No payment records found.</td>
                 </tr>
             @endforelse
         </tbody>

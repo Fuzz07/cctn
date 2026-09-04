@@ -102,6 +102,8 @@ Route::prefix('admin')->group(function () {
         Route::post('/billing/payment', [AdminBilling::class, 'recordPayment'])->name('admin.billing.payment');
 
         Route::get('/sales', [AdminSales::class, 'index'])->name('admin.sales');
+        Route::get('/sales/receipt/{id}', [AdminSales::class, 'receipt'])->name('admin.sales.receipt');
+        Route::get('/sales/print-summary', [AdminSales::class, 'printSummary'])->name('admin.sales.print-summary');
 
         Route::get('/schedules', [AdminSchedule::class, 'index'])->name('admin.schedules');
         Route::post('/schedules', [AdminSchedule::class, 'store'])->name('admin.schedules.store');
