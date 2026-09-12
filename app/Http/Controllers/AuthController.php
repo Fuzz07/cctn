@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Auth\Events\PasswordReset;
 
 class AuthController extends Controller
 {
@@ -413,20 +416,63 @@ class AuthController extends Controller
     {
         $request->validate(['email' => 'required|email']);
 
-        $client = Client::where('email', $request->email)->first();
-        if (!$client) {
-            return back()->withErrors(['email' => 'No account found with that email address.']);
+        try {
+            $status = Password::broker('clients')->sendResetLink(
+                $request->only('email')
+            );
+        } catch (\Throwable $exception) {
+            Log::error('Unable to send client password reset email.', [
+                'email' => $request->input('email'),
+                'exception' => $exception,
+            ]);
+
+            return back()
+                ->withErrors(['email' => 'We could not send the reset email. Please try again later or contact BCTVI support.'])
+                ->withInput();
         }
 
-        $token = bin2hex(random_bytes(32));
-        $client->update([
-            'reset_token'      => $token,
-            'reset_expires_at' => now()->addHour(),
+        if ($status !== Password::RESET_LINK_SENT) {
+            return back()
+                ->withErrors(['email' => __($status)])
+                ->withInput();
+        }
+
+        return redirect()->route('login')->with('success_message', __($status));
+    }
+
+    public function showResetPassword(Request $request, string $token)
+    {
+        return view('auth.reset-password', [
+            'token' => $token,
+            'email' => $request->query('email'),
+        ]);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'token' => 'required|string',
+            'email' => 'required|email',
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
-        // In production, send email. For now, just flash the token.
-        session()->flash('success_message', 'Password reset instructions have been sent to your email address.');
+        $status = Password::broker('clients')->reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function (Client $client, string $password) {
+                $client->forceFill([
+                    'password' => Hash::make($password),
+                ])->save();
 
-        return redirect()->route('login');
+                event(new PasswordReset($client));
+            }
+        );
+
+        if ($status !== Password::PASSWORD_RESET) {
+            return back()
+                ->withErrors(['email' => __($status)])
+                ->withInput($request->only('email'));
+        }
+
+        return redirect()->route('login')->with('success_message', __($status));
     }
 }

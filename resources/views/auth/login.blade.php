@@ -148,6 +148,12 @@
             <h2 class="auth-form-title">Client Login</h2>
             <p class="auth-form-sub">Welcome back! Please sign in to continue.</p>
 
+            @if (session('success_message'))
+                <div style="background: #f0fdf4; border: 1px solid #86efac; color: #166534; padding: 0.75rem; border-radius: 8px; font-size: 0.85rem; margin-bottom: 1.25rem;">
+                    {{ session('success_message') }}
+                </div>
+            @endif
+
             @if ($errors->any())
                 <div style="background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; padding: 0.75rem; border-radius: 8px; font-size: 0.85rem; margin-bottom: 1.25rem;">
                     @foreach ($errors->all() as $error)
