@@ -258,6 +258,7 @@ private fun MainNavHost(navController: NavHostController = rememberNavController
                         navController.navigateToTab(Routes.APPOINTMENTS)
                     },
                     onBack = { navController.popBackStack() },
+                    onPaymentMethods = { navController.navigate(Routes.PAYMENT_METHODS) },
                 )
             }
         }

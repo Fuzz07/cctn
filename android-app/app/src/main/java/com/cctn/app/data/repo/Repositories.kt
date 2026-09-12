@@ -1,12 +1,14 @@
 package com.cctn.app.data.repo
 
+import android.content.Context
+import android.net.Uri
+import com.cctn.app.core.AppError
 import com.cctn.app.core.AppResult
 import com.cctn.app.core.map
 import com.cctn.app.data.remote.CctnApi
 import com.cctn.app.data.remote.apiCall
 import com.cctn.app.data.remote.dto.AppointmentDto
 import com.cctn.app.data.remote.dto.BillingResponse
-import com.cctn.app.data.remote.dto.BookAppointmentRequest
 import com.cctn.app.data.remote.dto.BookAppointmentResponse
 import com.cctn.app.data.remote.dto.ChatMessageBody
 import com.cctn.app.data.remote.dto.ChatResponse
@@ -26,7 +28,11 @@ import com.cctn.app.data.remote.dto.UpdatePaymentMethodDetailsRequest
 import com.cctn.app.data.remote.dto.UpdatePaymentMethodRequest
 import com.cctn.app.data.remote.dto.UpdateProfileRequest
 import com.cctn.app.data.session.SessionManager
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -92,6 +98,7 @@ class ProfileRepository @Inject constructor(
 
 @Singleton
 class AppointmentRepository @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val api: CctnApi,
     private val json: Json,
 ) {
@@ -106,19 +113,67 @@ class AppointmentRepository @Inject constructor(
         date: String,
         time: String,
         message: String?,
-        paymentMethod: String? = null,
-        referenceNumber: String? = null,
-    ): AppResult<BookAppointmentResponse> = apiCall(json) {
-        api.book(
-            BookAppointmentRequest(
-                serviceId = serviceId,
-                preferredDate = date,
-                preferredTime = time,
-                message = message?.takeIf { it.isNotBlank() },
-                paymentMethod = paymentMethod?.takeIf { it.isNotBlank() },
-                referenceNumber = referenceNumber?.takeIf { it.isNotBlank() },
+        paymentMethod: String,
+        referenceNumber: String,
+        paymentProofUri: String,
+        paymentProofName: String,
+        paymentProofMimeType: String?,
+    ): AppResult<BookAppointmentResponse> {
+        val proofPart = try {
+            val resolver = context.contentResolver
+            val uri = Uri.parse(paymentProofUri)
+            val bytes = resolver.openInputStream(uri)?.use { it.readBytes() }
+                ?: throw IllegalArgumentException("The selected receipt could not be opened.")
+
+            if (bytes.size > MAX_PAYMENT_PROOF_BYTES) {
+                return AppResult.Failure(
+                    AppError(
+                        message = "The payment receipt must be 4 MB or smaller.",
+                        fieldErrors = mapOf("payment_proof" to "The payment receipt must be 4 MB or smaller."),
+                        kind = AppError.Kind.Validation,
+                    )
+                )
+            }
+
+            val mimeType = (paymentProofMimeType ?: resolver.getType(uri) ?: "image/jpeg")
+                .toMediaTypeOrNull()
+            val fileName = paymentProofName
+                .replace(Regex("[^A-Za-z0-9._-]"), "_")
+                .take(120)
+                .ifBlank { "payment-receipt.jpg" }
+
+            MultipartBody.Part.createFormData(
+                "payment_proof",
+                fileName,
+                bytes.toRequestBody(mimeType),
             )
-        )
+        } catch (exception: Exception) {
+            return AppResult.Failure(
+                AppError(
+                    message = "The selected payment receipt could not be read. Please choose it again.",
+                    fieldErrors = mapOf("payment_proof" to "Please choose the payment receipt again."),
+                    kind = AppError.Kind.Validation,
+                )
+            )
+        }
+
+        return apiCall(json) {
+            api.book(
+                serviceId = serviceId.toString().textPart(),
+                preferredDate = date.textPart(),
+                preferredTime = time.textPart(),
+                message = message?.trim()?.takeIf { it.isNotEmpty() }?.textPart(),
+                paymentMethod = paymentMethod.trim().textPart(),
+                referenceNumber = referenceNumber.trim().textPart(),
+                paymentProof = proofPart,
+            )
+        }
+    }
+
+    private fun String.textPart() = toRequestBody("text/plain".toMediaTypeOrNull())
+
+    private companion object {
+        const val MAX_PAYMENT_PROOF_BYTES = 4 * 1024 * 1024
     }
 
     suspend fun updatePaymentMethod(

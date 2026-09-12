@@ -3,7 +3,6 @@ package com.cctn.app.data.remote
 import com.cctn.app.data.remote.dto.AppointmentsResponse
 import com.cctn.app.data.remote.dto.AuthResponse
 import com.cctn.app.data.remote.dto.BillingResponse
-import com.cctn.app.data.remote.dto.BookAppointmentRequest
 import com.cctn.app.data.remote.dto.BookAppointmentResponse
 import com.cctn.app.data.remote.dto.ChatMessageBody
 import com.cctn.app.data.remote.dto.ChatResponse
@@ -27,10 +26,14 @@ import com.cctn.app.data.remote.dto.UpdateProfileRequest
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Multipart
+import retrofit2.http.Part
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 
 /** The customer-facing half of the backend. No admin endpoint is declared here. */
 interface CctnApi {
@@ -62,8 +65,17 @@ interface CctnApi {
     @GET("appointments/slots")
     suspend fun slots(@Query("date") date: String): SlotsResponse
 
+    @Multipart
     @POST("appointments")
-    suspend fun book(@Body body: BookAppointmentRequest): BookAppointmentResponse
+    suspend fun book(
+        @Part("service_id") serviceId: RequestBody,
+        @Part("preferred_date") preferredDate: RequestBody,
+        @Part("preferred_time") preferredTime: RequestBody,
+        @Part("message") message: RequestBody?,
+        @Part("payment_method") paymentMethod: RequestBody,
+        @Part("reference_number") referenceNumber: RequestBody,
+        @Part paymentProof: MultipartBody.Part,
+    ): BookAppointmentResponse
 
     @POST("appointments/{id}/payment-method")
     suspend fun updateAppointmentPaymentMethod(

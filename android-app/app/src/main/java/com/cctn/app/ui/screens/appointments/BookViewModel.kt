@@ -35,6 +35,11 @@ data class BookUiState(
     val paymentMethods: List<PaymentMethodDto> = emptyList(),
     val selectedPaymentMethod: String = "GCash",
     val referenceNumber: String = "",
+    val referenceNumberError: String? = null,
+    val paymentProofUri: String? = null,
+    val paymentProofName: String? = null,
+    val paymentProofMimeType: String? = null,
+    val paymentProofError: String? = null,
 
     val message: String = "",
 
@@ -129,7 +134,24 @@ class BookViewModel @Inject constructor(
     }
 
     fun onReferenceNumberChange(value: String) = _state.update {
-        it.copy(referenceNumber = value)
+        it.copy(referenceNumber = value.take(100), referenceNumberError = null, submitError = null)
+    }
+
+    fun onPaymentProofSelected(uri: String?, name: String?, mimeType: String?, size: Long?) = _state.update {
+        val error = when {
+            uri == null -> null
+            mimeType !in ALLOWED_PAYMENT_PROOF_TYPES -> "Choose a JPG, PNG, or WebP image."
+            size != null && size > MAX_PAYMENT_PROOF_BYTES -> "The receipt must be 4 MB or smaller."
+            else -> null
+        }
+
+        it.copy(
+            paymentProofUri = uri?.takeIf { error == null },
+            paymentProofName = name?.takeIf { error == null },
+            paymentProofMimeType = mimeType?.takeIf { error == null },
+            paymentProofError = error,
+            submitError = null,
+        )
     }
 
     fun onMessageChange(value: String) = _state.update { it.copy(message = value) }
@@ -162,7 +184,32 @@ class BookViewModel @Inject constructor(
         val time = current.selectedTime ?: return
         if (current.submitting) return
 
-        _state.update { it.copy(submitting = true, submitError = null) }
+        val referenceError = if (current.referenceNumber.isBlank()) {
+            "Enter the reference number from your payment confirmation."
+        } else null
+        val proofError = if (current.paymentProofUri == null) {
+            current.paymentProofError ?: "Upload a screenshot or photo of your payment receipt."
+        } else null
+
+        if (referenceError != null || proofError != null) {
+            _state.update {
+                it.copy(
+                    referenceNumberError = referenceError,
+                    paymentProofError = proofError,
+                    submitError = null,
+                )
+            }
+            return
+        }
+
+        _state.update {
+            it.copy(
+                submitting = true,
+                submitError = null,
+                referenceNumberError = null,
+                paymentProofError = null,
+            )
+        }
 
         viewModelScope.launch {
             val result = appointmentRepository.book(
@@ -171,7 +218,10 @@ class BookViewModel @Inject constructor(
                 time = time,
                 message = current.message,
                 paymentMethod = current.selectedPaymentMethod,
-                referenceNumber = current.referenceNumber.takeIf { it.isNotBlank() },
+                referenceNumber = current.referenceNumber,
+                paymentProofUri = current.paymentProofUri.orEmpty(),
+                paymentProofName = current.paymentProofName ?: "payment-receipt.jpg",
+                paymentProofMimeType = current.paymentProofMimeType,
             )
 
             when (result) {
@@ -187,11 +237,21 @@ class BookViewModel @Inject constructor(
                 }
 
                 is AppResult.Failure -> _state.update {
-                    it.copy(submitting = false, submitError = result.error.message)
+                    it.copy(
+                        submitting = false,
+                        referenceNumberError = result.error.fieldErrors["reference_number"],
+                        paymentProofError = result.error.fieldErrors["payment_proof"],
+                        submitError = result.error.message,
+                    )
                 }
             }
         }
     }
 
     fun resultShown() = _state.update { it.copy(result = null) }
+
+    private companion object {
+        const val MAX_PAYMENT_PROOF_BYTES = 4L * 1024 * 1024
+        val ALLOWED_PAYMENT_PROOF_TYPES = setOf("image/jpeg", "image/png", "image/webp")
+    }
 }
