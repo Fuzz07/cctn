@@ -44,7 +44,7 @@
         </div>
 
         <h1 class="title">Forgot Password</h1>
-        <p class="subtitle">Enter your registered email address and we'll send you reset instructions.</p>
+        <p class="subtitle">Enter your registered email address and we'll send you a six-digit verification code.</p>
 
         @if(session('success_message'))
             <div class="alert-success">{{ session('success_message') }}</div>
@@ -64,7 +64,7 @@
             </div>
             <button type="submit" class="btn-submit">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
-                Send Reset Instructions
+                Send Verification Code
             </button>
         </form>
 

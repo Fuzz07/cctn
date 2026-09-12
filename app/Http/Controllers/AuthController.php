@@ -3,18 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Notifications\PasswordResetCode;
 use App\Support\InputRules;
+use Carbon\Carbon;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Support\Facades\RateLimiter;
 
 class AuthController extends Controller
 {
+    private const RESET_CODE_EXPIRY_MINUTES = 15;
+    private const RESET_CODE_MAX_ATTEMPTS = 5;
+
     // ─── Login Form ──────────────────────────────────────────────────────────────
     public function showLogin()
     {
@@ -414,65 +419,132 @@ class AuthController extends Controller
 
     public function forgotPassword(Request $request)
     {
+        $request->merge(['email' => strtolower(trim((string) $request->input('email')))]);
         $request->validate(['email' => 'required|email']);
 
+        $client = Client::where('email', $request->email)->first();
+        if (!$client) {
+            return back()
+                ->withErrors(['email' => "We can't find a client with that email address."])
+                ->withInput();
+        }
+
+        $recentlySent = DB::table('password_resets')
+            ->where('email', $client->email)
+            ->where('created_at', '>', now()->subMinute())
+            ->exists();
+
+        if ($recentlySent) {
+            return back()
+                ->withErrors(['email' => 'A verification code was already sent. Please wait one minute before requesting another.'])
+                ->withInput();
+        }
+
+        $code = (string) random_int(100000, 999999);
+
         try {
-            $status = Password::broker('clients')->sendResetLink(
-                $request->only('email')
+            DB::table('password_resets')->updateOrInsert(
+                ['email' => $client->email],
+                ['token' => Hash::make($code), 'created_at' => now()]
             );
+
+            $client->notify(new PasswordResetCode($code, self::RESET_CODE_EXPIRY_MINUTES));
         } catch (\Throwable $exception) {
-            Log::error('Unable to send client password reset email.', [
-                'email' => $request->input('email'),
+            try {
+                DB::table('password_resets')->where('email', $client->email)->delete();
+            } catch (\Throwable $cleanupException) {
+                Log::warning('Unable to clean up a failed password reset code.', [
+                    'email' => $client->email,
+                    'exception' => $cleanupException,
+                ]);
+            }
+
+            Log::error('Unable to send client password reset verification code.', [
+                'email' => $client->email,
                 'exception' => $exception,
             ]);
 
             return back()
-                ->withErrors(['email' => 'We could not send the reset email. Please try again later or contact BCTVI support.'])
+                ->withErrors(['email' => 'We could not send the verification code. Please try again later or contact BCTVI support.'])
                 ->withInput();
         }
 
-        if ($status !== Password::RESET_LINK_SENT) {
-            return back()
-                ->withErrors(['email' => __($status)])
-                ->withInput();
-        }
-
-        return redirect()->route('login')->with('success_message', __($status));
+        return redirect()
+            ->route('password.reset', ['email' => $client->email])
+            ->with('success_message', 'A six-digit verification code has been sent to your email address.');
     }
 
-    public function showResetPassword(Request $request, string $token)
+    public function showResetPassword(Request $request)
     {
         return view('auth.reset-password', [
-            'token' => $token,
             'email' => $request->query('email'),
         ]);
     }
 
     public function resetPassword(Request $request)
     {
+        $request->merge(['email' => strtolower(trim((string) $request->input('email')))]);
         $request->validate([
-            'token' => 'required|string',
             'email' => 'required|email',
+            'code' => 'required|digits:6',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $status = Password::broker('clients')->reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function (Client $client, string $password) {
-                $client->forceFill([
-                    'password' => Hash::make($password),
-                ])->save();
-
-                event(new PasswordReset($client));
-            }
-        );
-
-        if ($status !== Password::PASSWORD_RESET) {
+        $attemptKey = 'password-reset-code:' . sha1($request->ip() . '|' . $request->email);
+        if (RateLimiter::tooManyAttempts($attemptKey, self::RESET_CODE_MAX_ATTEMPTS)) {
             return back()
-                ->withErrors(['email' => __($status)])
+                ->withErrors(['code' => 'Too many incorrect attempts. Please request a new verification code.'])
                 ->withInput($request->only('email'));
         }
 
-        return redirect()->route('login')->with('success_message', __($status));
+        $result = DB::transaction(function () use ($request) {
+            $reset = DB::table('password_resets')
+                ->where('email', $request->email)
+                ->lockForUpdate()
+                ->first();
+
+            if (!$reset) {
+                return 'invalid';
+            }
+
+            if (!$reset->created_at || Carbon::parse($reset->created_at)->lt(now()->subMinutes(self::RESET_CODE_EXPIRY_MINUTES))) {
+                DB::table('password_resets')->where('email', $request->email)->delete();
+                return 'expired';
+            }
+
+            if (!Hash::check($request->code, $reset->token)) {
+                return 'invalid';
+            }
+
+            $client = Client::where('email', $request->email)->first();
+            if (!$client) {
+                return 'invalid';
+            }
+
+            $client->forceFill([
+                'password' => Hash::make($request->password),
+            ])->save();
+
+            DB::table('password_resets')->where('email', $request->email)->delete();
+            event(new PasswordReset($client));
+
+            return 'reset';
+        });
+
+        if ($result !== 'reset') {
+            RateLimiter::hit($attemptKey, self::RESET_CODE_EXPIRY_MINUTES * 60);
+
+            $message = $result === 'expired'
+                ? 'This verification code has expired. Please request a new code.'
+                : 'The verification code is invalid.';
+
+            return back()
+                ->withErrors(['code' => $message])
+                ->withInput($request->only('email'));
+        }
+
+        RateLimiter::clear($attemptKey);
+
+        return redirect()->route('login')->with('success_message', 'Your password has been reset!');
     }
 }

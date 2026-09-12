@@ -1,5 +1,7 @@
 package com.cctn.app.ui.screens.auth
 
+import android.content.Intent
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -51,6 +53,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.cctn.app.BuildConfig
 import com.cctn.app.R
 import com.cctn.app.ui.components.BrandWordmark
 import com.cctn.app.ui.components.CctnPasswordField

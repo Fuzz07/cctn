@@ -44,7 +44,7 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout.get');
 
 Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('forgot-password');
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->name('forgot-password.submit');
-Route::get('/reset-password/{token}', [AuthController::class, 'showResetPassword'])->name('password.reset');
+Route::get('/reset-password', [AuthController::class, 'showResetPassword'])->name('password.reset');
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
 
 Route::get('/auth/google', [AuthController::class, 'googleRedirect'])->name('google.redirect');

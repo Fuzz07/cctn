@@ -34,7 +34,13 @@
         </a>
 
         <h1 class="title">Create a New Password</h1>
-        <p class="subtitle">Enter and confirm your new password below.</p>
+        <p class="subtitle">Enter the six-digit code sent to your email, then create your new password.</p>
+
+        @if(session('success_message'))
+            <div style="background:#f0fdf4; color:#15803d; padding:.75rem 1rem; border-radius:8px; font-size:.9rem; margin-bottom:1.5rem; border:1px solid #bbf7d0; font-weight:500;">
+                {{ session('success_message') }}
+            </div>
+        @endif
 
         @if($errors->any())
             <div class="alert-error">
@@ -44,15 +50,18 @@
 
         <form action="{{ route('password.update') }}" method="POST">
             @csrf
-            <input type="hidden" name="token" value="{{ $token }}">
 
             <div class="form-group">
                 <label for="email" class="form-label">Email Address</label>
                 <input id="email" type="email" name="email" class="form-input" value="{{ old('email', $email) }}" autocomplete="email" required>
             </div>
             <div class="form-group">
+                <label for="code" class="form-label">Verification Code</label>
+                <input id="code" type="text" name="code" class="form-input" value="{{ old('code') }}" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" minlength="6" maxlength="6" placeholder="000000" style="font-size:1.25rem; letter-spacing:.35rem; text-align:center;" required autofocus>
+            </div>
+            <div class="form-group">
                 <label for="password" class="form-label">New Password</label>
-                <input id="password" type="password" name="password" class="form-input" minlength="8" autocomplete="new-password" required autofocus>
+                <input id="password" type="password" name="password" class="form-input" minlength="8" autocomplete="new-password" required>
             </div>
             <div class="form-group">
                 <label for="password_confirmation" class="form-label">Confirm New Password</label>
@@ -62,7 +71,8 @@
             <button type="submit" class="btn-submit">Reset Password</button>
         </form>
 
-        <a href="{{ route('login') }}" class="back-link">Back to Login</a>
+        <a href="{{ route('forgot-password') }}" class="back-link">Didn't receive a code? Request a new one</a>
+        <a href="{{ route('login') }}" class="back-link" style="margin-top:.75rem;">Back to Login</a>
     </div>
 </body>
 </html>
