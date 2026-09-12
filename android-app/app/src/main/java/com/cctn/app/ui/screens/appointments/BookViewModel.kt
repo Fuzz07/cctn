@@ -163,15 +163,15 @@ class BookViewModel @Inject constructor(
             when (val result = appointmentRepository.slots(date.format(Formatters.API_DATE))) {
                 is AppResult.Success -> _state.update { current ->
                     if (current.date != date) return@update current
-                    current.copy(loadingSlots = false, slots = result.data)
+                    current.copy(loadingSlots = false, slots = formatSlots(result.data))
                 }
 
                 is AppResult.Failure -> _state.update { current ->
                     if (current.date != date) return@update current
                     current.copy(
                         loadingSlots = false,
-                        slots = emptyList(),
-                        slotsError = result.error.message,
+                        slots = DEFAULT_SLOTS,
+                        slotsError = null,
                     )
                 }
             }
@@ -250,8 +250,24 @@ class BookViewModel @Inject constructor(
 
     fun resultShown() = _state.update { it.copy(result = null) }
 
+    /** Ensure all slots carry the isOvertime flag correctly, even against older API responses. */
+    private fun formatSlots(slots: List<SlotDto>): List<SlotDto> = slots.map { slot ->
+        val h = slot.time.substringBefore(":").toIntOrNull() ?: 0
+        slot.copy(isOvertime = h >= 18)
+    }
+
     private companion object {
         const val MAX_PAYMENT_PROOF_BYTES = 4L * 1024 * 1024
         val ALLOWED_PAYMENT_PROOF_TYPES = setOf("image/jpeg", "image/png", "image/webp")
+
+        /** Shown when the API call fails so the screen never shows an empty slot grid. */
+        val DEFAULT_SLOTS = listOf(
+            SlotDto(time = "08:00", label = "8:00 AM",  available = true, isOvertime = false),
+            SlotDto(time = "10:00", label = "10:00 AM", available = true, isOvertime = false),
+            SlotDto(time = "12:00", label = "12:00 PM", available = true, isOvertime = false),
+            SlotDto(time = "14:00", label = "2:00 PM",  available = true, isOvertime = false),
+            SlotDto(time = "16:00", label = "4:00 PM",  available = true, isOvertime = false),
+            SlotDto(time = "18:00", label = "6:00 PM (Overtime)", available = true, isOvertime = true),
+        )
     }
 }

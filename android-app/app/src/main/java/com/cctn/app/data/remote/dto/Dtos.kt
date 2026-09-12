@@ -98,6 +98,7 @@ data class SlotDto(
     val time: String,
     val label: String,
     val available: Boolean,
+    @SerialName("is_overtime") val isOvertime: Boolean = false,
 )
 
 @Serializable

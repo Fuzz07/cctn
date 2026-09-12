@@ -37,6 +37,9 @@ class AppointmentController extends Controller
 
         $services = Service::active()->orderBy('service_name')->get();
         $allSlots = TimeSlot::available()->pluck('slot_time')->toArray();
+        if (empty($allSlots)) {
+            $allSlots = ['08:00:00', '10:00:00', '12:00:00', '14:00:00', '16:00:00', '18:00:00'];
+        }
 
         // Fetch booked slots for the selected date
         $bookedSlots = Appointment::where('preferred_date', $selectedDate)

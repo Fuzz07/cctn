@@ -49,6 +49,17 @@
     .slot-label:hover:not(.unavailable) { border-color: #dc2626; background: #fef2f2; color: #dc2626; }
     .slot-radio:checked + .slot-label { background: #dc2626; border-color: #dc2626; color: #fff; box-shadow: 0 4px 10px rgba(220,38,38,0.3); }
     .slot-label.unavailable { opacity: 0.4; cursor: not-allowed; background: #f3f4f6; text-decoration: line-through; }
+    .slot-label.slot-overtime { border-color: #f59e0b; }
+    .slot-ot-tag {
+        display: block;
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: #d97706;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-top: 2px;
+    }
+    .slot-radio:checked + .slot-label .slot-ot-tag { color: #fef08a; }
 
     .btn-submit {
         background: #0f172a;
@@ -120,6 +131,7 @@
                     @forelse ($allSlots as $slot_time)
                         @php
                             $is_booked = in_array($slot_time, $bookedSlots);
+                            $is_overtime = strtotime($slot_time) >= strtotime('18:00:00');
                             $formatted_time = date('h:i A', strtotime($slot_time));
                         @endphp
                         <div>
@@ -128,8 +140,11 @@
                                    {{ $is_booked ? 'disabled' : '' }} required>
                             
                             <label for="slot_{{ $slot_time }}" 
-                                   class="slot-label {{ $is_booked ? 'unavailable' : '' }}">
+                                   class="slot-label {{ $is_booked ? 'unavailable' : '' }} {{ $is_overtime ? 'slot-overtime' : '' }}">
                                 {{ $formatted_time }}
+                                @if($is_overtime)
+                                    <span class="slot-ot-tag">Overtime</span>
+                                @endif
                             </label>
                         </div>
                     @empty
@@ -141,6 +156,9 @@
                 <div style="display: flex; gap: 1rem; margin-top: 0.75rem; font-size: 0.8rem; flex-wrap: wrap;">
                     <span style="display: flex; align-items: center; gap: 0.35rem;">
                         <span style="display: inline-block; width: 12px; height: 12px; background: #f9fafb; border: 1.5px solid #e2e8f0; border-radius: 3px;"></span> Available Slot
+                    </span>
+                    <span style="display: flex; align-items: center; gap: 0.35rem;">
+                        <span style="display: inline-block; width: 12px; height: 12px; background: #f9fafb; border: 1.5px solid #f59e0b; border-radius: 3px;"></span> Overtime Slot
                     </span>
                     <span style="display: flex; align-items: center; gap: 0.35rem;">
                         <span style="display: inline-block; width: 12px; height: 12px; background: #dc2626; border-radius: 3px;"></span> Selected Slot

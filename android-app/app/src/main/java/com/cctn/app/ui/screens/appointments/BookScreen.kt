@@ -689,7 +689,7 @@ private fun SlotGrid(
     // A plain wrapping layout rather than a nested lazy grid: the whole screen
     // already scrolls, and nesting scroll containers is a runtime crash.
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        slots.chunked(3).forEach { row ->
+        slots.chunked(2).forEach { row ->
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 row.forEach { slot ->
                     SlotChip(
@@ -700,7 +700,7 @@ private fun SlotGrid(
                     )
                 }
                 // Keeps the last row's chips the same width as the rows above.
-                repeat(3 - row.size) { Spacer(Modifier.weight(1f)) }
+                repeat(2 - row.size) { Spacer(Modifier.weight(1f)) }
             }
         }
     }
@@ -714,38 +714,59 @@ private fun SlotChip(
     modifier: Modifier = Modifier,
 ) {
     val enabled = slot.available
+    val overtimeAmber = Color(0xFFF59E0B)
+    val overtimeAmberLight = Color(0xFFFFF8E1)
 
     val background = when {
+        selected && slot.isOvertime -> overtimeAmber
         selected -> MaterialTheme.colorScheme.primary
         !enabled -> MaterialTheme.colorScheme.surfaceVariant
+        slot.isOvertime -> overtimeAmberLight
         else -> MaterialTheme.colorScheme.surface
     }
+    val borderColor = when {
+        selected && slot.isOvertime -> overtimeAmber
+        selected -> MaterialTheme.colorScheme.primary
+        slot.isOvertime -> overtimeAmber
+        else -> MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
+    }
     val contentColor = when {
-        selected -> MaterialTheme.colorScheme.onPrimary
+        selected -> if (slot.isOvertime) Color.White else MaterialTheme.colorScheme.onPrimary
         !enabled -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+        slot.isOvertime -> Color(0xFF92400E)
         else -> MaterialTheme.colorScheme.onSurface
+    }
+    val labelColor = when {
+        selected -> Color(0xFFFEF08A)
+        !enabled -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
+        else -> Color(0xFFD97706)
     }
 
     Box(
         modifier = modifier
-            .height(46.dp)
+            .height(if (slot.isOvertime) 62.dp else 46.dp)
             .border(
-                width = 1.dp,
-                color = if (selected) {
-                    MaterialTheme.colorScheme.primary
-                } else {
-                    MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
-                },
+                width = if (selected) 2.dp else 1.dp,
+                color = borderColor,
                 shape = RoundedCornerShape(10.dp),
             )
             .background(background, RoundedCornerShape(10.dp))
             .clickable(enabled = enabled, onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
-        Text(
-            text = slot.label,
-            style = MaterialTheme.typography.bodyMedium,
-            color = contentColor,
-        )
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = slot.label.substringBefore(" ("),
+                style = MaterialTheme.typography.bodyMedium,
+                color = contentColor,
+            )
+            if (slot.isOvertime) {
+                Text(
+                    text = "Overtime",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = labelColor,
+                )
+            }
+        }
     }
 }

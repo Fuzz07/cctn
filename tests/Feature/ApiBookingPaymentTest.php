@@ -75,4 +75,18 @@ class ApiBookingPaymentTest extends TestCase
         $this->assertNotNull($appointment->payment_proof);
         Storage::disk('public')->assertExists($appointment->payment_proof);
     }
+
+    public function test_mobile_can_fetch_slots_with_overtime_flag(): void
+    {
+        $response = $this->getJson('/api/v1/appointments/slots?date=' . now()->addDay()->format('Y-m-d'));
+
+        $response->assertOk()->assertJson(['success' => true]);
+        $slots = $response->json('slots');
+        $this->assertNotEmpty($slots);
+
+        $overtimeSlot = collect($slots)->firstWhere('time', '18:00');
+        $this->assertNotNull($overtimeSlot);
+        $this->assertTrue($overtimeSlot['is_overtime']);
+        $this->assertStringContainsString('Overtime', $overtimeSlot['label']);
+    }
 }

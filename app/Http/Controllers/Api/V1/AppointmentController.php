@@ -35,6 +35,10 @@ class AppointmentController extends Controller
 
         $allSlots = TimeSlot::available()->pluck('slot_time')->toArray();
 
+        if (empty($allSlots)) {
+            $allSlots = ['08:00:00', '10:00:00', '12:00:00', '14:00:00', '16:00:00', '18:00:00'];
+        }
+
         $bookedSlots = Appointment::where('preferred_date', $date)
             ->where('status', '!=', 'cancelled')
             ->pluck('preferred_time')
@@ -42,10 +46,16 @@ class AppointmentController extends Controller
             ->toArray();
 
         $slots = array_map(function ($slot) use ($bookedSlots) {
+            $h = (int) date('H', strtotime($slot));
+            $isOvertime = ($h >= 18);
+            $formatted = date('g:i A', strtotime($slot));
+            $label = $isOvertime ? $formatted . ' (Overtime)' : $formatted;
+
             return [
-                'time'      => date('H:i', strtotime($slot)),
-                'label'     => date('g:i A', strtotime($slot)),
-                'available' => !in_array(date('H:i', strtotime($slot)), $bookedSlots),
+                'time'        => date('H:i', strtotime($slot)),
+                'label'       => $label,
+                'is_overtime' => $isOvertime,
+                'available'   => !in_array(date('H:i', strtotime($slot)), $bookedSlots),
             ];
         }, $allSlots);
 

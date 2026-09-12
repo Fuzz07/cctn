@@ -609,14 +609,19 @@
                         <select name="preferred_time" id="preferred_time" class="form-control" required>
                             <option value="">Select Time Slot</option>
                             @forelse ($timeSlots as $slot)
+                                @php
+                                    $isOt = strtotime($slot->slot_time) >= strtotime('18:00:00');
+                                @endphp
                                 <option value="{{ $slot->slot_time }}">
-                                    {{ date('h:i A', strtotime($slot->slot_time)) }}
+                                    {{ date('h:i A', strtotime($slot->slot_time)) }}{{ $isOt ? ' (Overtime)' : '' }}
                                 </option>
                             @empty
-                                <option value="09:00:00">09:00 AM - Morning Slot</option>
-                                <option value="11:00:00">11:00 AM - Late Morning Slot</option>
+                                <option value="08:00:00">08:00 AM - Morning Slot</option>
+                                <option value="10:00:00">10:00 AM - Mid-Morning Slot</option>
+                                <option value="12:00:00">12:00 PM - Midday Slot</option>
                                 <option value="14:00:00">02:00 PM - Afternoon Slot</option>
                                 <option value="16:00:00">04:00 PM - Late Afternoon Slot</option>
+                                <option value="18:00:00">06:00 PM - Overtime Slot</option>
                             @endforelse
                         </select>
                     </div>
