@@ -7,6 +7,7 @@ use App\Notifications\PasswordResetCode;
 use App\Support\InputRules;
 use Carbon\Carbon;
 use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Schema;
 
 class AuthController extends Controller
 {
@@ -440,6 +442,8 @@ class AuthController extends Controller
                 ->withInput();
         }
 
+        $this->ensurePasswordResetsTableExists();
+
         $code = (string) random_int(100000, 999999);
 
         try {
@@ -464,8 +468,12 @@ class AuthController extends Controller
                 'exception' => $exception,
             ]);
 
+            $errorMessage = config('app.debug')
+                ? 'We could not send the verification code: ' . $exception->getMessage()
+                : 'We could not send the verification code. Please try again later or contact BCTVI support.';
+
             return back()
-                ->withErrors(['email' => 'We could not send the verification code. Please try again later or contact BCTVI support.'])
+                ->withErrors(['email' => $errorMessage])
                 ->withInput();
         }
 
@@ -489,6 +497,8 @@ class AuthController extends Controller
             'code' => 'required|digits:6',
             'password' => 'required|string|min:8|confirmed',
         ]);
+
+        $this->ensurePasswordResetsTableExists();
 
         $attemptKey = 'password-reset-code:' . sha1($request->ip() . '|' . $request->email);
         if (RateLimiter::tooManyAttempts($attemptKey, self::RESET_CODE_MAX_ATTEMPTS)) {
@@ -546,5 +556,23 @@ class AuthController extends Controller
         RateLimiter::clear($attemptKey);
 
         return redirect()->route('login')->with('success_message', 'Your password has been reset!');
+    }
+
+    /**
+     * Auto-ensure password_resets table exists in database if not yet migrated
+     */
+    private function ensurePasswordResetsTableExists(): void
+    {
+        try {
+            if (!Schema::hasTable('password_resets')) {
+                Schema::create('password_resets', function (Blueprint $table) {
+                    $table->string('email')->index();
+                    $table->string('token');
+                    $table->timestamp('created_at')->nullable();
+                });
+            }
+        } catch (\Throwable $e) {
+            Log::warning('password_resets table check failed: ' . $e->getMessage());
+        }
     }
 }
