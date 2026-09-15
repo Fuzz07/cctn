@@ -28,9 +28,6 @@
                 </div>
             </div>
             <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
-                <a href="{{ route('client.payment-methods') }}" class="btn" style="background: #dc2626; color: #fff; border-radius: 10px; font-weight: 700; font-size: 0.85rem; text-decoration: none; padding: 0.6rem 1.15rem; display: inline-flex; align-items: center; gap: 0.4rem;">
-                    <i class="bi bi-wallet2"></i> Manage Payment Methods
-                </a>
                 <a href="{{ route('client.dashboard') }}" class="btn btn-secondary" style="border-radius: 10px; font-weight: 700; font-size: 0.85rem;">← Back to Dashboard</a>
             </div>
         </div>
@@ -45,9 +42,6 @@
             <div style="flex: 1;">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem;">
                     <h4 style="font-size: 1.05rem; font-weight: 800; margin: 0 0 0.35rem; color: #ffffff;">How to Pay Your Bill &amp; Official Payment Accounts</h4>
-                    <a href="{{ route('client.payment-methods') }}" style="color: #fca5a5; font-size: 0.8rem; font-weight: 700; text-decoration: none;">
-                        Manage Saved Methods &rarr;
-                    </a>
                 </div>
                 <p style="font-size: 0.88rem; color: #cbd5e1; margin: 0 0 0.6rem; line-height: 1.5;">
                     Send your payments directly to our official digital accounts below. Always use your Account Number (<strong style="color: #f87171; font-family: monospace;">{{ $client->account_number ?? 'N/A' }}</strong>) as reference.
