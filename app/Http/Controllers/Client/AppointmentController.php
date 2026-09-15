@@ -66,10 +66,14 @@ class AppointmentController extends Controller
             'preferred_date'   => 'required|date|after_or_equal:today',
             'preferred_time'   => 'required',
             'payment_method'   => 'required|string|max:50|not_in:Cash,cash',
-            'reference_number' => 'nullable|string|max:100',
-            'payment_proof'    => 'nullable|image|mimes:jpeg,png,jpg,webp|max:4096',
+            'reference_number' => 'required|string|max:100',
+            'payment_proof'    => 'required|image|mimes:jpeg,png,jpg,webp|max:4096',
         ], [
-            'payment_method.not_in' => 'Cash payments are not available on the client portal. Please choose a digital payment method (GCash, Maya, Bank Transfer, or Card).',
+            'payment_method.not_in'     => 'Cash payments are not available on the client portal. Please choose a digital payment method (GCash, Maya, Bank Transfer, or Card).',
+            'reference_number.required' => 'Please enter the reference or transaction number from your payment confirmation.',
+            'payment_proof.required'    => 'Please upload a screenshot or photo of your payment receipt.',
+            'payment_proof.image'       => 'The payment receipt must be an image file (JPEG, PNG, JPG, or WebP).',
+            'payment_proof.max'         => 'The payment receipt file must not exceed 4MB.',
         ]);
 
         $client = Auth::guard('client')->user();

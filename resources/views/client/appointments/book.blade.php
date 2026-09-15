@@ -26,6 +26,76 @@
     .form-label { display: block; font-weight: 700; margin-bottom: 0.5rem; color: #1e293b; font-size: 0.9rem; }
     .form-control { width: 100%; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; font-family: inherit; box-sizing: border-box; }
     .form-control:focus { outline: none; border-color: #dc2626; box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1); }
+
+    /* ── Validation States ── */
+    .form-control.is-invalid {
+        border-color: #dc2626 !important;
+        background-color: #fff8f8;
+        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+    }
+    .field-error {
+        display: none;
+        margin-top: 0.35rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #dc2626;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+    .field-error.visible { display: flex; }
+    .slots-error-msg {
+        display: none;
+        margin-top: 0.5rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #dc2626;
+        align-items: center;
+        gap: 0.3rem;
+    }
+    .slots-error-msg.visible { display: flex; }
+    .slots-container.has-error {
+        border: 1.5px solid #dc2626;
+        border-radius: 8px;
+        padding: 0.5rem;
+        background: #fff8f8;
+    }
+
+    /* ── Validation Banner ── */
+    #validation-banner {
+        display: none;
+        background: linear-gradient(135deg, #fef2f2, #fff5f5);
+        border: 1.5px solid #fca5a5;
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1.5rem;
+        animation: shake 0.4s ease;
+    }
+    #validation-banner.visible { display: block; }
+    #validation-banner .banner-title {
+        font-weight: 800;
+        font-size: 0.92rem;
+        color: #991b1b;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        margin-bottom: 0.5rem;
+    }
+    #validation-banner ul {
+        margin: 0;
+        padding-left: 1.2rem;
+        color: #b91c1c;
+        font-size: 0.82rem;
+        font-weight: 600;
+        line-height: 1.7;
+    }
+    @keyframes shake {
+        0%,100% { transform: translateX(0); }
+        20%      { transform: translateX(-5px); }
+        40%      { transform: translateX(5px); }
+        60%      { transform: translateX(-4px); }
+        80%      { transform: translateX(4px); }
+    }
     
     .slots-container {
         display: grid;
@@ -97,13 +167,30 @@
             <p>Schedule a WiFi installation, subscription inquiry, or technical support visit</p>
         </div>
 
-        <form action="{{ route('client.book.submit') }}" method="POST" id="booking-form" enctype="multipart/form-data">
+        <form action="{{ route('client.book.submit') }}" method="POST" id="booking-form" enctype="multipart/form-data" novalidate>
             @csrf
+
+            {{-- ── Server-side Validation Error Banner ── --}}
+            @if ($errors->any())
+                <div id="validation-banner" class="visible">
+                    <div class="banner-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        Please fix the following errors before submitting:
+                    </div>
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @else
+                <div id="validation-banner"></div>
+            @endif
 
             <!-- Service Selection -->
             <div class="form-group">
-                <label class="form-label" for="service_id">Select Service *</label>
-                <select name="service_id" id="service_id" class="form-control" required>
+                <label class="form-label" for="service_id">Select Service <span style="color:#dc2626">*</span></label>
+                <select name="service_id" id="service_id" class="form-control {{ $errors->has('service_id') ? 'is-invalid' : '' }}">
                     <option value="">Choose a service package...</option>
                     @foreach ($services as $serv)
                         <option value="{{ $serv->id }}" {{ (old('service_id', $preselectedServiceId) == $serv->id) ? 'selected' : '' }}>
@@ -111,23 +198,31 @@
                         </option>
                     @endforeach
                 </select>
+                <span class="field-error {{ $errors->has('service_id') ? 'visible' : '' }}" id="error-service_id">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    {{ $errors->first('service_id', 'Please select a service package.') }}
+                </span>
             </div>
 
             <!-- Date Selection (reloads page to fetch timeslots) -->
             <div class="form-group">
-                <label class="form-label" for="preferred_date">Preferred Date *</label>
-                <input type="date" name="preferred_date" id="preferred_date" class="form-control" 
-                       min="{{ date('Y-m-d', strtotime('+1 day')) }}" 
-                       value="{{ old('preferred_date', $selectedDate) }}" 
-                       required>
+                <label class="form-label" for="preferred_date">Preferred Date <span style="color:#dc2626">*</span></label>
+                <input type="date" name="preferred_date" id="preferred_date"
+                       class="form-control {{ $errors->has('preferred_date') ? 'is-invalid' : '' }}"
+                       min="{{ date('Y-m-d', strtotime('+1 day')) }}"
+                       value="{{ old('preferred_date', $selectedDate) }}">
+                <span class="field-error {{ $errors->has('preferred_date') ? 'visible' : '' }}" id="error-preferred_date">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    {{ $errors->first('preferred_date', 'Please select a preferred date.') }}
+                </span>
                 <p class="text-muted" style="font-size: 0.75rem; margin-top: 0.25rem;">Changing the date automatically updates the list of available slots below.</p>
             </div>
 
             <!-- Time Slot Radio Grid -->
             <div class="form-group">
-                <label class="form-label">Available Time Slots for <span class="text-gold" id="display-date">{{ date('F d, Y', strtotime($selectedDate)) }}</span> *</label>
-                
-                <div class="slots-container" id="slots-container">
+                <label class="form-label">Available Time Slots for <span class="text-gold" id="display-date">{{ date('F d, Y', strtotime($selectedDate)) }}</span> <span style="color:#dc2626">*</span></label>
+
+                <div class="slots-container {{ $errors->has('preferred_time') ? 'has-error' : '' }}" id="slots-container">
                     @forelse ($allSlots as $slot_time)
                         @php
                             $is_booked = in_array($slot_time, $bookedSlots);
@@ -151,6 +246,11 @@
                         <p class="text-muted" style="grid-column: 1 / -1;">No time slots configured in the database.</p>
                     @endforelse
                 </div>
+
+                <span class="slots-error-msg {{ $errors->has('preferred_time') ? 'visible' : '' }}" id="error-preferred_time">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    {{ $errors->first('preferred_time', 'Please select an available time slot.') }}
+                </span>
 
                 <!-- Slot Legend -->
                 <div style="display: flex; gap: 1rem; margin-top: 0.75rem; font-size: 0.8rem; flex-wrap: wrap;">
@@ -230,7 +330,15 @@
                         <label class="form-label" for="reference_number" style="font-size: 0.85rem; font-weight: 700; color: #334155;">
                             Reference / Transaction Number <span style="color: #dc2626;">*</span>
                         </label>
-                        <input type="text" name="reference_number" id="reference_number" class="form-control" placeholder="e.g. 10029384756" value="{{ old('reference_number') }}" style="font-family: monospace; font-size: 0.95rem; font-weight: 700;">
+                        <input type="text" name="reference_number" id="reference_number"
+                               class="form-control {{ $errors->has('reference_number') ? 'is-invalid' : '' }}"
+                               placeholder="e.g. 10029384756"
+                               value="{{ old('reference_number') }}"
+                               style="font-family: monospace; font-size: 0.95rem; font-weight: 700;">
+                        <span class="field-error {{ $errors->has('reference_number') ? 'visible' : '' }}" id="error-reference_number">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            {{ $errors->first('reference_number', 'Please enter your payment reference/transaction number.') }}
+                        </span>
                         <small style="color: #64748b; font-size: 0.78rem; display: block; margin-top: 0.25rem;">Enter the reference or reference ID from your payment confirmation screen.</small>
                     </div>
 
@@ -238,7 +346,13 @@
                         <label class="form-label" for="payment_proof" style="font-size: 0.85rem; font-weight: 700; color: #334155;">
                             Upload Payment Receipt or Screenshot <span style="color: #dc2626;">*</span>
                         </label>
-                        <input type="file" name="payment_proof" id="payment_proof" class="form-control" accept="image/jpeg,image/png,image/jpg,image/webp">
+                        <input type="file" name="payment_proof" id="payment_proof"
+                               class="form-control {{ $errors->has('payment_proof') ? 'is-invalid' : '' }}"
+                               accept="image/jpeg,image/png,image/jpg,image/webp">
+                        <span class="field-error {{ $errors->has('payment_proof') ? 'visible' : '' }}" id="error-payment_proof">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            {{ $errors->first('payment_proof', 'Please upload a screenshot or photo of your payment receipt.') }}
+                        </span>
                         <small style="color: #64748b; font-size: 0.78rem; display: block; margin-top: 0.25rem;">Upload a clear screenshot or photo of your payment receipt.</small>
                     </div>
 
@@ -258,7 +372,7 @@
                 <textarea name="message" id="message" class="form-control" rows="3" placeholder="Any specific requirements or notes regarding location/landmarks?">{{ old('message') }}</textarea>
             </div>
 
-            <button type="submit" class="btn-submit">
+            <button type="button" id="submit-btn" class="btn-submit" onclick="handleFormSubmit()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
                 Confirm Appointment Booking
             </button>
@@ -269,6 +383,157 @@
 
 @push('scripts')
 <script>
+    /* ══════════════════════════════════════════════
+       CLIENT-SIDE FORM VALIDATION
+    ══════════════════════════════════════════════ */
+
+    function setFieldError(fieldId, errorId, message) {
+        const field = document.getElementById(fieldId);
+        const errorEl = document.getElementById(errorId);
+        if (field) field.classList.add('is-invalid');
+        if (errorEl) {
+            if (message) errorEl.querySelector('svg').nextSibling
+                ? errorEl.lastChild.textContent = ' ' + message
+                : (errorEl.textContent = message);
+            errorEl.classList.add('visible');
+        }
+    }
+
+    function clearFieldError(fieldId, errorId) {
+        const field = document.getElementById(fieldId);
+        const errorEl = document.getElementById(errorId);
+        if (field) field.classList.remove('is-invalid');
+        if (errorEl) errorEl.classList.remove('visible');
+    }
+
+    function clearAllErrors() {
+        document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+        document.querySelectorAll('.field-error.visible, .slots-error-msg.visible').forEach(el => el.classList.remove('visible'));
+        const slotsContainer = document.getElementById('slots-container');
+        if (slotsContainer) slotsContainer.classList.remove('has-error');
+        hideBanner();
+    }
+
+    function showBanner(errors) {
+        const banner = document.getElementById('validation-banner');
+        if (!banner) return;
+        const existingList = banner.querySelector('ul');
+        if (existingList) existingList.remove();
+        banner.innerHTML = `
+            <div class="banner-title">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                Please complete all required fields before submitting:
+            </div>
+            <ul>${errors.map(e => `<li>${e}</li>`).join('')}</ul>
+        `;
+        banner.classList.add('visible');
+        banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function hideBanner() {
+        const banner = document.getElementById('validation-banner');
+        if (banner) banner.classList.remove('visible');
+    }
+
+    function validateBookingForm() {
+        clearAllErrors();
+        const errors = [];
+
+        // 1. Service
+        const serviceId = document.getElementById('service_id');
+        if (!serviceId || !serviceId.value) {
+            setFieldError('service_id', 'error-service_id', 'Please select a service package.');
+            errors.push('Service: Please select a service package.');
+        }
+
+        // 2. Preferred Date
+        const prefDate = document.getElementById('preferred_date');
+        if (!prefDate || !prefDate.value) {
+            setFieldError('preferred_date', 'error-preferred_date', 'Please select a preferred date.');
+            errors.push('Preferred Date: Please select a date.');
+        }
+
+        // 3. Time Slot
+        const slotSelected = document.querySelector('input[name="preferred_time"]:checked');
+        if (!slotSelected) {
+            const slotsContainer = document.getElementById('slots-container');
+            const slotsError = document.getElementById('error-preferred_time');
+            if (slotsContainer) slotsContainer.classList.add('has-error');
+            if (slotsError) slotsError.classList.add('visible');
+            errors.push('Time Slot: Please select an available time slot.');
+        }
+
+        // 4. Reference Number
+        const refNum = document.getElementById('reference_number');
+        if (!refNum || !refNum.value.trim()) {
+            setFieldError('reference_number', 'error-reference_number', 'Please enter your payment reference/transaction number.');
+            errors.push('Reference Number: Please enter your payment reference or transaction number.');
+        }
+
+        // 5. Payment Proof
+        const payProof = document.getElementById('payment_proof');
+        if (!payProof || !payProof.files || payProof.files.length === 0) {
+            setFieldError('payment_proof', 'error-payment_proof', 'Please upload a screenshot or photo of your payment receipt.');
+            errors.push('Payment Receipt: Please upload a screenshot or photo of your payment receipt.');
+        }
+
+        return errors;
+    }
+
+    function handleFormSubmit() {
+        const errors = validateBookingForm();
+
+        if (errors.length > 0) {
+            showBanner(errors);
+            return; // Block submission
+        }
+
+        // All valid — disable button and submit
+        const btn = document.getElementById('submit-btn');
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation: spin 1s linear infinite;">
+                    <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                </svg>
+                Submitting...
+            `;
+            btn.style.background = '#64748b';
+            btn.style.cursor = 'not-allowed';
+        }
+
+        document.getElementById('booking-form').submit();
+    }
+
+    /* Auto-clear per-field error on change/input */
+    document.addEventListener('DOMContentLoaded', function () {
+        const fieldMap = [
+            ['service_id',       'error-service_id'],
+            ['preferred_date',   'error-preferred_date'],
+            ['reference_number', 'error-reference_number'],
+            ['payment_proof',    'error-payment_proof'],
+        ];
+        fieldMap.forEach(([fid, eid]) => {
+            const el = document.getElementById(fid);
+            if (el) {
+                el.addEventListener('change', () => clearFieldError(fid, eid));
+                el.addEventListener('input',  () => clearFieldError(fid, eid));
+            }
+        });
+
+        document.querySelectorAll('input[name="preferred_time"]').forEach(radio => {
+            radio.addEventListener('change', () => {
+                const slotsContainer = document.getElementById('slots-container');
+                const slotsError    = document.getElementById('error-preferred_time');
+                if (slotsContainer) slotsContainer.classList.remove('has-error');
+                if (slotsError)    slotsError.classList.remove('visible');
+            });
+        });
+    });
+
+    /* ══════════════════════════════════════════════
+       PAYMENT ACCOUNTS CONFIG
+    ══════════════════════════════════════════════ */
     const PAYMENT_ACCOUNTS = {
         'GCash': {
             badge: 'GCash E-Wallet',
