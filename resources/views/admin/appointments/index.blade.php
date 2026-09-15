@@ -59,6 +59,37 @@
     .btn-cancel { background: #fff; color: #64748b; padding: 0.65rem 1.25rem; border-radius: 8px; font-weight: 600; font-size: 0.9rem; border: 1px solid #e2e8f0; cursor: pointer; text-decoration: none; }
     .btn-cancel:hover { background: #f1f5f9; color: #0f172a; }
 
+    /* Compact table proof indicators */
+    .tbl-pay-cell { font-size: 0.82rem; }
+    .tbl-pay-method { font-weight: 700; color: #0f172a; font-size: 0.82rem; }
+    .tbl-pay-ref { font-family: monospace; font-size: 0.78rem; color: #64748b; font-weight: 600; }
+    .tbl-proof-thumb {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        margin-top: 0.35rem;
+        padding: 0.2rem 0.55rem;
+        border-radius: 5px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+    .tbl-proof-thumb.has-proof {
+        background: #f0fdf4;
+        color: #15803d;
+        border: 1px solid #bbf7d0;
+    }
+    .tbl-proof-thumb.has-proof:hover {
+        background: #dcfce7;
+    }
+    .tbl-proof-thumb.no-proof {
+        background: #fef2f2;
+        color: #b91c1c;
+        border: 1px solid #fecaca;
+    }
+
     .badge-paid { background: #f0fdf4; color: #16a34a; border: 1px solid #dcfce7; }
     .badge-unpaid { background: #fef2f2; color: #dc2626; border: 1px solid #fee2e2; }
     .badge-pending-pay { background: #fff7ed; color: #ea580c; border: 1px solid #ffedd5; }
@@ -262,6 +293,7 @@
                 <th>Ref ID</th>
                 <th>Client Info</th>
                 <th>Service & Schedule</th>
+                <th>Payment</th>
                 <th>Status</th>
                 <th>Actions</th>
             </tr>
@@ -277,6 +309,27 @@
                     <td>
                         <div style="font-weight:600; color:#0f172a;">{{ $appt->service->service_name }}</div>
                         <div style="font-size:0.85rem; color:#dc2626; font-weight:700;">{{ date('M d, Y', strtotime($appt->preferred_date)) }} @ {{ date('g:i A', strtotime($appt->preferred_time)) }}</div>
+                    </td>
+                    <td class="tbl-pay-cell">
+                        @if($appt->payment_method)
+                            <div class="tbl-pay-method">{{ $appt->payment_method }}</div>
+                        @endif
+                        @if($appt->reference_number)
+                            <div class="tbl-pay-ref">Ref: {{ $appt->reference_number }}</div>
+                        @endif
+                        @if($appt->payment_proof)
+                            <a href="{{ request()->fullUrlWithQuery(['manage_id' => $appt->id]) }}" class="tbl-proof-thumb has-proof" title="View Receipt">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                                Receipt Attached
+                            </a>
+                        @elseif($appt->payment_method)
+                            <span class="tbl-proof-thumb no-proof">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                                No Receipt
+                            </span>
+                        @else
+                            <span style="color:#94a3b8; font-size:0.8rem;">&mdash;</span>
+                        @endif
                     </td>
                     <td>
                         <span class="badge badge-{{ $appt->status }}">{{ $appt->status }}</span>
@@ -303,7 +356,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5" style="text-align: center; padding: 3rem; color: #94a3b8;">
+                    <td colspan="6" style="text-align: center; padding: 3rem; color: #94a3b8;">
                         No appointments found matching your criteria.
                     </td>
                 </tr>
