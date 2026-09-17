@@ -209,4 +209,13 @@ class PaymentEmailNotificationTest extends TestCase
         $this->artisan('mail:test', ['email' => 'test@example.com'])
             ->assertExitCode(0);
     }
+
+    public function test_storage_receipt_file_can_be_viewed(): void
+    {
+        \Illuminate\Support\Facades\Storage::fake('public');
+        \Illuminate\Support\Facades\Storage::disk('public')->put('payments/receipt123.jpg', 'fake-image-content');
+
+        $response = $this->get('/storage/payments/receipt123.jpg');
+        $response->assertStatus(200);
+    }
 }

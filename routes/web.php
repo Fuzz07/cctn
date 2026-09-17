@@ -32,6 +32,30 @@ Route::get('/migration', function () {
 });
 Route::get('/download-apk', [HomeController::class, 'downloadApk'])->name('download.apk');
 
+// Serve public storage files (payment proofs/receipts) even if the symlink is missing on shared hosting
+Route::get('/storage/{path}', function ($path) {
+    if (str_contains($path, '..')) {
+        abort(403);
+    }
+
+    $disk = \Illuminate\Support\Facades\Storage::disk('public');
+    if ($disk->exists($path)) {
+        return $disk->response($path);
+    }
+
+    $altPath = storage_path('app/public/' . $path);
+    if (file_exists($altPath)) {
+        return response()->file($altPath);
+    }
+
+    $uploadPath = public_path('uploads/' . $path);
+    if (file_exists($uploadPath)) {
+        return response()->file($uploadPath);
+    }
+
+    abort(404);
+})->where('path', '.*')->name('storage.file');
+
 // The chat bubble, on every page including the public ones. The assistant
 // decides for itself which answers need a signed-in client.
 Route::post('/chat', [ChatbotController::class, 'reply'])->name('chat.reply');
