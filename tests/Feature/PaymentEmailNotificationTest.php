@@ -175,4 +175,38 @@ class PaymentEmailNotificationTest extends TestCase
         // Cancelled should not send a payment confirmation
         Notification::assertNotSentTo($client, AppointmentPaymentConfirmedNotification::class);
     }
+
+    public function test_admin_can_view_email_diagnostics(): void
+    {
+        $admin = $this->admin();
+
+        $response = $this->actingAs($admin, 'admin')
+            ->get(route('admin.mail.test'));
+
+        $response->assertStatus(200);
+        $response->assertSee('Email Diagnostics');
+        $response->assertSee('Current Active Mail Settings');
+    }
+
+    public function test_admin_can_send_test_email(): void
+    {
+        \Illuminate\Support\Facades\Mail::fake();
+
+        $admin = $this->admin();
+
+        $response = $this->actingAs($admin, 'admin')
+            ->post(route('admin.mail.test.send'), [
+                'test_email' => 'recipient@example.com',
+            ]);
+
+        $response->assertSessionHas('success_message');
+    }
+
+    public function test_artisan_mail_test_command(): void
+    {
+        \Illuminate\Support\Facades\Mail::fake();
+
+        $this->artisan('mail:test', ['email' => 'test@example.com'])
+            ->assertExitCode(0);
+    }
 }

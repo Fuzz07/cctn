@@ -23,6 +23,7 @@ use App\Http\Controllers\Admin\MaintenanceController as AdminMaintenance;
 use App\Http\Controllers\Admin\NotificationController as AdminNotification;
 
 use App\Http\Controllers\Admin\WalkInController as AdminWalkIn;
+use App\Http\Controllers\Admin\MailDiagnosticController as AdminMailDiagnostic;
 
 // ─── Public Routes ───────────────────────────────────────────────────────────
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -123,5 +124,8 @@ Route::prefix('admin')->group(function () {
         Route::post('/maintenance', [AdminMaintenance::class, 'update'])->name('admin.maintenance.update');
 
         Route::post('/notifications/read', [AdminNotification::class, 'markRead'])->name('admin.notifications.read');
+
+        Route::get('/mail-test', [AdminMailDiagnostic::class, 'index'])->name('admin.mail.test');
+        Route::post('/mail-test/send', [AdminMailDiagnostic::class, 'sendTest'])->name('admin.mail.test.send');
     });
 });

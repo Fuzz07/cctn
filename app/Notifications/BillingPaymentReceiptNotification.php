@@ -44,8 +44,16 @@ class BillingPaymentReceiptNotification extends Notification
         $receivedBy = $payment->received_by ?: 'Authorized Cashier';
         $paymentDate = $payment->payment_date ? date('F d, Y h:i A', strtotime($payment->payment_date)) : date('F d, Y h:i A');
 
-        $mail = (new MailMessage)
-            ->subject("Official Payment Receipt — {$receiptNo} - CCTN")
+        $fromAddress = config('mail.from.address') ?: config('mail.mailers.smtp.username');
+        $fromName    = config('mail.from.name') ?: config('app.name', 'CCTN');
+
+        $mail = (new MailMessage);
+
+        if (!empty($fromAddress) && $fromAddress !== 'hello@example.com') {
+            $mail->from($fromAddress, $fromName);
+        }
+
+        $mail->subject("Official Payment Receipt — {$receiptNo} - CCTN")
             ->greeting("Hello {$clientName},")
             ->line("Thank you for your payment! This email serves as your official electronic receipt.")
             ->line("**Official Receipt No:** {$receiptNo}")

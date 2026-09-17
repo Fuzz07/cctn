@@ -65,6 +65,7 @@ class AppointmentController extends Controller
             }
         }
 
+        $previousStatus = $appointment->status;
         $previousPaymentStatus = $appointment->payment_status;
         $newPaymentStatus = $request->input('payment_status');
 
@@ -89,12 +90,17 @@ class AppointmentController extends Controller
 
         $appointment->update($updateData);
 
-        // Notify recipient via email if payment is confirmed or approved with payment details
+        // Notify recipient via email if payment is confirmed or booking approved
         $isNowConfirmed = in_array($appointment->payment_status, ['Payment Confirmed', 'paid'], true);
         $wasNotConfirmed = !in_array($previousPaymentStatus, ['Payment Confirmed', 'paid'], true);
+        $isNowApproved = ($appointment->status === 'approved');
+        $wasNotApproved = ($previousStatus !== 'approved');
 
-        if (($isNowConfirmed && $wasNotConfirmed) || ($request->status === 'approved' && $isNowConfirmed)) {
-            $this->sendPaymentConfirmationEmail($appointment);
+        if (($isNowConfirmed && $wasNotConfirmed) || ($isNowApproved && $wasNotApproved) || ($isNowApproved && $isNowConfirmed)) {
+            $mailErr = $this->sendPaymentConfirmationEmail($appointment);
+            if ($mailErr) {
+                session()->flash('email_warning', "Appointment updated, but confirmation email could not be sent: {$mailErr}");
+            }
         }
 
         return redirect()->route('admin.appointments')
@@ -125,23 +131,31 @@ class AppointmentController extends Controller
         $appointment->update($updateData);
 
         if ($request->status === 'approved') {
-            $this->sendPaymentConfirmationEmail($appointment);
+            $mailErr = $this->sendPaymentConfirmationEmail($appointment);
+            if ($mailErr) {
+                session()->flash('email_warning', "Appointment approved, but confirmation email could not be sent: {$mailErr}");
+            }
         }
 
         return redirect()->route('admin.appointments')
             ->with('success_message', "Appointment #{$appointment->id} status set to {$request->status}.");
     }
 
-    private function sendPaymentConfirmationEmail(Appointment $appointment): void
+    private function sendPaymentConfirmationEmail(Appointment $appointment): ?string
     {
         try {
             $appointment->loadMissing(['client', 'service']);
             $client = $appointment->client;
-            if ($client && !empty($client->email)) {
-                $client->notify(new \App\Notifications\AppointmentPaymentConfirmedNotification($appointment));
+            if (!$client || empty($client->email)) {
+                return 'Client has no email address on file.';
             }
+            $client->notify(new \App\Notifications\AppointmentPaymentConfirmedNotification($appointment));
+            return null;
         } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::warning("Could not send payment confirmation email for appointment #{$appointment->id}: " . $e->getMessage());
+            \Illuminate\Support\Facades\Log::warning("Could not send payment confirmation email for appointment #{$appointment->id}: " . $e->getMessage(), [
+                'exception' => $e
+            ]);
+            return $e->getMessage();
         }
     }
 }

@@ -249,6 +249,17 @@
         {{ session('success_message') }}
     </div>
 @endif
+@if (session('email_warning'))
+    <div style="background:#fffbeb; color:#b45309; padding: 1rem 1.25rem; border-radius: 12px; margin-bottom: 1.5rem; font-weight: 600; border: 1px solid #fde68a; display: flex; align-items: flex-start; gap: 0.5rem;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0; margin-top:2px;"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <div>
+            {{ session('email_warning') }}
+            <div style="font-size: 0.8rem; font-weight: 500; margin-top: 0.25rem; color: #78350f;">
+                You can test and diagnose your SMTP connection at <a href="{{ route('admin.mail.test') }}" style="color: #b45309; text-decoration: underline; font-weight: 700;">Email Diagnostics</a>.
+            </div>
+        </div>
+    </div>
+@endif
 @if ($errors->any())
     <div style="background:#fef2f2; color:#b91c1c; padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; font-weight: 500; border: 1px solid #fecaca;">
         @foreach ($errors->all() as $error)

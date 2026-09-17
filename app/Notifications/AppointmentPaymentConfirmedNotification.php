@@ -39,17 +39,41 @@ class AppointmentPaymentConfirmedNotification extends Notification
         $amount = (float) ($appointment->amount_paid > 0 ? $appointment->amount_paid : ($appointment->amount_due > 0 ? $appointment->amount_due : ($appointment->service->price ?? 0)));
         $formattedAmount = number_format($amount, 2);
 
-        $mail = (new MailMessage)
-            ->subject('Payment Confirmed — Appointment #' . str_pad($appointment->id, 5, '0', STR_PAD_LEFT) . ' - CCTN')
+        $isPaid = in_array($appointment->payment_status, ['Payment Confirmed', 'paid'], true);
+        $subject = $isPaid
+            ? 'Payment Confirmed — Appointment #' . str_pad($appointment->id, 5, '0', STR_PAD_LEFT) . ' - CCTN'
+            : 'Appointment Approved — Ref #' . str_pad($appointment->id, 5, '0', STR_PAD_LEFT) . ' - CCTN';
+
+        $headline = $isPaid
+            ? 'Great news! Your payment has been successfully verified and confirmed.'
+            : 'Great news! Your service appointment has been approved and scheduled.';
+
+        $fromAddress = config('mail.from.address') ?: config('mail.mailers.smtp.username');
+        $fromName    = config('mail.from.name') ?: config('app.name', 'CCTN');
+
+        $mail = (new MailMessage);
+
+        if (!empty($fromAddress) && $fromAddress !== 'hello@example.com') {
+            $mail->from($fromAddress, $fromName);
+        }
+
+        $mail->subject($subject)
             ->greeting("Hello {$clientName},")
-            ->line('Great news! Your payment has been successfully verified and confirmed.')
-            ->line('Here are your confirmed appointment and payment details:')
+            ->line($headline)
+            ->line('Here are your confirmed appointment details:')
             ->line("**Appointment Ref:** #" . str_pad($appointment->id, 5, '0', STR_PAD_LEFT))
             ->line("**Service Plan:** {$serviceName}")
             ->line("**Scheduled Date:** {$formattedDate} at {$formattedTime}")
-            ->line("**Payment Method:** {$paymentMethod}")
-            ->line("**Transaction Reference:** {$refNumber}")
-            ->line("**Amount Verified:** ₱{$formattedAmount}");
+            ->line("**Booking Status:** " . ucfirst($appointment->status))
+            ->line("**Payment Status:** " . ($appointment->payment_status ?: 'Pending Payment'));
+
+        if ($isPaid || !empty($appointment->payment_method)) {
+            $mail->line("**Payment Method:** {$paymentMethod}")
+                ->line("**Transaction Reference:** {$refNumber}")
+                ->line("**Amount Verified:** ₱{$formattedAmount}");
+        } else {
+            $mail->line("**Amount Due:** ₱{$formattedAmount}");
+        }
 
         if (!empty($appointment->installation_address)) {
             $mail->line("**Installation Address:** " . $appointment->installation_address);
