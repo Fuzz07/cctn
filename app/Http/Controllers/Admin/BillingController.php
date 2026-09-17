@@ -7,8 +7,10 @@ use App\Models\BillingAccount;
 use App\Models\Payment;
 use App\Models\Client;
 use App\Models\Notification;
+use App\Notifications\BillingPaymentReceiptNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class BillingController extends Controller
 {
@@ -59,7 +61,7 @@ class BillingController extends Controller
 
         $receiptNo = 'RCP-' . date('Ymd') . '-' . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
 
-        Payment::create([
+        $payment = Payment::create([
             'billing_id'       => $billing->id,
             'client_id'        => $billing->client_id,
             'account_number'   => $billing->account_number,
@@ -93,6 +95,15 @@ class BillingController extends Controller
             'message'   => "₱{$amountPaid} received from {$clientName} (Acct: {$billing->account_number}) for {$billing->statement_period}. Receipt No: {$receiptNo}.",
             'link'      => 'admin/billing',
         ]);
+
+        // Send email receipt to client's Gmail
+        if ($client && !empty($client->email)) {
+            try {
+                $client->notify(new BillingPaymentReceiptNotification($payment, $billing));
+            } catch (\Throwable $e) {
+                Log::warning("Could not send billing payment receipt email to {$client->email}: " . $e->getMessage());
+            }
+        }
 
         return redirect()->route('admin.billing')->with('success_message', "Payment recorded. Receipt: {$receiptNo}");
     }

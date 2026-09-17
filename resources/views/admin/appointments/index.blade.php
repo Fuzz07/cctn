@@ -485,14 +485,31 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label">Status</label>
-                        <select name="status" class="form-control" required>
-                            <option value="pending" {{ $manageAppointment->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                            <option value="approved" {{ $manageAppointment->status == 'approved' ? 'selected' : '' }}>Approved</option>
-                            <option value="cancelled" {{ $manageAppointment->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                        </select>
+                    <div class="detail-grid" style="margin-bottom: 0;">
+                        <div class="form-group">
+                            <label class="form-label">Booking Status</label>
+                            <select name="status" class="form-control" required>
+                                <option value="pending" {{ $manageAppointment->status == 'pending' ? 'selected' : '' }}>Pending</option>
+                                <option value="approved" {{ $manageAppointment->status == 'approved' ? 'selected' : '' }}>Approved</option>
+                                <option value="cancelled" {{ $manageAppointment->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Payment Status</label>
+                            <select name="payment_status" class="form-control">
+                                <option value="Pending Payment" {{ in_array($manageAppointment->payment_status, ['Pending Payment', 'pending', 'unpaid', null]) ? 'selected' : '' }}>Pending Payment</option>
+                                <option value="Payment Confirmed" {{ in_array($manageAppointment->payment_status, ['Payment Confirmed', 'paid']) ? 'selected' : '' }}>Payment Confirmed</option>
+                                <option value="Cancelled" {{ $manageAppointment->payment_status == 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
+                            </select>
+                        </div>
                     </div>
+
+                    @if($manageAppointment->client?->email)
+                        <div style="font-size: 0.75rem; color: #0369a1; background: #e0f2fe; padding: 0.45rem 0.75rem; border-radius: 6px; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.4rem; border: 1px solid #bae6fd;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                            Payment confirmation receipt will be emailed to <strong>{{ $manageAppointment->client->email }}</strong> upon approval or confirmation.
+                        </div>
+                    @endif
 
                     <div class="form-group" style="margin-bottom: 0;">
                         <label class="form-label">Admin Notes (Optional)</label>

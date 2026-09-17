@@ -9,6 +9,8 @@ use App\Models\Service;
 use App\Models\TimeSlot;
 use App\Models\BillingAccount;
 use App\Models\Payment;
+use App\Notifications\BillingPaymentReceiptNotification;
+use App\Notifications\AppointmentPaymentConfirmedNotification;
 use App\Support\InputRules;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -205,8 +207,9 @@ class WalkInController extends Controller
                 'paid_at'           => $paymentStatus === 'Payment Confirmed' ? now() : null,
             ]);
 
+            $walkinPayment = null;
             if ($amountPaid > 0) {
-                Payment::create([
+                $walkinPayment = Payment::create([
                     'billing_id'       => $billing->id,
                     'client_id'        => $client->id,
                     'account_number'   => $billing->account_number,
@@ -221,6 +224,19 @@ class WalkInController extends Controller
             }
 
             DB::commit();
+
+            // Send email receipt to client's Gmail after successful walk-in booking
+            if ($client && !empty($client->email)) {
+                try {
+                    if ($walkinPayment) {
+                        $client->notify(new BillingPaymentReceiptNotification($walkinPayment, $billing));
+                    }
+                    // Also send appointment/payment confirmation
+                    $client->notify(new AppointmentPaymentConfirmedNotification($appointment->load('service')));
+                } catch (\Throwable $e) {
+                    Log::warning("Could not send walk-in email notifications to {$client->email}: " . $e->getMessage());
+                }
+            }
 
             return redirect()->route('admin.walkin.create', ['confirmed_id' => $appointment->id])
                 ->with('success_message', "Walk-In Client Booking successful! Reference: {$bookingRef}");

@@ -1,0 +1,504 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" agent="cctn-flowchart" type="device" version="24.7.5">
+  <diagram id="cctn-whole-system-flowchart" name="CCTN Whole Process Flowchart">
+    <mxGraphModel dx="1800" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1680" pageHeight="3430" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title" value="CCTN ONLINE SERVICE MANAGEMENT SYSTEM -- COMPLETE SYSTEM FLOWCHART&#10;Bogo Cable Television Inc. (BCTVI) | Web Portal &amp; Android Mobile Application | Laravel 9 + MySQL 8" style="text;html=0;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=15;fontStyle=1;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#0F172A;" vertex="1" parent="1">
+          <mxGeometry x="20" y="15" width="1640" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend" value="LEGEND:   [Oval] Start/End   |   [Rectangle] Process   |   [Diamond] Decision   |   [Parallelogram] Input/Output   |   [Cylinder] Database/Storage" style="rounded=1;arcSize=4;html=0;fillColor=#F1F5F9;strokeColor=#CBD5E1;strokeWidth=1;align=center;verticalAlign=middle;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#475569;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="65" width="1560" height="32" as="geometry"/>
+        </mxCell>
+        <mxCell id="sw_hdr_user" value="1. USER / CLIENT&#10;Web Browser | Android App | Walk-In" style="rounded=1;arcSize=4;html=0;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=1.5;verticalAlign=middle;align=center;fontSize=11;fontStyle=1;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#0F172A;" vertex="1" parent="1">
+          <mxGeometry x="60" y="108" width="260" height="46" as="geometry"/>
+        </mxCell>
+        <mxCell id="sw_bg_user" value="" style="rounded=1;arcSize=2;html=0;fillColor=#F8FAFC;strokeColor=#3B82F6;strokeWidth=1;dashed=1;dashPattern=6 4;" vertex="1" parent="1">
+          <mxGeometry x="60" y="160" width="260" height="3250" as="geometry"/>
+        </mxCell>
+        <mxCell id="sw_hdr_ui" value="2. WEBSITE &amp; MOBILE UI&#10;Blade Views | Jetpack Compose" style="rounded=1;arcSize=4;html=0;fillColor=#F0FDF4;strokeColor=#16A34A;strokeWidth=1.5;verticalAlign=middle;align=center;fontSize=11;fontStyle=1;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#0F172A;" vertex="1" parent="1">
+          <mxGeometry x="350" y="108" width="270" height="46" as="geometry"/>
+        </mxCell>
+        <mxCell id="sw_bg_ui" value="" style="rounded=1;arcSize=2;html=0;fillColor=#F8FAFC;strokeColor=#16A34A;strokeWidth=1;dashed=1;dashPattern=6 4;" vertex="1" parent="1">
+          <mxGeometry x="350" y="160" width="270" height="3250" as="geometry"/>
+        </mxCell>
+        <mxCell id="sw_hdr_backend" value="3. BACKEND API &amp; SECURITY&#10;Laravel 9 | Sanctum | InputRules" style="rounded=1;arcSize=4;html=0;fillColor=#FAF5FF;strokeColor=#9333EA;strokeWidth=1.5;verticalAlign=middle;align=center;fontSize=11;fontStyle=1;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#0F172A;" vertex="1" parent="1">
+          <mxGeometry x="650" y="108" width="300" height="46" as="geometry"/>
+        </mxCell>
+        <mxCell id="sw_bg_backend" value="" style="rounded=1;arcSize=2;html=0;fillColor=#F8FAFC;strokeColor=#9333EA;strokeWidth=1;dashed=1;dashPattern=6 4;" vertex="1" parent="1">
+          <mxGeometry x="650" y="160" width="300" height="3250" as="geometry"/>
+        </mxCell>
+        <mxCell id="sw_hdr_admin" value="4. ADMIN / STAFF CONSOLE&#10;Back-Office | Verification Queue" style="rounded=1;arcSize=4;html=0;fillColor=#FEFCE8;strokeColor=#CA8A04;strokeWidth=1.5;verticalAlign=middle;align=center;fontSize=11;fontStyle=1;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#0F172A;" vertex="1" parent="1">
+          <mxGeometry x="980" y="108" width="270" height="46" as="geometry"/>
+        </mxCell>
+        <mxCell id="sw_bg_admin" value="" style="rounded=1;arcSize=2;html=0;fillColor=#F8FAFC;strokeColor=#CA8A04;strokeWidth=1;dashed=1;dashPattern=6 4;" vertex="1" parent="1">
+          <mxGeometry x="980" y="160" width="270" height="3250" as="geometry"/>
+        </mxCell>
+        <mxCell id="sw_hdr_db" value="5. DATABASE &amp; STORAGE&#10;MySQL 8 | Storage (Receipts/PDFs)" style="rounded=1;arcSize=4;html=0;fillColor=#FFF7ED;strokeColor=#EA580C;strokeWidth=1.5;verticalAlign=middle;align=center;fontSize=11;fontStyle=1;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#0F172A;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="108" width="270" height="46" as="geometry"/>
+        </mxCell>
+        <mxCell id="sw_bg_db" value="" style="rounded=1;arcSize=2;html=0;fillColor=#F8FAFC;strokeColor=#EA580C;strokeWidth=1;dashed=1;dashPattern=6 4;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="160" width="270" height="3250" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_start" value="START&#10;User Launches Application" style="ellipse;whiteSpace=wrap;html=0;fontSize=11;fontStyle=1;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fillColor=#DCFCE7;strokeColor=#16A34A;strokeWidth=2;fontColor=#14532D;" vertex="1" parent="1">
+          <mxGeometry x="105" y="210" width="170" height="48" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_channel" value="INPUT:&#10;Select Channel&#10;(Web Browser / Android App)" style="shape=parallelogram;perimeter=parallelogramPerimeter;fixedSize=1;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#EEF2FF;strokeColor=#4F46E5;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="72" y="300" width="236" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_landing" value="Render Landing / Login View&#10;(Blade View / Compose UI)" style="rounded=1;arcSize=6;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#F0FDF4;strokeColor=#16A34A;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="362" y="300" width="246" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="d_account" value="Has Existing&#10;Account?" style="rhombus;whiteSpace=wrap;html=0;fontSize=10.5;fontStyle=1;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#9A3412;fillColor=#FFFBEB;strokeColor=#D97706;strokeWidth=2;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="105" y="390" width="170" height="68" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_reg_form" value="INPUT:&#10;Register Details&#10;(Name, Email, Phone, Pass)" style="shape=parallelogram;perimeter=parallelogramPerimeter;fixedSize=1;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#EEF2FF;strokeColor=#4F46E5;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="362" y="390" width="246" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_reg_api" value="POST /register&#10;Validate InputRules &amp; Hash Pass" style="rounded=1;arcSize=6;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#FAF5FF;strokeColor=#9333EA;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="662" y="480" width="276" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_db_reg" value="INSERT INTO clients / users&#10;Set role = client" style="shape=cylinder3;whiteSpace=wrap;html=0;boundedLbl=1;backgroundOutline=1;size=10;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#7C2D12;fillColor=#FFF7ED;strokeColor=#EA580C;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1292" y="480" width="246" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_login_in" value="INPUT:&#10;Submit Email &amp; Password&#10;OR Google OAuth 2.0" style="shape=parallelogram;perimeter=parallelogramPerimeter;fixedSize=1;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#EEF2FF;strokeColor=#4F46E5;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="72" y="570" width="236" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_auth_proc" value="POST /login | /api/v1/login&#10;Check Sanctum / Session Guard" style="rounded=1;arcSize=6;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#FAF5FF;strokeColor=#9333EA;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="662" y="570" width="276" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_db_auth" value="SELECT FROM users&#10;Verify Password &amp; Status" style="shape=cylinder3;whiteSpace=wrap;html=0;boundedLbl=1;backgroundOutline=1;size=10;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#7C2D12;fillColor=#FFF7ED;strokeColor=#EA580C;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1292" y="660" width="246" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="d_auth_ok" value="Credentials&#10;Valid?" style="rhombus;whiteSpace=wrap;html=0;fontSize=10.5;fontStyle=1;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#9A3412;fillColor=#FFFBEB;strokeColor=#D97706;strokeWidth=2;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="725" y="660" width="150" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_auth_err" value="Display Auth Error&#10;Invalid Email or Password" style="rounded=1;arcSize=6;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#FEF2F2;strokeColor=#DC2626;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="362" y="750" width="246" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_gen_token" value="Create Session / Sanctum Token&#10;Enforce Single-Session Policy" style="rounded=1;arcSize=6;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#FAF5FF;strokeColor=#9333EA;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="662" y="750" width="276" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_dash_ui" value="Render Client Dashboard&#10;Active Subs, Appts &amp; Balances" style="rounded=1;arcSize=6;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#F0FDF4;strokeColor=#16A34A;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="362" y="840" width="246" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_user_dash" value="View Client Dashboard&#10;Navigate System Menu" style="rounded=1;arcSize=6;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="72" y="840" width="236" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_profile_in" value="INPUT:&#10;Update Profile Details&#10;(Name, Phone, Password, Avatar)" style="shape=parallelogram;perimeter=parallelogramPerimeter;fixedSize=1;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#EEF2FF;strokeColor=#4F46E5;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="72" y="930" width="236" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_profile_api" value="PUT /client/profile&#10;Validate &amp; Update Information" style="rounded=1;arcSize=6;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#FAF5FF;strokeColor=#9333EA;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="662" y="930" width="276" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_db_prof" value="UPDATE users / clients&#10;Save Profile &amp; Image Path" style="shape=cylinder3;whiteSpace=wrap;html=0;boundedLbl=1;backgroundOutline=1;size=10;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#7C2D12;fillColor=#FFF7ED;strokeColor=#EA580C;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1292" y="930" width="246" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_browse_srv" value="View Available Plans&#10;(Cable TV &amp; Broadband Internet)" style="rounded=1;arcSize=6;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="72" y="1020" width="236" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_load_srv" value="GET /api/v1/services&#10;Fetch Active Catalog &amp; Plans" style="rounded=1;arcSize=6;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#FAF5FF;strokeColor=#9333EA;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="662" y="1020" width="276" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_db_srv" value="SELECT * FROM services&#10;WHERE is_active = 1" style="shape=cylinder3;whiteSpace=wrap;html=0;boundedLbl=1;backgroundOutline=1;size=10;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#7C2D12;fillColor=#FFF7ED;strokeColor=#EA580C;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1292" y="1020" width="246" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_book_in" value="INPUT:&#10;Select Service &amp; Date&#10;Choose Available Time Slot" style="shape=parallelogram;perimeter=parallelogramPerimeter;fixedSize=1;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#EEF2FF;strokeColor=#4F46E5;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="72" y="1110" width="236" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_slot_check" value="Fetch Open Appointment Slots&#10;Prevent Overbooking" style="rounded=1;arcSize=6;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#FAF5FF;strokeColor=#9333EA;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="662" y="1110" width="276" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_db_slots" value="SELECT FROM appointment_slots&#10;WHERE status = 'open'" style="shape=cylinder3;whiteSpace=wrap;html=0;boundedLbl=1;backgroundOutline=1;size=10;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#7C2D12;fillColor=#FFF7ED;strokeColor=#EA580C;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1292" y="1110" width="246" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_submit_req" value="INPUT:&#10;Enter Installation Address&#10;Submit Service Application" style="shape=parallelogram;perimeter=parallelogramPerimeter;fixedSize=1;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#EEF2FF;strokeColor=#4F46E5;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="72" y="1200" width="236" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_save_appt" value="POST /client/appointments&#10;Create Appointment Record" style="rounded=1;arcSize=6;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#FAF5FF;strokeColor=#9333EA;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="662" y="1200" width="276" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_db_appt" value="INSERT INTO appointments&#10;status = 'Pending'" style="shape=cylinder3;whiteSpace=wrap;html=0;boundedLbl=1;backgroundOutline=1;size=10;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#7C2D12;fillColor=#FFF7ED;strokeColor=#EA580C;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1292" y="1200" width="246" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="d_pay_type" value="Select Payment&#10;Method?" style="rhombus;whiteSpace=wrap;html=0;fontSize=10.5;fontStyle=1;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#9A3412;fillColor=#FFFBEB;strokeColor=#D97706;strokeWidth=2;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="110" y="1290" width="160" height="66" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_walkin_pay" value="Pay Over-The-Counter&#10;(Physical Office / Cashier)" style="rounded=1;arcSize=6;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#FEFCE8;strokeColor=#CA8A04;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="72" y="1380" width="236" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_staff_walkin" value="Cashier Processes Payment&#10;Issue Official Receipt" style="rounded=1;arcSize=6;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#FEFCE8;strokeColor=#CA8A04;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="992" y="1380" width="246" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_get_methods" value="GET /payment-methods&#10;Fetch GCash, Maya, Bank Info" style="rounded=1;arcSize=6;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#FAF5FF;strokeColor=#9333EA;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="662" y="1470" width="276" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_db_methods" value="SELECT * FROM payment_methods&#10;WHERE is_active = 1" style="shape=cylinder3;whiteSpace=wrap;html=0;boundedLbl=1;backgroundOutline=1;size=10;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#7C2D12;fillColor=#FFF7ED;strokeColor=#EA580C;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1292" y="1470" width="246" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_view_instr" value="Display Payment QR &amp; Details&#10;(Account Number &amp; Instructions)" style="rounded=1;arcSize=6;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#F0FDF4;strokeColor=#16A34A;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="362" y="1470" width="246" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_upload_proof" value="INPUT:&#10;Enter Ref No, Amount Paid&#10;&amp; Upload Screenshot Proof" style="shape=parallelogram;perimeter=parallelogramPerimeter;fixedSize=1;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#EEF2FF;strokeColor=#4F46E5;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="72" y="1560" width="236" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_pay_api" value="POST /client/payments&#10;Validate Screenshot &amp; Ref No" style="rounded=1;arcSize=6;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#FAF5FF;strokeColor=#9333EA;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="662" y="1560" width="276" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_store_file" value="STORE IN storage/app/public&#10;INSERT INTO payments (Pending)" style="shape=cylinder3;whiteSpace=wrap;html=0;boundedLbl=1;backgroundOutline=1;size=10;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#7C2D12;fillColor=#FFF7ED;strokeColor=#EA580C;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1292" y="1560" width="246" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_admin_login" value="Staff / Admin Login&#10;POST /admin/login (auth:admin)" style="rounded=1;arcSize=6;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#FEFCE8;strokeColor=#CA8A04;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="992" y="1650" width="246" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_admin_dash" value="Admin Dashboard&#10;View Revenue, Appts &amp; Queue" style="rounded=1;arcSize=6;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#FEFCE8;strokeColor=#CA8A04;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="992" y="1740" width="246" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_queue_fetch" value="GET /admin/payments&#10;Fetch Pending Payments Queue" style="rounded=1;arcSize=6;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#FAF5FF;strokeColor=#9333EA;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="662" y="1830" width="276" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_admin_verify" value="Staff Verifies Receipt:&#10;Inspect Screenshot vs Ref No" style="rounded=1;arcSize=6;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#FEFCE8;strokeColor=#CA8A04;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="992" y="1830" width="246" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="d_admin_appr" value="Payment &amp;&#10;Receipt Valid?" style="rhombus;whiteSpace=wrap;html=0;fontSize=10.5;fontStyle=1;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#9A3412;fillColor=#FFFBEB;strokeColor=#D97706;strokeWidth=2;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1035" y="1920" width="160" height="66" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_reject_proc" value="POST /admin/payments/{id}/reject&#10;Update status = 'Rejected' + Note" style="rounded=1;arcSize=6;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#FEF2F2;strokeColor=#DC2626;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="662" y="2010" width="276" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_notify_rej" value="Notify Client of Rejection&#10;Prompt to Re-upload Proof" style="rounded=1;arcSize=6;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#FEF2F2;strokeColor=#DC2626;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="362" y="2010" width="246" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_appr_proc" value="POST /admin/payments/{id}/approve&#10;Set status = 'Approved' &amp; Generate Receipt" style="rounded=1;arcSize=6;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#F0FDF4;strokeColor=#16A34A;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="662" y="2100" width="276" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_db_sales" value="UPDATE payments -&gt; Approved&#10;INSERT INTO sales_receipts" style="shape=cylinder3;whiteSpace=wrap;html=0;boundedLbl=1;backgroundOutline=1;size=10;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#7C2D12;fillColor=#FFF7ED;strokeColor=#EA580C;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1292" y="2100" width="246" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_assign_tech" value="Assign Technician &amp; Schedule&#10;Update Appointment Slot" style="rounded=1;arcSize=6;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#FEFCE8;strokeColor=#CA8A04;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="992" y="2190" width="246" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_db_assign" value="UPDATE appointments&#10;status = 'Scheduled', tech_id = X" style="shape=cylinder3;whiteSpace=wrap;html=0;boundedLbl=1;backgroundOutline=1;size=10;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#7C2D12;fillColor=#FFF7ED;strokeColor=#EA580C;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1292" y="2190" width="246" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_tech_exec" value="Technician Installs / Services&#10;Client Signs Job Order" style="rounded=1;arcSize=6;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#FEFCE8;strokeColor=#CA8A04;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="992" y="2280" width="246" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_db_complete" value="UPDATE appointments&#10;status = 'Completed'" style="shape=cylinder3;whiteSpace=wrap;html=0;boundedLbl=1;backgroundOutline=1;size=10;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#7C2D12;fillColor=#FFF7ED;strokeColor=#EA580C;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1292" y="2280" width="246" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_track_ui" value="Fetch Updated Status Timeline&#10;Pending -&gt; Verified -&gt; Completed" style="rounded=1;arcSize=6;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#F0FDF4;strokeColor=#16A34A;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="362" y="2370" width="246" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_track_view" value="Track Request &amp; Order Status&#10;View Active Subscription" style="rounded=1;arcSize=6;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#EFF6FF;strokeColor=#3B82F6;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="72" y="2370" width="236" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_req_receipt" value="INPUT:&#10;Click View / Download Receipt" style="shape=parallelogram;perimeter=parallelogramPerimeter;fixedSize=1;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#EEF2FF;strokeColor=#4F46E5;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="72" y="2460" width="236" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_pdf_engine" value="GET /client/print/receipt/{id}&#10;Generate PDF / Thermal Format" style="rounded=1;arcSize=6;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#FAF5FF;strokeColor=#9333EA;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="662" y="2460" width="276" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_out_receipt" value="Display &amp; Download Official Receipt&#10;(Sales Invoice with QR Code)" style="shape=parallelogram;perimeter=parallelogramPerimeter;fixedSize=1;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#F0FDF4;strokeColor=#16A34A;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="362" y="2460" width="246" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_chat_in" value="INPUT:&#10;Open AI Chatbot &amp; Submit Inquiry&#10;(Billing, Plans, Technical Support)" style="shape=parallelogram;perimeter=parallelogramPerimeter;fixedSize=1;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#EEF2FF;strokeColor=#4F46E5;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="72" y="2550" width="236" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_chat_bot" value="POST /api/v1/chat&#10;Assistant Engine Analyzes Intent" style="rounded=1;arcSize=6;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#FAF5FF;strokeColor=#9333EA;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="662" y="2550" width="276" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_chat_resp" value="Display Automated Support Response&#10;Or Escalate to Live Staff" style="shape=parallelogram;perimeter=parallelogramPerimeter;fixedSize=1;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#F0FDF4;strokeColor=#16A34A;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="362" y="2550" width="246" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_pass_in" value="INPUT:&#10;Change Password / Update Settings" style="shape=parallelogram;perimeter=parallelogramPerimeter;fixedSize=1;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#EEF2FF;strokeColor=#4F46E5;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="72" y="2640" width="236" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_pass_api" value="PUT /client/password&#10;Hash New Password &amp; Revoke Old Sessions" style="rounded=1;arcSize=6;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#FAF5FF;strokeColor=#9333EA;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="662" y="2640" width="276" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_db_pass" value="UPDATE users&#10;SET password = HashedPass" style="shape=cylinder3;whiteSpace=wrap;html=0;boundedLbl=1;backgroundOutline=1;size=10;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#7C2D12;fillColor=#FFF7ED;strokeColor=#EA580C;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1292" y="2640" width="246" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_logout_in" value="INPUT:&#10;Click Logout Button&#10;(Web Navigation / Mobile Menu)" style="shape=parallelogram;perimeter=parallelogramPerimeter;fixedSize=1;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#EEF2FF;strokeColor=#4F46E5;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="72" y="2730" width="236" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_logout_api" value="POST /logout | /api/v1/logout&#10;Revoke Sanctum Tokens &amp; Flush Session" style="rounded=1;arcSize=6;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#FAF5FF;strokeColor=#9333EA;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="662" y="2730" width="276" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_db_logout" value="DELETE FROM personal_access_tokens&#10;Clear Active Session Token" style="shape=cylinder3;whiteSpace=wrap;html=0;boundedLbl=1;backgroundOutline=1;size=10;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#7C2D12;fillColor=#FFF7ED;strokeColor=#EA580C;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1292" y="2730" width="246" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_nocache" value="PreventBackHistory Middleware&#10;Inject Cache-Control &amp; Redirect /login" style="rounded=1;arcSize=6;whiteSpace=wrap;html=0;fontSize=10.5;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#1E293B;fillColor=#F0FDF4;strokeColor=#16A34A;strokeWidth=1.5;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="362" y="2820" width="246" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="n_end" value="END&#10;Session Safely Terminated" style="ellipse;whiteSpace=wrap;html=0;fontSize=11;fontStyle=1;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fillColor=#FEE2E2;strokeColor=#DC2626;strokeWidth=2;fontColor=#7F1D1D;" vertex="1" parent="1">
+          <mxGeometry x="105" y="2820" width="170" height="48" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_0_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_start" target="n_channel">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_1_ui" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_channel" target="n_landing">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_ui_dec" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;" edge="1" parent="1" source="n_landing" target="d_account">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="485" y="327"/>
+              <mxPoint x="190" y="370"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_dec_reg" value="No (New)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#DC2626;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontStyle=1;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#DC2626;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="d_account" target="n_reg_form">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_reg_api" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_reg_form" target="n_reg_api">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_reg_db" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_reg_api" target="n_db_reg">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_db_to_login" value="Registered" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_db_reg" target="n_login_in">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1415" y="507"/>
+              <mxPoint x="1525" y="507"/>
+              <mxPoint x="1525" y="597"/>
+              <mxPoint x="330" y="597"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_dec_login" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#16A34A;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontStyle=1;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#16A34A;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="d_account" target="n_login_in">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_login_auth" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_login_in" target="n_auth_proc">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_auth_db" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_auth_proc" target="n_db_auth">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_db_dec" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_db_auth" target="d_auth_ok">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1415" y="687"/>
+              <mxPoint x="800" y="687"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_auth_fail" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#DC2626;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontStyle=1;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#DC2626;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="d_auth_ok" target="n_auth_err">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_err_retry" value="Retry" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_auth_err" target="n_login_in">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="365" y="777"/>
+              <mxPoint x="365" y="597"/>
+              <mxPoint x="320" y="597"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_auth_succ" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#16A34A;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontStyle=1;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#16A34A;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="d_auth_ok" target="n_gen_token">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_tok_dash" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_gen_token" target="n_dash_ui">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="800" y="777"/>
+              <mxPoint x="485" y="867"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_ui_user_dash" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_dash_ui" target="n_user_dash">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_dash_prof" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_user_dash" target="n_profile_in">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_prof_api" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_profile_in" target="n_profile_api">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_prof_db" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_profile_api" target="n_db_prof">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_prof_srv" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_profile_in" target="n_browse_srv">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_srv_api" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_browse_srv" target="n_load_srv">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_srv_db" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_load_srv" target="n_db_srv">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_srv_book" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_browse_srv" target="n_book_in">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_book_slot" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_book_in" target="n_slot_check">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_slot_db" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_slot_check" target="n_db_slots">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_book_sub" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_book_in" target="n_submit_req">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_sub_api" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_submit_req" target="n_save_appt">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_save_db" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_save_appt" target="n_db_appt">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_sub_pay" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_submit_req" target="d_pay_type">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_pay_walkin" value="Counter / Cash" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="d_pay_type" target="n_walkin_pay">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_walkin_cashier" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_walkin_pay" target="n_staff_walkin">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="190" y="1407"/>
+              <mxPoint x="1115" y="1407"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_pay_digital" value="GCash/Maya/Bank" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="d_pay_type" target="n_get_methods">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="320" y="1323"/>
+              <mxPoint x="800" y="1497"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_meth_db" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_get_methods" target="n_db_methods">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_meth_ui" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_get_methods" target="n_view_instr">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_instr_user" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_view_instr" target="n_upload_proof">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="485" y="1497"/>
+              <mxPoint x="190" y="1587"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_proof_api" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_upload_proof" target="n_pay_api">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_api_store" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_pay_api" target="n_store_file">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_adm_log_dash" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_admin_login" target="n_admin_dash">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_adm_fetch" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_admin_dash" target="n_queue_fetch">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1115" y="1767"/>
+              <mxPoint x="800" y="1857"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_queue_adm" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_queue_fetch" target="n_admin_verify">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_verify_dec" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_admin_verify" target="d_admin_appr">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_adm_rej" value="No (Invalid)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#DC2626;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontStyle=1;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#DC2626;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="d_admin_appr" target="n_reject_proc">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_rej_notify" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_reject_proc" target="n_notify_rej">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_rej_reupload" value="Re-upload" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_notify_rej" target="n_upload_proof">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="355" y="2037"/>
+              <mxPoint x="355" y="1587"/>
+              <mxPoint x="320" y="1587"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_adm_appr" value="Yes (Valid)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#16A34A;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontStyle=1;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#16A34A;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="d_admin_appr" target="n_appr_proc">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_appr_db" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_appr_proc" target="n_db_sales">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_appr_tech" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_appr_proc" target="n_assign_tech">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="800" y="2127"/>
+              <mxPoint x="1115" y="2217"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_tech_db" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_assign_tech" target="n_db_assign">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_assign_exec" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_assign_tech" target="n_tech_exec">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_exec_comp" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_tech_exec" target="n_db_complete">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_comp_track" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_db_complete" target="n_track_ui">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1415" y="2307"/>
+              <mxPoint x="485" y="2397"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_track_user" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_track_ui" target="n_track_view">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_view_rcpt" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_track_view" target="n_req_receipt">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_rcpt_api" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_req_receipt" target="n_pdf_engine">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_pdf_ui" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_pdf_engine" target="n_out_receipt">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_rcpt_chat" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_req_receipt" target="n_chat_in">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_chat_api" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_chat_in" target="n_chat_bot">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_bot_ui" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_chat_bot" target="n_chat_resp">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_chat_pass" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_chat_in" target="n_pass_in">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_pass_api_e" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_pass_in" target="n_pass_api">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_pass_db_e" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_pass_api" target="n_db_pass">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_pass_logout" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_pass_in" target="n_logout_in">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_logout_api_e" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_logout_in" target="n_logout_api">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_logout_db_e" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_logout_api" target="n_db_logout">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_logout_nocache" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_logout_api" target="n_nocache">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_nocache_end" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;strokeColor=#64748B;strokeWidth=1.5;endArrow=classic;endFill=1;fontSize=10;fontFamily=Segoe UI, Inter, Helvetica Neue, Arial, sans-serif;fontColor=#334155;labelBackgroundColor=#FFFFFF;labelBorderColor=none;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="n_nocache" target="n_end">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
