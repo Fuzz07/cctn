@@ -553,8 +553,8 @@ class Assistant
 
     private function howToPay(?Client $client): array
     {
-        $reply = 'We process payments via secure digital payment methods (GCash, Maya, and Bank Transfers). '
-            . 'You can manage and save your preferred payment methods in your portal or mobile app, '
+        $reply = 'We process payments via GCash and Maya (E-Wallet). '
+            . 'You can manage and save your preferred payment method in your portal or mobile app, '
             . 'and track all your statements and payments in real-time.';
 
         return $this->answer(

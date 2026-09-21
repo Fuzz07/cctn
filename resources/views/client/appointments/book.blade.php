@@ -279,8 +279,6 @@
                 <select name="payment_method" id="payment_method" class="form-control" required style="font-weight: 600;" onchange="updatePaymentInstructions()">
                     <option value="GCash" {{ old('payment_method', 'GCash') == 'GCash' ? 'selected' : '' }}>GCash (E-Wallet)</option>
                     <option value="Maya" {{ old('payment_method', '') == 'Maya' ? 'selected' : '' }}>Maya (E-Wallet)</option>
-                    <option value="Bank Transfer" {{ old('payment_method', '') == 'Bank Transfer' ? 'selected' : '' }}>Bank Transfer (BDO, BPI, UnionBank)</option>
-                    <option value="Credit/Debit Card" {{ old('payment_method', '') == 'Credit/Debit Card' ? 'selected' : '' }}>Credit / Debit Card</option>
                 </select>
 
                 <!-- DYNAMIC PAYMENT INSTRUCTIONS CARD -->
@@ -526,24 +524,6 @@
             typeLabel: 'Maya Number',
             instructions: 'Transfer exact amount to the official Maya account details above.'
         },
-        'Bank Transfer': {
-            badge: 'Bank Transfer (BDO / BPI)',
-            badgeBg: '#f3e8ff',
-            badgeFg: '#6b21a8',
-            name: 'Bogo Cable Television Inc.',
-            accountNumber: '0012-3456-7890 (BDO Unibank) / 1234-5678-90 (BPI)',
-            typeLabel: 'Bank Account Number',
-            instructions: 'Execute online bank transfer or over-the-counter deposit to BCTVI BDO/BPI account.'
-        },
-        'Credit/Debit Card': {
-            badge: 'Credit / Debit Card',
-            badgeBg: '#e0f2fe',
-            badgeFg: '#0369a1',
-            name: 'BCTVI Payment Channel',
-            accountNumber: 'Online Card Portal Transfer',
-            typeLabel: 'Payment Channel',
-            instructions: 'Process your card payment via our verified online payment account channel.'
-        }
     };
 
     document.addEventListener('DOMContentLoaded', function() {

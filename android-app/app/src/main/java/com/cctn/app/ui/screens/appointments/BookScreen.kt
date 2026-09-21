@@ -226,7 +226,7 @@ fun BookScreen(
                 }
             }
 
-            val digitalOptions = listOf("GCash", "Maya", "Bank Transfer", "Credit/Debit Card")
+            val digitalOptions = listOf("GCash", "Maya")
             val availableMethods = if (state.paymentMethods.isNotEmpty()) {
                 state.paymentMethods.map { it.providerName }.distinct() + digitalOptions.filter { opt ->
                     state.paymentMethods.none { it.providerName.equals(opt, ignoreCase = true) }
@@ -388,25 +388,6 @@ private fun paymentInstructionsFor(method: String): PaymentAccountInstructions {
             accent = Color(0xFF15803D),
         )
 
-        listOf("bank", "bdo", "bpi", "unionbank").any { it in normalized } -> PaymentAccountInstructions(
-            badge = "Bank Transfer",
-            heading = "BCTVI OFFICIAL BANK ACCOUNT",
-            accountName = "Bogo Cable Television Inc.",
-            accountLabel = "Bank Account Number",
-            accountNumber = "0012-3456-7890 (BDO) / 1234-5678-90 (BPI)",
-            instructions = "Transfer the exact amount through your bank and keep the confirmation receipt.",
-            accent = Color(0xFF6B21A8),
-        )
-
-        "card" in normalized -> PaymentAccountInstructions(
-            badge = "Credit / Debit Card",
-            heading = "VERIFIED CARD PAYMENT CHANNEL",
-            accountName = "Bogo Cable Television Inc. (BCTVI)",
-            accountLabel = "Payment Channel",
-            accountNumber = "Online Card Portal Transfer",
-            instructions = "Complete the payment through the verified card channel and save the receipt.",
-            accent = Color(0xFF0369A1),
-        )
 
         else -> PaymentAccountInstructions(
             badge = "GCash E-Wallet",

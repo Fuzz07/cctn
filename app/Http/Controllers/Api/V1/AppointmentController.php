@@ -78,7 +78,7 @@ class AppointmentController extends Controller
             'reference_number' => 'required|string|max:100',
             'payment_proof'    => 'required|image|mimes:jpeg,png,jpg,webp|max:4096',
         ], [
-            'payment_method.not_in' => 'Cash is not available. Please select a digital payment method (GCash, Maya, Bank Transfer, or Card).',
+            'payment_method.not_in' => 'Cash is not available. Please select a digital payment method (GCash or Maya).',
             'reference_number.required' => 'Enter the reference number from your payment confirmation.',
             'payment_proof.required' => 'Upload a screenshot or photo of your payment receipt.',
         ]);

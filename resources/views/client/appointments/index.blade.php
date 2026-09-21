@@ -154,8 +154,6 @@
                                 <select name="payment_method" class="form-control" style="width: 100%; padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: 600;" required>
                                     <option value="GCash" {{ ($appt->payment_method == 'GCash' || !$appt->payment_method || $appt->payment_method == 'Cash') ? 'selected' : '' }}>GCash (E-Wallet)</option>
                                     <option value="Maya" {{ $appt->payment_method == 'Maya' ? 'selected' : '' }}>Maya (E-Wallet)</option>
-                                    <option value="Bank Transfer" {{ $appt->payment_method == 'Bank Transfer' ? 'selected' : '' }}>Bank Transfer</option>
-                                    <option value="Credit/Debit Card" {{ $appt->payment_method == 'Credit/Debit Card' ? 'selected' : '' }}>Credit / Debit Card</option>
                                 </select>
                             </div>
                             <div id="ref-field-{{ $appt->id }}">
