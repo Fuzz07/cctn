@@ -21,7 +21,7 @@ class WalkInController extends Controller
 {
     public function create(Request $request)
     {
-        $services = Service::where('status', 'Active')->orderBy('price', 'asc')->get();
+        $services = Service::where('status', 'Active')->orderBy('price', 'asc')->get()->unique('service_name')->values();
         $timeSlots = TimeSlot::where('is_available', true)->get();
 
         // Populates the confirmation step after a booking is stored

@@ -21,10 +21,13 @@ class ServiceSeeder extends Seeder
         ];
 
         foreach ($services as $service) {
-            DB::table('services')->insertOrIgnore(array_merge($service, [
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]));
+            DB::table('services')->updateOrInsert(
+                ['service_name' => $service['service_name']],
+                array_merge($service, [
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ])
+            );
         }
     }
 }

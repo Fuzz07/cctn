@@ -31,7 +31,7 @@ class AppointmentController extends Controller
             ->orderBy('preferred_time', 'desc')
             ->get();
 
-        $services = Service::orderBy('service_name')->get();
+        $services = Service::orderBy('service_name')->get()->unique('service_name')->values();
 
         // If manage_id is set, fetch that appointment for the edit modal
         $manageAppointment = null;

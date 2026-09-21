@@ -35,7 +35,16 @@ class AppointmentController extends Controller
             $selectedDate = date('Y-m-d', strtotime('+1 day'));
         }
 
-        $services = Service::active()->orderBy('service_name')->get();
+        $services = Service::active()->orderBy('service_name')->get()->unique('service_name')->values();
+        if ($preselectedServiceId) {
+            $preselectedService = Service::find($preselectedServiceId);
+            if ($preselectedService) {
+                $canonical = $services->firstWhere('service_name', $preselectedService->service_name);
+                if ($canonical) {
+                    $preselectedServiceId = $canonical->id;
+                }
+            }
+        }
         $allSlots = TimeSlot::available()->pluck('slot_time')->toArray();
         if (empty($allSlots)) {
             $allSlots = ['08:00:00', '10:00:00', '12:00:00', '14:00:00', '16:00:00', '18:00:00'];

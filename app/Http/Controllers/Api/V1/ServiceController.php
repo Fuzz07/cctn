@@ -11,7 +11,7 @@ class ServiceController extends Controller
     // ─── GET /api/v1/services ────────────────────────────────────────────────
     public function index()
     {
-        $services = Service::active()->orderBy('service_name')->get();
+        $services = Service::active()->orderBy('service_name')->get()->unique('service_name')->values();
 
         return response()->json([
             'success'  => true,

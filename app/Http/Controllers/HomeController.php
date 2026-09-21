@@ -10,7 +10,7 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $services = Service::active()->where('price', '>', 0)->orderBy('price', 'asc')->get();
+        $services = Service::active()->where('price', '>', 0)->orderBy('price', 'asc')->get()->unique('service_name')->values();
 
         // Get troubleshooting service ID dynamically
         $troubleService = Service::where('service_name', 'like', '%Troubleshooting%')->first();

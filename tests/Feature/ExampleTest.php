@@ -23,6 +23,9 @@ class ExampleTest extends TestCase
 
     public function test_landing_page_only_displays_paid_broadband_plans()
     {
+        // Clear any services created during initial migration
+        \App\Models\Service::query()->delete();
+
         // 1. Create a paid active FTTH plan
         \App\Models\Service::create([
             'service_name' => 'FTTH - Super Fast 50 Mbps Plan',

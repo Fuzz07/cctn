@@ -486,7 +486,7 @@ class Assistant
 
     private function plans(?Client $client): array
     {
-        $services = Service::active()->orderBy('price')->get();
+        $services = Service::active()->orderBy('price')->get()->unique('service_name')->values();
 
         if ($services->isEmpty()) {
             return $this->answer(
