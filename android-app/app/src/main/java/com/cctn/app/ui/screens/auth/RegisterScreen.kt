@@ -6,7 +6,10 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -161,6 +164,17 @@ fun RegisterScreen(
             Spacer(Modifier.height(20.dp))
 
             RegisterCard {
+                Image(
+                    painter = painterResource(R.drawable.logo_bctvi),
+                    contentDescription = "BCTVI Logo",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(64.dp)
+                        .clip(CircleShape)
+                        .background(Color.White, CircleShape)
+                        .border(2.5.dp, MaterialTheme.colorScheme.primary, CircleShape),
+                )
+                Spacer(Modifier.height(14.dp))
                 Text(
                     text = "Client Registration",
                     style = MaterialTheme.typography.headlineSmall,

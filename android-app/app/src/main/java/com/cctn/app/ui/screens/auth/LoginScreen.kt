@@ -43,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -163,19 +164,16 @@ fun LoginScreen(
             Spacer(Modifier.height(22.dp))
 
             AuthCard {
-                Box(
+                Image(
+                    painter = painterResource(R.drawable.logo_bctvi),
+                    contentDescription = "BCTVI Logo",
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .size(64.dp)
-                        .background(MaterialTheme.colorScheme.primary, CircleShape),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Person,
-                        contentDescription = null,
-                        tint = Color.White,
-                        modifier = Modifier.size(32.dp),
-                    )
-                }
+                        .size(68.dp)
+                        .clip(CircleShape)
+                        .background(Color.White, CircleShape)
+                        .border(2.5.dp, MaterialTheme.colorScheme.primary, CircleShape),
+                )
 
                 Spacer(Modifier.height(18.dp))
 
