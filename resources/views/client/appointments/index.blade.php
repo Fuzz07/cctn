@@ -110,12 +110,23 @@
                     @endif
                 </div>
 
-                <!-- Footer Action: Payment Method Update -->
-                <div class="appt-footer" style="display: flex; justify-content: space-between; align-items: center;">
-                    <button type="button" class="btn-action" style="background: #fef2f2; color: #dc2626; border-color: #fecaca; font-weight: 700;" onclick="togglePaymentForm({{ $appt->id }})">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px; vertical-align: -2px;"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-                        {{ $appt->payment_method ? 'Update Payment Method' : 'Set Digital Payment Method' }}
-                    </button>
+                <!-- Footer Action: Payment Method Update & Delete -->
+                <div class="appt-footer" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                        <button type="button" class="btn-action" style="background: #fef2f2; color: #dc2626; border-color: #fecaca; font-weight: 700;" onclick="togglePaymentForm({{ $appt->id }})">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px; vertical-align: -2px;"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                            {{ $appt->payment_method ? 'Update Payment Method' : 'Set Digital Payment Method' }}
+                        </button>
+
+                        <form action="{{ route('client.appointments.destroy', $appt->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this booking appointment? This action cannot be undone.');" style="margin: 0;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn-action btn-outline-danger" style="font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2 2v2"></path></svg>
+                                Delete Booking
+                            </button>
+                        </form>
+                    </div>
                     @if($appt->admin_notes)
                         <span style="font-size: 0.8rem; color: #64748b;"><strong>Note:</strong> {{ $appt->admin_notes }}</span>
                     @endif

@@ -84,6 +84,7 @@ Route::middleware('auth.client')->group(function () {
 
     Route::get('/my-appointments', [ClientAppointment::class, 'index'])->name('client.appointments');
     Route::post('/my-appointments/{id}/payment-method', [ClientAppointment::class, 'updatePaymentMethod'])->name('client.appointments.payment-method');
+    Route::delete('/my-appointments/{id}', [ClientAppointment::class, 'destroy'])->name('client.appointments.destroy');
     Route::get('/book', [ClientAppointment::class, 'create'])->name('client.book');
     Route::post('/book', [ClientAppointment::class, 'store'])->name('client.book.submit');
     Route::get('/api/booked-slots', [ClientAppointment::class, 'getBookedSlots'])->name('api.booked-slots');

@@ -156,6 +156,7 @@
                                 <th>Service</th>
                                 <th>Status</th>
                                 <th>Ref #</th>
+                                <th style="text-align: right;">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -175,10 +176,20 @@
                                     <td style="font-family:monospace; font-size:0.85rem; color:#94a3b8;">
                                         #{{ str_pad($appt->id, 5, '0', STR_PAD_LEFT) }}
                                     </td>
+                                    <td style="text-align: right;">
+                                        <form action="{{ route('client.appointments.destroy', $appt->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this booking appointment?');" style="display:inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" style="background:none; border:none; color:#dc2626; cursor:pointer; padding:4px; font-size:0.85rem; font-weight:700;" title="Delete Booking">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" style="text-align:center; padding: 2rem; color: #94a3b8;">
+                                    <td colspan="5" style="text-align:center; padding: 2rem; color: #94a3b8;">
                                         No recent appointments found.
                                     </td>
                                 </tr>
@@ -300,16 +311,9 @@
 
                     <hr style="border:0; border-top:1px solid #e2e8f0; margin: 1.5rem 0;">
 
-                    <div class="c-form-grid-2">
-                        <div class="c-field">
-                            <label class="c-label">New Password <span style="font-weight:400; color:#94a3b8;">(Leave blank to keep current)</span></label>
-                            <input type="password" name="new_password" class="c-input" placeholder="••••••••">
-                        </div>
-                        <div class="c-field">
-                            <label class="c-label">Update Profile Photo</label>
-                            <input type="file" name="profile_photo" class="c-input" accept="image/png, image/jpeg, image/gif, image/webp" style="padding: 0.4rem 0.85rem;">
-                            <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.35rem;">JPG, PNG, GIF, or WEBP &middot; up to 5 MB</div>
-                        </div>
+                    <div class="c-field">
+                        <label class="c-label">New Password <span style="font-weight:400; color:#94a3b8;">(Leave blank to keep current)</span></label>
+                        <input type="password" name="new_password" class="c-input" placeholder="••••••••">
                     </div>
 
                     <div style="text-align: right; margin-top: 1rem;">
@@ -322,7 +326,7 @@
         <!-- Right Side: Profile Summary -->
         <div>
             <div class="c-card c-profile-card">
-                <img src="{{ $client->profile_photo ? asset($client->profile_photo) : asset('assets/img/default-avatar.svg') }}" alt="Profile Photo" class="c-avatar-img">
+                <img src="{{ asset('assets/images/cctn-logo.png') }}" alt="Client Avatar" class="c-avatar-img">
                 <h2 class="c-profile-name">{{ $client->firstname }} {{ $client->lastname }}</h2>
                 <p class="c-profile-user">{{ '@' . $client->username }}</p>
 
