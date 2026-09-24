@@ -18,7 +18,16 @@ class HomeController extends Controller
 
         return view('home', compact('services', 'troubleId'));
     }
-/**
+
+    /**
+     * Display Terms and Conditions for BCTVI clients.
+     */
+    public function terms()
+    {
+        return view('terms');
+    }
+
+    /**
  * Streams the mobile companion app APK with proper headers.
  */
 public function downloadApk()

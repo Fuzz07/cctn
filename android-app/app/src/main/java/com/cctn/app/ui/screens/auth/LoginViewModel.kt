@@ -17,13 +17,14 @@ data class LoginUiState(
     val loginInput: String = "",
     val password: String = "",
     val rememberMe: Boolean = true,
+    val agreeTerms: Boolean = false,
     val loginInputError: String? = null,
     val passwordError: String? = null,
     val formError: String? = null,
     val submitting: Boolean = false,
 ) {
     val canSubmit: Boolean
-        get() = loginInput.isNotBlank() && password.isNotBlank() && !submitting
+        get() = loginInput.isNotBlank() && password.isNotBlank() && agreeTerms && !submitting
 }
 
 @HiltViewModel
@@ -44,6 +45,10 @@ class LoginViewModel @Inject constructor(
 
     fun onRememberMeChange(value: Boolean) = _state.update {
         it.copy(rememberMe = value)
+    }
+
+    fun onAgreeTermsChange(value: Boolean) = _state.update {
+        it.copy(agreeTerms = value)
     }
 
     fun onGoogleIdToken(idToken: String) {

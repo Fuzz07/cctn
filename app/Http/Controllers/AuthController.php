@@ -36,6 +36,9 @@ class AuthController extends Controller
         $request->validate([
             'login_input' => 'required|string',
             'password'    => 'required|string',
+            'agree_terms' => 'accepted',
+        ], [
+            'agree_terms.accepted' => 'You must agree to the Terms and Conditions before signing in.',
         ]);
 
         $loginInput = $request->input('login_input');
@@ -94,12 +97,14 @@ class AuthController extends Controller
             'address_province'  => InputRules::address(true, 100),
             'proof_of_billing'  => 'required|image|mimes:jpeg,jpg,png,webp|max:5120',
             'profile_photo'     => 'nullable|image|mimes:jpeg,jpg,png,gif,webp|max:5120',
+            'agree_terms'       => 'accepted',
         ], array_merge(InputRules::messages([
             'name'    => ['firstname', 'middlename', 'lastname', 'place_of_birth'],
             'number'  => ['age'],
             'address' => ['address_barangay', 'address_province'],
             'mobile'  => ['contact_no'],
         ]), [
+            'agree_terms.accepted'      => 'You must agree to the Terms and Conditions to create an account.',
             'profile_photo.image'       => 'The profile photo must be an image file (JPG, PNG, GIF, or WEBP).',
             'profile_photo.mimes'       => 'The profile photo must be a JPG, PNG, GIF, or WEBP image.',
             'profile_photo.max'         => 'The profile photo must not be larger than 5 MB.',

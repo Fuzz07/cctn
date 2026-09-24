@@ -385,6 +385,11 @@
                             Attach a clear photo of a recent billing statement (electric or water bill) showing your
                             name and address. This is required to verify that your account details are valid.
                         </div>
+                    <div class="auth-input-group" style="margin-top: 1.25rem;">
+                        <label class="auth-checkbox" style="display: flex; align-items: flex-start; gap: 0.65rem; font-size: 0.85rem; color: #475569; font-weight: 500; cursor: pointer;">
+                            <input type="checkbox" name="agree_terms" id="agree_terms_register" value="1" required style="accent-color: var(--primary); width: 17px; height: 17px; margin-top: 2px;">
+                            <span>I have read and agree to the <a href="{{ route('terms') }}" target="_blank" style="color: var(--primary); font-weight: 700; text-decoration: underline;">Terms and Conditions</a></span>
+                        </label>
                     </div>
                 </div>
 

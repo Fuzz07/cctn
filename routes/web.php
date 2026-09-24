@@ -31,6 +31,8 @@ Route::get('/migration', function () {
     require public_path('migration.php');
 });
 Route::get('/download-apk', [HomeController::class, 'downloadApk'])->name('download.apk');
+Route::get('/terms', [HomeController::class, 'terms'])->name('terms');
+Route::get('/terms-and-conditions', [HomeController::class, 'terms'])->name('terms.conditions');
 
 // Serve public storage files (payment proofs/receipts) even if the symlink is missing on shared hosting
 Route::get('/storage/{path}', function ($path) {
