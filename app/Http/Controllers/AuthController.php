@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use App\Notifications\PasswordResetCode;
+use App\Rules\Recaptcha;
 use App\Support\InputRules;
 use Carbon\Carbon;
 use Illuminate\Auth\Events\PasswordReset;
@@ -34,9 +35,10 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'login_input' => 'required|string',
-            'password'    => 'required|string',
-            'agree_terms' => 'accepted',
+            'login_input'          => 'required|string',
+            'password'             => 'required|string',
+            'agree_terms'          => 'accepted',
+            'g-recaptcha-response' => [new Recaptcha],
         ], [
             'agree_terms.accepted' => 'You must agree to the Terms and Conditions before signing in.',
         ]);
@@ -95,9 +97,10 @@ class AuthController extends Controller
             'address_barangay'  => InputRules::address(true, 100),
             'address_municipality' => 'required|string|max:100|in:Bantayan,Santa Fe,Madridejos',
             'address_province'  => InputRules::address(true, 100),
-            'proof_of_billing'  => 'required|image|mimes:jpeg,jpg,png,webp|max:5120',
-            'profile_photo'     => 'nullable|image|mimes:jpeg,jpg,png,gif,webp|max:5120',
-            'agree_terms'       => 'accepted',
+            'proof_of_billing'     => 'required|image|mimes:jpeg,jpg,png,webp|max:5120',
+            'profile_photo'        => 'nullable|image|mimes:jpeg,jpg,png,gif,webp|max:5120',
+            'agree_terms'          => 'accepted',
+            'g-recaptcha-response' => [new Recaptcha],
         ], array_merge(InputRules::messages([
             'name'    => ['firstname', 'middlename', 'lastname', 'place_of_birth'],
             'number'  => ['age'],
@@ -427,7 +430,10 @@ class AuthController extends Controller
     public function forgotPassword(Request $request)
     {
         $request->merge(['email' => strtolower(trim((string) $request->input('email')))]);
-        $request->validate(['email' => 'required|email']);
+        $request->validate([
+            'email'                => 'required|email',
+            'g-recaptcha-response' => [new Recaptcha],
+        ]);
 
         $client = Client::where('email', $request->email)->first();
         if (!$client) {

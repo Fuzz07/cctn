@@ -6,6 +6,7 @@
     <title>Forgot Password - BCTVI Bantayan</title>
     <link rel="icon" type="image/png" href="{{ asset('assets/images/favicon.png') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <style>
         body { background:#f8fafc; min-height:100vh; display:flex; align-items:center; justify-content:center; margin:0; font-family:system-ui,sans-serif; padding:1.5rem; }
         .card { background:#fff; border-radius:20px; padding:3rem 2.5rem; max-width:440px; width:100%; box-shadow:0 20px 40px rgba(0,0,0,0.04); border:1px solid #e5e7eb; }
@@ -62,6 +63,9 @@
                 <label class="form-label">Email Address</label>
                 <input type="email" name="email" class="form-input" placeholder="your@email.com" value="{{ old('email') }}" required>
             </div>
+
+            @include('partials.recaptcha')
+
             <button type="submit" class="btn-submit">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
                 Send Verification Code

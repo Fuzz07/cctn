@@ -26,6 +26,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <style>
         body {
             background: linear-gradient(rgba(15, 23, 42, 0.55), rgba(15, 23, 42, 0.7)), url('{{ asset('assets/images/login-bg.jpg') }}') center / cover no-repeat fixed;
@@ -391,6 +392,8 @@
                             <span>I have read and agree to the <a href="{{ route('terms') }}" target="_blank" style="color: var(--primary); font-weight: 700; text-decoration: underline;">Terms and Conditions</a></span>
                         </label>
                     </div>
+
+                    @include('partials.recaptcha')
                 </div>
 
                 <div class="wizard-nav">
