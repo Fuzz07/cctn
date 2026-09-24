@@ -3,7 +3,7 @@
     $stepFields = [
         1 => ['firstname', 'middlename', 'lastname', 'birthdate', 'age', 'gender', 'place_of_birth', 'civil_status'],
         2 => ['contact_no', 'email', 'address_province', 'address_municipality', 'address_barangay'],
-        3 => ['username', 'password', 'password_confirmation', 'profile_photo', 'proof_of_billing'],
+        3 => ['username', 'password', 'password_confirmation', 'proof_of_billing'],
     ];
     $initialStep = 1;
     foreach ($stepFields as $stepNumber => $fields) {
@@ -357,15 +357,9 @@
                         Account &amp; Verification
                     </div>
 
-                    <div class="form-grid">
-                        <div class="auth-input-group">
-                            <label>Username *</label>
-                            <input type="text" name="username" class="auth-input" value="{{ old('username') }}" required>
-                        </div>
-                        <div class="auth-input-group">
-                            <label>Profile Photo (Optional)</label>
-                            <input type="file" name="profile_photo" class="auth-input" accept="image/png, image/jpeg, image/gif, image/webp" style="padding: 0.6rem;">
-                        </div>
+                    <div class="auth-input-group">
+                        <label>Username *</label>
+                        <input type="text" name="username" class="auth-input" value="{{ old('username') }}" required>
                     </div>
 
                     <div class="form-grid">
