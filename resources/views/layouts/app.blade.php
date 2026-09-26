@@ -316,15 +316,16 @@
         body.app-mode #download { display: none; }
         .bottom-nav { padding-bottom: calc(0.6rem + env(safe-area-inset-bottom)); }
 
-        /* Site Footer */
+        /* Site Footer: white base with the header's palette (red brand, slate text) */
         .site-footer {
             position: relative;
             overflow: hidden;
-            background: #0b1426;
-            color: #cbd5e1;
+            background: #ffffff;
+            color: #475569;
             margin-top: 3rem;
             padding: 0;
-            border-top: none;
+            border-top: 1px solid #e2e8f0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.03);
             text-align: left;
             font-size: 1rem;
             font-family: var(--font-body, 'Inter', sans-serif);
@@ -344,16 +345,16 @@
             grid-template-columns: 1.45fr 1fr 1.1fr;
             gap: 3.5rem;
             padding-bottom: 3.5rem;
-            border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+            border-bottom: 1px solid #e2e8f0;
         }
         .footer-brand { display: flex; align-items: center; gap: 1.75rem; margin-bottom: 1.5rem; }
-        .footer-brand-logo { width: 96px; height: 96px; object-fit: cover; border-radius: 50%; flex-shrink: 0; }
-        .footer-brand-text { border-left: 2px solid #3b82f6; padding-left: 1.5rem; }
+        .footer-brand-logo { width: 96px; height: 96px; object-fit: cover; border-radius: 50%; flex-shrink: 0; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12); }
+        .footer-brand-text { border-left: 2px solid #dc2626; padding-left: 1.5rem; }
         .footer-kicker {
             font-size: 0.8rem;
             letter-spacing: 0.25em;
             text-transform: uppercase;
-            color: #94a3b8;
+            color: #64748b;
             margin-bottom: 0.35rem;
         }
         .footer-title {
@@ -361,25 +362,25 @@
             font-size: 1.9rem;
             font-weight: 800;
             line-height: 1.15;
-            color: #ffffff;
+            color: #0f172a;
             margin: 0;
         }
-        .footer-title span { display: block; color: #60a5fa; }
-        .footer-mission { font-size: 0.95rem; line-height: 1.75; color: #94a3b8; margin: 0 0 1.5rem; }
+        .footer-title span { display: block; color: #dc2626; }
+        .footer-mission { font-size: 0.95rem; line-height: 1.75; color: #64748b; margin: 0 0 1.5rem; }
         .footer-badges { display: flex; flex-wrap: wrap; gap: 0.6rem; }
         .footer-badge {
             display: inline-flex;
             align-items: center;
             gap: 0.6rem;
             padding: 0.45rem 0.95rem;
-            border: 1px solid rgba(148, 163, 184, 0.28);
+            border: 1px solid #e2e8f0;
             border-radius: 999px;
-            background: rgba(15, 23, 42, 0.6);
+            background: #f8fafc;
             font-size: 0.8rem;
             line-height: 1.25;
-            color: #cbd5e1;
+            color: #334155;
         }
-        .footer-badge i { font-size: 1.15rem; color: #60a5fa; }
+        .footer-badge i { font-size: 1.15rem; color: #dc2626; }
         .footer-heading {
             display: flex;
             align-items: center;
@@ -388,7 +389,7 @@
             font-weight: 700;
             letter-spacing: 0.12em;
             text-transform: uppercase;
-            color: #60a5fa;
+            color: #dc2626;
             margin: 0.4rem 0 1.5rem;
         }
         .footer-heading i { font-size: 1.4rem; }
@@ -398,14 +399,14 @@
             justify-content: space-between;
             align-items: center;
             padding: 1rem 0;
-            border-bottom: 1px solid rgba(148, 163, 184, 0.18);
-            color: #f1f5f9;
-            font-weight: 500;
+            border-bottom: 1px solid #e2e8f0;
+            color: #0f172a;
+            font-weight: 600;
             transition: color 0.2s, padding 0.2s;
         }
         .footer-portal li:last-child a { border-bottom: none; }
-        .footer-portal a i { color: #60a5fa; transition: transform 0.2s; }
-        .footer-portal a:hover { color: #60a5fa; }
+        .footer-portal a i { color: #dc2626; transition: transform 0.2s; }
+        .footer-portal a:hover { color: #dc2626; }
         .footer-portal a:hover i { transform: translateX(4px); }
         .footer-contact { display: flex; flex-direction: column; gap: 1.5rem; }
         .footer-contact-item { display: flex; gap: 1rem; align-items: flex-start; }
@@ -414,16 +415,16 @@
             height: 46px;
             flex-shrink: 0;
             border-radius: 50%;
-            background: #1e3a5f;
-            color: #93c5fd;
+            background: #fef2f2;
+            color: #dc2626;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.15rem;
         }
-        .footer-contact-label { font-weight: 700; color: #93c5fd; font-size: 0.95rem; }
-        .footer-contact-value { color: #cbd5e1; font-size: 0.95rem; line-height: 1.55; word-break: break-word; }
-        a.footer-contact-value:hover { color: #ffffff; }
+        .footer-contact-label { font-weight: 700; color: #dc2626; font-size: 0.95rem; }
+        .footer-contact-value { color: #334155; font-size: 0.95rem; line-height: 1.55; word-break: break-word; }
+        a.footer-contact-value:hover { color: #dc2626; }
         .footer-bottom {
             display: grid;
             grid-template-columns: 1fr auto 1fr;
@@ -436,21 +437,21 @@
             width: 42px;
             height: 42px;
             border-radius: 50%;
-            border: 1px solid rgba(148, 163, 184, 0.35);
-            color: #e2e8f0;
+            border: 1px solid #e2e8f0;
+            color: #334155;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.05rem;
             transition: border-color 0.2s, color 0.2s, background 0.2s;
         }
-        .footer-social a:hover { border-color: #60a5fa; color: #60a5fa; background: rgba(96, 165, 250, 0.08); }
-        .footer-copy { text-align: center; font-size: 0.9rem; color: #94a3b8; }
+        .footer-social a:hover { border-color: #dc2626; color: #dc2626; background: #fef2f2; }
+        .footer-copy { text-align: center; font-size: 0.9rem; color: #64748b; }
         .footer-copy p { margin: 0; }
         .footer-legal { margin-top: 0.5rem !important; }
-        .footer-legal a { color: #60a5fa; }
-        .footer-legal a:hover { color: #93c5fd; }
-        .footer-legal span { color: #475569; margin: 0 0.75rem; }
+        .footer-legal a { color: #dc2626; white-space: nowrap; }
+        .footer-legal a:hover { color: #b91c1c; }
+        .footer-legal span { color: #cbd5e1; margin: 0 0.75rem; }
         .footer-credit { text-align: right; font-size: 0.78rem; color: #64748b; }
 
         @media (max-width: 992px) {
@@ -466,6 +467,8 @@
             .footer-title { font-size: 1.5rem; }
             .footer-bottom { grid-template-columns: 1fr; justify-items: center; }
             .footer-credit { text-align: center; }
+            .footer-legal { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.35rem 1.1rem; }
+            .footer-legal span { display: none; }
         }
     </style>
     @stack('styles')
@@ -667,14 +670,13 @@
 
     <footer class="site-footer">
         <svg class="footer-wave footer-wave-left" viewBox="0 0 320 180" fill="none" aria-hidden="true">
-            <path d="M0 40 C 90 60, 160 120, 320 180" stroke="#3b82f6" stroke-opacity=".35"/>
-            <path d="M0 70 C 100 80, 170 140, 300 180" stroke="#3b82f6" stroke-opacity=".25"/>
-            <path d="M0 100 C 110 100, 180 160, 280 180 L 0 180 Z" fill="#1d4ed8" fill-opacity=".18"/>
+            <path d="M0 40 C 90 60, 160 120, 320 180" stroke="#dc2626" stroke-opacity=".35"/>
+            <path d="M0 70 C 100 80, 170 140, 300 180" stroke="#dc2626" stroke-opacity=".25"/>
         </svg>
         <svg class="footer-wave footer-wave-right" viewBox="0 0 420 200" fill="none" aria-hidden="true">
-            <path d="M0 200 C 160 180, 280 90, 420 20" stroke="#3b82f6" stroke-opacity=".3"/>
-            <path d="M40 200 C 190 175, 300 110, 420 60" stroke="#3b82f6" stroke-opacity=".22"/>
-            <path d="M90 200 C 230 180, 320 130, 420 100" stroke="#3b82f6" stroke-opacity=".15"/>
+            <path d="M0 200 C 160 180, 280 90, 420 20" stroke="#dc2626" stroke-opacity=".3"/>
+            <path d="M40 200 C 190 175, 300 110, 420 60" stroke="#dc2626" stroke-opacity=".22"/>
+            <path d="M90 200 C 230 180, 320 130, 420 100" stroke="#dc2626" stroke-opacity=".15"/>
         </svg>
 
         <div class="footer-inner">
