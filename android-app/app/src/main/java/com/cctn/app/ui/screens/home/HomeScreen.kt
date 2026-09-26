@@ -259,19 +259,21 @@ private fun RecentAppointmentsCard(
                         modifier = Modifier.clickable(onClick = onBook),
                     )
                 }
-                return@Column
-            }
-
-            recent.forEachIndexed { index, appointment ->
-                if (index > 0) {
-                    Box(
-                        Modifier
-                            .fillMaxWidth()
-                            .height(1.dp)
-                            .background(MaterialTheme.colorScheme.outlineVariant)
-                    )
+            } else {
+                // An if/else, not an early return: returning out of Column's
+                // inline lambda leaves Compose's slot table unbalanced, which
+                // crashed this screen for anyone with no appointments yet.
+                recent.forEachIndexed { index, appointment ->
+                    if (index > 0) {
+                        Box(
+                            Modifier
+                                .fillMaxWidth()
+                                .height(1.dp)
+                                .background(MaterialTheme.colorScheme.outlineVariant)
+                        )
+                    }
+                    AppointmentRow(appointment)
                 }
-                AppointmentRow(appointment)
             }
         }
     }
