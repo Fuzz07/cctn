@@ -33,6 +33,7 @@ Route::get('/migration', function () {
 Route::get('/download-apk', [HomeController::class, 'downloadApk'])->name('download.apk');
 Route::get('/terms', [HomeController::class, 'terms'])->name('terms');
 Route::get('/terms-and-conditions', [HomeController::class, 'terms'])->name('terms.conditions');
+Route::get('/mobile/recaptcha', [HomeController::class, 'mobileRecaptcha'])->name('mobile.recaptcha');
 
 // Serve public storage files (payment proofs/receipts) even if the symlink is missing on shared hosting
 Route::get('/storage/{path}', function ($path) {

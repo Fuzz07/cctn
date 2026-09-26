@@ -312,7 +312,6 @@
         body.app-mode .bottom-nav { display: block; }
         body.app-mode { padding-bottom: calc(65px + env(safe-area-inset-bottom)); }
         body.app-mode .site-footer { display: none; }
-        body.app-mode .admin-only-link { display: none !important; }
         body.app-mode #download { display: none; }
         .bottom-nav { padding-bottom: calc(0.6rem + env(safe-area-inset-bottom)); }
 
@@ -584,9 +583,6 @@
                     <a href="{{ route('login') }}" class="drawer-item">
                         <span class="drawer-item-icon"><i class="bi bi-box-arrow-in-right"></i></span> Login
                     </a>
-                    <a href="{{ route('admin.login') }}" class="drawer-item admin-only-link">
-                        <span class="drawer-item-icon"><i class="bi bi-shield-lock"></i></span> Admin Login
-                    </a>
                     <a href="{{ route('register') }}" class="drawer-item">
                         <span class="drawer-item-icon"><i class="bi bi-person-plus"></i></span> Register
                     </a>
@@ -706,7 +702,6 @@
                     <ul class="footer-portal">
                         <li><a href="{{ route('login') }}">Customer Sign In <i class="bi bi-arrow-right"></i></a></li>
                         <li><a href="{{ route('register') }}">Customer Registration <i class="bi bi-arrow-right"></i></a></li>
-                        <li class="admin-only-link"><a href="{{ route('admin.login') }}">Admin Login Portal <i class="bi bi-arrow-right"></i></a></li>
                     </ul>
                 </div>
 

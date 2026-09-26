@@ -11,6 +11,7 @@ import kotlinx.serialization.Serializable
 data class LoginRequest(
     @SerialName("login_input") val loginInput: String,
     val password: String,
+    @SerialName("recaptcha_token") val recaptchaToken: String? = null,
 )
 
 @Serializable
@@ -35,6 +36,7 @@ data class RegisterRequest(
     val gender: String? = null,
     @SerialName("civil_status") val civilStatus: String? = null,
     @SerialName("place_of_birth") val placeOfBirth: String? = null,
+    @SerialName("recaptcha_token") val recaptchaToken: String? = null,
 )
 
 @Serializable

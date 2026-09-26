@@ -55,6 +55,12 @@
 -keep class com.google.android.gms.tasks.** { *; }
 -dontwarn com.google.android.gms.**
 
+# ─── WebView JavaScript bridge ───────────────────────────────────────────────
+# The reCAPTCHA page calls these by name through window.CctnRecaptcha.
+-keepclassmembers class * {
+    @android.webkit.JavascriptInterface <methods>;
+}
+
 # ─── Crash reports stay readable ─────────────────────────────────────────────
 -keepattributes SourceFile,LineNumberTable
 -renamesourcefileattribute SourceFile

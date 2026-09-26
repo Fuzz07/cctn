@@ -42,8 +42,8 @@ class AuthRepository @Inject constructor(
     private val session: SessionManager,
     private val json: Json,
 ) {
-    suspend fun login(loginInput: String, password: String): AppResult<ClientDto> =
-        apiCall(json) { api.login(LoginRequest(loginInput.trim(), password)) }
+    suspend fun login(loginInput: String, password: String, recaptchaToken: String?): AppResult<ClientDto> =
+        apiCall(json) { api.login(LoginRequest(loginInput.trim(), password, recaptchaToken)) }
             .also { result ->
                 if (result is AppResult.Success) {
                     session.signIn(result.data.token, result.data.client)

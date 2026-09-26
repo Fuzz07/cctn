@@ -6,6 +6,8 @@ import com.cctn.app.core.AppResult
 import com.cctn.app.core.Validators
 import com.cctn.app.data.repo.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,13 +20,15 @@ data class LoginUiState(
     val password: String = "",
     val rememberMe: Boolean = true,
     val agreeTerms: Boolean = false,
+    val recaptcha: RecaptchaStatus = RecaptchaStatus.Unverified(),
     val loginInputError: String? = null,
     val passwordError: String? = null,
     val formError: String? = null,
     val submitting: Boolean = false,
 ) {
     val canSubmit: Boolean
-        get() = loginInput.isNotBlank() && password.isNotBlank() && agreeTerms && !submitting
+        get() = loginInput.isNotBlank() && password.isNotBlank() && agreeTerms &&
+            recaptcha.isDone && !submitting
 }
 
 @HiltViewModel
@@ -34,6 +38,8 @@ class LoginViewModel @Inject constructor(
 
     private val _state = MutableStateFlow(LoginUiState())
     val state: StateFlow<LoginUiState> = _state.asStateFlow()
+
+    private var recaptchaTimeout: Job? = null
 
     fun onLoginInputChange(value: String) = _state.update {
         it.copy(loginInput = value, loginInputError = null, formError = null)
@@ -49,6 +55,19 @@ class LoginViewModel @Inject constructor(
 
     fun onAgreeTermsChange(value: Boolean) = _state.update {
         it.copy(agreeTerms = value)
+    }
+
+    fun onRecaptchaVerified(token: String) {
+        _state.update { it.copy(recaptcha = RecaptchaStatus.Verified(token), formError = null) }
+        recaptchaTimeout?.cancel()
+        recaptchaTimeout = viewModelScope.launch {
+            delay(RECAPTCHA_TOKEN_LIFETIME_MS)
+            _state.update { it.copy(recaptcha = it.recaptcha.timedOut()) }
+        }
+    }
+
+    fun onRecaptchaNotRequired() = _state.update {
+        it.copy(recaptcha = RecaptchaStatus.NotRequired, formError = null)
     }
 
     fun onGoogleIdToken(idToken: String) {
@@ -94,9 +113,15 @@ class LoginViewModel @Inject constructor(
         }
 
         _state.update { it.copy(submitting = true, formError = null) }
+        recaptchaTimeout?.cancel()
 
         viewModelScope.launch {
-            when (val result = authRepository.login(current.loginInput, current.password)) {
+            val result = authRepository.login(
+                current.loginInput,
+                current.password,
+                current.recaptcha.token,
+            )
+            when (result) {
                 is AppResult.Success -> {
                     // The session flow swaps the navigation graph; this screen
                     // is about to leave, so only the spinner needs clearing.
@@ -110,6 +135,7 @@ class LoginViewModel @Inject constructor(
                         // login_input, so surface it on that field too.
                         loginInputError = result.error.fieldErrors["login_input"],
                         formError = result.error.message,
+                        recaptcha = it.recaptcha.spent(),
                     )
                 }
             }
