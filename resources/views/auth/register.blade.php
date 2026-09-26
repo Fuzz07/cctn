@@ -3,7 +3,7 @@
     $stepFields = [
         1 => ['firstname', 'middlename', 'lastname', 'birthdate', 'age', 'gender', 'place_of_birth', 'civil_status'],
         2 => ['contact_no', 'email', 'address_province', 'address_municipality', 'address_barangay'],
-        3 => ['username', 'password', 'password_confirmation', 'profile_photo', 'proof_of_billing'],
+        3 => ['username', 'password', 'password_confirmation', 'proof_of_billing'],
     ];
     $initialStep = 1;
     foreach ($stepFields as $stepNumber => $fields) {
@@ -26,6 +26,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <style>
         body {
             background: linear-gradient(rgba(15, 23, 42, 0.55), rgba(15, 23, 42, 0.7)), url('{{ asset('assets/images/login-bg.jpg') }}') center / cover no-repeat fixed;
@@ -95,20 +96,21 @@
         .js-wizard .form-step .form-section-title { margin-top: 0; }
         @keyframes stepIn { from { opacity: 0; transform: translateX(12px); } to { opacity: 1; transform: none; } }
 
-        .wizard-nav { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-top: 2rem; }
+        .wizard-nav { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-top: 2rem; width: 100%; }
         .btn-wizard {
-            display: none; align-items: center; gap: 0.5rem;
+            display: inline-flex; align-items: center; gap: 0.5rem;
             padding: 0.85rem 1.75rem; border-radius: 8px;
             font-weight: 700; font-size: 1rem; cursor: pointer;
             border: 1px solid #cbd5e1; background: #fff; color: var(--text-dark);
+            transition: all 0.2s;
         }
-        .js-wizard .btn-wizard { display: inline-flex; }
         .btn-wizard:hover { border-color: var(--primary); color: var(--primary); }
         .btn-wizard-next {
-            background: var(--primary); color: #fff; border-color: var(--primary);
+            background: var(--primary); color: #fff !important; border-color: var(--primary);
             box-shadow: 0 4px 12px rgba(220,38,38,0.25); margin-left: auto;
+            display: inline-flex !important;
         }
-        .btn-wizard-next:hover { background: var(--primary-dark); color: #fff; }
+        .btn-wizard-next:hover { background: var(--primary-dark); color: #fff !important; transform: translateY(-1px); }
         .btn-auth-primary { margin-top: 0; margin-left: auto; width: auto; }
         
         .auth-input-group label { display: block; font-size: 0.85rem; font-weight: 700; color: var(--text-dark); margin-bottom: 0.5rem; }
@@ -356,15 +358,9 @@
                         Account &amp; Verification
                     </div>
 
-                    <div class="form-grid">
-                        <div class="auth-input-group">
-                            <label>Username *</label>
-                            <input type="text" name="username" class="auth-input" value="{{ old('username') }}" required>
-                        </div>
-                        <div class="auth-input-group">
-                            <label>Profile Photo (Optional)</label>
-                            <input type="file" name="profile_photo" class="auth-input" accept="image/png, image/jpeg, image/gif, image/webp" style="padding: 0.6rem;">
-                        </div>
+                    <div class="auth-input-group">
+                        <label>Username *</label>
+                        <input type="text" name="username" class="auth-input" value="{{ old('username') }}" required>
                     </div>
 
                     <div class="form-grid">
@@ -386,6 +382,15 @@
                             name and address. This is required to verify that your account details are valid.
                         </div>
                     </div>
+
+                    <div class="auth-input-group" style="margin-top: 1.25rem;">
+                        <label class="auth-checkbox" style="display: flex; align-items: flex-start; gap: 0.65rem; font-size: 0.85rem; color: #475569; font-weight: 500; cursor: pointer;">
+                            <input type="checkbox" name="agree_terms" id="agree_terms_register" value="1" required style="accent-color: var(--primary); width: 17px; height: 17px; margin-top: 2px;">
+                            <span>I have read and agree to the <a href="{{ route('terms') }}" target="_blank" style="color: var(--primary); font-weight: 700; text-decoration: underline;">Terms and Conditions</a></span>
+                        </label>
+                    </div>
+
+                    @include('partials.recaptcha')
                 </div>
 
                 <div class="wizard-nav">
@@ -447,10 +452,10 @@
                 marker.classList.toggle('active', i === n);
                 marker.classList.toggle('done', i < n);
             });
-            btnBack.style.display = (n === 1) ? 'none' : '';
-            btnNext.style.display = (n === total) ? 'none' : '';
-            btnSubmit.style.display = (n === total) ? '' : 'none';
-            googleBlock.style.display = (n === 1) ? '' : 'none';
+            btnBack.style.display = (n === 1) ? 'none' : 'inline-flex';
+            btnNext.style.display = (n === total) ? 'none' : 'inline-flex';
+            btnSubmit.style.display = (n === total) ? 'inline-flex' : 'none';
+            if (googleBlock) googleBlock.style.display = (n === 1) ? '' : 'none';
             if (subtitle) subtitle.textContent = SUBTITLES[n];
         }
 

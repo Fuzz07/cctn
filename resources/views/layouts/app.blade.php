@@ -12,7 +12,10 @@
     <title>@yield('title', 'BCTVI Broadband Telecommunications')</title>
     <meta name="description" content="Official BCTVI Broadband Client Portal & Mobile App. Book WiFi installation, manage statements, and receive installation updates.">
     
-    <link rel="icon" type="image/png" href="{{ asset('assets/images/favicon.png') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/images/favicon.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('assets/images/favicon.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&display=swap" rel="stylesheet">
@@ -662,6 +665,7 @@
         </div>
     </nav>
 
+<<<<<<< HEAD
     <footer class="site-footer">
         <svg class="footer-wave footer-wave-left" viewBox="0 0 320 180" fill="none" aria-hidden="true">
             <path d="M0 40 C 90 60, 160 120, 320 180" stroke="#3b82f6" stroke-opacity=".35"/>
@@ -748,6 +752,16 @@
                 <div class="footer-credit">Developed by Clinton Jay</div>
             </div>
         </div>
+=======
+    <footer class="site-footer" style="background: #0f172a; padding: 2rem 1rem; text-align: center; color: #94a3b8; font-size: 0.85rem; margin-top: 3rem;">
+        <p>&copy; {{ date('Y') }} BCTVI Broadband Telecommunications. All Rights Reserved.</p>
+        <p style="margin-top: 0.5rem; font-size: 0.8rem; color: #64748b;">
+            <a href="{{ route('terms') }}" style="color: #94a3b8; text-decoration: underline; margin: 0 0.5rem;">Terms &amp; Conditions</a> &bull;
+            <span>Customer Support: 0999 998 8209</span>
+        </p>
+        <p style="margin-top: 0.5rem; font-size: 0.8rem; color: #64748b;">Developed by Clinton Jay</p>
+        <p class="admin-only-link" style="margin-top: 0.5rem;"><a href="{{ route('admin.login') }}" style="color: #64748b; text-decoration: none; font-weight: 600;">Staff / Admin Login</a></p>
+>>>>>>> 0a05547271bf37f801d6ec229ada21c53a8e3c33
     </footer>
 
     <script>

@@ -420,9 +420,12 @@ fun BrandWordmark(
         Image(
             painter = painterResource(R.drawable.logo_bctvi),
             contentDescription = null,
+            contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(markSize)
-                .clip(CircleShape),
+                .clip(CircleShape)
+                .background(Color.White, CircleShape)
+                .border(1.5.dp, if (onDark) Color.White.copy(alpha = 0.5f) else Color(0xFFE2E8F0), CircleShape),
         )
         Spacer(Modifier.width(10.dp))
         Column {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use App\Notifications\PasswordResetCode;
+use App\Rules\Recaptcha;
 use App\Support\InputRules;
 use Carbon\Carbon;
 use Illuminate\Auth\Events\PasswordReset;
@@ -34,8 +35,12 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'login_input' => 'required|string',
-            'password'    => 'required|string',
+            'login_input'          => 'required|string',
+            'password'             => 'required|string',
+            'agree_terms'          => 'accepted',
+            'g-recaptcha-response' => [new Recaptcha],
+        ], [
+            'agree_terms.accepted' => 'You must agree to the Terms and Conditions before signing in.',
         ]);
 
         $loginInput = $request->input('login_input');
@@ -92,17 +97,16 @@ class AuthController extends Controller
             'address_barangay'  => InputRules::address(true, 100),
             'address_municipality' => 'required|string|max:100|in:Bantayan,Santa Fe,Madridejos',
             'address_province'  => InputRules::address(true, 100),
-            'proof_of_billing'  => 'required|image|mimes:jpeg,jpg,png,webp|max:5120',
-            'profile_photo'     => 'nullable|image|mimes:jpeg,jpg,png,gif,webp|max:5120',
+            'proof_of_billing'     => 'required|image|mimes:jpeg,jpg,png,webp|max:5120',
+            'agree_terms'          => 'accepted',
+            'g-recaptcha-response' => [new Recaptcha],
         ], array_merge(InputRules::messages([
             'name'    => ['firstname', 'middlename', 'lastname', 'place_of_birth'],
             'number'  => ['age'],
             'address' => ['address_barangay', 'address_province'],
             'mobile'  => ['contact_no'],
         ]), [
-            'profile_photo.image'       => 'The profile photo must be an image file (JPG, PNG, GIF, or WEBP).',
-            'profile_photo.mimes'       => 'The profile photo must be a JPG, PNG, GIF, or WEBP image.',
-            'profile_photo.max'         => 'The profile photo must not be larger than 5 MB.',
+            'agree_terms.accepted'      => 'You must agree to the Terms and Conditions to create an account.',
             'proof_of_billing.required' => 'Please attach a photo of your proof of billing for account verification.',
             'proof_of_billing.image'    => 'The proof of billing must be a photo (JPG, PNG, or WEBP).',
             'proof_of_billing.max'      => 'The proof of billing photo must not be larger than 5 MB.',
@@ -112,15 +116,6 @@ class AuthController extends Controller
         $accountNumber = Client::nextAccountNumber();
 
         try {
-            // Handle profile photo upload
-            $profilePhotoPath = null;
-            if ($request->hasFile('profile_photo') && $request->file('profile_photo')->isValid()) {
-                $file = $request->file('profile_photo');
-                $filename = 'client_' . time() . '_' . rand(1000, 9999) . '.' . ($file->extension() ?: 'jpg');
-                $file->move(public_path('uploads/profile_photos'), $filename);
-                $profilePhotoPath = 'uploads/profile_photos/' . $filename;
-            }
-
             // Handle proof of billing upload (required for account verification)
             $proofOfBillingPath = null;
             if ($request->hasFile('proof_of_billing') && $request->file('proof_of_billing')->isValid()) {
@@ -159,7 +154,7 @@ class AuthController extends Controller
             'email'                => $request->email,
             'username'             => $request->username,
             'password'             => Hash::make($request->password),
-            'profile_photo'        => $profilePhotoPath,
+            'profile_photo'        => null,
             'proof_of_billing'     => $proofOfBillingPath,
             'email_verified_at'    => now(),
         ]);
@@ -422,7 +417,10 @@ class AuthController extends Controller
     public function forgotPassword(Request $request)
     {
         $request->merge(['email' => strtolower(trim((string) $request->input('email')))]);
-        $request->validate(['email' => 'required|email']);
+        $request->validate([
+            'email'                => 'required|email',
+            'g-recaptcha-response' => [new Recaptcha],
+        ]);
 
         $client = Client::where('email', $request->email)->first();
         if (!$client) {

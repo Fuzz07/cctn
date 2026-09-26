@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <style>
         body {
             background: linear-gradient(rgba(15, 23, 42, 0.55), rgba(15, 23, 42, 0.7)), url('{{ asset('assets/images/login-bg.jpg') }}') center / cover no-repeat fixed;
@@ -70,9 +71,263 @@
 
         .bottom-bar { display: none; }
 
+        /* ── Terms & Conditions Checkbox & Note ── */
+        .auth-terms {
+            margin-bottom: 1.25rem;
+            padding: 0.75rem 0.85rem;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        .auth-terms:hover, .auth-terms:focus-within {
+            border-color: #cbd5e1;
+            background: #f1f5f9;
+        }
+        .terms-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.65rem;
+            font-size: 0.82rem;
+            color: #475569;
+            cursor: pointer;
+            line-height: 1.45;
+            user-select: none;
+            margin: 0;
+        }
+        .terms-label input[type="checkbox"] {
+            accent-color: var(--primary);
+            width: 17px;
+            height: 17px;
+            margin-top: 1px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .terms-link {
+            color: var(--primary);
+            font-weight: 700;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+            cursor: pointer;
+            transition: color 0.15s;
+        }
+        .terms-link:hover {
+            color: #b91c1c;
+        }
+        .auth-terms-note {
+            text-align: center;
+            font-size: 0.76rem;
+            color: #64748b;
+            margin-top: 1.25rem;
+            line-height: 1.5;
+        }
+        .auth-terms-note a {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        /* ── Terms Modal ── */
+        .terms-modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.25rem;
+            box-sizing: border-box;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
+        }
+        .terms-modal-backdrop.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .terms-modal-container {
+            background: #ffffff;
+            width: 100%;
+            max-width: 620px;
+            max-height: 85vh;
+            border-radius: 18px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+            transform: scale(0.95) translateY(10px);
+            transition: transform 0.25s ease;
+        }
+        .terms-modal-backdrop.active .terms-modal-container {
+            transform: scale(1) translateY(0);
+        }
+        .terms-modal-head {
+            padding: 1.25rem 1.5rem;
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+        .terms-modal-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+        }
+        .terms-modal-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: #fef2f2;
+            color: #dc2626;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .terms-modal-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0 0 2px 0;
+            font-family: var(--font-heading);
+            line-height: 1.2;
+        }
+        .terms-modal-sub {
+            font-size: 0.78rem;
+            color: #64748b;
+            margin: 0;
+            line-height: 1.3;
+        }
+        .terms-modal-close {
+            background: #f1f5f9;
+            border: none;
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .terms-modal-close:hover {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        .terms-modal-body {
+            padding: 1.5rem;
+            overflow-y: auto;
+            color: #334155;
+            font-size: 0.88rem;
+            line-height: 1.65;
+            flex: 1;
+        }
+        .terms-modal-notice {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1e40af;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-size: 0.82rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 1.25rem;
+            line-height: 1.45;
+        }
+        .terms-modal-body h4 {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 1.15rem 0 0.35rem 0;
+        }
+        .terms-modal-body h4:first-of-type {
+            margin-top: 0;
+        }
+        .terms-modal-body p {
+            margin: 0 0 0.75rem 0;
+            color: #475569;
+        }
+        .terms-modal-foot {
+            padding: 1rem 1.5rem;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .terms-full-page-link {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #64748b;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: color 0.15s;
+        }
+        .terms-full-page-link:hover {
+            color: #dc2626;
+        }
+        .terms-modal-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            margin-left: auto;
+        }
+        .btn-terms-modal-secondary {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #475569;
+            padding: 0.6rem 1.1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-terms-modal-secondary:hover {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+        .btn-terms-modal-primary {
+            background: #dc2626;
+            border: 1px solid #dc2626;
+            color: #ffffff;
+            padding: 0.6rem 1.25rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(220,38,38,0.25);
+        }
+        .btn-terms-modal-primary:hover {
+            background: #b91c1c;
+            border-color: #b91c1c;
+        }
+
         @media (max-width: 768px) {
             .auth-layout { padding: 4.5rem 1rem 2.5rem; }
             .auth-form-card { padding: 2rem 1.5rem; }
+            .terms-modal-actions { width: 100%; justify-content: flex-end; }
         }
     </style>
 </head>
@@ -188,6 +443,17 @@
                     <a href="{{ route('forgot-password') }}" class="auth-forgot">Forgot Password?</a>
                 </div>
 
+                <div class="auth-terms">
+                    <label class="terms-label" for="agree_terms">
+                        <input type="checkbox" name="agree_terms" id="agree_terms" value="1" required {{ old('agree_terms') ? 'checked' : '' }}>
+                        <span class="terms-text">
+                            I agree to the <a href="javascript:void(0)" id="openTermsModal" class="terms-link">Terms and Conditions</a>
+                        </span>
+                    </label>
+                </div>
+
+                @include('partials.recaptcha')
+
                 <button type="submit" class="btn-auth-primary">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                     Sign In
@@ -205,11 +471,80 @@
                     Create an Account
                 </a>
 
+                <p class="auth-terms-note">
+                    By signing in, you acknowledge and agree to BCTVI's <a href="javascript:void(0)" class="open-terms-trigger">Terms and Conditions</a> &amp; Privacy Policy.
+                </p>
+
             </form>
         </div>
         
         <div class="auth-copyright">
             &copy; {{ date('Y') }} BCTVI Bantayan. All rights reserved.
+        </div>
+    </div>
+</div>
+
+<!-- Terms and Conditions Modal -->
+<div id="termsModal" class="terms-modal-backdrop" aria-hidden="true" role="dialog" aria-labelledby="termsModalTitle">
+    <div class="terms-modal-container">
+        <div class="terms-modal-head">
+            <div class="terms-modal-title-wrap">
+                <div class="terms-modal-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <div>
+                    <h3 id="termsModalTitle" class="terms-modal-title">Terms &amp; Conditions</h3>
+                    <p class="terms-modal-sub">BCTVI Broadband Telecommunications • Client Agreement</p>
+                </div>
+            </div>
+            <button type="button" class="terms-modal-close" id="closeTermsBtn" aria-label="Close Terms Modal">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+
+        <div class="terms-modal-body">
+            <div class="terms-modal-notice">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                <span>Please review these terms before signing in to manage your fiber account.</span>
+            </div>
+
+            <h4>1. Agreement Overview &amp; Acceptance</h4>
+            <p>By signing in to your BCTVI client account or booking an appointment, you agree to abide by these Terms and Conditions and our service policies across Bantayan Island (Bantayan, Santa Fe, and Madridejos).</p>
+
+            <h4>2. Client Account &amp; Credential Security</h4>
+            <p>Clients are solely responsible for maintaining the confidentiality of their credentials (username/email and password). Any activity conducted through your authenticated portal session is deemed authorized by you.</p>
+
+            <h4>3. Fiber WiFi Installation &amp; Site Feasibility</h4>
+            <p>All online booking requests are subject to physical facility availability, optical distribution point (ODP) capacity, and technical feasibility. Clients authorize certified BCTVI technicians to access the premises for cabling and terminal setup.</p>
+
+            <h4>4. Billing, Due Dates &amp; Disconnection Policy</h4>
+            <p>Monthly subscription fees must be paid on or before the due date specified on each statement of account. Accounts overdue by more than five (5) days may experience automated temporary disconnection until settled.</p>
+
+            <h4>5. Acceptable Use Policy (AUP)</h4>
+            <p>The fiber connection must be used strictly for legitimate purposes. Any unlawful activity, unauthorized reselling, spamming, or actions endangering network performance or security are strictly prohibited.</p>
+
+            <h4>6. Equipment Ownership &amp; Care</h4>
+            <p>Optical Network Terminals (modems), power adapters, and drop cables supplied by BCTVI remain property of BCTVI unless purchased. Subscribers agree to exercise proper care and must not attempt unauthorized cable splicing.</p>
+
+            <h4>7. Privacy &amp; Data Protection (RA 10173)</h4>
+            <p>Under the Philippine Data Privacy Act of 2012, your personal information and uploaded proofs of billing are kept secure, confidential, and used strictly for account administration, billing, and technical notifications.</p>
+
+            <h4>8. Customer Support &amp; Hotline</h4>
+            <p>For inquiries, billing disputes, or connection troubleshooting, our Bantayan Island customer support team is available at <strong>0999 998 8209</strong> or via the online portal chat assistant.</p>
+        </div>
+
+        <div class="terms-modal-foot">
+            <a href="{{ route('terms') }}" target="_blank" class="terms-full-page-link">
+                <span>View Full Legal Document</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </a>
+            <div class="terms-modal-actions">
+                <button type="button" class="btn-terms-modal-secondary" id="declineTermsBtn">Close</button>
+                <button type="button" class="btn-terms-modal-primary" id="acceptTermsBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    I Accept Terms
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -225,6 +560,63 @@
             this.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
         }
     });
+
+    // ── Terms and Conditions Modal Handler ──
+    (function() {
+        var modal = document.getElementById('termsModal');
+        var openBtn = document.getElementById('openTermsModal');
+        var triggers = document.querySelectorAll('.open-terms-trigger');
+        var closeBtn = document.getElementById('closeTermsBtn');
+        var declineBtn = document.getElementById('declineTermsBtn');
+        var acceptBtn = document.getElementById('acceptTermsBtn');
+        var termsCheckbox = document.getElementById('agree_terms');
+
+        function openModal() {
+            modal.classList.add('active');
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+
+        if (openBtn) openBtn.addEventListener('click', openModal);
+        triggers.forEach(function(el) { el.addEventListener('click', openModal); });
+        if (closeBtn) closeBtn.addEventListener('click', closeModal);
+        if (declineBtn) declineBtn.addEventListener('click', closeModal);
+
+        if (acceptBtn) {
+            acceptBtn.addEventListener('click', function() {
+                if (termsCheckbox) {
+                    termsCheckbox.checked = true;
+                    // Add subtle visual feedback
+                    var termsCard = termsCheckbox.closest('.auth-terms');
+                    if (termsCard) {
+                        termsCard.style.borderColor = '#16a34a';
+                        termsCard.style.backgroundColor = '#f0fdf4';
+                    }
+                }
+                closeModal();
+            });
+        }
+
+        // Close on clicking backdrop outside modal content
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        // Close on ESC key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modal.classList.contains('active')) {
+                closeModal();
+            }
+        });
+    })();
 </script>
 </body>
 </html>

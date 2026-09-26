@@ -37,4 +37,10 @@ return [
         'android_client_id' => env('GOOGLE_ANDROID_CLIENT_ID', env('GOOGLE_CLIENT_ID')),
     ],
 
+    'recaptcha' => [
+        'site_key'   => env('RECAPTCHA_SITE_KEY', '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'),
+        'secret_key' => env('RECAPTCHA_SECRET_KEY', '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'),
+        'enabled'    => env('RECAPTCHA_ENABLED', true),
+    ],
+
 ];

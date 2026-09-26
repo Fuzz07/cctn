@@ -6,7 +6,10 @@
     <meta name="theme-color" content="#dc2626">
     <title>@yield('title', 'Admin Panel - BCTVI Bantayan')</title>
     
-    <link rel="icon" type="image/png" href="{{ asset('assets/images/favicon.png') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/images/favicon.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('assets/images/favicon.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&display=swap" rel="stylesheet">
@@ -82,10 +85,7 @@
                     <div>
                         <div class="admin-sidebar-category">SYSTEM</div>
                         <div style="display: flex; flex-direction: column; gap: 0.35rem;">
-                            <a href="{{ route('admin.mail.test') }}" class="admin-sidebar-item {{ request()->routeIs('admin.mail*') ? 'active' : '' }}">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                                Email Diagnostics
-                            </a>
+                            
                             <form action="{{ route('admin.logout') }}" method="POST" style="margin:0;">
                                 @csrf
                                 <button type="submit" class="admin-sidebar-item" style="color: #ef4444; width:100%; border:none; background:none; text-align:left; cursor:pointer;">

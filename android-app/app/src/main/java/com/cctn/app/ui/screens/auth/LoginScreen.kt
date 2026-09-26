@@ -43,13 +43,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -158,19 +164,16 @@ fun LoginScreen(
             Spacer(Modifier.height(22.dp))
 
             AuthCard {
-                Box(
+                Image(
+                    painter = painterResource(R.drawable.logo_bctvi),
+                    contentDescription = "BCTVI Logo",
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .size(64.dp)
-                        .background(MaterialTheme.colorScheme.primary, CircleShape),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Person,
-                        contentDescription = null,
-                        tint = Color.White,
-                        modifier = Modifier.size(32.dp),
-                    )
-                }
+                        .size(68.dp)
+                        .clip(CircleShape)
+                        .background(Color.White, CircleShape)
+                        .border(2.5.dp, MaterialTheme.colorScheme.primary, CircleShape),
+                )
 
                 Spacer(Modifier.height(18.dp))
 
@@ -254,7 +257,46 @@ fun LoginScreen(
                     )
                 }
 
-                Spacer(Modifier.height(14.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp, bottom = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Checkbox(
+                        checked = state.agreeTerms,
+                        onCheckedChange = viewModel::onAgreeTermsChange,
+                        colors = CheckboxDefaults.colors(
+                            checkedColor = MaterialTheme.colorScheme.primary,
+                        ),
+                    )
+                    Text(
+                        text = buildAnnotatedString {
+                            append("I agree to the ")
+                            withStyle(
+                                SpanStyle(
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontWeight = FontWeight.Bold,
+                                    textDecoration = TextDecoration.Underline,
+                                )
+                            ) {
+                                append("Terms and Conditions")
+                            }
+                        },
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.clickable {
+                            context.startActivity(
+                                Intent(
+                                    Intent.ACTION_VIEW,
+                                    Uri.parse(BuildConfig.WEB_BASE_URL + "terms"),
+                                )
+                            )
+                        },
+                    )
+                }
+
+                Spacer(Modifier.height(10.dp))
 
                 LoadingButton(
                     text = "Sign In",

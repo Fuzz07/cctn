@@ -179,6 +179,26 @@ class AppointmentController extends Controller
             ->with('success_message', 'Payment method updated successfully for Appointment #' . str_pad($appointment->id, 6, '0', STR_PAD_LEFT) . '.');
     }
 
+    public function destroy($id)
+    {
+        $client = Auth::guard('client')->user();
+        $appointment = Appointment::where('client_id', $client->id)->findOrFail($id);
+
+        $appointmentNum = str_pad($appointment->id, 6, '0', STR_PAD_LEFT);
+        $appointment->delete();
+
+        // Create notification for admin
+        Notification::create([
+            'for_admin' => true,
+            'title'     => 'Booking Deleted',
+            'message'   => "{$client->firstname} {$client->lastname} deleted booking #{$appointmentNum}.",
+            'link'      => 'admin/appointments',
+        ]);
+
+        return redirect()->route('client.appointments')
+            ->with('success_message', "Appointment #{$appointmentNum} has been deleted successfully.");
+    }
+
     private function findNextAvailableSlot(string $startDate, string $preferredTime, int $maxDays = 14): ?array
     {
         $activeSlots = TimeSlot::available()->pluck('slot_time')->toArray();
