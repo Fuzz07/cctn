@@ -665,7 +665,6 @@
         </div>
     </nav>
 
-<<<<<<< HEAD
     <footer class="site-footer">
         <svg class="footer-wave footer-wave-left" viewBox="0 0 320 180" fill="none" aria-hidden="true">
             <path d="M0 40 C 90 60, 160 120, 320 180" stroke="#3b82f6" stroke-opacity=".35"/>
@@ -746,22 +745,12 @@
                 <div class="footer-copy">
                     <p>&copy; {{ date('Y') }} BCTVI Broadband Telecommunications. All Rights Reserved.</p>
                     <p class="footer-legal">
-                        <a href="{{ route('home') }}#plans">Plans</a><span>|</span><a href="{{ route('home') }}#support">Support</a><span>|</span><a href="{{ route('home') }}#about">About</a>
+                        <a href="{{ route('terms') }}">Terms &amp; Conditions</a><span>|</span><a href="{{ route('home') }}#plans">Plans</a><span>|</span><a href="{{ route('home') }}#support">Support</a><span>|</span><a href="{{ route('home') }}#about">About</a>
                     </p>
                 </div>
                 <div class="footer-credit">Developed by Clinton Jay</div>
             </div>
         </div>
-=======
-    <footer class="site-footer" style="background: #0f172a; padding: 2rem 1rem; text-align: center; color: #94a3b8; font-size: 0.85rem; margin-top: 3rem;">
-        <p>&copy; {{ date('Y') }} BCTVI Broadband Telecommunications. All Rights Reserved.</p>
-        <p style="margin-top: 0.5rem; font-size: 0.8rem; color: #64748b;">
-            <a href="{{ route('terms') }}" style="color: #94a3b8; text-decoration: underline; margin: 0 0.5rem;">Terms &amp; Conditions</a> &bull;
-            <span>Customer Support: 0999 998 8209</span>
-        </p>
-        <p style="margin-top: 0.5rem; font-size: 0.8rem; color: #64748b;">Developed by Clinton Jay</p>
-        <p class="admin-only-link" style="margin-top: 0.5rem;"><a href="{{ route('admin.login') }}" style="color: #64748b; text-decoration: none; font-weight: 600;">Staff / Admin Login</a></p>
->>>>>>> 0a05547271bf37f801d6ec229ada21c53a8e3c33
     </footer>
 
     <script>
