@@ -455,9 +455,10 @@
         font-family: Arial, sans-serif;
         box-shadow: 0 8px 30px rgba(0,0,0,0.35);
         white-space: nowrap;
-        pointer-events: none;
         border-left: 4px solid #ef4444;
-    ">🔒 Right-click and browser developer tools have been restricted on this website.</div>
+        cursor: pointer;
+        user-select: none;
+    " onclick="hideSecurityToast()">🔒 Right-click and browser developer tools have been restricted on this website. &nbsp;<span style="opacity:0.6;font-size:1rem;">&times;</span></div>
 
     <script>
         (function () {
