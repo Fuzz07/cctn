@@ -9,11 +9,18 @@ use Illuminate\Support\Facades\Auth;
 class MaintenanceMode
 {
     /**
-     * Public routes that remain accessible during maintenance
-     * so clients can at least see the landing page with a notice.
+     * Routes that remain accessible during maintenance. Clients can still
+     * authenticate and recover their accounts, even while service actions are
+     * temporarily unavailable.
      */
     protected array $publicAllowed = [
         '/',
+        'login',
+        'register',
+        'forgot-password',
+        'reset-password',
+        'auth/google',
+        'auth/google/callback',
         'terms',
         'terms-and-conditions',
     ];
