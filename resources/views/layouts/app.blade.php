@@ -587,6 +587,76 @@
     </style>
     @endif
 
+    @if(config('cctn.maintenance_mode') && !auth('admin')->check())
+    {{-- ── Client Maintenance Notice Banner ────────────────────────── --}}
+    <div id="client-maintenance-notice" style="
+        background: linear-gradient(135deg, #fff7ed 0%, #fef3c7 100%);
+        border-bottom: 2px solid #f59e0b;
+        padding: 0.85rem 1.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+    ">
+        <div style="display:flex; align-items:center; gap:0.85rem; flex-wrap:wrap;">
+            {{-- Animated warning icon --}}
+            <span style="
+                width: 36px; height: 36px;
+                border-radius: 50%;
+                background: #f59e0b;
+                display: flex; align-items: center; justify-content: center;
+                flex-shrink: 0;
+                animation: noticeBounce 1.8s ease-in-out infinite;
+            ">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                    <line x1="12" y1="9" x2="12" y2="13"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+            </span>
+            <div>
+                <div style="font-size:0.88rem; font-weight:800; color:#92400e; line-height:1.2;">
+                    🔧 Scheduled Maintenance in Progress
+                </div>
+                <div style="font-size:0.78rem; color:#a16207; margin-top:0.2rem; line-height:1.4;">
+                    Some features may be temporarily unavailable. Our team is working to restore full service as soon as possible. Thank you for your patience.
+                </div>
+            </div>
+        </div>
+
+        {{-- Right: dismiss --}}
+        <button onclick="
+            document.getElementById('client-maintenance-notice').style.display='none';
+            sessionStorage.setItem('cctn_notice_dismissed','1');
+        " style="
+            background: rgba(245,158,11,0.15);
+            border: 1px solid rgba(245,158,11,0.4);
+            color: #92400e;
+            padding: 0.35rem 0.85rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        ">Got it</button>
+    </div>
+
+    <style>
+        @keyframes noticeBounce {
+            0%, 100% { transform: scale(1); }
+            50%       { transform: scale(1.1); }
+        }
+    </style>
+    <script>
+        // Respect dismiss across navigations within the same session
+        if (sessionStorage.getItem('cctn_notice_dismissed') === '1') {
+            document.getElementById('client-maintenance-notice').style.display = 'none';
+        }
+    </script>
+    @endif
+
     <!-- Header Navbar -->
     <header class="client-header">
         <div class="client-navbar">

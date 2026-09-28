@@ -9,17 +9,22 @@ use Illuminate\Support\Facades\Auth;
 class MaintenanceMode
 {
     /**
-     * If maintenance mode is ON (MAINTENANCE_MODE=true in .env),
-     * block everyone except logged-in admins.
-     * Admin login/logout routes are always allowed so admins can still sign in.
+     * Public routes that remain accessible during maintenance
+     * so clients can at least see the landing page with a notice.
      */
+    protected array $publicAllowed = [
+        '/',
+        'terms',
+        'terms-and-conditions',
+    ];
+
     public function handle(Request $request, Closure $next)
     {
         if (!config('cctn.maintenance_mode', false)) {
             return $next($request);
         }
 
-        // Always allow the admin section through (login page + authenticated panel)
+        // Always allow the admin section through (login page + panel)
         if ($request->is('admin*')) {
             return $next($request);
         }
@@ -29,7 +34,14 @@ class MaintenanceMode
             return $next($request);
         }
 
-        // Everyone else sees the maintenance page
+        // Allow the public landing page so clients see the notice, not a blank wall
+        foreach ($this->publicAllowed as $path) {
+            if ($request->is($path)) {
+                return $next($request);
+            }
+        }
+
+        // Everything else (dashboard, booking, billing, login, register…) is blocked
         return response()->view('maintenance', [], 503);
     }
 }
