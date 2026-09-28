@@ -29,7 +29,7 @@
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <style>
         body {
-            background: linear-gradient(rgba(15, 23, 42, 0.55), rgba(15, 23, 42, 0.7)), url('{{ asset('assets/images/login-bg.jpg') }}') center / cover no-repeat fixed;
+            background: linear-gradient(rgba(20, 0, 0, 0.42), rgba(20, 0, 0, 0.62)), url('{{ asset('assets/images/auth-bctvi-background.png') }}') center / cover no-repeat fixed;
             min-height: 100vh; overflow-x: hidden; margin: 0;
             font-family: var(--font-body);
         }
