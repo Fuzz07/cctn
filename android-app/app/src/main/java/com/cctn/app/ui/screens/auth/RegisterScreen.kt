@@ -77,7 +77,7 @@ import com.google.android.gms.common.api.ApiException
 
 /**
  * Registration, laid out as `auth/register.blade.php` lays it out: the same
- * photo and scrim as sign-in, one white card, and the three-step wizard with
+ * BCTVI artwork and scrim as sign-in, one white card, and the three-step wizard with
  * its numbered markers across the top and Google signup option.
  */
 @Composable
@@ -134,10 +134,10 @@ fun RegisterScreen(
 
     Box(Modifier.fillMaxSize()) {
         Image(
-            painter = painterResource(R.drawable.login_bg),
+            painter = painterResource(R.drawable.bctvi_auth_background),
             contentDescription = null,
             contentScale = ContentScale.Crop,
-            alignment = BiasAlignment(horizontalBias = -0.55f, verticalBias = 0f),
+            alignment = BiasAlignment(horizontalBias = -0.70f, verticalBias = 0f),
             modifier = Modifier.fillMaxSize(),
         )
         Box(

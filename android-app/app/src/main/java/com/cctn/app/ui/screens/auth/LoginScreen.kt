@@ -77,7 +77,7 @@ import com.google.android.gms.common.api.ApiException
 import java.time.Year
 
 /**
- * Sign in, laid out to match `auth/login.blade.php`: the office photo
+ * Sign in, laid out to match `auth/login.blade.php`: the BCTVI artwork
  * behind a slate scrim, the lockup over it, and a white card holding
  * the form, remember-me checkbox, Google sign-in, and account registration.
  */
@@ -135,10 +135,10 @@ fun LoginScreen(
 
     Box(Modifier.fillMaxSize()) {
         Image(
-            painter = painterResource(R.drawable.login_bg),
+            painter = painterResource(R.drawable.bctvi_auth_background),
             contentDescription = null,
             contentScale = ContentScale.Crop,
-            alignment = BiasAlignment(horizontalBias = -0.55f, verticalBias = 0f),
+            alignment = BiasAlignment(horizontalBias = -0.70f, verticalBias = 0f),
             modifier = Modifier.fillMaxSize(),
         )
         Box(
