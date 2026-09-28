@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1900" viewBox="0 0 1600 1900" role="img" aria-labelledby="title desc">
+  <title id="title">CCTN Online Cable Service Management System — Data Flow Diagram Level 1</title>
+  <desc id="desc">A Level 1 data-flow diagram with CCTN external entities, processes, named data flows, and data stores.</desc>
+  <style>
+    .canvas { fill:#050708; }
+    .frame { fill:none; stroke:#0d5767; stroke-width:4; }
+    .entity, .process, .store { fill:#fff; stroke:#d9e0e2; stroke-width:2; }
+    .process { rx:18; }
+    .flow { fill:none; stroke:#79aeb9; stroke-width:2.5; marker-end:url(#arrow); }
+    .event { fill:none; stroke:#bca8dc; stroke-width:2.5; stroke-dasharray:9 7; marker-end:url(#arrowViolet); }
+    .title { fill:#fff; font:700 30px Arial, sans-serif; text-anchor:middle; }
+    .subtitle { fill:#b8cbd0; font:16px Arial, sans-serif; text-anchor:middle; }
+    .entityText { fill:#111; font:700 16px Arial, sans-serif; text-anchor:middle; }
+    .entitySub { fill:#555; font:12px Arial, sans-serif; text-anchor:middle; }
+    .processNo { fill:#111; font:700 16px Arial, sans-serif; text-anchor:middle; }
+    .processName { fill:#111; font:700 18px Arial, sans-serif; text-anchor:middle; }
+    .processSub { fill:#555; font:12px Arial, sans-serif; text-anchor:middle; }
+    .storeId { fill:#111; font:700 14px Arial, sans-serif; text-anchor:middle; }
+    .storeName { fill:#111; font:700 14px Arial, sans-serif; }
+    .storeFields { fill:#555; font:11px Arial, sans-serif; }
+    .label { fill:#e6f2f4; font:12px Arial, sans-serif; text-anchor:middle; paint-order:stroke; stroke:#050708; stroke-width:7; stroke-linejoin:round; }
+    .legend { fill:#b8cbd0; font:12px Arial, sans-serif; }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#79aeb9"/></marker>
+    <marker id="arrowViolet" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#bca8dc"/></marker>
+  </defs>
+
+  <rect class="canvas" width="1600" height="1900"/>
+  <rect class="frame" x="12" y="12" width="1576" height="1876"/>
+  <text class="title" x="800" y="58">CCTN ONLINE CABLE SERVICE MANAGEMENT SYSTEM</text>
+  <text class="subtitle" x="800" y="84">Data Flow Diagram — Level 1</text>
+
+  <!-- External entities -->
+  <g>
+    <rect class="entity" x="70" y="185" width="230" height="76"/><text class="entityText" x="185" y="216">WEBSITE VISITOR</text><text class="entitySub" x="185" y="237">guest / prospective client</text>
+    <rect class="entity" x="70" y="435" width="230" height="76"/><text class="entityText" x="185" y="466">CLIENT / SUBSCRIBER</text><text class="entitySub" x="185" y="487">web portal or Android app</text>
+    <rect class="entity" x="70" y="760" width="230" height="76"/><text class="entityText" x="185" y="791">ADMINISTRATOR / STAFF</text><text class="entitySub" x="185" y="812">admin web console</text>
+    <rect class="entity" x="70" y="1065" width="230" height="76"/><text class="entityText" x="185" y="1096">WALK-IN APPLICANT</text><text class="entitySub" x="185" y="1117">served at office counter</text>
+    <rect class="entity" x="70" y="1370" width="230" height="76"/><text class="entityText" x="185" y="1401">GOOGLE IDENTITY</text><text class="entitySub" x="185" y="1422">OAuth sign-in provider</text>
+  </g>
+
+  <!-- Processes -->
+  <g>
+    <rect class="process" x="635" y="150" width="330" height="90"/><text class="processNo" x="800" y="180">1.0</text><text class="processName" x="800" y="204">ACCOUNT &amp; SESSION MANAGEMENT</text><text class="processSub" x="800" y="224">register · login · password reset · profile</text>
+    <rect class="process" x="635" y="375" width="330" height="90"/><text class="processNo" x="800" y="405">2.0</text><text class="processName" x="800" y="429">APPOINTMENT BOOKING</text><text class="processSub" x="800" y="449">service selection · scheduling · payment proof</text>
+    <rect class="process" x="635" y="600" width="330" height="90"/><text class="processNo" x="800" y="630">3.0</text><text class="processName" x="800" y="654">APPOINTMENT REVIEW &amp; INSTALLATION</text><text class="processSub" x="800" y="674">approval · status update · walk-in encoding</text>
+    <rect class="process" x="635" y="825" width="330" height="90"/><text class="processNo" x="800" y="855">4.0</text><text class="processName" x="800" y="879">BILLING &amp; PAYMENT MANAGEMENT</text><text class="processSub" x="800" y="899">accounts · payments · receipts</text>
+    <rect class="process" x="635" y="1050" width="330" height="90"/><text class="processNo" x="800" y="1080">5.0</text><text class="processName" x="800" y="1104">MAINTENANCE REQUEST HANDLING</text><text class="processSub" x="800" y="1124">report · assign · update status</text>
+    <rect class="process" x="635" y="1275" width="330" height="90"/><text class="processNo" x="800" y="1305">6.0</text><text class="processName" x="800" y="1329">SERVICE &amp; RESOURCE MANAGEMENT</text><text class="processSub" x="800" y="1349">plans · slots · equipment · manpower</text>
+    <rect class="process" x="635" y="1500" width="330" height="90"/><text class="processNo" x="800" y="1530">7.0</text><text class="processName" x="800" y="1554">NOTIFICATION &amp; REPORTING</text><text class="processSub" x="800" y="1574">alerts · dashboard · sales reports</text>
+  </g>
+
+  <!-- Data stores: split left identifier and open-ended store form -->
+  <g>
+    <rect class="store" x="1190" y="130" width="70" height="58"/><rect class="store" x="1260" y="130" width="270" height="58"/><text class="storeId" x="1225" y="164">D1</text><text class="storeName" x="1280" y="154">clients</text><text class="storeFields" x="1280" y="173">profile, address, proof_of_billing</text>
+    <rect class="store" x="1190" y="205" width="70" height="58"/><rect class="store" x="1260" y="205" width="270" height="58"/><text class="storeId" x="1225" y="239">D2</text><text class="storeName" x="1280" y="229">admins</text><text class="storeFields" x="1280" y="248">name, email, password</text>
+    <rect class="store" x="1190" y="355" width="70" height="58"/><rect class="store" x="1260" y="355" width="270" height="58"/><text class="storeId" x="1225" y="389">D3</text><text class="storeName" x="1280" y="379">services</text><text class="storeFields" x="1280" y="398">name, description, price, status</text>
+    <rect class="store" x="1190" y="430" width="70" height="58"/><rect class="store" x="1260" y="430" width="270" height="58"/><text class="storeId" x="1225" y="464">D4</text><text class="storeName" x="1280" y="454">time_slots</text><text class="storeFields" x="1280" y="473">start_time, end_time, active</text>
+    <rect class="store" x="1190" y="580" width="70" height="58"/><rect class="store" x="1260" y="580" width="270" height="58"/><text class="storeId" x="1225" y="614">D5</text><text class="storeName" x="1280" y="604">appointments</text><text class="storeFields" x="1280" y="623">client, service, schedule, status</text>
+    <rect class="store" x="1190" y="805" width="70" height="58"/><rect class="store" x="1260" y="805" width="270" height="58"/><text class="storeId" x="1225" y="839">D6</text><text class="storeName" x="1280" y="829">billing_accounts</text><text class="storeFields" x="1280" y="848">account_no, balance, due_date</text>
+    <rect class="store" x="1190" y="880" width="70" height="58"/><rect class="store" x="1260" y="880" width="270" height="58"/><text class="storeId" x="1225" y="914">D7</text><text class="storeName" x="1280" y="904">payments</text><text class="storeFields" x="1280" y="923">amount, method, reference, receipt</text>
+    <rect class="store" x="1190" y="1030" width="70" height="58"/><rect class="store" x="1260" y="1030" width="270" height="58"/><text class="storeId" x="1225" y="1064">D8</text><text class="storeName" x="1280" y="1054">maintenance_requests</text><text class="storeFields" x="1280" y="1073">client, issue, status, remarks</text>
+    <rect class="store" x="1190" y="1470" width="70" height="58"/><rect class="store" x="1260" y="1470" width="270" height="58"/><text class="storeId" x="1225" y="1504">D9</text><text class="storeName" x="1280" y="1494">notifications</text><text class="storeFields" x="1280" y="1513">recipient, message, read_at</text>
+    <rect class="store" x="1190" y="1290" width="70" height="58"/><rect class="store" x="1260" y="1290" width="270" height="58"/><text class="storeId" x="1225" y="1324">D10</text><text class="storeName" x="1280" y="1314">equipment</text><text class="storeFields" x="1280" y="1333">name, quantity, status</text>
+    <rect class="store" x="1190" y="1365" width="70" height="58"/><rect class="store" x="1260" y="1365" width="270" height="58"/><text class="storeId" x="1225" y="1399">D11</text><text class="storeName" x="1280" y="1389">manpower</text><text class="storeFields" x="1280" y="1408">name, role, availability</text>
+  </g>
+
+  <!-- Left-side flows -->
+  <path class="flow" d="M300 223 H480 V190 H635"/><text class="label" x="465" y="180">registration / enquiry</text>
+  <path class="flow" d="M635 220 H430 V258 H300"/><text class="label" x="458" y="250">plans, account result</text>
+  <path class="flow" d="M300 472 H635"/><text class="label" x="467" y="461">credentials, profile updates</text>
+  <path class="flow" d="M635 405 H500 V510 H300"/><text class="label" x="470" y="501">booking request + payment proof</text>
+  <path class="flow" d="M635 445 H520 V550 H300"/><text class="label" x="470" y="541">booking reference / status</text>
+  <path class="flow" d="M300 798 H500 V645 H635"/><text class="label" x="485" y="636">approval, schedule and status update</text>
+  <path class="flow" d="M635 665 H520 V835 H300"/><text class="label" x="485" y="826">appointment queue / client record</text>
+  <path class="flow" d="M300 1103 H510 V665 H635"/><text class="label" x="500" y="1094">application details / cash payment</text>
+  <path class="flow" d="M635 1100 H510 V1140 H300"/><text class="label" x="485" y="1131">maintenance request / follow-up</text>
+  <path class="flow" d="M300 1408 H500 V210 H635"/><text class="label" x="490" y="1399">OAuth authorization / verified profile</text>
+
+  <!-- Process to store flows -->
+  <path class="flow" d="M965 180 H1190"/><text class="label" x="1080" y="170">client account</text>
+  <path class="flow" d="M965 220 H1100 V234 H1190"/><text class="label" x="1080" y="226">admin credentials</text>
+  <path class="flow" d="M965 405 H1190"/><text class="label" x="1080" y="395">plan / price query</text>
+  <path class="flow" d="M965 440 H1080 V459 H1190"/><text class="label" x="1080" y="450">available slots</text>
+  <path class="flow" d="M965 645 H1190"/><text class="label" x="1080" y="635">appointment record</text>
+  <path class="flow" d="M965 855 H1190"/><text class="label" x="1080" y="845">account balance</text>
+  <path class="flow" d="M965 890 H1100 V909 H1190"/><text class="label" x="1080" y="899">payment entry</text>
+  <path class="flow" d="M965 1095 H1190"/><text class="label" x="1080" y="1085">request / status</text>
+  <path class="flow" d="M965 1310 H1190"/><text class="label" x="1080" y="1300">equipment update</text>
+  <path class="flow" d="M965 1340 H1100 V1394 H1190"/><text class="label" x="1080" y="1384">staff assignment</text>
+  <path class="flow" d="M965 1540 H1190"/><text class="label" x="1080" y="1530">alerts / report data</text>
+
+  <!-- Internal events -->
+  <path class="event" d="M800 465 V600"/><text class="label" x="875" y="540">new booking event</text>
+  <path class="event" d="M800 690 V825"/><text class="label" x="875" y="765">approval / completion event</text>
+  <path class="event" d="M800 915 V1500"/><text class="label" x="885" y="1210">payment event</text>
+  <path class="event" d="M800 1140 V1500"/><text class="label" x="890" y="1320">maintenance event</text>
+
+  <line x1="70" y1="1700" x2="1530" y2="1700" stroke="#0d5767" stroke-width="2"/>
+  <rect class="entity" x="80" y="1740" width="100" height="42"/><text class="entityText" x="130" y="1766">ENTITY</text>
+  <rect class="process" x="290" y="1740" width="130" height="42"/><text class="entityText" x="355" y="1766">PROCESS</text>
+  <rect class="store" x="530" y="1740" width="42" height="42"/><rect class="store" x="572" y="1740" width="150" height="42"/><text class="storeId" x="551" y="1766">D#</text><text class="storeName" x="590" y="1766">DATA STORE</text>
+  <path class="flow" d="M830 1761 H940"/><text class="legend" x="960" y="1766">named data flow</text>
+  <path class="event" d="M1150 1761 H1260"/><text class="legend" x="1280" y="1766">internal event flow</text>
+  <text class="legend" x="80" y="1830">D1 clients · D2 admins · D3 services · D4 time_slots · D5 appointments · D6 billing_accounts · D7 payments · D8 maintenance_requests · D9 notifications · D10 equipment · D11 manpower</text>
+</svg>

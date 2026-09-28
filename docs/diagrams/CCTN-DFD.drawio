@@ -1,4 +1,4 @@
-<mxfile host="Electron" agent="cctn-docs" pages="3">
+<mxfile host="Electron" agent="cctn-docs" pages="4">
   <diagram id="Context-Diagram-(Level-0)" name="Context Diagram (Level 0)">
     <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1620" math="0" shadow="0">
       <root>
@@ -566,6 +566,191 @@
         </mxCell>
         <mxCell id="l2-legend" value="&lt;b&gt;Rectangle&lt;/b&gt; - external entity     &lt;b&gt;Rounded rectangle&lt;/b&gt; - subprocess     &lt;b&gt;Open-ended rectangle&lt;/b&gt; - data store     &lt;b&gt;Arrow&lt;/b&gt; - data flow&lt;br&gt;This page is balanced with Level 1 Process 2.0: the client supplies the booking and proof, receives availability/confirmation, and the administrator receives the new-booking alert. D5 is repeated to reduce crossing lines." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=11;fontColor=#4d4d4d;" vertex="1" parent="l2-1">
           <mxGeometry x="80" y="1120" width="1400" height="45" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="Level-1-Reference-Style" name="Level 1 - Reference Style (Editable)">
+    <mxGraphModel dx="3620" dy="1270" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1900" math="0" shadow="0">
+      <root>
+        <mxCell id="rs0" />
+        <mxCell id="rs1" parent="rs0" />
+        <mxCell id="rs-e1" parent="rs1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d9e0e2;strokeWidth=2;fontSize=16;fontStyle=1;fontColor=#111111;align=center;verticalAlign=middle;" value="WEBSITE VISITOR&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;guest / prospective client&lt;/font&gt;" vertex="1">
+          <mxGeometry height="76" width="230" x="70" y="185" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-e2" parent="rs1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d9e0e2;strokeWidth=2;fontSize=16;fontStyle=1;fontColor=#111111;align=center;verticalAlign=middle;" value="CLIENT / SUBSCRIBER&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;web portal or Android app&lt;/font&gt;" vertex="1">
+          <mxGeometry height="76" width="230" x="70" y="435" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-e3" parent="rs1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d9e0e2;strokeWidth=2;fontSize=16;fontStyle=1;fontColor=#111111;align=center;verticalAlign=middle;" value="ADMINISTRATOR / STAFF&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;admin web console&lt;/font&gt;" vertex="1">
+          <mxGeometry height="76" width="230" x="80" y="614" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-e4" parent="rs1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d9e0e2;strokeWidth=2;fontSize=16;fontStyle=1;fontColor=#111111;align=center;verticalAlign=middle;" value="WALK-IN APPLICANT&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;served at office counter&lt;/font&gt;" vertex="1">
+          <mxGeometry height="76" width="230" x="70" y="1065" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-e5" parent="rs1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d9e0e2;strokeWidth=2;fontSize=16;fontStyle=1;fontColor=#111111;align=center;verticalAlign=middle;" value="GOOGLE IDENTITY&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;OAuth sign-in provider&lt;/font&gt;" vertex="1">
+          <mxGeometry height="76" width="230" x="70" y="1370" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-p1" parent="rs1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d9e0e2;strokeWidth=2;fontSize=18;fontColor=#111111;align=center;verticalAlign=middle;" value="&lt;b&gt;1.0&lt;/b&gt;&lt;br&gt;&lt;b&gt;ACCOUNT &amp;amp; SESSION MANAGEMENT&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:12px;color:#555555&quot;&gt;register - login - password reset - profile&lt;/font&gt;" vertex="1">
+          <mxGeometry height="90" width="330" x="635" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-p2" parent="rs1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d9e0e2;strokeWidth=2;fontSize=18;fontColor=#111111;align=center;verticalAlign=middle;" value="&lt;b&gt;2.0&lt;/b&gt;&lt;br&gt;&lt;b&gt;APPOINTMENT BOOKING&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:12px;color:#555555&quot;&gt;service selection - scheduling - payment proof&lt;/font&gt;" vertex="1">
+          <mxGeometry height="90" width="330" x="635" y="375" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-p3" parent="rs1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d9e0e2;strokeWidth=2;fontSize=18;fontColor=#111111;align=center;verticalAlign=middle;" value="&lt;b&gt;3.0&lt;/b&gt;&lt;br&gt;&lt;b&gt;APPOINTMENT REVIEW &amp;amp; INSTALLATION&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:12px;color:#555555&quot;&gt;approval - status update - walk-in encoding&lt;/font&gt;" vertex="1">
+          <mxGeometry height="90" width="330" x="635" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-p4" parent="rs1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d9e0e2;strokeWidth=2;fontSize=18;fontColor=#111111;align=center;verticalAlign=middle;" value="&lt;b&gt;4.0&lt;/b&gt;&lt;br&gt;&lt;b&gt;BILLING &amp;amp; PAYMENT MANAGEMENT&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:12px;color:#555555&quot;&gt;accounts - payments - receipts&lt;/font&gt;" vertex="1">
+          <mxGeometry height="90" width="330" x="635" y="825" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-p5" parent="rs1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d9e0e2;strokeWidth=2;fontSize=18;fontColor=#111111;align=center;verticalAlign=middle;" value="&lt;b&gt;5.0&lt;/b&gt;&lt;br&gt;&lt;b&gt;MAINTENANCE REQUEST HANDLING&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:12px;color:#555555&quot;&gt;report - assign - update status&lt;/font&gt;" vertex="1">
+          <mxGeometry height="90" width="330" x="635" y="1050" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-p6" parent="rs1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d9e0e2;strokeWidth=2;fontSize=18;fontColor=#111111;align=center;verticalAlign=middle;" value="&lt;b&gt;6.0&lt;/b&gt;&lt;br&gt;&lt;b&gt;SERVICE &amp;amp; RESOURCE MANAGEMENT&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:12px;color:#555555&quot;&gt;plans - slots - equipment - manpower&lt;/font&gt;" vertex="1">
+          <mxGeometry height="90" width="330" x="635" y="1275" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-p7" parent="rs1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d9e0e2;strokeWidth=2;fontSize=18;fontColor=#111111;align=center;verticalAlign=middle;" value="&lt;b&gt;7.0&lt;/b&gt;&lt;br&gt;&lt;b&gt;NOTIFICATION &amp;amp; REPORTING&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:12px;color:#555555&quot;&gt;alerts - dashboard - sales reports&lt;/font&gt;" vertex="1">
+          <mxGeometry height="90" width="330" x="635" y="1500" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-d1" parent="rs1" style="shape=partialRectangle;html=1;whiteSpace=wrap;left=1;right=0;top=1;bottom=1;fillColor=#ffffff;strokeColor=#d9e0e2;strokeWidth=2;align=left;spacingLeft=14;verticalAlign=middle;fontSize=14;fontColor=#111111;" value="&lt;b&gt;D1&lt;/b&gt;   |   clients&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;profile, address, proof of billing&lt;/font&gt;" vertex="1">
+          <mxGeometry height="58" width="340" x="1190" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-d2" parent="rs1" style="shape=partialRectangle;html=1;whiteSpace=wrap;left=1;right=0;top=1;bottom=1;fillColor=#ffffff;strokeColor=#d9e0e2;strokeWidth=2;align=left;spacingLeft=14;verticalAlign=middle;fontSize=14;fontColor=#111111;" value="&lt;b&gt;D2&lt;/b&gt;   |   admins&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;name, email, password&lt;/font&gt;" vertex="1">
+          <mxGeometry height="58" width="340" x="1190" y="205" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-d3" parent="rs1" style="shape=partialRectangle;html=1;whiteSpace=wrap;left=1;right=0;top=1;bottom=1;fillColor=#ffffff;strokeColor=#d9e0e2;strokeWidth=2;align=left;spacingLeft=14;verticalAlign=middle;fontSize=14;fontColor=#111111;" value="&lt;b&gt;D3&lt;/b&gt;   |   services&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;name, description, price, status&lt;/font&gt;" vertex="1">
+          <mxGeometry height="58" width="340" x="1190" y="355" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-d4" parent="rs1" style="shape=partialRectangle;html=1;whiteSpace=wrap;left=1;right=0;top=1;bottom=1;fillColor=#ffffff;strokeColor=#d9e0e2;strokeWidth=2;align=left;spacingLeft=14;verticalAlign=middle;fontSize=14;fontColor=#111111;" value="&lt;b&gt;D4&lt;/b&gt;   |   time_slots&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;start time, end time, active&lt;/font&gt;" vertex="1">
+          <mxGeometry height="58" width="340" x="1190" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-d5" parent="rs1" style="shape=partialRectangle;html=1;whiteSpace=wrap;left=1;right=0;top=1;bottom=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=1;align=left;spacingLeft=14;verticalAlign=middle;fontSize=14;fontColor=#111111;" value="&lt;b&gt;D5&lt;/b&gt;   |   appointments&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;client, service, schedule, status&lt;/font&gt;" vertex="1">
+          <mxGeometry height="58" width="340" x="1190" y="580" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-d6" parent="rs1" style="shape=partialRectangle;html=1;whiteSpace=wrap;left=1;right=0;top=1;bottom=1;fillColor=#ffffff;strokeColor=#d9e0e2;strokeWidth=2;align=left;spacingLeft=14;verticalAlign=middle;fontSize=14;fontColor=#111111;" value="&lt;b&gt;D6&lt;/b&gt;   |   billing_accounts&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;account no., balance, due date&lt;/font&gt;" vertex="1">
+          <mxGeometry height="58" width="340" x="1190" y="805" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-d7" parent="rs1" style="shape=partialRectangle;html=1;whiteSpace=wrap;left=1;right=0;top=1;bottom=1;fillColor=#ffffff;strokeColor=#d9e0e2;strokeWidth=2;align=left;spacingLeft=14;verticalAlign=middle;fontSize=14;fontColor=#111111;" value="&lt;b&gt;D7&lt;/b&gt;   |   payments&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;amount, method, reference, receipt&lt;/font&gt;" vertex="1">
+          <mxGeometry height="58" width="340" x="1190" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-d8" parent="rs1" style="shape=partialRectangle;html=1;whiteSpace=wrap;left=1;right=0;top=1;bottom=1;fillColor=#ffffff;strokeColor=#d9e0e2;strokeWidth=2;align=left;spacingLeft=14;verticalAlign=middle;fontSize=14;fontColor=#111111;" value="&lt;b&gt;D8&lt;/b&gt;   |   maintenance_requests&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;client, issue, status, remarks&lt;/font&gt;" vertex="1">
+          <mxGeometry height="58" width="340" x="1190" y="1030" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-d10" parent="rs1" style="shape=partialRectangle;html=1;whiteSpace=wrap;left=1;right=0;top=1;bottom=1;fillColor=#ffffff;strokeColor=#d9e0e2;strokeWidth=2;align=left;spacingLeft=14;verticalAlign=middle;fontSize=14;fontColor=#111111;" value="&lt;b&gt;D10&lt;/b&gt;   |   equipment&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;name, quantity, status&lt;/font&gt;" vertex="1">
+          <mxGeometry height="58" width="340" x="1190" y="1290" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-d11" parent="rs1" style="shape=partialRectangle;html=1;whiteSpace=wrap;left=1;right=0;top=1;bottom=1;fillColor=#ffffff;strokeColor=#d9e0e2;strokeWidth=2;align=left;spacingLeft=14;verticalAlign=middle;fontSize=14;fontColor=#111111;" value="&lt;b&gt;D11&lt;/b&gt;   |   manpower&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;name, role, availability&lt;/font&gt;" vertex="1">
+          <mxGeometry height="58" width="340" x="1190" y="1365" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-d9" parent="rs1" style="shape=partialRectangle;html=1;whiteSpace=wrap;left=1;right=0;top=1;bottom=1;fillColor=#ffffff;strokeColor=#d9e0e2;strokeWidth=2;align=left;spacingLeft=14;verticalAlign=middle;fontSize=14;fontColor=#111111;" value="&lt;b&gt;D9&lt;/b&gt;   |   notifications&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;recipient, message, read at&lt;/font&gt;" vertex="1">
+          <mxGeometry height="58" width="340" x="1190" y="1470" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-f1" edge="1" parent="rs1" source="rs-e1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#79aeb9;strokeWidth=2.5;endArrow=blockThin;endFill=1;fontColor=#e6f2f4;fontSize=12;labelBackgroundColor=#050708;" target="rs-p1" value="registration / enquiry">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="470" y="223" />
+              <mxPoint x="470" y="190" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rs-f2" edge="1" parent="rs1" source="rs-e2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#79aeb9;strokeWidth=2.5;endArrow=blockThin;endFill=1;fontColor=#e6f2f4;fontSize=12;labelBackgroundColor=#050708;" target="rs-p1" value="credentials / profile updates">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-f3" edge="1" parent="rs1" source="rs-e2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#79aeb9;strokeWidth=2.5;endArrow=blockThin;endFill=1;fontColor=#e6f2f4;fontSize=12;labelBackgroundColor=#050708;" target="rs-p2" value="booking request + payment proof">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-f4" edge="1" parent="rs1" source="rs-e3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#79aeb9;strokeWidth=2.5;endArrow=blockThin;endFill=1;fontColor=#e6f2f4;fontSize=12;labelBackgroundColor=#050708;" target="rs-p3" value="approval / schedule / status update">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="310" y="645" />
+              <mxPoint x="310" y="645" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rs-f5" edge="1" parent="rs1" source="rs-e4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#79aeb9;strokeWidth=2.5;endArrow=blockThin;endFill=1;fontColor=#e6f2f4;fontSize=12;labelBackgroundColor=#050708;" target="rs-p3" value="application details / cash payment">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="510" y="1103" />
+              <mxPoint x="510" y="665" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rs-f6" edge="1" parent="rs1" source="rs-e2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#79aeb9;strokeWidth=2.5;endArrow=blockThin;endFill=1;fontColor=#e6f2f4;fontSize=12;labelBackgroundColor=#050708;" target="rs-p5" value="maintenance request / follow-up">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="60" y="473" />
+              <mxPoint x="60" y="1170" />
+              <mxPoint x="800" y="1170" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rs-f7" edge="1" parent="rs1" source="rs-e5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#79aeb9;strokeWidth=2.5;endArrow=blockThin;endFill=1;fontColor=#e6f2f4;fontSize=12;labelBackgroundColor=#050708;" target="rs-p1" value="OAuth authorization / verified profile">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="-20" y="1408" />
+              <mxPoint x="-20" y="90" />
+              <mxPoint x="800" y="90" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rs-f8" edge="1" parent="rs1" source="rs-p1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#79aeb9;strokeWidth=2.5;endArrow=blockThin;endFill=1;fontColor=#e6f2f4;fontSize=12;labelBackgroundColor=#050708;" target="rs-d1" value="client account">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-f9" edge="1" parent="rs1" source="rs-p1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#79aeb9;strokeWidth=2.5;endArrow=blockThin;endFill=1;fontColor=#e6f2f4;fontSize=12;labelBackgroundColor=#050708;" target="rs-d2" value="admin credentials">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-f10" edge="1" parent="rs1" source="rs-p2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#79aeb9;strokeWidth=2.5;endArrow=blockThin;endFill=1;fontColor=#e6f2f4;fontSize=12;labelBackgroundColor=#050708;" target="rs-d3" value="plan / price query">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1077.57" y="400" />
+              <mxPoint x="1077.57" y="384" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rs-f11" edge="1" parent="rs1" source="rs-p2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#79aeb9;strokeWidth=2.5;endArrow=blockThin;endFill=1;fontColor=#e6f2f4;fontSize=12;labelBackgroundColor=#050708;" target="rs-d4" value="available slots">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1077.57" y="440" />
+              <mxPoint x="1077.57" y="459" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rs-f12" edge="1" parent="rs1" source="rs-p3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#79aeb9;strokeWidth=2.5;endArrow=blockThin;endFill=1;fontColor=#e6f2f4;fontSize=12;labelBackgroundColor=#050708;" target="rs-d5" value="appointment record">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-f13" edge="1" parent="rs1" source="rs-p4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#79aeb9;strokeWidth=2.5;endArrow=blockThin;endFill=1;fontColor=#e6f2f4;fontSize=12;labelBackgroundColor=#050708;" target="rs-d6" value="account balance">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-f14" edge="1" parent="rs1" source="rs-p4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#79aeb9;strokeWidth=2.5;endArrow=blockThin;endFill=1;fontColor=#e6f2f4;fontSize=12;labelBackgroundColor=#050708;" target="rs-d7" value="payment entry">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-f15" edge="1" parent="rs1" source="rs-p5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#79aeb9;strokeWidth=2.5;endArrow=blockThin;endFill=1;fontColor=#e6f2f4;fontSize=12;labelBackgroundColor=#050708;" target="rs-d8" value="request / status">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-f16" edge="1" parent="rs1" source="rs-p6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#79aeb9;strokeWidth=2.5;endArrow=blockThin;endFill=1;fontColor=#e6f2f4;fontSize=12;labelBackgroundColor=#050708;" target="rs-d10" value="&lt;span&gt;equipment update&lt;/span&gt;">
+          <mxGeometry relative="1" x="-0.5133" y="20" as="geometry">
+            <mxPoint x="1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rs-f17" edge="1" parent="rs1" source="rs-p6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#79aeb9;strokeWidth=2.5;endArrow=blockThin;endFill=1;fontColor=#e6f2f4;fontSize=12;labelBackgroundColor=#050708;" target="rs-d11" value="staff assignment">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-f18" edge="1" parent="rs1" source="rs-p7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#79aeb9;strokeWidth=2.5;endArrow=blockThin;endFill=1;fontColor=#e6f2f4;fontSize=12;labelBackgroundColor=#050708;" target="rs-d9" value="alerts / report data">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-f19" edge="1" parent="rs1" source="rs-p2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#bca8dc;strokeWidth=2.5;dashed=1;dashPattern=9 7;endArrow=blockThin;endFill=1;fontColor=#e6f2f4;fontSize=12;labelBackgroundColor=#050708;" target="rs-p3" value="new booking event">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-f20" edge="1" parent="rs1" source="rs-p3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#bca8dc;strokeWidth=2.5;dashed=1;dashPattern=9 7;endArrow=blockThin;endFill=1;fontColor=#e6f2f4;fontSize=12;labelBackgroundColor=#050708;" target="rs-p4" value="approval / completion event">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-f21" edge="1" parent="rs1" source="rs-p4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#bca8dc;strokeWidth=2.5;dashed=1;dashPattern=9 7;endArrow=blockThin;endFill=1;fontColor=#e6f2f4;fontSize=12;labelBackgroundColor=#050708;" target="rs-p7" value="payment and maintenance events">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-f22" edge="1" parent="rs1" source="rs-p5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#bca8dc;strokeWidth=2.5;dashed=1;dashPattern=9 7;endArrow=blockThin;endFill=1;fontColor=#e6f2f4;fontSize=12;labelBackgroundColor=#050708;" target="rs-p7" value="maintenance event">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rs-legend" parent="rs1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#b8cbd0;" value="&lt;b&gt;Legend:&lt;/b&gt; Rectangle = external entity   |   Rounded rectangle = process   |   Open-ended rectangle = data store   |   Solid arrow = data flow   |   Dashed violet arrow = internal event flow" vertex="1">
+          <mxGeometry height="34" width="1440" x="80" y="1780" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

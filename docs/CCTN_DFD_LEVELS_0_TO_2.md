@@ -2,6 +2,8 @@
 
 These diagrams describe the implemented BCTVI/CCTN Online Cable Service Management System. The editable Draw.io version is in `docs/diagrams/CCTN-DFD.drawio`.
 
+For a presentation-ready Level 1 layout with the same left-to-right composition as the supplied reference, use `docs/diagrams/CCTN-DFD-Level-1-Reference-Style.svg`.
+
 ## DFD notation
 
 - Rectangle: external entity
