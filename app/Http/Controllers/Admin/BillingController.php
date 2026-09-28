@@ -59,6 +59,13 @@ class BillingController extends Controller
         $billing = BillingAccount::findOrFail($request->billing_id);
         $admin = Auth::guard('admin')->user();
 
+        // Guard: amount paid must cover the full balance to mark as paid
+        if ((float) $request->amount_paid < (float) $billing->total_amount_due) {
+            return back()->withErrors([
+                'amount_paid' => 'Partial payments are not supported. The amount paid (₱' . number_format((float) $request->amount_paid, 2) . ') is less than the total amount due (₱' . number_format((float) $billing->total_amount_due, 2) . '). Please adjust the amount or update the billing record first.',
+            ])->withInput();
+        }
+
         $receiptNo = 'RCP-' . date('Ymd') . '-' . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
 
         $payment = Payment::create([

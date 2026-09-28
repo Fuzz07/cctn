@@ -34,6 +34,15 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+        // Rate-limit: 10 attempts per minute per IP
+        $throttleKey = 'login:' . $request->ip();
+        if (RateLimiter::tooManyAttempts($throttleKey, 10)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+            return back()->withErrors([
+                'login_input' => "Too many login attempts. Please wait {$seconds} seconds before trying again.",
+            ])->withInput();
+        }
+
         $request->validate([
             'login_input'          => 'required|string',
             'password'             => 'required|string',
@@ -51,17 +60,21 @@ class AuthController extends Controller
             ->orWhere('email', $loginInput)
             ->first();
 
-        if (!$client) {
-            return back()->withErrors(['login_input' => 'No account found with that username or email address.'])->withInput();
-        }
-
-        if (!Hash::check($password, $client->password)) {
-            return back()->withErrors(['password' => 'Incorrect password. Please try again.'])->withInput();
+        if (!$client || !Hash::check($password, $client->password)) {
+            RateLimiter::hit($throttleKey, 60);
+            $error = !$client
+                ? 'No account found with that username or email address.'
+                : 'Incorrect password. Please try again.';
+            return back()->withErrors(['login_input' => $error])->withInput();
         }
 
         if ($client->isArchived()) {
+            RateLimiter::hit($throttleKey, 60);
             return back()->withErrors(['login_input' => 'This account has been archived. Please contact BCTVI support.'])->withInput();
         }
+
+        // Clear throttle on successful login
+        RateLimiter::clear($throttleKey);
 
         // Auto-verify email if not verified
         if (empty($client->email_verified_at)) {

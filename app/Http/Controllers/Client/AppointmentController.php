@@ -184,6 +184,12 @@ class AppointmentController extends Controller
         $client = Auth::guard('client')->user();
         $appointment = Appointment::where('client_id', $client->id)->findOrFail($id);
 
+        // Prevent cancellation of already-approved appointments
+        if ($appointment->status === 'approved') {
+            return redirect()->route('client.appointments')
+                ->withErrors(['cancel' => 'Appointment #' . str_pad($appointment->id, 6, '0', STR_PAD_LEFT) . ' has already been approved and cannot be cancelled from the portal. Please contact BCTVI support directly.']);
+        }
+
         $appointmentNum = str_pad($appointment->id, 6, '0', STR_PAD_LEFT);
         $appointment->delete();
 

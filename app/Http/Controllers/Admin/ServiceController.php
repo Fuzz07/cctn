@@ -22,13 +22,21 @@ class ServiceController extends Controller
 
     public function store(Request $request)
     {
+        $id = (int) $request->input('service_id', 0);
+
         $request->validate([
-            'service_name'     => 'required|string|max:100',
+            'service_name'     => [
+                'required', 'string', 'max:100',
+                // Only enforce uniqueness when creating a new service; allow editing existing
+                $id > 0
+                    ? \Illuminate\Validation\Rule::unique('services', 'service_name')->ignore($id)
+                    : \Illuminate\Validation\Rule::unique('services', 'service_name'),
+            ],
             'duration_minutes' => 'required|integer|min:1',
             'price'            => 'required|numeric|min:0',
+        ], [
+            'service_name.unique' => 'A service with this name already exists. Please use a different name or edit the existing service.',
         ]);
-
-        $id = $request->input('service_id', 0);
 
         $data = $request->only(['service_name', 'description', 'duration_minutes', 'price', 'status']);
 

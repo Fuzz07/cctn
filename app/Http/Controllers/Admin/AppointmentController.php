@@ -90,6 +90,17 @@ class AppointmentController extends Controller
 
         $appointment->update($updateData);
 
+        // Notify client if their appointment was cancelled
+        if ($request->status === 'cancelled' && $previousStatus !== 'cancelled' && $appointment->client_id) {
+            \App\Models\Notification::create([
+                'for_admin' => false,
+                'client_id' => $appointment->client_id,
+                'title'     => 'Booking Cancelled',
+                'message'   => 'Your appointment #' . str_pad($appointment->id, 6, '0', STR_PAD_LEFT) . ' scheduled on ' . $appointment->preferred_date->format('F j, Y') . ' has been cancelled by BCTVI staff. Please contact us if you have questions.',
+                'link'      => 'my-appointments',
+            ]);
+        }
+
         // Notify recipient via email if payment is confirmed or booking approved
         $isNowConfirmed = in_array($appointment->payment_status, ['Payment Confirmed', 'paid'], true);
         $wasNotConfirmed = !in_array($previousPaymentStatus, ['Payment Confirmed', 'paid'], true);
