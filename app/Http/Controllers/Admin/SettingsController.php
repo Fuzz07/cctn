@@ -84,7 +84,27 @@ class SettingsController extends Controller
         $env = $this->setEnvValue($env, 'MAINTENANCE_MODE',   $maintenanceMode);
         $env = $this->setEnvValue($env, 'MAX_DAILY_BOOKINGS', $maxBookings);
 
-        file_put_contents($envPath, $env);
+        if (file_put_contents($envPath, $env, LOCK_EX) === false) {
+            return back()->withErrors([
+                'system_settings' => 'System settings could not be saved. Please check that the .env file is writable.',
+            ]);
+        }
+
+        // A cached config file ignores new .env values. Remove it so the next
+        // request immediately uses the settings just saved in this panel.
+        $cachedConfig = bootstrap_path('cache/config.php');
+        if (is_file($cachedConfig) && !unlink($cachedConfig)) {
+            return back()->withErrors([
+                'system_settings' => 'Settings were saved, but the configuration cache could not be cleared. Please make bootstrap/cache writable.',
+            ]);
+        }
+
+        // Keep this request consistent too; the redirect will reload from .env.
+        config([
+            'cctn.booking_enabled' => $bookingEnabled === 'true',
+            'cctn.maintenance_mode' => $maintenanceMode === 'true',
+            'cctn.max_daily_bookings' => $maxBookings,
+        ]);
 
         return redirect()->route('admin.settings')->with('success_message', 'System settings saved.');
     }
