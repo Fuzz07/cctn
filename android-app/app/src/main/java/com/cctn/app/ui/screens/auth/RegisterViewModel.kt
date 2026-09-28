@@ -9,6 +9,8 @@ import com.cctn.app.core.Validators
 import com.cctn.app.data.remote.dto.RegisterRequest
 import com.cctn.app.data.repo.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -36,6 +38,7 @@ data class RegisterUiState(
     val username: String = "",
     val password: String = "",
     val passwordConfirmation: String = "",
+    val recaptcha: RecaptchaStatus = RecaptchaStatus.Unverified(),
 
     val errors: Map<String, String> = emptyMap(),
     val formError: String? = null,
@@ -61,6 +64,8 @@ class RegisterViewModel @Inject constructor(
 
     private val _state = MutableStateFlow(RegisterUiState())
     val state: StateFlow<RegisterUiState> = _state.asStateFlow()
+
+    private var recaptchaTimeout: Job? = null
 
     // ── Field updates ────────────────────────────────────────────────────────
 
@@ -99,6 +104,18 @@ class RegisterViewModel @Inject constructor(
     }
 
     fun onBarangay(v: String) = update("address_barangay") { it.copy(barangay = v) }
+
+    fun onRecaptchaVerified(token: String) {
+        update("recaptcha_token") { it.copy(recaptcha = RecaptchaStatus.Verified(token)) }
+        recaptchaTimeout?.cancel()
+        recaptchaTimeout = viewModelScope.launch {
+            delay(RECAPTCHA_TOKEN_LIFETIME_MS)
+            _state.update { it.copy(recaptcha = it.recaptcha.timedOut()) }
+        }
+    }
+
+    fun onRecaptchaNotRequired() =
+        update("recaptcha_token") { it.copy(recaptcha = RecaptchaStatus.NotRequired) }
 
     fun onGoogleIdToken(idToken: String) {
         val current = _state.value
@@ -175,6 +192,9 @@ class RegisterViewModel @Inject constructor(
                 Validators.password(s.password)?.let { put("password", it) }
                 Validators.passwordConfirmation(s.password, s.passwordConfirmation)
                     ?.let { put("password_confirmation", it) }
+                if (!s.recaptcha.isDone) {
+                    put("recaptcha_token", "Please confirm you're not a robot.")
+                }
             }
         }
     }
@@ -197,6 +217,7 @@ class RegisterViewModel @Inject constructor(
         }
 
         _state.update { it.copy(submitting = true, formError = null) }
+        recaptchaTimeout?.cancel()
 
         viewModelScope.launch {
             val request = RegisterRequest(
@@ -215,6 +236,7 @@ class RegisterViewModel @Inject constructor(
                 gender = current.gender,
                 civilStatus = current.civilStatus,
                 placeOfBirth = current.placeOfBirth.trim().takeIf { it.isNotEmpty() },
+                recaptchaToken = current.recaptcha.token,
             )
 
             when (val result = authRepository.register(request)) {
@@ -232,6 +254,7 @@ class RegisterViewModel @Inject constructor(
                             errors = fieldErrors,
                             step = targetStep ?: it.step,
                             formError = if (fieldErrors.isEmpty()) result.error.message else null,
+                            recaptcha = it.recaptcha.spent(),
                         )
                     }
                 }
@@ -257,6 +280,7 @@ class RegisterViewModel @Inject constructor(
             "username" to 3,
             "password" to 3,
             "password_confirmation" to 3,
+            "recaptcha_token" to 3,
         )
     }
 }

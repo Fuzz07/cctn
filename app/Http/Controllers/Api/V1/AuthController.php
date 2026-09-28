@@ -5,21 +5,28 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ClientResource;
 use App\Models\Client;
+use App\Rules\Recaptcha;
 use App\Support\InputRules;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    // The app gets its token from the page at /mobile/recaptcha. Only an app
+    // older than that page sends none, so this is the message it will show.
+    private const RECAPTCHA_MISSING = 'Please complete the "I\'m not a robot" check. If you don\'t see one, update the BCTVI app to the latest version.';
+
     // ─── POST /api/v1/auth/login ─────────────────────────────────────────────
     public function login(Request $request)
     {
         $request->validate([
-            'login_input' => 'required|string',
-            'password'    => 'required|string',
+            'login_input'     => 'required|string',
+            'password'        => 'required|string',
+            'recaptcha_token' => [new Recaptcha(self::RECAPTCHA_MISSING)],
         ]);
 
         $client = Client::where('username', $request->login_input)
@@ -125,6 +132,7 @@ class AuthController extends Controller
             'address_barangay'     => InputRules::address(true, 100),
             'address_municipality' => InputRules::address(true, 100),
             'address_province'     => InputRules::address(true, 100),
+            'recaptcha_token'      => [new Recaptcha(self::RECAPTCHA_MISSING)],
         ], InputRules::messages([
             'name'    => ['firstname', 'middlename', 'lastname'],
             'address' => ['address_barangay', 'address_municipality', 'address_province'],

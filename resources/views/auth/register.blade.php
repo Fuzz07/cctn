@@ -108,7 +108,6 @@
         .btn-wizard-next {
             background: var(--primary); color: #fff !important; border-color: var(--primary);
             box-shadow: 0 4px 12px rgba(220,38,38,0.25); margin-left: auto;
-            display: inline-flex !important;
         }
         .btn-wizard-next:hover { background: var(--primary-dark); color: #fff !important; transform: translateY(-1px); }
         .btn-auth-primary { margin-top: 0; margin-left: auto; width: auto; }

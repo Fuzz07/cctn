@@ -2,13 +2,35 @@
 
 namespace App\Rules;
 
-use Illuminate\Contracts\Validation\Rule;
+use Illuminate\Contracts\Validation\ImplicitRule;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class Recaptcha implements Rule
+// Implicit, so it runs even when the token field is missing from the request.
+// A plain rule is skipped for an absent field, and a form posted without it
+// would pass without any reCAPTCHA check at all.
+class Recaptcha implements ImplicitRule
 {
     protected string $message = 'Please complete the reCAPTCHA verification to proceed.';
+
+    /**
+     * @param  string|null  $missingMessage  What to say when no token was sent at all.
+     */
+    public function __construct(protected ?string $missingMessage = null)
+    {
+    }
+
+    /**
+     * Whether a token is needed at all. Also asked by the mobile reCAPTCHA
+     * page, so the app and this rule agree on when the check is switched off.
+     */
+    public static function isRequired(): bool
+    {
+        // Explicitly disabled, or no secret key configured: bypass to avoid
+        // locking out users in unconfigured environments
+        return config('services.recaptcha.enabled', true)
+            && !empty(config('services.recaptcha.secret_key'));
+    }
 
     /**
      * Determine if the validation rule passes.
@@ -19,21 +41,15 @@ class Recaptcha implements Rule
      */
     public function passes($attribute, $value): bool
     {
-        // If reCAPTCHA is explicitly disabled, bypass verification
-        if (!config('services.recaptcha.enabled', true)) {
+        if (!static::isRequired()) {
             return true;
         }
 
         $secret = config('services.recaptcha.secret_key');
 
-        // If no secret key configured, bypass to avoid locking out users in unconfigured environments
-        if (empty($secret)) {
-            return true;
-        }
-
         // Must have received a token from the frontend
         if (empty($value)) {
-            $this->message = 'Please check the "I\'m not a robot" reCAPTCHA box.';
+            $this->message = $this->missingMessage ?? 'Please check the "I\'m not a robot" reCAPTCHA box.';
             return false;
         }
 

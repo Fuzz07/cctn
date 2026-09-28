@@ -547,4 +547,12 @@ private fun AccountStep(state: RegisterUiState, viewModel: RegisterViewModel) {
         enabled = !state.submitting,
         imeAction = ImeAction.Done,
     )
+    RecaptchaField(
+        status = state.recaptcha,
+        onVerified = viewModel::onRecaptchaVerified,
+        onNotRequired = viewModel::onRecaptchaNotRequired,
+        enabled = !state.submitting,
+        error = state.error("recaptcha_token"),
+        modifier = Modifier.padding(bottom = 16.dp),
+    )
 }

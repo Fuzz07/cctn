@@ -296,7 +296,15 @@ fun LoginScreen(
                     )
                 }
 
-                Spacer(Modifier.height(10.dp))
+                RecaptchaField(
+                    status = state.recaptcha,
+                    onVerified = viewModel::onRecaptchaVerified,
+                    onNotRequired = viewModel::onRecaptchaNotRequired,
+                    enabled = !state.submitting,
+                    modifier = Modifier.padding(top = 6.dp),
+                )
+
+                Spacer(Modifier.height(16.dp))
 
                 LoadingButton(
                     text = "Sign In",

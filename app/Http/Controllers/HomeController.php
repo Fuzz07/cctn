@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Service;
+use App\Rules\Recaptcha;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -25,6 +26,20 @@ class HomeController extends Controller
     public function terms()
     {
         return view('terms');
+    }
+
+    /**
+     * The "I'm not a robot" check for the Android app, which opens this page in
+     * a WebView and receives the token through its JavaScript bridge. The app
+     * sends the token with its sign-in or registration request, where it is verified.
+     */
+    public function mobileRecaptcha(Request $request)
+    {
+        return view('mobile.recaptcha', [
+            'required' => Recaptcha::isRequired(),
+            'siteKey'  => config('services.recaptcha.site_key'),
+            'dark'     => $request->query('theme') === 'dark',
+        ]);
     }
 
     /**

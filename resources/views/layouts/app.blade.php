@@ -312,9 +312,163 @@
         body.app-mode .bottom-nav { display: block; }
         body.app-mode { padding-bottom: calc(65px + env(safe-area-inset-bottom)); }
         body.app-mode .site-footer { display: none; }
-        body.app-mode .admin-only-link { display: none !important; }
         body.app-mode #download { display: none; }
         .bottom-nav { padding-bottom: calc(0.6rem + env(safe-area-inset-bottom)); }
+
+        /* Site Footer: white base with the header's palette (red brand, slate text) */
+        .site-footer {
+            position: relative;
+            overflow: hidden;
+            background: #ffffff;
+            color: #475569;
+            margin-top: 3rem;
+            padding: 0;
+            border-top: 1px solid #e2e8f0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.03);
+            text-align: left;
+            font-size: 1rem;
+            font-family: var(--font-body, 'Inter', sans-serif);
+        }
+        .site-footer a { text-decoration: none; }
+        .footer-wave { position: absolute; pointer-events: none; opacity: 0.55; }
+        .footer-wave-left { left: 0; bottom: 30%; width: 320px; }
+        .footer-wave-right { right: 0; bottom: 0; width: 420px; }
+        .footer-inner {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 1.5rem 0;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1.45fr 1fr 1.1fr;
+            gap: 3.5rem;
+            padding-bottom: 3.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .footer-brand { display: flex; align-items: center; gap: 1.75rem; margin-bottom: 1.5rem; }
+        .footer-brand-logo { width: 96px; height: 96px; object-fit: cover; border-radius: 50%; flex-shrink: 0; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12); }
+        .footer-brand-text { border-left: 2px solid #dc2626; padding-left: 1.5rem; }
+        .footer-kicker {
+            font-size: 0.8rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: #64748b;
+            margin-bottom: 0.35rem;
+        }
+        .footer-title {
+            font-family: var(--font-heading, 'Plus Jakarta Sans', sans-serif);
+            font-size: 1.9rem;
+            font-weight: 800;
+            line-height: 1.15;
+            color: #0f172a;
+            margin: 0;
+        }
+        .footer-title span { display: block; color: #dc2626; }
+        .footer-mission { font-size: 0.95rem; line-height: 1.75; color: #64748b; margin: 0 0 1.5rem; }
+        .footer-badges { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+        .footer-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.45rem 0.95rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 999px;
+            background: #f8fafc;
+            font-size: 0.8rem;
+            line-height: 1.25;
+            color: #334155;
+        }
+        .footer-badge i { font-size: 1.15rem; color: #dc2626; }
+        .footer-heading {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #dc2626;
+            margin: 0.4rem 0 1.5rem;
+        }
+        .footer-heading i { font-size: 1.4rem; }
+        .footer-portal { list-style: none; margin: 0; padding: 0; }
+        .footer-portal a {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #e2e8f0;
+            color: #0f172a;
+            font-weight: 600;
+            transition: color 0.2s, padding 0.2s;
+        }
+        .footer-portal li:last-child a { border-bottom: none; }
+        .footer-portal a i { color: #dc2626; transition: transform 0.2s; }
+        .footer-portal a:hover { color: #dc2626; }
+        .footer-portal a:hover i { transform: translateX(4px); }
+        .footer-contact { display: flex; flex-direction: column; gap: 1.5rem; }
+        .footer-contact-item { display: flex; gap: 1rem; align-items: flex-start; }
+        .footer-contact-icon {
+            width: 46px;
+            height: 46px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            background: #fef2f2;
+            color: #dc2626;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+        }
+        .footer-contact-label { font-weight: 700; color: #dc2626; font-size: 0.95rem; }
+        .footer-contact-value { color: #334155; font-size: 0.95rem; line-height: 1.55; word-break: break-word; }
+        a.footer-contact-value:hover { color: #dc2626; }
+        .footer-bottom {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1.75rem 0 2.25rem;
+        }
+        .footer-social { display: flex; gap: 0.85rem; }
+        .footer-social a {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 1px solid #e2e8f0;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.05rem;
+            transition: border-color 0.2s, color 0.2s, background 0.2s;
+        }
+        .footer-social a:hover { border-color: #dc2626; color: #dc2626; background: #fef2f2; }
+        .footer-copy { text-align: center; font-size: 0.9rem; color: #64748b; }
+        .footer-copy p { margin: 0; }
+        .footer-legal { margin-top: 0.5rem !important; }
+        .footer-legal a { color: #dc2626; white-space: nowrap; }
+        .footer-legal a:hover { color: #b91c1c; }
+        .footer-legal span { color: #cbd5e1; margin: 0 0.75rem; }
+        .footer-credit { text-align: right; font-size: 0.78rem; color: #64748b; }
+
+        @media (max-width: 992px) {
+            .footer-grid { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+            .footer-about { grid-column: 1 / -1; }
+        }
+        @media (max-width: 640px) {
+            .footer-inner { padding: 3rem 1rem 0; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .footer-brand { gap: 1rem; }
+            .footer-brand-logo { width: 72px; height: 72px; }
+            .footer-brand-text { padding-left: 1rem; }
+            .footer-title { font-size: 1.5rem; }
+            .footer-bottom { grid-template-columns: 1fr; justify-items: center; }
+            .footer-credit { text-align: center; }
+            .footer-legal { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.35rem 1.1rem; }
+            .footer-legal span { display: none; }
+        }
     </style>
     @stack('styles')
 </head>
@@ -429,9 +583,6 @@
                     <a href="{{ route('login') }}" class="drawer-item">
                         <span class="drawer-item-icon"><i class="bi bi-box-arrow-in-right"></i></span> Login
                     </a>
-                    <a href="{{ route('admin.login') }}" class="drawer-item admin-only-link">
-                        <span class="drawer-item-icon"><i class="bi bi-shield-lock"></i></span> Admin Login
-                    </a>
                     <a href="{{ route('register') }}" class="drawer-item">
                         <span class="drawer-item-icon"><i class="bi bi-person-plus"></i></span> Register
                     </a>
@@ -513,14 +664,90 @@
         </div>
     </nav>
 
-    <footer class="site-footer" style="background: #0f172a; padding: 2rem 1rem; text-align: center; color: #94a3b8; font-size: 0.85rem; margin-top: 3rem;">
-        <p>&copy; {{ date('Y') }} BCTVI Broadband Telecommunications. All Rights Reserved.</p>
-        <p style="margin-top: 0.5rem; font-size: 0.8rem; color: #64748b;">
-            <a href="{{ route('terms') }}" style="color: #94a3b8; text-decoration: underline; margin: 0 0.5rem;">Terms &amp; Conditions</a> &bull;
-            <span>Customer Support: 0999 998 8209</span>
-        </p>
-        <p style="margin-top: 0.5rem; font-size: 0.8rem; color: #64748b;">Developed by Clinton Jay</p>
-        <p class="admin-only-link" style="margin-top: 0.5rem;"><a href="{{ route('admin.login') }}" style="color: #64748b; text-decoration: none; font-weight: 600;">Staff / Admin Login</a></p>
+    <footer class="site-footer">
+        <svg class="footer-wave footer-wave-left" viewBox="0 0 320 180" fill="none" aria-hidden="true">
+            <path d="M0 40 C 90 60, 160 120, 320 180" stroke="#dc2626" stroke-opacity=".35"/>
+            <path d="M0 70 C 100 80, 170 140, 300 180" stroke="#dc2626" stroke-opacity=".25"/>
+        </svg>
+        <svg class="footer-wave footer-wave-right" viewBox="0 0 420 200" fill="none" aria-hidden="true">
+            <path d="M0 200 C 160 180, 280 90, 420 20" stroke="#dc2626" stroke-opacity=".3"/>
+            <path d="M40 200 C 190 175, 300 110, 420 60" stroke="#dc2626" stroke-opacity=".22"/>
+            <path d="M90 200 C 230 180, 320 130, 420 100" stroke="#dc2626" stroke-opacity=".15"/>
+        </svg>
+
+        <div class="footer-inner">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <div class="footer-brand">
+                        <img src="{{ asset('assets/images/cctn-logo.png') }}" alt="BCTVI Logo" class="footer-brand-logo">
+                        <div class="footer-brand-text">
+                            <div class="footer-kicker">Bantayan Island</div>
+                            <h2 class="footer-title">BCTVI Broadband <span>Client Portal</span></h2>
+                        </div>
+                    </div>
+                    <p class="footer-mission">
+                        Our mission is to keep Bantayan Island connected with fast, reliable cable TV and
+                        internet service, backed by simple online booking, transparent billing, and
+                        responsive local support.
+                    </p>
+                    <div class="footer-badges">
+                        <span class="footer-badge"><i class="bi bi-wifi"></i> Reliable<br>Connection</span>
+                        <span class="footer-badge"><i class="bi bi-people"></i> Responsive<br>Support</span>
+                        <span class="footer-badge"><i class="bi bi-shield-check"></i> Transparent<br>Billing</span>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="footer-heading"><i class="bi bi-grid"></i> Portal Access</h3>
+                    <ul class="footer-portal">
+                        <li><a href="{{ route('login') }}">Customer Sign In <i class="bi bi-arrow-right"></i></a></li>
+                        <li><a href="{{ route('register') }}">Customer Registration <i class="bi bi-arrow-right"></i></a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="footer-heading"><i class="bi bi-telephone-inbound"></i> Contact Info</h3>
+                    <div class="footer-contact">
+                        <div class="footer-contact-item">
+                            <span class="footer-contact-icon"><i class="bi bi-geo-alt-fill"></i></span>
+                            <div>
+                                <div class="footer-contact-label">Address</div>
+                                <div class="footer-contact-value">Bantayan Island, Cebu,<br>Philippines</div>
+                            </div>
+                        </div>
+                        <div class="footer-contact-item">
+                            <span class="footer-contact-icon"><i class="bi bi-envelope-fill"></i></span>
+                            <div>
+                                <div class="footer-contact-label">Email</div>
+                                <a href="mailto:bctvibantayanisland@gmail.com" class="footer-contact-value">bctvibantayanisland@gmail.com</a>
+                            </div>
+                        </div>
+                        <div class="footer-contact-item">
+                            <span class="footer-contact-icon"><i class="bi bi-telephone-fill"></i></span>
+                            <div>
+                                <div class="footer-contact-label">Phone</div>
+                                <a href="tel:+639999988209" class="footer-contact-value">0999 998 8209</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div class="footer-social">
+                    <a href="https://www.facebook.com/bogocable.bantayan" target="_blank" rel="noopener" aria-label="BCTVI on Facebook"><i class="bi bi-facebook"></i></a>
+                    <a href="https://m.me/bogocable.bantayan" target="_blank" rel="noopener" aria-label="Message BCTVI on Messenger"><i class="bi bi-messenger"></i></a>
+                    <a href="mailto:bctvibantayanisland@gmail.com" aria-label="Email BCTVI"><i class="bi bi-envelope"></i></a>
+                </div>
+                <div class="footer-copy">
+                    <p>&copy; {{ date('Y') }} BCTVI Broadband Telecommunications. All Rights Reserved.</p>
+                    <p class="footer-legal">
+                        <a href="{{ route('terms') }}">Terms &amp; Conditions</a><span>|</span><a href="{{ route('home') }}#plans">Plans</a><span>|</span><a href="{{ route('home') }}#support">Support</a><span>|</span><a href="{{ route('home') }}#about">About</a>
+                    </p>
+                </div>
+                <div class="footer-credit">Developed by Clinton Jay</div>
+            </div>
+        </div>
     </footer>
 
     <script>
