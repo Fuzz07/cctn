@@ -33,9 +33,9 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.04);
         }
         .client-navbar {
-            max-width: 1200px;
+            max-width: 1600px;
             margin: 0 auto;
-            padding: 0.75rem 1.25rem;
+            padding: 0.75rem clamp(1.25rem, 3vw, 3rem);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -575,7 +575,7 @@
             </div>
 
             <!-- Desktop Nav Links -->
-            <div class="desktop-nav-links" style="display: flex; align-items: center; gap: 1.75rem;">
+            <div class="desktop-nav-links" style="display: flex; align-items: center; gap: clamp(1.25rem, 2.2vw, 2.25rem);">
                 @auth('client')
                     @php
                         $unreadCount = \App\Models\Notification::where('for_admin', false)

@@ -31,7 +31,6 @@
     .data-table td { padding: 1rem; border-bottom: 1px solid #f1f5f9; color: #334155; vertical-align: middle; }
     .data-table tbody tr:hover { background: #f8fafc; }
     
-    .client-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: #e2e8f0; }
     
     @media (max-width: 1024px) { .stats-row { grid-template-columns: 1fr; } }
 </style>
@@ -104,13 +103,8 @@
             @forelse ($clients as $client)
                 <tr>
                     <td>
-                        <div style="display:flex; align-items:center; gap:1rem;">
-                            <img src="{{ $client->profile_photo ? asset($client->profile_photo) : asset('assets/img/default-avatar.svg') }}" alt="Avatar" class="client-avatar">
-                            <div>
-                                <div style="font-weight:700; color:#0f172a;">{{ $client->firstname }} {{ $client->lastname }}</div>
-                                <div style="font-size:0.75rem; color:#64748b;">{{ '@' . $client->username }} &middot; Acc: {{ $client->account_number ?? 'N/A' }}</div>
-                            </div>
-                        </div>
+                        <div style="font-weight:700; color:#0f172a;">{{ $client->firstname }} {{ $client->lastname }}</div>
+                        <div style="font-size:0.75rem; color:#64748b;">{{ '@' . $client->username }} &middot; Acc: {{ $client->account_number ?? 'N/A' }}</div>
                     </td>
                     <td>
                         <div style="font-weight:600; color:#334155;">{{ $client->email }}</div>
