@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign In - BCTVI Bantayan</title>
+    <script>
+        (function () {
+            try {
+                var savedTheme = localStorage.getItem('bctvi-theme');
+                var isDark = savedTheme ? savedTheme === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+                document.documentElement.dataset.theme = isDark ? 'dark' : 'light';
+            } catch (error) {}
+        })();
+    </script>
     <link rel="icon" type="image/png" href="{{ asset('assets/images/favicon.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,10 +20,11 @@
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <style>
+        html { min-height: 100%; overflow-y: auto; }
         body {
             --auth-background-y: 0px;
             background: #180000;
-            min-height: 100vh; overflow-x: hidden; margin: 0; position: relative;
+            min-height: 100vh; min-height: 100dvh; overflow-x: hidden; overflow-y: auto; margin: 0; position: relative;
             font-family: var(--font-body);
         }
         body::before {
@@ -35,6 +45,7 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
+            min-height: 100dvh;
             width: 100%;
             padding: 5rem 1rem 3rem;
             box-sizing: border-box;
@@ -57,7 +68,10 @@
         .auth-right { width: 100%; max-width: 440px; background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; position: static; padding: 0; }
         .auth-back-link { position: fixed; top: 1.5rem; right: 1.5rem; display: inline-flex; align-items: center; gap: 0.5rem; color: #e2e8f0; text-decoration: none; font-weight: 700; font-size: 0.88rem; transition: color 0.2s; z-index: 10; text-shadow: 0 1px 6px rgba(0,0,0,0.4); }
         .auth-back-link:hover { color: #ffffff; }
+        .auth-theme-toggle { position: fixed; top: 1.25rem; left: 1.25rem; z-index: 12; box-shadow: 0 4px 14px rgba(0,0,0,0.25); }
+        .auth-live-date { position: fixed; top: 1.52rem; left: 4.25rem; z-index: 11; color: #ffffff; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.01em; text-shadow: 0 1px 5px rgba(0,0,0,0.65); white-space: nowrap; }
         .auth-form-card { background: var(--bg-card); width: 100%; max-width: 440px; border-radius: 20px; padding: 3rem 2.5rem; box-shadow: 0 25px 60px rgba(0,0,0,0.35); border: 1px solid #e5e7eb; position: relative; z-index: 2; }
+        :root[data-theme="dark"] .auth-form-card { border-color: var(--border); }
         .auth-avatar { width: 64px; height: 64px; background: #dc2626; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; margin: 0 auto 1.5rem; }
         .auth-form-title { text-align: center; font-family: var(--font-heading); font-size: 1.6rem; font-weight: 800; color: var(--text-dark); margin-bottom: 0.5rem; letter-spacing: -0.02em; }
         .auth-form-sub { text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem; }
@@ -357,9 +371,17 @@
             .auth-form-card { padding: 2rem 1.5rem; }
             .terms-modal-actions { width: 100%; justify-content: flex-end; }
         }
+        @media (max-width: 430px) {
+            .auth-live-date { font-size: 0.68rem; left: 4rem; top: 1.58rem; }
+        }
     </style>
 </head>
 <body>
+<button type="button" class="theme-toggle-btn auth-theme-toggle" id="authThemeToggle" aria-label="Switch to dark mode" aria-pressed="false">
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+</button>
+<time class="auth-live-date" id="authLiveDate" aria-live="polite"></time>
 <div class="auth-layout">
     <div class="auth-left">
         <div class="auth-left-content">
@@ -663,6 +685,37 @@
                 ticking = true;
             }
         }, { passive: true });
+    })();
+
+    (function () {
+        var toggle = document.getElementById('authThemeToggle');
+        var liveDate = document.getElementById('authLiveDate');
+
+        function setTheme(theme) {
+            var isDark = theme === 'dark';
+            document.documentElement.dataset.theme = theme;
+            toggle.setAttribute('aria-pressed', String(isDark));
+            toggle.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+            try { localStorage.setItem('bctvi-theme', theme); } catch (error) {}
+        }
+
+        toggle.addEventListener('click', function () {
+            setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+        });
+        setTheme(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
+
+        function updateDate() {
+            var now = new Date();
+            liveDate.dateTime = now.toISOString();
+            liveDate.textContent = new Intl.DateTimeFormat('en-PH', {
+                timeZone: 'Asia/Manila', weekday: 'short', month: 'short', day: 'numeric',
+                year: 'numeric', hour: 'numeric', minute: '2-digit', second: '2-digit'
+            }).format(now);
+            liveDate.title = 'Current Philippine time';
+        }
+
+        updateDate();
+        window.setInterval(updateDate, 1000);
     })();
 </script>
 </body>
