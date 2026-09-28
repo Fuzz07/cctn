@@ -29,10 +29,22 @@
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <style>
         body {
-            background: linear-gradient(rgba(20, 0, 0, 0.42), rgba(20, 0, 0, 0.62)), url('{{ asset('assets/images/auth-bctvi-background.png') }}') center / cover no-repeat fixed;
-            min-height: 100vh; overflow-x: hidden; margin: 0;
+            --auth-background-y: 0px;
+            background: #180000;
+            min-height: 100vh; overflow-x: hidden; margin: 0; position: relative;
             font-family: var(--font-body);
         }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: -4px;
+            z-index: 0;
+            background: linear-gradient(rgba(20, 0, 0, 0.42), rgba(20, 0, 0, 0.62)), url('{{ asset('assets/images/auth-bctvi-background.png') }}') center calc(50% + var(--auth-background-y)) / cover no-repeat fixed;
+            filter: blur(2px);
+            transform: scale(1.01);
+            pointer-events: none;
+        }
+        .auth-layout { position: relative; z-index: 1; }
         .auth-layout {
             display: flex;
             flex-direction: column;
@@ -529,7 +541,7 @@
         var ticking = false;
         function updateBackground() {
             var offset = Math.min(window.scrollY * 0.08, 24);
-            document.body.style.backgroundPosition = 'center calc(50% + ' + offset + 'px)';
+            document.body.style.setProperty('--auth-background-y', offset + 'px');
             ticking = false;
         }
 
