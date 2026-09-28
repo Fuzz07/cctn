@@ -843,7 +843,9 @@
             }
         }
     </script>
+    @if(request()->routeIs('home'))
     @include('partials.chatbot')
+    @endif
 
     @stack('scripts')
 </body>

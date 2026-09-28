@@ -325,16 +325,16 @@
             </div>
             <div class="bar-label">Restoring services…</div>
 
-            {{-- Admin CTA --}}
-            <a href="{{ route('admin.login') }}" class="admin-btn">
+            {{-- Refresh CTA --}}
+            <button onclick="window.location.reload();" class="admin-btn">
                 <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15"
                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                    <polyline points="16 17 21 12 16 7"/>
-                    <line x1="21" y1="12" x2="9" y2="12"/>
+                    <path d="M23 4v6h-6"/>
+                    <path d="M1 20v-6h6"/>
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
                 </svg>
-                Admin Login
-            </a>
+                Refresh Page
+            </button>
 
             <hr class="divider">
 

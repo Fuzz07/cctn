@@ -726,7 +726,7 @@ class Assistant
 
         unset($pool[$answered]);
 
-        return array_slice(array_values($pool), 0, 3);
+        return array_slice(array_values($pool), 0, 4);
     }
 
     /**
