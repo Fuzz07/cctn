@@ -12,6 +12,21 @@
         --bl-pink-soft: #fee2e2;
         --bl-pink-border: #fecaca;
     }
+    :root[data-theme="dark"] {
+        --bl-navy: var(--text-dark);
+        --bl-slate: var(--text-muted);
+        --bl-pink-bg: #171d29;
+        --bl-pink-soft: #2b2028;
+        --bl-pink-border: #5b3038;
+    }
+    :root[data-theme="dark"] .bl-hero-sub,
+    :root[data-theme="dark"] .bl-app-banner-text span,
+    :root[data-theme="dark"] #support p,
+    :root[data-theme="dark"] #about p { color: var(--text-body) !important; }
+    :root[data-theme="dark"] .bl-apk-step-card { background: var(--bg-subtle); border-color: var(--border-light); }
+    :root[data-theme="dark"] .bl-phone-bg-badge { background: #143326; }
+    :root[data-theme="dark"] .bl-phone-bg-badge-title { color: #86efac; }
+    :root[data-theme="dark"] .bl-phone-bg-badge-sub { color: #bbf7d0; }
 
     /* ── Hero Section ── */
     .bl-hero {

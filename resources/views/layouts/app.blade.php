@@ -11,6 +11,17 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'BCTVI Broadband Telecommunications')</title>
     <meta name="description" content="Official BCTVI Broadband Client Portal & Mobile App. Book WiFi installation, manage statements, and receive installation updates.">
+    @if(request()->routeIs('home'))
+    <script>
+        (function () {
+            try {
+                var savedTheme = localStorage.getItem('bctvi-theme');
+                var isDark = savedTheme ? savedTheme === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+                document.documentElement.dataset.theme = isDark ? 'dark' : 'light';
+            } catch (error) {}
+        })();
+    </script>
+    @endif
     
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
@@ -40,6 +51,19 @@
             justify-content: space-between;
             align-items: center;
         }
+        .landing-header-tools {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.7rem;
+            margin-left: 1rem;
+        }
+        .landing-live-date {
+            color: var(--text-muted);
+            font-size: 0.76rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        @media (max-width: 1180px) { .landing-live-date { display: none; } }
         .client-brand {
             display: flex;
             align-items: center;
@@ -609,6 +633,15 @@
                     <a href="{{ route('register') }}" class="top-nav-btn-solid"><i class="bi bi-rocket-takeoff-fill"></i> Get Started</a>
                 @endauth
             </div>
+            @if(request()->routeIs('home'))
+                <div class="landing-header-tools">
+                    <time class="landing-live-date" id="landingLiveDate" aria-live="polite"></time>
+                    <button type="button" class="theme-toggle-btn" id="landingThemeToggle" aria-label="Switch to dark mode" aria-pressed="false">
+                        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+                        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+                    </button>
+                </div>
+            @endif
         </div>
     </header>
 
@@ -847,6 +880,41 @@
             }
         }
     </script>
+    @if(request()->routeIs('home'))
+    <script>
+        (function () {
+            var toggle = document.getElementById('landingThemeToggle');
+            var liveDate = document.getElementById('landingLiveDate');
+            if (!toggle || !liveDate) return;
+
+            function setTheme(theme) {
+                var isDark = theme === 'dark';
+                document.documentElement.dataset.theme = theme;
+                toggle.setAttribute('aria-pressed', String(isDark));
+                toggle.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+                try { localStorage.setItem('bctvi-theme', theme); } catch (error) {}
+            }
+
+            toggle.addEventListener('click', function () {
+                setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+            });
+            setTheme(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
+
+            function updateDate() {
+                var now = new Date();
+                liveDate.dateTime = now.toISOString();
+                liveDate.textContent = new Intl.DateTimeFormat('en-PH', {
+                    timeZone: 'Asia/Manila', weekday: 'short', month: 'short', day: 'numeric',
+                    year: 'numeric', hour: 'numeric', minute: '2-digit', second: '2-digit'
+                }).format(now);
+                liveDate.title = 'Current Philippine time';
+            }
+
+            updateDate();
+            window.setInterval(updateDate, 1000);
+        })();
+    </script>
+    @endif
     @if(request()->routeIs('home'))
     @include('partials.chatbot')
     @endif
