@@ -24,6 +24,7 @@ use App\Http\Controllers\Admin\NotificationController as AdminNotification;
 
 use App\Http\Controllers\Admin\WalkInController as AdminWalkIn;
 use App\Http\Controllers\Admin\MailDiagnosticController as AdminMailDiagnostic;
+use App\Http\Controllers\Admin\SettingsController as AdminSettings;
 
 // ─── Public Routes ───────────────────────────────────────────────────────────
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -156,5 +157,14 @@ Route::prefix('admin')->group(function () {
 
         Route::get('/mail-test', [AdminMailDiagnostic::class, 'index'])->name('admin.mail.test');
         Route::post('/mail-test/send', [AdminMailDiagnostic::class, 'sendTest'])->name('admin.mail.test.send');
+
+        // Settings
+        Route::get('/settings', [AdminSettings::class, 'index'])->name('admin.settings');
+        Route::post('/settings/profile', [AdminSettings::class, 'updateProfile'])->name('admin.settings.profile');
+        Route::post('/settings/password', [AdminSettings::class, 'updatePassword'])->name('admin.settings.password');
+        Route::post('/settings/system', [AdminSettings::class, 'updateSystem'])->name('admin.settings.system');
+        Route::post('/settings/admins', [AdminSettings::class, 'storeAdmin'])->name('admin.settings.admins.store');
+        Route::put('/settings/admins/{id}', [AdminSettings::class, 'updateAdmin'])->name('admin.settings.admins.update');
+        Route::delete('/settings/admins/{id}', [AdminSettings::class, 'destroyAdmin'])->name('admin.settings.admins.destroy');
     });
 });
