@@ -52,9 +52,13 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
                                 Walk-In Booking
                             </a>
-                            <a href="{{ route('admin.clients') }}" class="admin-sidebar-item {{ request()->routeIs('admin.clients*') ? 'active' : '' }}">
+                            <a href="{{ route('admin.clients') }}" class="admin-sidebar-item {{ request()->routeIs('admin.clients') && request('filter') !== 'archived' ? 'active' : '' }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
                                 Customers
+                            </a>
+                            <a href="{{ route('admin.clients', ['filter' => 'archived']) }}" class="admin-sidebar-item {{ request()->routeIs('admin.clients') && request('filter') === 'archived' ? 'active' : '' }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8v13H3V8"></path><path d="M1 3h22v5H1z"></path><path d="M10 12h4"></path></svg>
+                                Archived Customers
                             </a>
                             <a href="{{ route('admin.services') }}" class="admin-sidebar-item {{ request()->routeIs('admin.services*') ? 'active' : '' }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
