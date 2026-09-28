@@ -1032,5 +1032,99 @@
             if (e.key === 'Escape') hideLogoutModal();
         });
     </script>
+    {{-- Right-click & DevTools Restriction --}}
+    <div id="devtools-toast" style="
+        display: none;
+        position: fixed;
+        bottom: 1.5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 2147483647;
+        background: #1e293b;
+        color: #f1f5f9;
+        padding: 0.75rem 1.4rem;
+        border-radius: 10px;
+        font-size: 0.85rem;
+        font-family: Arial, sans-serif;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+        white-space: nowrap;
+        pointer-events: none;
+        border-left: 4px solid #ef4444;
+    ">🔒 Right-click and browser developer tools have been restricted on this website.</div>
+
+    <script>
+        (function () {
+            'use strict';
+
+            /* ── 1. Disable right-click context menu ─────────────────────── */
+            document.addEventListener('contextmenu', function (e) {
+                e.preventDefault();
+                showSecurityToast();
+                return false;
+            });
+
+            /* ── 2. Block keyboard shortcuts ────────────────────────────── */
+            document.addEventListener('keydown', function (e) {
+                var blocked = false;
+
+                // F12
+                if (e.keyCode === 123) blocked = true;
+                // Ctrl+Shift+I (Inspector)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) blocked = true;
+                // Ctrl+Shift+J (Console)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 74) blocked = true;
+                // Ctrl+Shift+C (Element picker)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 67) blocked = true;
+                // Ctrl+U (View source)
+                if (e.ctrlKey && e.keyCode === 85) blocked = true;
+                // Ctrl+S (Save page)
+                if (e.ctrlKey && e.keyCode === 83) blocked = true;
+
+                if (blocked) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showSecurityToast();
+                    return false;
+                }
+            });
+
+            /* ── 3. DevTools open detection via window size ──────────────── */
+            var _devToolsOpen = false;
+            var _threshold = 160;
+
+            function checkDevTools() {
+                var widthDiff  = window.outerWidth  - window.innerWidth;
+                var heightDiff = window.outerHeight - window.innerHeight;
+                var isOpen = widthDiff > _threshold || heightDiff > _threshold;
+
+                if (isOpen && !_devToolsOpen) {
+                    _devToolsOpen = true;
+                    showSecurityToast(true);
+                } else if (!isOpen && _devToolsOpen) {
+                    _devToolsOpen = false;
+                    hideSecurityToast();
+                }
+            }
+            setInterval(checkDevTools, 1000);
+
+            /* ── 4. Toast helper ─────────────────────────────────────────── */
+            var _toastTimer = null;
+            function showSecurityToast(persist) {
+                var toast = document.getElementById('devtools-toast');
+                if (!toast) return;
+                toast.style.display = 'block';
+                clearTimeout(_toastTimer);
+                if (!persist) {
+                    _toastTimer = setTimeout(function () {
+                        toast.style.display = 'none';
+                    }, 3500);
+                }
+            }
+            function hideSecurityToast() {
+                var toast = document.getElementById('devtools-toast');
+                if (toast) toast.style.display = 'none';
+            }
+        })();
+    </script>
 </body>
 </html>
