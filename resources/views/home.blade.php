@@ -22,29 +22,77 @@
         padding-bottom: 2rem;
     }
 
-    /* Subtle background ambient waves */
-    .bl-hero-bg-accent {
+    /* Animated background: slowly drifting blurred blobs + a swaying wave */
+    .bl-hero-bg-accent,
+    .bl-hero-bg-blob {
         position: absolute;
-        top: 0;
-        right: 0;
-        width: 600px;
-        height: 600px;
-        background: radial-gradient(circle, rgba(254, 226, 226, 0.6) 0%, rgba(255, 245, 245, 0.2) 60%, transparent 100%);
         border-radius: 50%;
-        filter: blur(40px);
+        filter: blur(50px);
         pointer-events: none;
         z-index: 0;
+        will-change: transform;
+    }
+
+    .bl-hero-bg-accent {
+        top: -80px;
+        right: -60px;
+        width: 620px;
+        height: 620px;
+        background: radial-gradient(circle, rgba(254, 202, 202, 0.75) 0%, rgba(254, 226, 226, 0.3) 55%, transparent 100%);
+        animation: bl-drift-a 16s ease-in-out infinite alternate;
+    }
+
+    .bl-hero-bg-blob-2 {
+        bottom: -160px;
+        left: -120px;
+        width: 520px;
+        height: 520px;
+        background: radial-gradient(circle, rgba(254, 226, 226, 0.85) 0%, rgba(255, 245, 245, 0.3) 60%, transparent 100%);
+        animation: bl-drift-b 20s ease-in-out infinite alternate;
+    }
+
+    .bl-hero-bg-blob-3 {
+        top: 15%;
+        left: 38%;
+        width: 320px;
+        height: 320px;
+        background: radial-gradient(circle, rgba(252, 165, 165, 0.35) 0%, rgba(254, 202, 202, 0.12) 60%, transparent 100%);
+        animation: bl-drift-c 24s ease-in-out infinite alternate;
     }
 
     .bl-hero-bg-wave {
         position: absolute;
         bottom: 0;
-        left: 0;
-        right: 0;
-        height: 120px;
-        background: radial-gradient(ellipse 80% 50% at 50% 120%, rgba(254, 226, 226, 0.4), transparent);
+        left: -10%;
+        right: -10%;
+        height: 140px;
+        background: radial-gradient(ellipse 80% 50% at 50% 120%, rgba(254, 202, 202, 0.55), transparent);
         pointer-events: none;
         z-index: 0;
+        animation: bl-wave-sway 9s ease-in-out infinite alternate;
+    }
+
+    @keyframes bl-drift-a {
+        0%   { transform: translate3d(0, 0, 0) scale(1); }
+        100% { transform: translate3d(-90px, 70px, 0) scale(1.15); }
+    }
+    @keyframes bl-drift-b {
+        0%   { transform: translate3d(0, 0, 0) scale(1); }
+        100% { transform: translate3d(110px, -60px, 0) scale(1.2); }
+    }
+    @keyframes bl-drift-c {
+        0%   { transform: translate3d(0, 0, 0) scale(0.9); }
+        100% { transform: translate3d(-70px, 80px, 0) scale(1.15); }
+    }
+    @keyframes bl-wave-sway {
+        0%   { transform: translateX(-4%) scaleY(0.85); }
+        100% { transform: translateX(4%) scaleY(1.2); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .bl-hero-bg-accent,
+        .bl-hero-bg-blob,
+        .bl-hero-bg-wave { animation: none; }
     }
 
     .bl-hero-inner {
@@ -843,6 +891,8 @@
 <!-- ========== HERO ========== -->
 <section class="bl-hero">
     <div class="bl-hero-bg-accent"></div>
+    <div class="bl-hero-bg-blob bl-hero-bg-blob-2"></div>
+    <div class="bl-hero-bg-blob bl-hero-bg-blob-3"></div>
     <div class="bl-hero-bg-wave"></div>
 
     <div class="bl-hero-inner">
