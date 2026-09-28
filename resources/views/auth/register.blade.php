@@ -521,6 +521,25 @@
 
         showStep({{ $initialStep }});
     })();
+
+    // Move the background gently as the page scrolls, without scaling it.
+    (function () {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+        var ticking = false;
+        function updateBackground() {
+            var offset = Math.min(window.scrollY * 0.08, 24);
+            document.body.style.backgroundPosition = 'center calc(50% + ' + offset + 'px)';
+            ticking = false;
+        }
+
+        window.addEventListener('scroll', function () {
+            if (!ticking) {
+                window.requestAnimationFrame(updateBackground);
+                ticking = true;
+            }
+        }, { passive: true });
+    })();
 </script>
 </body>
 </html>

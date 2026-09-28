@@ -69,6 +69,21 @@
         .auth-help a { color: var(--primary); font-weight: 600; text-decoration: none; }
         .auth-copyright { position: static; margin-top: 1.5rem; color: #e2e8f0; font-size: 0.75rem; text-align: center; text-shadow: 0 1px 6px rgba(0,0,0,0.4); }
 
+        /* A quiet entrance that keeps the login content at its natural size. */
+        @keyframes login-content-enter {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media (prefers-reduced-motion: no-preference) {
+            .auth-right > .auth-logo,
+            .auth-right > .auth-form-card,
+            .auth-right > .auth-copyright {
+                animation: login-content-enter 420ms ease-out both;
+            }
+            .auth-right > .auth-form-card { animation-delay: 80ms; }
+            .auth-right > .auth-copyright { animation-delay: 140ms; }
+        }
+
         .bottom-bar { display: none; }
 
         /* ── Terms & Conditions Checkbox & Note ── */
@@ -616,6 +631,25 @@
                 closeModal();
             }
         });
+    })();
+
+    // Move the background gently as the page scrolls, without scaling it.
+    (function () {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+        var ticking = false;
+        function updateBackground() {
+            var offset = Math.min(window.scrollY * 0.08, 24);
+            document.body.style.backgroundPosition = 'center calc(50% + ' + offset + 'px)';
+            ticking = false;
+        }
+
+        window.addEventListener('scroll', function () {
+            if (!ticking) {
+                window.requestAnimationFrame(updateBackground);
+                ticking = true;
+            }
+        }, { passive: true });
     })();
 </script>
 </body>
