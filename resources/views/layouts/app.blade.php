@@ -616,7 +616,7 @@
                         @endif
                     </a>
                     <a href="{{ route('client.book') }}" class="top-nav-btn-solid">Book Installation</a>
-                    <form action="{{ route('logout') }}" method="POST" class="top-nav-logout-form">
+                    <form action="{{ route('logout') }}" method="POST" class="top-nav-logout-form" onsubmit="return confirm('Are you sure you want to log out?');">
                         @csrf
                         <button type="submit" class="top-nav-logout">
                             <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
@@ -694,7 +694,7 @@
                         @endif
                     </a>
                     <div style="border-top: 1px solid var(--bg-subtle); margin: 0.5rem 0;"></div>
-                    <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
+                    <form action="{{ route('logout') }}" method="POST" style="margin: 0;" onsubmit="return confirm('Are you sure you want to log out?');">
                         @csrf
                         <button type="submit" class="drawer-item" style="width: 100%; border: none; background: none; text-align: left; cursor: pointer; color: #ef4444;">
                             <span class="drawer-item-icon"><i class="bi bi-box-arrow-right"></i></span> Logout

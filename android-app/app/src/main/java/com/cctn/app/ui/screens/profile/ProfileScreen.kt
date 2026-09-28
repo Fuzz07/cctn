@@ -172,7 +172,7 @@ fun ProfileScreen(
     if (state.signOutDialogOpen) {
         AlertDialog(
             onDismissRequest = viewModel::dismissSignOut,
-            title = { Text("Sign out?") },
+            title = { Text("Are you sure you want to sign out?") },
             text = { Text("You will need your username and password to sign back in.") },
             confirmButton = {
                 TextButton(onClick = viewModel::confirmSignOut) {
