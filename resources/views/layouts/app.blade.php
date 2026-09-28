@@ -616,9 +616,9 @@
                         @endif
                     </a>
                     <a href="{{ route('client.book') }}" class="top-nav-btn-solid">Book Installation</a>
-                    <form action="{{ route('logout') }}" method="POST" class="top-nav-logout-form" onsubmit="return confirm('Are you sure you want to log out?');">
+                    <form action="{{ route('logout') }}" method="POST" class="top-nav-logout-form" id="logoutFormDesktop" onsubmit="return false;">
                         @csrf
-                        <button type="submit" class="top-nav-logout">
+                        <button type="button" class="top-nav-logout" onclick="showLogoutModal('logoutFormDesktop')">
                             <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
                             Logout
                         </button>
@@ -694,9 +694,9 @@
                         @endif
                     </a>
                     <div style="border-top: 1px solid var(--bg-subtle); margin: 0.5rem 0;"></div>
-                    <form action="{{ route('logout') }}" method="POST" style="margin: 0;" onsubmit="return confirm('Are you sure you want to log out?');">
+                    <form action="{{ route('logout') }}" method="POST" style="margin: 0;" id="logoutFormDrawer" onsubmit="return false;">
                         @csrf
-                        <button type="submit" class="drawer-item" style="width: 100%; border: none; background: none; text-align: left; cursor: pointer; color: #ef4444;">
+                        <button type="button" class="drawer-item" style="width: 100%; border: none; background: none; text-align: left; cursor: pointer; color: #ef4444;" onclick="showLogoutModal('logoutFormDrawer')">
                             <span class="drawer-item-icon"><i class="bi bi-box-arrow-right"></i></span> Logout
                         </button>
                     </form>
@@ -920,5 +920,117 @@
     @endif
 
     @stack('scripts')
+
+    {{-- Logout Confirmation Modal --}}
+    <div id="logoutModal" role="dialog" aria-modal="true" aria-labelledby="logoutModalTitle" style="
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        align-items: center;
+        justify-content: center;
+    ">
+        {{-- Backdrop --}}
+        <div id="logoutModalBackdrop" onclick="hideLogoutModal()" style="
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        "></div>
+
+        {{-- Dialog card --}}
+        <div style="
+            position: relative;
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 2rem 2rem 1.5rem;
+            width: min(92vw, 380px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.18), 0 4px 16px rgba(0,0,0,0.10);
+            animation: logoutModalIn 0.22s cubic-bezier(.34,1.56,.64,1) both;
+            text-align: center;
+        ">
+            {{-- Icon --}}
+            <div style="
+                width: 56px; height: 56px;
+                border-radius: 50%;
+                background: #fef2f2;
+                display: flex; align-items: center; justify-content: center;
+                margin: 0 auto 1.1rem;
+            ">
+                <i class="bi bi-box-arrow-right" style="font-size: 1.6rem; color: #ef4444;"></i>
+            </div>
+
+            <h2 id="logoutModalTitle" style="margin: 0 0 0.4rem; font-size: 1.1rem; font-weight: 700; color: #0f172a;">Sign out?</h2>
+            <p style="margin: 0 0 1.6rem; font-size: 0.9rem; color: #64748b; line-height: 1.5;">Are you sure you want to log out of your account?</p>
+
+            <div style="display: flex; gap: 0.75rem;">
+                <button type="button" onclick="hideLogoutModal()" style="
+                    flex: 1;
+                    padding: 0.65rem 1rem;
+                    border-radius: 8px;
+                    border: 1.5px solid #e2e8f0;
+                    background: #f8fafc;
+                    color: #334155;
+                    font-size: 0.9rem;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: background 0.15s;
+                " onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f8fafc'">
+                    Cancel
+                </button>
+                <button type="button" id="logoutConfirmBtn" onclick="submitLogoutForm()" style="
+                    flex: 1;
+                    padding: 0.65rem 1rem;
+                    border-radius: 8px;
+                    border: none;
+                    background: #ef4444;
+                    color: #ffffff;
+                    font-size: 0.9rem;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: background 0.15s;
+                " onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'">
+                    Yes, sign out
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes logoutModalIn {
+            from { opacity: 0; transform: scale(0.88) translateY(12px); }
+            to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
+    </style>
+
+    <script>
+        var _logoutActiveFormId = null;
+
+        function showLogoutModal(formId) {
+            _logoutActiveFormId = formId;
+            var modal = document.getElementById('logoutModal');
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            document.getElementById('logoutConfirmBtn').focus();
+        }
+
+        function hideLogoutModal() {
+            document.getElementById('logoutModal').style.display = 'none';
+            document.body.style.overflow = '';
+            _logoutActiveFormId = null;
+        }
+
+        function submitLogoutForm() {
+            if (_logoutActiveFormId) {
+                var form = document.getElementById(_logoutActiveFormId);
+                if (form) form.submit();
+            }
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') hideLogoutModal();
+        });
+    </script>
 </body>
 </html>
