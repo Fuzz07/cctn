@@ -23,12 +23,17 @@
         <!-- Sidebar -->
         <aside class="admin-sidebar">
             <div>
-                <div class="admin-sidebar-brand">
-                    <img src="{{ asset('assets/images/cctn-logo.png') }}" alt="BCTVI Logo" style="width: 38px; height: 38px; object-fit: contain;">
-                    <div>
-                        <strong style="color: #ffffff; font-family: var(--font-heading, sans-serif); font-size: 1.25rem; font-weight: 800; display: block; line-height: 1;">BCTVI</strong>
-                        <span style="color: rgba(255,255,255,0.85); font-size: 0.7rem; font-weight: 600; letter-spacing: 0.05em;">Bantayan</span>
+                <div class="admin-sidebar-brand" style="display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <img src="{{ asset('assets/images/cctn-logo.png') }}" alt="BCTVI Logo" style="width: 38px; height: 38px; object-fit: contain;">
+                        <div>
+                            <strong style="color: #ffffff; font-family: var(--font-heading, sans-serif); font-size: 1.25rem; font-weight: 800; display: block; line-height: 1;">BCTVI</strong>
+                            <span style="color: rgba(255,255,255,0.85); font-size: 0.7rem; font-weight: 600; letter-spacing: 0.05em;">Bantayan</span>
+                        </div>
                     </div>
+                    <button type="button" id="admin-sidebar-close-btn" class="admin-sidebar-close-btn" aria-label="Close Sidebar" title="Close">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
                 </div>
 
                 <div class="admin-sidebar-menu">
@@ -104,10 +109,12 @@
             </div>
         </aside>
 
+        <div class="admin-sidebar-backdrop" id="admin-sidebar-backdrop"></div>
+
         <div class="admin-main-wrapper">
             <header class="admin-topbar">
                 <div style="display: flex; align-items: center; gap: 1rem;">
-                    <button id="admin-sidebar-toggle" style="background: none; border: none; color: #0f172a; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 4px;">
+                    <button id="admin-sidebar-toggle" class="admin-burger-btn" aria-label="Toggle navigation menu" title="Toggle Navigation">
                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                     </button>
                 </div>
@@ -180,12 +187,74 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var toggleBtn = document.getElementById('admin-sidebar-toggle');
-            var sidebar = document.querySelector('.admin-sidebar');
+            var closeBtn  = document.getElementById('admin-sidebar-close-btn');
+            var backdrop  = document.getElementById('admin-sidebar-backdrop');
+            var sidebar   = document.querySelector('.admin-sidebar');
+
+            function isMobile() {
+                return window.innerWidth <= 992;
+            }
+
+            function openMobileSidebar() {
+                if (sidebar) sidebar.classList.add('mobile-open');
+                if (backdrop) backdrop.classList.add('active');
+            }
+
+            function closeMobileSidebar() {
+                if (sidebar) sidebar.classList.remove('mobile-open');
+                if (backdrop) backdrop.classList.remove('active');
+            }
+
             if (toggleBtn && sidebar) {
-                toggleBtn.addEventListener('click', function() {
-                    sidebar.classList.toggle('sidebar-collapsed');
+                toggleBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    if (isMobile()) {
+                        if (sidebar.classList.contains('mobile-open')) {
+                            closeMobileSidebar();
+                        } else {
+                            openMobileSidebar();
+                        }
+                    } else {
+                        sidebar.classList.toggle('sidebar-collapsed');
+                    }
                 });
             }
+
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    closeMobileSidebar();
+                });
+            }
+
+            if (backdrop) {
+                backdrop.addEventListener('click', closeMobileSidebar);
+            }
+
+            // Close on escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && sidebar && sidebar.classList.contains('mobile-open')) {
+                    closeMobileSidebar();
+                }
+            });
+
+            // Close mobile sidebar on navigation link click
+            if (sidebar) {
+                sidebar.querySelectorAll('.admin-sidebar-item').forEach(function(item) {
+                    item.addEventListener('click', function() {
+                        if (isMobile()) {
+                            closeMobileSidebar();
+                        }
+                    });
+                });
+            }
+
+            // Window resize handler
+            window.addEventListener('resize', function() {
+                if (!isMobile() && sidebar && sidebar.classList.contains('mobile-open')) {
+                    closeMobileSidebar();
+                }
+            });
 
             var bellBtn = document.getElementById('notif-bell-btn');
             var dropdown = document.getElementById('notif-dropdown');

@@ -23,9 +23,11 @@ class ChatbotController extends Controller
             'message' => 'nullable|string|max:500',
         ]);
 
+        $client = $request->user('sanctum') ?? $request->user();
+
         $answer = $this->assistant->respond(
             $request->input('message'),
-            $request->user(),
+            $client,
             Assistant::APP,
         );
 

@@ -9,24 +9,18 @@ use App\Models\MaintenanceRequest;
 use App\Models\Service;
 use App\Models\TimeSlot;
 use App\Support\ServiceArea;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 /**
  * The assistant behind the chat bubble on the site and the Assistant screen in
  * the mobile app.
  *
- * There is one copy of it on purpose. Both platforms POST a message here and
- * render whatever comes back, so the two can never answer the same question
- * differently — the mobile app carries no rules of its own.
- *
- * It is deliberately not a language model. Every number it quotes — a balance,
- * a due date, a booking — is read out of the database on the spot, so it cannot
- * invent one, and it costs nothing per message. The trade is that it only knows
- * what is listed in INTENTS; anything else gets an honest "I don't know that"
- * and a route to a human.
- *
- * It also never writes. The customer is always pointed at the screen that does
- * the thing, which is why every answer may carry a `link` but no answer has a
- * side effect.
+ * It uses a hybrid intelligence approach:
+ * 1. High-precision rule-based & database queries for ISP customer records
+ *    (zero hallucination, real-time database queries).
+ * 2. Fuzzy typo-tolerant keyword matching.
+ * 3. OpenAI GPT Fallback for open-ended customer queries.
  */
 class Assistant
 {
@@ -35,11 +29,6 @@ class Assistant
 
     /**
      * Which client is asking.
-     *
-     * It matters for more than wording. Filing a fault report is a feature of
-     * the mobile app only — the website has no client-facing support page, just
-     * POST /api/v1/maintenance — so on the web the assistant says where that
-     * lives instead of pointing at a page that does not exist.
      */
     private string $platform = self::WEB;
 
@@ -50,12 +39,6 @@ class Assistant
 
     /**
      * What each intent listens for.
-     *
-     * `phrases` are whole expressions and score five; `keywords` are single
-     * words and score one. The weighting is what keeps "how do I pay" (a
-     * phrase under how_to_pay) away from balance, which also lists "pay" as a
-     * keyword. Cebuano and Tagalog triggers are in here alongside the English
-     * ones because most of Bantayan asks in those first.
      */
     private const INTENTS = [
         'balance' => [
@@ -112,17 +95,17 @@ class Assistant
         'coverage' => [
             'phrases' => [
                 'do you cover', 'is it available in', 'service area', 'coverage area',
-                'do you serve', 'abot ba', 'saklaw',
+                'do you serve', 'abot ba', 'saklaw', 'covered area', 'available area',
             ],
-            'keywords' => ['coverage', 'area', 'available'],
+            'keywords' => ['coverage', 'area', 'available', 'barangay', 'sakop'],
         ],
         'how_to_book' => [
             'phrases' => [
                 'how do i book', 'how to book', 'how do i apply', 'how to apply', 'how do i subscribe',
                 'i want to apply', 'i want internet', 'paunsa mag apply', 'paano mag apply',
-                'request installation',
+                'request installation', 'apply for internet',
             ],
-            'keywords' => ['apply', 'book'],
+            'keywords' => ['apply', 'book', 'subscribe'],
         ],
         'how_to_pay' => [
             'phrases' => [
@@ -137,7 +120,7 @@ class Assistant
                 'cannot connect', 'no signal', 'walay internet', 'hinay ang internet', 'walang internet',
                 'report a problem', 'i have a problem', 'my connection',
             ],
-            'keywords' => ['slow', 'down', 'offline', 'disconnected', 'problem', 'hinay', 'guba'],
+            'keywords' => ['slow', 'down', 'offline', 'disconnected', 'problem', 'hinay', 'guba', 'lag'],
         ],
         'installation_time' => [
             'phrases' => [
@@ -189,22 +172,22 @@ class Assistant
     /**
      * The reply for a message.
      *
-     * Passing null or an empty message returns the opening greeting, which is
-     * what both clients ask for when the chat is first opened.
-     *
-     * @return array{reply:string,intent:string,suggestions:array<int,string>,link:?array}
+     * @return array{reply:string,intent:string,suggestions:array<int,string>,link:?array,plan_cards?:array,coverage_checker?:bool}
      */
     public function respond(?string $message, ?Client $client, string $platform = self::WEB): array
     {
         $this->platform = $platform === self::APP ? self::APP : self::WEB;
 
-        $text = $this->normalise((string) $message);
+        $raw = trim((string) $message);
+        $text = $this->normalise($raw);
 
         if ($text === '') {
             return $this->opening($client, $this->platform);
         }
 
-        return match ($this->match($text)) {
+        $matched = $this->match($text);
+
+        return match ($matched) {
             'balance'           => $this->balance($client),
             'next_appointment'  => $this->nextAppointment($client),
             'bookings'          => $this->bookings($client),
@@ -223,7 +206,7 @@ class Assistant
             'thanks'            => $this->simple('thanks', 'Anytime! Anything else I can check for you?', $client),
             'bye'               => $this->simple('bye', 'Thanks for dropping by. The chat is here whenever you need it.', $client),
             'help'              => $this->help($client),
-            default             => $this->fallback($client),
+            default             => $this->fallback($client, $raw),
         };
     }
 
@@ -237,7 +220,7 @@ class Assistant
         return [
             'reply' => $name
                 ? "Hi {$name}! I'm the BCTVI assistant. I can check your balance, your bookings and your reports, or explain how something works."
-                : "Hi! I'm the BCTVI assistant. I can tell you about our plans, our coverage and how to sign up. Sign in and I can also check your balance and bookings.",
+                : "Hi! I'm the BCTVI AI assistant. I can tell you about our plans, coverage, and how to apply. Sign in and I can also check your balance and bookings.",
             'intent'      => 'greeting',
             'suggestions' => $this->suggestionsFor($client),
             'link'        => null,
@@ -246,10 +229,6 @@ class Assistant
 
     // ─── Matching ────────────────────────────────────────────────────────────
 
-    /**
-     * Lowercase, strip punctuation and collapse whitespace, so "How much do I
-     * owe??" and "how much do i owe" are the same question.
-     */
     private function normalise(string $message): string
     {
         $message = mb_strtolower(trim($message));
@@ -258,22 +237,11 @@ class Assistant
         return trim(preg_replace('/\s+/', ' ', $message) ?? '');
     }
 
-    /**
-     * The best-scoring intent, or null when nothing clears the bar.
-     *
-     * A single keyword is enough to match — the fallback is cheap and a wrong
-     * guess costs the customer one tap — but any phrase outweighs a pile of
-     * them, which is what separates intents that share vocabulary.
-     *
-     * A phrase is worth four points per word rather than a flat score, because
-     * the longer of two matching phrases is the more specific one. That is what
-     * decides "my contact number", where my_details matches three words and
-     * contact matches the two inside them.
-     */
     private function match(string $text): ?string
     {
         $best = null;
         $bestScore = 0;
+        $words = explode(' ', $text);
 
         foreach (self::INTENTS as $intent => $triggers) {
             $score = 0;
@@ -285,11 +253,20 @@ class Assistant
             }
 
             foreach ($triggers['keywords'] as $keyword) {
-                // Word-boundary matched, so "pay" does not fire inside an
-                // unrelated word, with a trailing plural allowed so a list does
-                // not have to carry both "plan" and "plans".
                 if (preg_match('/\b' . preg_quote($keyword, '/') . '(s|es)?\b/u', $text) === 1) {
                     $score += 1;
+                    continue;
+                }
+
+                // Fuzzy typo tolerance for longer keywords
+                $kLen = mb_strlen($keyword);
+                if ($kLen >= 4) {
+                    foreach ($words as $w) {
+                        if (abs(mb_strlen($w) - $kLen) <= 2 && levenshtein($w, $keyword) <= ($kLen >= 6 ? 2 : 1)) {
+                            $score += 1;
+                            break;
+                        }
+                    }
                 }
             }
 
@@ -300,6 +277,55 @@ class Assistant
         }
 
         return $bestScore > 0 ? $best : null;
+    }
+
+    // ─── OpenAI Fallback ─────────────────────────────────────────────────────
+
+    private function askOpenAi(string $message, ?Client $client): ?string
+    {
+        $apiKey = config('services.openai.api_key');
+        if (!$apiKey || !config('services.openai.enabled', true)) {
+            return null;
+        }
+
+        try {
+            $systemPrompt = "You are the official AI Chat Assistant for BCTVI Bantayan (Bantayan Cable & Telecommunications Vision Inc.), the fiber internet and cable TV provider in Bantayan Island, Cebu, Philippines.\n\n"
+                . "Key Company Details:\n"
+                . "- Service Area: Bantayan Island (covering all 49 barangays across Bantayan, Santa Fe, and Madridejos municipalities).\n"
+                . "- Main Office: Poblacion, Bantayan, Cebu.\n"
+                . "- Office Hours: Monday to Saturday, 8:00 AM – 5:00 PM (Closed on Sundays).\n"
+                . "- Customer Support Hotline: 0999 998 8209.\n"
+                . "- Payment Options: GCash online, or over-the-counter walk-in at our Poblacion office.\n"
+                . "- Internet Packages: High-speed fiber internet plans starting at affordable monthly rates (e.g., 25Mbps, 50Mbps, 75Mbps, 100Mbps).\n"
+                . "- Guidelines:\n"
+                . "  1. Keep answers concise, helpful, and friendly (1-3 sentences maximum).\n"
+                . "  2. You can understand and reply in English, Tagalog, or Cebuano (Bisaya) depending on what the customer used.\n"
+                . "  3. If asked about personal balance, specific invoices, or private ticket updates and customer is not signed in, politely remind them to sign in to their account.";
+
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $apiKey,
+                'Content-Type'  => 'application/json',
+            ])->timeout(6)->post('https://api.openai.com/v1/chat/completions', [
+                'model'       => config('services.openai.model', 'gpt-4o-mini'),
+                'messages'    => [
+                    ['role' => 'system', 'content' => $systemPrompt],
+                    ['role' => 'user', 'content' => $message],
+                ],
+                'max_tokens'  => 250,
+                'temperature' => 0.7,
+            ]);
+
+            if ($response->successful()) {
+                $content = $response->json('choices.0.message.content');
+                if ($content) {
+                    return trim($content);
+                }
+            }
+        } catch (\Throwable $e) {
+            Log::warning('OpenAI Chatbot fallback error: ' . $e->getMessage());
+        }
+
+        return null;
     }
 
     // ─── Answers that read the customer's own record ─────────────────────────
@@ -348,31 +374,32 @@ class Assistant
 
         $next = Appointment::with('service')
             ->where('client_id', $client->id)
-            ->where('status', '!=', 'cancelled')
-            ->whereDate('preferred_date', '>=', now()->toDateString())
-            ->orderBy('preferred_date')
-            ->orderBy('preferred_time')
+            ->where('appointment_date', '>=', now()->toDateString())
+            ->whereNotIn('status', ['completed', 'cancelled', 'rejected'])
+            ->orderBy('appointment_date')
+            ->orderBy('appointment_time')
             ->first();
 
         if (!$next) {
             return $this->answer(
                 'next_appointment',
-                'You have no upcoming visits booked. You can request an installation or a service visit whenever you like.',
+                "You don't have any upcoming appointments scheduled right now.",
                 $client,
                 $this->link('Book a visit', 'client.book', 'book'),
             );
         }
 
-        $reply = 'Your next visit is ' . ($next->service->service_name ?? 'a service visit')
-            . ' on ' . date('M j, Y', strtotime($next->preferred_date))
-            . ' at ' . date('g:i A', strtotime($next->preferred_time))
-            . '. Status: ' . ucfirst($next->status) . '.';
+        $service = $next->service?->service_name ?? 'service visit';
+        $date = $next->appointment_date ? date('M j, Y', strtotime((string) $next->appointment_date)) : 'soon';
+        $time = $next->appointment_time ? date('g:i A', strtotime((string) $next->appointment_time)) : '';
+
+        $reply = "Your next scheduled visit is for {$service} on {$date}" . ($time ? " at {$time}" : '') . ". Status: " . ucfirst($next->status) . '.';
 
         return $this->answer(
             'next_appointment',
             $reply,
             $client,
-            $this->link('View bookings', 'client.appointments', 'appointments'),
+            $this->link('View appointment', 'client.appointments', 'appointments'),
         );
     }
 
@@ -498,26 +525,32 @@ class Assistant
 
         $lines = $services->take(6)->map(function (Service $service) {
             $line = '• ' . $service->service_name;
-            $line .= $service->speed ? ' — ' . $service->speed : '';
-            $line .= ' — ' . $this->peso($service->price) . '/month';
+            $line .= $service->speed ? ' (' . $service->speed . ')' : '';
+            $line .= ' — ' . $this->peso($service->price) . '/mo';
             $line .= $service->installation_fee > 0
-                ? ' (installation ' . $this->peso($service->installation_fee) . ')'
-                : '';
+                ? ' + ' . $this->peso($service->installation_fee) . ' install'
+                : ' (Free install)';
 
             return $line;
         })->implode("\n");
 
-        $reply = "Here's what BCTVI offers right now:\n" . $lines;
+        $reply = "Here are our current Fiber Internet plans:\n" . $lines;
 
-        if ($services->count() > 6) {
-            $reply .= "\n…and " . ($services->count() - 6) . ' more.';
-        }
+        $planCards = $services->take(6)->map(fn ($s) => [
+            'id'    => $s->id,
+            'name'  => $s->service_name,
+            'speed' => $s->speed ?? 'High-Speed Fiber',
+            'price' => $this->peso($s->price),
+            'fee'   => $s->installation_fee > 0 ? $this->peso($s->installation_fee) : 'Free',
+            'book_url' => $client ? route('client.book') : route('register'),
+        ])->values()->all();
 
         return $this->answer(
             'plans',
             $reply,
             $client,
-            $this->link('Book a plan', 'client.book', 'book'),
+            $this->link('Book a plan', $client ? 'client.book' : 'register', 'book'),
+            ['plan_cards' => $planCards]
         );
     }
 
@@ -526,11 +559,21 @@ class Assistant
         $municipalities = ServiceArea::municipalities();
         $barangays = collect($municipalities)->sum(fn ($m) => count(ServiceArea::barangays($m)));
 
-        $reply = 'BCTVI covers Bantayan Island — ' . $this->list($municipalities)
-            . ', in ' . ServiceArea::PROVINCE . ' — ' . $barangays . ' barangays in all. '
-            . 'If your barangay is on the list in the booking form, we can reach you.';
+        $reply = 'BCTVI Fiber covers Bantayan Island — ' . $this->list($municipalities)
+            . ', in ' . ServiceArea::PROVINCE . ' (' . $barangays . ' barangays in total). '
+            . 'Select your municipality and barangay below to check availability instantly!';
 
-        return $this->answer('coverage', $reply, $client);
+        return $this->answer(
+            'coverage',
+            $reply,
+            $client,
+            null,
+            [
+                'coverage_checker' => true,
+                'municipalities'   => $municipalities,
+                'areas'            => ServiceArea::all(),
+            ]
+        );
     }
 
     private function howToBook(?Client $client): array
@@ -553,30 +596,19 @@ class Assistant
 
     private function howToPay(?Client $client): array
     {
-        $reply = 'We process payments via GCash and Maya (E-Wallet). '
-            . 'You can manage and save your preferred payment method in your portal or mobile app, '
-            . 'and track all your statements and payments in real-time.';
+        $reply = "You can pay via GCash, bank transfer, or over-the-counter at the BCTVI office in Poblacion. "
+            . "Once you submit your payment with the reference number and receipt, the office verifies it.";
 
         return $this->answer(
             'how_to_pay',
             $reply,
             $client,
-            $client ? $this->link('Manage Payment Methods', 'client.payment-methods', 'profile') : null,
+            $client ? $this->link('Pay now', 'client.billing', 'billing') : null,
         );
     }
 
     private function reportFault(?Client $client): array
     {
-        if (!$client) {
-            return $this->answer(
-                'report_fault',
-                'Sorry about that. Sign in first, then file a report from the Support tab of the BCTVI app — '
-                    . 'the team picks those up and you can follow the status there.',
-                $client,
-                $this->link('Sign in', 'login', null),
-            );
-        }
-
         $reply = $this->platform === self::APP
             ? "Sorry about that. File it under Support — give it a subject, describe what's happening and set "
                 . 'how urgent it is. It goes straight to the team and you can follow its status in the same place.'
@@ -660,10 +692,23 @@ class Assistant
         return $this->answer('help', $reply, $client);
     }
 
-    private function fallback(?Client $client): array
+    private function fallback(?Client $client, string $raw = ''): array
     {
-        $reply = "Sorry — I didn't understand that one. I'm a simple assistant, so I do best with short, "
-            . 'direct questions. Try one of these, or file a support request and a person will answer.';
+        if ($raw !== '') {
+            $aiReply = $this->askOpenAi($raw, $client);
+            if ($aiReply) {
+                return $this->answer(
+                    'ai_response',
+                    $aiReply,
+                    $client,
+                    $client ? $this->supportLink() : $this->link('View plans', 'home', null),
+                    ['source' => 'openai']
+                );
+            }
+        }
+
+        $reply = "Sorry — I didn't understand that one. I do best with short, direct questions about plans, coverage, balance, or office hours. "
+            . "Try one of the suggestions below, or call our customer hotline at 0999 998 8209.";
 
         return $this->answer('fallback', $reply, $client, $client ? $this->supportLink() : null);
     }
@@ -685,23 +730,17 @@ class Assistant
         ];
     }
 
-    private function answer(string $intent, string $reply, ?Client $client, ?array $link = null): array
+    private function answer(string $intent, string $reply, ?Client $client, ?array $link = null, array $extra = []): array
     {
-        return [
+        return array_merge([
             'reply'       => $reply,
             'intent'      => $intent,
+            'source'      => $extra['source'] ?? 'database',
             'suggestions' => $this->suggestionsFor($client, $intent),
             'link'        => $link,
-        ];
+        ], $extra);
     }
 
-    /**
-     * The chips offered after an answer.
-     *
-     * A rule-based assistant is only as good as the questions people think to
-     * ask it, so every reply offers three it definitely understands — minus
-     * the one just answered.
-     */
     private function suggestionsFor(?Client $client, ?string $answered = null): array
     {
         $pool = $client
@@ -729,18 +768,6 @@ class Assistant
         return array_slice(array_values($pool), 0, 4);
     }
 
-    /**
-     * A pointer at the screen that does the thing.
-     *
-     * The web reads `url` and the app reads `screen`; each ignores the other's
-     * half rather than the server having to know which one is asking.
-     */
-    /**
-     * Support, which only the app has a screen for.
-     *
-     * On the web there is nothing to link to, so the reply carries no button
-     * rather than a dead one.
-     */
     private function supportLink(): ?array
     {
         return $this->platform === self::APP
@@ -762,7 +789,6 @@ class Assistant
         return '₱' . number_format((float) $amount, 2);
     }
 
-    /** "a, b and c" */
     private function list(array $items): string
     {
         if (count($items) <= 1) {

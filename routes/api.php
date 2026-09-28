@@ -26,6 +26,9 @@ Route::prefix('v1')->group(function () {
     Route::post('/auth/google',   [AuthController::class, 'google']);
     Route::post('/auth/register', [AuthController::class, 'register']);
 
+    // Public / Open API AI Assistant
+    Route::post('/chat', [ChatbotController::class, 'reply']);
+
     // ── Protected (requires Bearer token via Sanctum) ─────────────────────
     Route::middleware('auth:sanctum')->group(function () {
 

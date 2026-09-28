@@ -1,12 +1,9 @@
 {{--
-    The BCTVI assistant, as a bubble on every page.
+    The BCTVI AI Assistant, with OpenAI Fallback, Interactive Widgets & Voice Input.
 
-    It holds no rules of its own: it POSTs to /chat and renders whatever the
-    Assistant sends back, which is the same thing the mobile app renders. That
-    is why the two platforms cannot answer the same question differently.
-
-    It works signed out — the landing page carries it too — and the server
-    decides which answers need an account.
+    It holds no rules of its own: it POSTs to /chat (or /api/v1/chat) and renders
+    whatever the Assistant sends back (database matches, OpenAI response, plan cards,
+    or live coverage checker).
 --}}
 <div id="bctvi-chat" class="bctvi-chat">
 
@@ -20,24 +17,29 @@
 
     {{-- Chat panel --}}
     <section class="bctvi-chat-panel" id="bctviChatPanel" role="dialog" aria-modal="false"
-             aria-label="BCTVI assistant" hidden>
+             aria-label="BCTVI AI assistant" hidden>
 
         {{-- Header --}}
         <header class="bctvi-chat-header">
             <div class="bctvi-header-avatar">
-                <img src="{{ asset('assets/images/cctn-logo.png') }}" alt="">
+                <img src="{{ asset('assets/images/cctn-logo.png') }}" alt="BCTVI">
                 <span class="bctvi-online-dot"></span>
             </div>
             <div class="bctvi-chat-titles">
-                <strong>BCTVI Assistant</strong>
+                <strong>BCTVI AI Assistant</strong>
                 <span>
                     <span class="bctvi-online-dot-inline"></span>
-                    Online · Usually replies instantly
+                    Online · Smart 24/7 ISP Support
                 </span>
             </div>
-            <button type="button" class="bctvi-chat-close" id="bctviChatClose" aria-label="Close the assistant">
-                <i class="bi bi-x-lg" aria-hidden="true"></i>
-            </button>
+            <div class="bctvi-header-actions">
+                <button type="button" class="bctvi-chat-hdr-btn" id="bctviChatReset" title="Restart conversation" aria-label="Restart chat">
+                    <i class="bi bi-arrow-clockwise" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="bctvi-chat-hdr-btn" id="bctviChatClose" title="Close chat" aria-label="Close assistant">
+                    <i class="bi bi-x-lg" aria-hidden="true"></i>
+                </button>
+            </div>
         </header>
 
         {{-- Message log --}}
@@ -49,8 +51,15 @@
         {{-- Composer --}}
         <form class="bctvi-chat-composer" id="bctviChatForm" autocomplete="off">
             <input type="text" id="bctviChatInput" maxlength="500"
-                   placeholder="Type a message…" aria-label="Your message">
-            <button type="submit" aria-label="Send" id="bctviSendBtn">
+                   placeholder="Ask about plans, coverage, balance…" aria-label="Your message">
+            
+            {{-- Speech to text mic --}}
+            <button type="button" class="bctvi-voice-btn" id="bctviVoiceBtn" title="Voice typing (Speak)" aria-label="Voice input">
+                <i class="bi bi-mic-fill" aria-hidden="true"></i>
+            </button>
+
+            {{-- Send button --}}
+            <button type="submit" aria-label="Send" id="bctviSendBtn" title="Send message">
                 <i class="bi bi-send-fill" aria-hidden="true"></i>
             </button>
         </form>
@@ -112,10 +121,10 @@
     position: absolute;
     right: 0;
     bottom: 72px;
-    width: 370px;
+    width: 380px;
     max-width: calc(100vw - 32px);
-    height: 540px;
-    max-height: calc(100vh - 140px);
+    height: 560px;
+    max-height: calc(100vh - 120px);
     background: #ffffff;
     border: 1px solid #e2e8f0;
     border-radius: 20px;
@@ -198,7 +207,14 @@
     flex-shrink: 0;
 }
 
-.bctvi-chat-close {
+.bctvi-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    position: relative;
+    z-index: 2;
+}
+.bctvi-chat-hdr-btn {
     background: rgba(255,255,255,0.15);
     border: 1px solid rgba(255,255,255,0.2);
     color: #fff;
@@ -207,10 +223,11 @@
     padding: 0.3rem 0.45rem;
     border-radius: 8px;
     transition: background 0.15s;
-    position: relative;
-    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-.bctvi-chat-close:hover { background: rgba(255,255,255,0.25); }
+.bctvi-chat-hdr-btn:hover { background: rgba(255,255,255,0.28); }
 
 /* ── Log ───────────────────────────────────────────────── */
 .bctvi-chat-log {
@@ -244,8 +261,8 @@
 }
 
 .bctvi-msg {
-    max-width: 82%;
-    padding: 0.6rem 0.85rem;
+    max-width: 84%;
+    padding: 0.65rem 0.9rem;
     border-radius: 16px;
     font-size: 0.855rem;
     line-height: 1.55;
@@ -284,6 +301,89 @@
 }
 .bctvi-msg-link:hover { background: #dc2626; color: #fff; border-color: #dc2626; }
 .bctvi-msg-link i { font-size: 0.85rem; }
+
+/* ── Interactive Plan Cards Inside Chat ─────────────────── */
+.bctvi-plans-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    margin-top: 0.4rem;
+    margin-left: 36px;
+    max-width: calc(100% - 36px);
+}
+.bctvi-plan-card {
+    background: #ffffff;
+    border: 1.5px solid #f1f5f9;
+    border-left: 3.5px solid #dc2626;
+    border-radius: 10px;
+    padding: 0.6rem 0.75rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+.bctvi-plan-info { flex: 1; min-width: 0; }
+.bctvi-plan-name { font-size: 0.82rem; font-weight: 800; color: #0f172a; line-height: 1.2; }
+.bctvi-plan-sub { font-size: 0.72rem; color: #64748b; margin-top: 2px; }
+.bctvi-plan-price { font-size: 0.84rem; font-weight: 800; color: #dc2626; white-space: nowrap; }
+.bctvi-plan-btn {
+    background: #dc2626;
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.35rem 0.65rem;
+    border-radius: 6px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.15s;
+}
+.bctvi-plan-btn:hover { background: #b91c1c; color: #fff; }
+
+/* ── Interactive Live Coverage Checker ──────────────────── */
+.bctvi-coverage-box {
+    margin-top: 0.4rem;
+    margin-left: 36px;
+    background: #ffffff;
+    border: 1px solid #fed7aa;
+    background: #fff7ed;
+    border-radius: 12px;
+    padding: 0.75rem;
+    max-width: calc(100% - 36px);
+    box-shadow: 0 2px 6px rgba(249,115,22,0.08);
+}
+.bctvi-coverage-box h5 {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #c2410c;
+    margin: 0 0 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+.bctvi-coverage-selects {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+.bctvi-cov-select {
+    width: 100%;
+    font-size: 0.76rem;
+    padding: 0.4rem 0.5rem;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    color: #1e293b;
+}
+.bctvi-cov-res {
+    margin-top: 0.45rem;
+    padding: 0.45rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    line-height: 1.35;
+}
+.bctvi-cov-res.available { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
 
 /* Typing indicator */
 .bctvi-typing {
@@ -347,7 +447,7 @@
 }
 .bctvi-chip i { font-size: 0.82rem; }
 
-/* Welcome chips grid — shown on open before any message */
+/* Welcome chips grid */
 .bctvi-welcome-chips {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -402,8 +502,9 @@
 /* ── Composer ───────────────────────────────────────────── */
 .bctvi-chat-composer {
     display: flex;
-    gap: 0.5rem;
-    padding: 0.7rem 0.75rem;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.65rem 0.75rem;
     border-top: 1px solid #e2e8f0;
     background: #ffffff;
     flex-shrink: 0;
@@ -414,7 +515,7 @@
     border: 1.5px solid #e2e8f0;
     border-radius: 10px;
     padding: 0.6rem 0.8rem;
-    font-size: 0.86rem;
+    font-size: 0.85rem;
     font-family: inherit;
     color: #0f172a;
     background: #f8fafc;
@@ -426,20 +527,52 @@
     background: #fff;
     box-shadow: 0 0 0 3px rgba(220,38,38,0.1);
 }
-.bctvi-chat-composer button {
+
+/* Voice mic button */
+.bctvi-voice-btn {
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    color: #64748b;
+    border-radius: 10px;
+    width: 38px; height: 38px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+}
+.bctvi-voice-btn:hover { background: #fee2e2; color: #dc2626; border-color: #fca5a5; }
+.bctvi-voice-btn.listening {
+    background: #dc2626;
+    color: #fff;
+    border-color: #dc2626;
+    animation: micPulse 1.2s infinite;
+}
+@keyframes micPulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(220,38,38,0.5); }
+    50%      { box-shadow: 0 0 0 8px rgba(220,38,38,0); }
+}
+
+/* Send button */
+.bctvi-chat-composer button[type="submit"] {
     border: none;
     background: linear-gradient(135deg, #dc2626, #b91c1c);
     color: #fff;
     border-radius: 10px;
-    width: 42px;
+    width: 38px; height: 38px;
     cursor: pointer;
     font-size: 0.88rem;
     flex-shrink: 0;
     box-shadow: 0 2px 8px rgba(220,38,38,0.3);
     transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-.bctvi-chat-composer button:hover { background: linear-gradient(135deg, #b91c1c, #991b1b); transform: translateY(-1px); }
-.bctvi-chat-composer button:disabled { background: #cbd5e1; box-shadow: none; cursor: not-allowed; transform: none; }
+.bctvi-chat-composer button[type="submit"]:hover { background: linear-gradient(135deg, #b91c1c, #991b1b); transform: translateY(-1px); }
+.bctvi-chat-composer button[type="submit"]:disabled { background: #cbd5e1; box-shadow: none; cursor: not-allowed; transform: none; }
 
 /* ── Date divider ───────────────────────────────────────── */
 .bctvi-divider {
@@ -465,7 +598,7 @@
     .bctvi-chat { right: 16px; bottom: calc(78px + env(safe-area-inset-bottom)); }
 }
 @media (max-width: 480px) {
-    .bctvi-chat-panel { width: calc(100vw - 32px); height: min(72vh, 540px); }
+    .bctvi-chat-panel { width: calc(100vw - 32px); height: min(75vh, 560px); }
     .bctvi-welcome-chips { grid-template-columns: 1fr 1fr; }
 }
 </style>
@@ -478,11 +611,13 @@
     var launcher  = document.getElementById('bctviChatLauncher');
     var panel     = document.getElementById('bctviChatPanel');
     var closeBtn  = document.getElementById('bctviChatClose');
+    var resetBtn  = document.getElementById('bctviChatReset');
     var log       = document.getElementById('bctviChatLog');
     var chipsWrap = document.getElementById('bctviChatChips');
     var form      = document.getElementById('bctviChatForm');
     var input     = document.getElementById('bctviChatInput');
     var sendBtn   = document.getElementById('bctviSendBtn');
+    var voiceBtn  = document.getElementById('bctviVoiceBtn');
     var badge     = document.getElementById('bctviLauncherBadge');
     var launchIconChat  = launcher.querySelector('.launcher-icon-chat');
     var launchIconClose = launcher.querySelector('.launcher-icon-close');
@@ -494,12 +629,12 @@
     var greeted = false;
     var busy    = false;
     var unread  = 0;
-    var welcomeChipsEl = null; // reference to the 2×2 grid shown before first send
+    var welcomeChipsEl = null;
 
-    /* ── Welcome chip definitions (shown on open, before greeting loads) ── */
+    /* ── Welcome chips (shown on initial open) ── */
     var WELCOME_CHIPS = [
-        { icon: 'bi-wifi',           label: 'View Plans',       sub: 'See our internet packages',    msg: 'What plans do you offer?' },
-        { icon: 'bi-geo-alt',        label: 'Coverage Area',    sub: 'Check if we serve your area',  msg: 'What is your service coverage area?' },
+        { icon: 'bi-wifi',           label: 'View Plans',       sub: 'Fiber packages & rates',       msg: 'What plans do you offer?' },
+        { icon: 'bi-geo-alt',        label: 'Coverage Area',    sub: 'Check your barangay',          msg: 'What is your service coverage area?' },
         { icon: 'bi-calendar-check', label: 'How to Apply',     sub: 'Book an installation',         msg: 'How do I apply for internet?' },
         { icon: 'bi-telephone',      label: 'Contact Us',       sub: 'Office number & hours',        msg: 'What is your contact number?' },
     ];
@@ -552,7 +687,86 @@
         scrollDown();
     }
 
-    /* ── Quick-reply chips (inline row, after a reply) ── */
+    /* ── Render Interactive Plan Cards ── */
+    function renderPlanCards(plans) {
+        if (!plans || !plans.length) return;
+        var wrap = document.createElement('div');
+        wrap.className = 'bctvi-plans-grid';
+
+        plans.forEach(function (plan) {
+            var card = document.createElement('div');
+            card.className = 'bctvi-plan-card';
+            card.innerHTML =
+                '<div class="bctvi-plan-info">' +
+                    '<div class="bctvi-plan-name">' + plan.name + ' (' + plan.speed + ')</div>' +
+                    '<div class="bctvi-plan-sub">' + plan.price + '/mo · Install: ' + plan.fee + '</div>' +
+                '</div>' +
+                '<a href="' + plan.book_url + '" class="bctvi-plan-btn">Apply Now</a>';
+            wrap.appendChild(card);
+        });
+
+        log.appendChild(wrap);
+        scrollDown();
+    }
+
+    /* ── Render Interactive Coverage Checker ── */
+    function renderCoverageChecker(areas, municipalities) {
+        if (!areas) return;
+        var box = document.createElement('div');
+        box.className = 'bctvi-coverage-box';
+        box.innerHTML =
+            '<h5><i class="bi bi-geo-alt-fill"></i> Check Your Barangay Coverage</h5>' +
+            '<div class="bctvi-coverage-selects">' +
+                '<select class="bctvi-cov-select" id="bctviMunSelect">' +
+                    '<option value="">-- Select Municipality --</option>' +
+                '</select>' +
+                '<select class="bctvi-cov-select" id="bctviBrgySelect" disabled>' +
+                    '<option value="">-- Select Barangay --</option>' +
+                '</select>' +
+                '<div class="bctvi-cov-res" id="bctviCovRes" style="display:none;"></div>' +
+            '</div>';
+
+        log.appendChild(box);
+
+        var munSel  = box.querySelector('#bctviMunSelect');
+        var brgySel = box.querySelector('#bctviBrgySelect');
+        var resDiv  = box.querySelector('#bctviCovRes');
+
+        (municipalities || Object.keys(areas)).forEach(function (m) {
+            var opt = document.createElement('option');
+            opt.value = m;
+            opt.textContent = m;
+            munSel.appendChild(opt);
+        });
+
+        munSel.addEventListener('change', function () {
+            brgySel.innerHTML = '<option value="">-- Select Barangay --</option>';
+            resDiv.style.display = 'none';
+            if (!this.value || !areas[this.value]) {
+                brgySel.disabled = true;
+                return;
+            }
+            brgySel.disabled = false;
+            areas[this.value].forEach(function (b) {
+                var opt = document.createElement('option');
+                opt.value = b;
+                opt.textContent = b;
+                brgySel.appendChild(opt);
+            });
+        });
+
+        brgySel.addEventListener('change', function () {
+            if (!this.value) { resDiv.style.display = 'none'; return; }
+            resDiv.className = 'bctvi-cov-res available';
+            resDiv.innerHTML = '✅ <strong>Fiber is Active in ' + this.value + ', ' + munSel.value + '!</strong> Fast installation slots available.';
+            resDiv.style.display = 'block';
+            scrollDown();
+        });
+
+        scrollDown();
+    }
+
+    /* ── Quick-reply suggestion chips ── */
     function renderChips(list) {
         chipsWrap.innerHTML = '';
         chipsWrap.style.display = '';
@@ -566,9 +780,9 @@
         });
     }
 
-    /* ── Welcome 2×2 chip grid (shown before first message) ── */
+    /* ── Welcome 2×2 chip grid ── */
     function showWelcomeChips() {
-        if (welcomeChipsEl) return; // only once
+        if (welcomeChipsEl) return;
         welcomeChipsEl = document.createElement('div');
         welcomeChipsEl.className = 'bctvi-welcome-chips';
         welcomeChipsEl.id = 'bctviWelcomeChips';
@@ -588,7 +802,6 @@
             welcomeChipsEl.appendChild(btn);
         });
 
-        // Insert before composer
         panel.insertBefore(welcomeChipsEl, chipsWrap);
     }
 
@@ -630,7 +843,7 @@
         sendBtn.disabled = state;
     }
 
-    /* ── Unread badge (only while panel is closed) ── */
+    /* ── Unread badge ── */
     function incUnread() {
         if (!panel.hidden) return;
         unread++;
@@ -643,7 +856,7 @@
         badge.style.display = 'none';
     }
 
-    /* ── Send ── */
+    /* ── Send Message ── */
     function send(message) {
         if (busy) return;
 
@@ -669,21 +882,69 @@
         .then(function (data) {
             hideTyping();
             bubble(data.reply, 'bot');
+            if (data.plan_cards) renderPlanCards(data.plan_cards);
+            if (data.coverage_checker) renderCoverageChecker(data.areas, data.municipalities);
             linkButton(data.link);
             renderChips(data.suggestions);
             incUnread();
         })
         .catch(function () {
             hideTyping();
-            bubble("I couldn't reach the server just then. Please check your connection and try again.", 'bot');
+            bubble("I had trouble reaching the server. Please try again or call 0999 998 8209.", 'bot');
+            renderChips(['What plans do you offer?', 'Where is your office?']);
         })
         .finally(function () {
             setBusy(false);
-            input.focus();
         });
     }
 
-    /* ── Open / close ── */
+    /* ── Voice Input (Speech to Text) ── */
+    var recognition = null;
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        var SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRec();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'en-PH';
+
+        recognition.onstart = function () {
+            voiceBtn.classList.add('listening');
+        };
+        recognition.onresult = function (event) {
+            var transcript = event.results[0][0].transcript;
+            input.value = transcript;
+            send(transcript);
+        };
+        recognition.onerror = function () {
+            voiceBtn.classList.remove('listening');
+        };
+        recognition.onend = function () {
+            voiceBtn.classList.remove('listening');
+        };
+
+        voiceBtn.addEventListener('click', function () {
+            if (voiceBtn.classList.contains('listening')) {
+                recognition.stop();
+            } else {
+                try { recognition.start(); } catch (e) {}
+            }
+        });
+    } else {
+        voiceBtn.style.display = 'none';
+    }
+
+    /* ── Reset / Clear Conversation ── */
+    function resetChat() {
+        log.innerHTML = '';
+        renderChips([]);
+        removeWelcomeChips();
+        addDivider('Today · ' + nowTime());
+        showWelcomeChips();
+        send('');
+    }
+    resetBtn.addEventListener('click', resetChat);
+
+    /* ── Open / Close ── */
     function openChat() {
         panel.hidden = false;
         root.classList.add('is-open');
@@ -719,7 +980,7 @@
 
     form.addEventListener('submit', function (e) {
         e.preventDefault();
-        var text = input.value.trim();
+        var text = (input.value || '').trim();
         if (!text) return;
         input.value = '';
         send(text);

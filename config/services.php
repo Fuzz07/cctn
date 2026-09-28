@@ -43,4 +43,10 @@ return [
         'enabled'    => env('RECAPTCHA_ENABLED', true),
     ],
 
+    'openai' => [
+        'api_key' => env('OPENAI_API_KEY'),
+        'model'   => env('OPENAI_MODEL', 'gpt-4o-mini'),
+        'enabled' => env('OPENAI_ENABLED', true),
+    ],
+
 ];
