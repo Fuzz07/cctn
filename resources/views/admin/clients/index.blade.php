@@ -50,7 +50,7 @@
         </div>
         <div class="stat-meta">
             <span class="stat-title">Total Registered</span>
-            <span class="stat-val">{{ $totalClients }}</span>
+            <span class="stat-val" id="stat-total-clients">{{ $totalClients }}</span>
         </div>
     </div>
     <div class="stat-card">
@@ -59,7 +59,7 @@
         </div>
         <div class="stat-meta">
             <span class="stat-title">New This Month</span>
-            <span class="stat-val">{{ $newThisMonth }}</span>
+            <span class="stat-val" id="stat-new-this-month">{{ $newThisMonth }}</span>
         </div>
     </div>
     <div class="stat-card">
@@ -68,7 +68,7 @@
         </div>
         <div class="stat-meta">
             <span class="stat-title">Active Bookings</span>
-            <span class="stat-val">{{ $activeBookings }}</span>
+            <span class="stat-val" id="stat-active-bookings">{{ $activeBookings }}</span>
         </div>
     </div>
 </div>
@@ -146,3 +146,49 @@
     </table>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+(function () {
+    const POLL_INTERVAL = 30000; // 30 seconds
+    const STATS_URL     = '{{ route("admin.clients.stats") }}';
+
+    const elTotal   = document.getElementById('stat-total-clients');
+    const elNew     = document.getElementById('stat-new-this-month');
+    const elActive  = document.getElementById('stat-active-bookings');
+
+    function animateUpdate(el, newVal) {
+        const current = parseInt(el.textContent, 10);
+        if (current === newVal) return;
+
+        el.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+        el.style.opacity    = '0';
+        el.style.transform  = 'translateY(-6px)';
+
+        setTimeout(function () {
+            el.textContent  = newVal;
+            el.style.opacity   = '1';
+            el.style.transform = 'translateY(0)';
+        }, 260);
+    }
+
+    function fetchStats() {
+        fetch(STATS_URL, {
+            headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(function (res) { return res.ok ? res.json() : Promise.reject(res.status); })
+        .then(function (data) {
+            animateUpdate(elTotal,  data.total_clients);
+            animateUpdate(elNew,    data.new_this_month);
+            animateUpdate(elActive, data.active_bookings);
+        })
+        .catch(function (err) {
+            console.warn('[Client Stats] Poll failed:', err);
+        });
+    }
+
+    // Start polling after first interval
+    setInterval(fetchStats, POLL_INTERVAL);
+})();
+</script>
+@endpush

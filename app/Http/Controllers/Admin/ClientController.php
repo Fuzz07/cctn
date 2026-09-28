@@ -45,4 +45,20 @@ class ClientController extends Controller
             'clients', 'filter', 'search', 'totalClients', 'newThisMonth', 'activeBookings'
         ));
     }
+
+    /**
+     * Return live stats as JSON for real-time polling.
+     */
+    public function stats()
+    {
+        return response()->json([
+            'total_clients'   => Client::count(),
+            'new_this_month'  => Client::whereMonth('created_at', now()->month)
+                                       ->whereYear('created_at', now()->year)
+                                       ->count(),
+            'active_bookings' => Appointment::where('status', 'approved')
+                                            ->distinct('client_id')
+                                            ->count('client_id'),
+        ]);
+    }
 }
