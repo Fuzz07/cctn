@@ -3,6 +3,7 @@
 @section('title', 'My Billing & Statements - BCTVI Bantayan')
 
 @section('content')
+<div style="max-width: 1100px; margin: 0 auto; padding: 0 1.25rem;">
 <div class="fade-in" style="padding: 1.5rem 0;">
     <div style="margin-bottom: 2rem;">
         <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--text-dark); margin-bottom: 0.35rem;">Statement of Account &amp; Billing History</h2>
@@ -133,5 +134,6 @@
             </table>
         </div>
     </div>
-</div>
+</div>{{-- fade-in --}}
+</div>{{-- max-width wrapper --}}
 @endsection
