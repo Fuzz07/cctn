@@ -501,6 +501,128 @@
         flex-shrink: 0;
     }
 
+    /* ── APK Step-by-Step Guide ── */
+    .bl-apk-guide {
+        background: #ffffff;
+        border: 1.5px solid #fecaca;
+        border-radius: 20px;
+        padding: 2.25rem 2rem;
+        margin-top: 1.5rem;
+        box-shadow: 0 10px 30px rgba(220, 38, 38, 0.04);
+        position: relative;
+    }
+    .bl-apk-guide-header {
+        text-align: center;
+        max-width: 650px;
+        margin: 0 auto 2rem;
+    }
+    .bl-apk-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: #fef2f2;
+        color: var(--bl-red);
+        border: 1px solid #fecaca;
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        padding: 0.35rem 0.85rem;
+        border-radius: 9999px;
+        margin-bottom: 0.65rem;
+    }
+    .bl-apk-guide-header h3 {
+        font-size: 1.45rem;
+        font-weight: 900;
+        color: var(--bl-navy);
+        margin: 0 0 0.45rem;
+        letter-spacing: -0.02em;
+    }
+    .bl-apk-guide-header p {
+        font-size: 0.9rem;
+        color: #64748b;
+        margin: 0;
+        line-height: 1.5;
+    }
+    .bl-apk-steps-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.25rem;
+    }
+    .bl-apk-step-card {
+        background: #fafafa;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 1.6rem 1.15rem 1.4rem;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        transition: all 0.22s ease;
+    }
+    .bl-apk-step-card:hover {
+        transform: translateY(-4px);
+        background: #ffffff;
+        border-color: #fca5a5;
+        box-shadow: 0 10px 25px rgba(220, 38, 38, 0.08);
+    }
+    .bl-apk-step-num {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: var(--bl-red);
+        color: #ffffff;
+        font-size: 0.75rem;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .bl-apk-step-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 14px;
+        background: #fee2e2;
+        color: var(--bl-red);
+        font-size: 1.45rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 0.85rem;
+        margin-top: 0.25rem;
+    }
+    .bl-apk-step-card h4 {
+        font-size: 0.98rem;
+        font-weight: 800;
+        color: var(--bl-navy);
+        margin: 0 0 0.45rem;
+    }
+    .bl-apk-step-card p {
+        font-size: 0.82rem;
+        color: #64748b;
+        line-height: 1.55;
+        margin: 0;
+    }
+    .bl-apk-step-card code {
+        background: #f1f5f9;
+        color: #dc2626;
+        padding: 0.1rem 0.35rem;
+        border-radius: 4px;
+        font-size: 0.76rem;
+        font-weight: 600;
+    }
+
+    @media (max-width: 992px) {
+        .bl-apk-steps-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 576px) {
+        .bl-apk-steps-grid { grid-template-columns: 1fr; }
+        .bl-apk-guide { padding: 1.5rem 1.15rem; }
+    }
+
     /* ── Plans Section ── */
     .bl-plans-section {
         background: #ffffff;
@@ -877,16 +999,16 @@
         </div>
     </div>
 
-    <!-- App Download Banner Card -->
+    <!-- App Download Banner Card & Step-by-Step Guide -->
     <div class="bl-app-banner-wrap" id="download">
         <div class="bl-app-banner">
             <div class="bl-app-banner-left">
                 <div class="bl-app-banner-icon">
-                    <i class="bi bi-wifi"></i>
+                    <i class="bi bi-phone"></i>
                 </div>
                 <div class="bl-app-banner-text">
                     <strong>Download the BCTVI Mobile App</strong>
-                    <span>Manage your account, check your bills, request support and more — all in one app.</span>
+                    <span>Manage your bills, track installation appointments, and request 24/7 support right on your phone.</span>
                 </div>
             </div>
             <div class="bl-app-banner-action">
@@ -895,6 +1017,57 @@
                     Download APK
                     <i class="bi bi-download" style="font-size: 0.9rem; margin-left: 2px;"></i>
                 </a>
+            </div>
+        </div>
+
+        <!-- Step-by-Step Installation Guide -->
+        <div class="bl-apk-guide">
+            <div class="bl-apk-guide-header">
+                <span class="bl-apk-badge"><i class="bi bi-info-circle-fill"></i> EASY 4-STEP INSTALLATION</span>
+                <h3>How to Install the APK on Your Android Device</h3>
+                <p>Follow these quick steps to sideload and install the BCTVI app in seconds.</p>
+            </div>
+
+            <div class="bl-apk-steps-grid">
+                {{-- Step 1 --}}
+                <div class="bl-apk-step-card">
+                    <div class="bl-apk-step-num">1</div>
+                    <div class="bl-apk-step-icon">
+                        <i class="bi bi-download"></i>
+                    </div>
+                    <h4>1. Download APK</h4>
+                    <p>Tap the <strong>Download APK</strong> button above to download <code>cctn-app.apk</code> to your device.</p>
+                </div>
+
+                {{-- Step 2 --}}
+                <div class="bl-apk-step-card">
+                    <div class="bl-apk-step-num">2</div>
+                    <div class="bl-apk-step-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <h4>2. Allow Unknown Apps</h4>
+                    <p>If prompted with <em>"File might be harmful"</em>, tap <strong>Download anyway</strong>. In Chrome/browser settings, enable <strong>"Allow from this source"</strong>.</p>
+                </div>
+
+                {{-- Step 3 --}}
+                <div class="bl-apk-step-card">
+                    <div class="bl-apk-step-num">3</div>
+                    <div class="bl-apk-step-icon">
+                        <i class="bi bi-box-arrow-in-down"></i>
+                    </div>
+                    <h4>3. Tap &amp; Install</h4>
+                    <p>Open the downloaded file from your <strong>Notification Bar</strong> or <strong>Downloads</strong> folder and tap <strong>Install</strong>.</p>
+                </div>
+
+                {{-- Step 4 --}}
+                <div class="bl-apk-step-card">
+                    <div class="bl-apk-step-num">4</div>
+                    <div class="bl-apk-step-icon">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                    <h4>4. Launch &amp; Sign In</h4>
+                    <p>Tap <strong>Open</strong>, log in with your email or Google account, and manage your fiber internet effortlessly!</p>
+                </div>
             </div>
         </div>
     </div>

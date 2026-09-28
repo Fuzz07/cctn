@@ -602,6 +602,7 @@
                 @else
                     <a href="{{ route('home') }}" class="top-nav-link {{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
                     <a href="{{ route('home') }}#plans" class="top-nav-link">Plans</a>
+                    <a href="{{ route('home') }}#download" class="top-nav-link">Mobile App</a>
                     <a href="{{ route('home') }}#support" class="top-nav-link">Support</a>
                     <a href="{{ route('home') }}#about" class="top-nav-link">About</a>
                     <a href="{{ route('login') }}" class="top-nav-btn-outline"><i class="bi bi-person-fill" style="font-size: 1.05rem;"></i> Login</a>
@@ -638,6 +639,9 @@
             <div class="drawer-menu">
                 <a href="{{ route('home') }}" class="drawer-item {{ request()->routeIs('home') ? 'active' : '' }}">
                     <span class="drawer-item-icon"><i class="bi bi-house-door"></i></span> Home
+                </a>
+                <a href="{{ route('home') }}#download" class="drawer-item" onclick="toggleDrawer(false)">
+                    <span class="drawer-item-icon"><i class="bi bi-phone"></i></span> Mobile App &amp; APK
                 </a>
 
                 @auth('client')

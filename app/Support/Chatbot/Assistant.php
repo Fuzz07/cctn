@@ -161,6 +161,15 @@ class Assistant
             'phrases' => ['good bye', 'see you'],
             'keywords' => ['bye', 'goodbye'],
         ],
+        'apk_guide' => [
+            'phrases' => [
+                'how to install apk', 'how to install app', 'install mobile app', 'download apk',
+                'download mobile app', 'how to download app', 'how to download apk', 'install the app',
+                'paano i-install ang app', 'unsaon pag install sa app', 'unsaon pag install sa apk',
+                'apk guide', 'installation guide', 'download android app',
+            ],
+            'keywords' => ['apk', 'sideload', 'android'],
+        ],
         'help' => [
             'phrases' => [
                 'what can you do', 'what can i ask', 'can you help', 'help me', 'unsa imong mahimo',
@@ -202,6 +211,7 @@ class Assistant
             'installation_time' => $this->installationTime($client),
             'location'          => $this->location($client),
             'contact'           => $this->contact($client),
+            'apk_guide'         => $this->apkGuide($client),
             'greeting'          => $this->opening($client),
             'thanks'            => $this->simple('thanks', 'Anytime! Anything else I can check for you?', $client),
             'bye'               => $this->simple('bye', 'Thanks for dropping by. The chat is here whenever you need it.', $client),
@@ -677,6 +687,22 @@ class Assistant
             $reply,
             $client,
             $client ? $this->supportLink() : $this->link('Sign in', 'login', null),
+        );
+    }
+
+    private function apkGuide(?Client $client): array
+    {
+        $reply = "📱 4-Step Guide to Install the BCTVI Android APK:\n\n"
+            . "1️⃣ Download: Tap the 'Download APK' button or visit /download-apk to download cctn-app.apk.\n"
+            . "2️⃣ Allow Unknown Apps: If your device displays 'File might be harmful', tap 'Download anyway'. In settings, enable 'Allow from this source'.\n"
+            . "3️⃣ Tap & Install: Open the downloaded APK from your notifications or Downloads folder and tap 'Install'.\n"
+            . "4️⃣ Launch & Sign In: Open the app, log in, and manage your billing, appointments, and support anywhere!";
+
+        return $this->answer(
+            'apk_guide',
+            $reply,
+            $client,
+            $this->link('Download APK', 'download.apk', null),
         );
     }
 
