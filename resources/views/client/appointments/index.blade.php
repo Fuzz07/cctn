@@ -12,11 +12,12 @@
     .filter-pill { padding: 0.5rem 1rem; border-radius: 99px; background: var(--bg-card); border: 1px solid var(--border-light); color: var(--text-muted); font-size: 0.85rem; font-weight: 600; text-decoration: none; white-space: nowrap; transition: all 0.2s; }
     .filter-pill:hover { background: var(--bg-subtle); color: var(--text-dark); }
     .filter-pill.active { background: #0f172a; color: #fff; border-color: #0f172a; }
+    :root[data-theme="dark"] .filter-pill.active { background: #dc2626; color: #fff; border-color: #dc2626; }
 
     .appt-card { background: var(--bg-card); border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border-light); margin-bottom: 1rem; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s; }
     .appt-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.06); }
     
-    .appt-header { padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--bg-subtle); background: #fafbfc; }
+    .appt-header { padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-light); background: var(--bg-subtle); }
     .appt-ref { font-family: monospace; font-weight: 700; color: var(--text-faint); font-size: 0.9rem; }
     
     .appt-body { padding: 1.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
@@ -40,13 +41,13 @@
 @endpush
 
 @section('content')
-<div style="max-width: 1000px; margin: 2rem auto; padding: 0 1.5rem;">
+<div style="max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem;">
     <div class="page-header">
         <div>
             <h1 class="page-title">My Appointments</h1>
             <p class="page-subtitle">Track your booking requests and history</p>
         </div>
-        <a href="{{ route('client.book') }}" class="btn" style="background:#0f172a; color:#fff; padding:0.75rem 1.5rem; border-radius:8px; text-decoration:none; font-weight:700;">+ Book New</a>
+        <a href="{{ route('client.book') }}" class="btn" style="background:#dc2626; color:#fff; padding:0.75rem 1.5rem; border-radius:8px; text-decoration:none; font-weight:700; box-shadow:0 4px 12px rgba(220,38,38,0.25); display:inline-flex; align-items:center; gap:0.4rem;">+ Book New</a>
     </div>
 
     @php
@@ -133,7 +134,7 @@
                 </div>
 
                 <!-- Collapsible Payment Method Form -->
-                <div id="payment-form-{{ $appt->id }}" style="display: none; padding: 1.25rem 1.5rem; background: #fafafa; border-top: 1px solid var(--border-light);">
+                <div id="payment-form-{{ $appt->id }}" style="display: none; padding: 1.25rem 1.5rem; background: var(--bg-subtle); border-top: 1px solid var(--border-light);">
                     <form action="{{ route('client.appointments.payment-method', $appt->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-dark); margin-bottom: 0.75rem;">
