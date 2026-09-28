@@ -83,7 +83,11 @@
         <a href="{{ route('admin.clients', ['filter' => 'all', 'search' => $search]) }}" class="filter-pill {{ $filter == 'all' ? 'active' : '' }}">All Clients</a>
         <a href="{{ route('admin.clients', ['filter' => 'active_bookings', 'search' => $search]) }}" class="filter-pill {{ $filter == 'active_bookings' ? 'active' : '' }}">With Active Bookings</a>
         <a href="{{ route('admin.clients', ['filter' => 'new_this_month', 'search' => $search]) }}" class="filter-pill {{ $filter == 'new_this_month' ? 'active' : '' }}">Joined This Month</a>
-        <a href="{{ route('admin.clients', ['filter' => 'archived', 'search' => $search]) }}" class="filter-pill {{ $filter == 'archived' ? 'active' : '' }}">Archived ({{ $archivedCount }})</a>
+        @if ($archivingSupported)
+            <a href="{{ route('admin.clients', ['filter' => 'archived', 'search' => $search]) }}" class="filter-pill {{ $filter == 'archived' ? 'active' : '' }}">Archived ({{ $archivedCount }})</a>
+        @else
+            <span class="filter-pill" title="Run the archive migration to enable this feature" style="opacity:0.65; cursor:not-allowed;">Archived unavailable</span>
+        @endif
     </div>
     <form action="{{ route('admin.clients') }}" method="GET" class="search-form">
         <input type="hidden" name="filter" value="{{ $filter }}">
@@ -135,7 +139,9 @@
                     </td>
                     <td>
                         <div style="color:var(--text-muted);">{{ $client->created_at->format('M d, Y') }}</div>
-                        @if ($client->isArchived())
+                        @if (! $archivingSupported)
+                            <span style="font-size:0.75rem; color:var(--text-muted);">Archive migration required</span>
+                        @elseif ($client->isArchived())
                             <span class="archived-tag">Archived {{ $client->archived_at->format('M d, Y') }}</span>
                         @endif
                     </td>

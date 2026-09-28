@@ -13,6 +13,7 @@ class ClientController extends Controller
     {
         $filter = $request->get('filter', 'all');
         $search = $request->get('search', '');
+        $archivingSupported = Client::supportsArchiving();
 
         // Archived clients only appear under the "Archived" filter.
         $query = $filter === 'archived' ? Client::archived() : Client::active();
@@ -44,7 +45,7 @@ class ClientController extends Controller
         $archivedCount  = Client::archived()->count();
 
         return view('admin.clients.index', compact(
-            'clients', 'filter', 'search', 'totalClients', 'newThisMonth', 'activeBookings', 'archivedCount'
+            'clients', 'filter', 'search', 'totalClients', 'newThisMonth', 'activeBookings', 'archivedCount', 'archivingSupported'
         ));
     }
 
@@ -71,6 +72,12 @@ class ClientController extends Controller
      */
     public function archive($id)
     {
+        if (!Client::supportsArchiving()) {
+            return redirect()->route('admin.clients')->with('error_message',
+                'Customer archiving is unavailable until the database migration is run.'
+            );
+        }
+
         $client = Client::findOrFail($id);
         $client->update(['archived_at' => now()]);
 
@@ -82,6 +89,12 @@ class ClientController extends Controller
 
     public function restore($id)
     {
+        if (!Client::supportsArchiving()) {
+            return redirect()->route('admin.clients')->with('error_message',
+                'Customer archiving is unavailable until the database migration is run.'
+            );
+        }
+
         $client = Client::findOrFail($id);
         $client->update(['archived_at' => null]);
 

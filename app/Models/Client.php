@@ -5,11 +5,14 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Schema;
 use Laravel\Sanctum\HasApiTokens;
 
 class Client extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
+
+    private static ?bool $archivingSupported = null;
 
     protected $fillable = [
         'account_number', 'firstname', 'middlename', 'lastname', 'birthdate', 'age',
@@ -30,12 +33,29 @@ class Client extends Authenticatable
 
     public function scopeActive($query)
     {
-        return $query->whereNull('archived_at');
+        return static::supportsArchiving()
+            ? $query->whereNull('archived_at')
+            : $query;
     }
 
     public function scopeArchived($query)
     {
-        return $query->whereNotNull('archived_at');
+        return static::supportsArchiving()
+            ? $query->whereNotNull('archived_at')
+            : $query->whereRaw('1 = 0');
+    }
+
+    /**
+     * Archiving was introduced after the first production schema. Keeping this
+     * check here lets the admin panel remain available while a deployment is
+     * waiting for its database migration to be run.
+     */
+    public static function supportsArchiving(): bool
+    {
+        return static::$archivingSupported ??= Schema::hasColumn(
+            (new static)->getTable(),
+            'archived_at',
+        );
     }
 
     public function isArchived(): bool
