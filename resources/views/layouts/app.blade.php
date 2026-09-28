@@ -28,8 +28,8 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            background: #ffffff;
-            border-bottom: 1px solid #e2e8f0;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-light);
             box-shadow: 0 2px 10px rgba(0,0,0,0.04);
         }
         .client-navbar {
@@ -61,7 +61,7 @@
         }
         .client-brand-sub {
             font-size: 0.65rem;
-            color: #64748b;
+            color: var(--text-muted);
             font-weight: 700;
             display: block;
             text-transform: uppercase;
@@ -71,7 +71,7 @@
         /* Desktop Nav Links & Buttons */
         .top-nav-link {
             position: relative;
-            color: #334155;
+            color: var(--text-body);
             text-decoration: none;
             font-weight: 600;
             font-size: 0.95rem;
@@ -92,7 +92,7 @@
             display: inline-flex;
             align-items: center;
             color: #dc2626;
-            background: #fff;
+            background: var(--bg-card);
             border: 1.5px solid #dc2626;
             text-decoration: none;
             font-weight: 700;
@@ -124,7 +124,7 @@
             align-items: center;
             gap: 0.4rem;
             color: #ef4444;
-            background: #fff;
+            background: var(--bg-card);
             border: 1.5px solid #fecaca;
             text-decoration: none;
             font-weight: 700;
@@ -159,7 +159,7 @@
             left: 0;
             bottom: 0;
             width: 290px;
-            background: #ffffff;
+            background: var(--bg-card);
             z-index: 201;
             transform: translateX(-100%);
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -198,12 +198,12 @@
         }
         .drawer-user-role {
             font-size: 0.75rem;
-            color: #94a3b8;
+            color: var(--text-faint);
         }
         .btn-drawer-close {
             background: none;
             border: none;
-            color: #94a3b8;
+            color: var(--text-faint);
             font-size: 1.5rem;
             cursor: pointer;
             padding: 4px;
@@ -223,7 +223,7 @@
             gap: 12px;
             padding: 0.85rem 1rem;
             border-radius: 12px;
-            color: #334155;
+            color: var(--text-body);
             text-decoration: none;
             font-weight: 700;
             font-size: 0.92rem;
@@ -250,9 +250,9 @@
 
         .drawer-footer {
             padding: 1rem 1.5rem;
-            border-top: 1px solid #e2e8f0;
+            border-top: 1px solid var(--border-light);
             font-size: 0.8rem;
-            color: #94a3b8;
+            color: var(--text-faint);
             text-align: center;
         }
 
@@ -263,8 +263,8 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: #ffffff;
-            border-top: 1px solid #e2e8f0;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border-light);
             z-index: 99;
             padding: 0.4rem 0.5rem 0.6rem 0.5rem;
             box-shadow: 0 -4px 15px rgba(0,0,0,0.05);
@@ -276,7 +276,7 @@
             text-align: center;
         }
         .bottom-nav-item {
-            color: #64748b;
+            color: var(--text-muted);
             text-decoration: none;
             font-size: 0.68rem;
             font-weight: 700;
@@ -319,11 +319,11 @@
         .site-footer {
             position: relative;
             overflow: hidden;
-            background: #ffffff;
+            background: var(--bg-card);
             color: #475569;
             margin-top: 3rem;
             padding: 0;
-            border-top: 1px solid #e2e8f0;
+            border-top: 1px solid var(--border-light);
             box-shadow: 0 -2px 10px rgba(0,0,0,0.03);
             text-align: left;
             font-size: 1rem;
@@ -344,7 +344,7 @@
             grid-template-columns: 1.45fr 1fr 1.1fr;
             gap: 3.5rem;
             padding-bottom: 3.5rem;
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 1px solid var(--border-light);
         }
         .footer-brand { display: flex; align-items: center; gap: 1.75rem; margin-bottom: 1.5rem; }
         .footer-brand-logo { width: 96px; height: 96px; object-fit: cover; border-radius: 50%; flex-shrink: 0; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12); }
@@ -353,7 +353,7 @@
             font-size: 0.8rem;
             letter-spacing: 0.25em;
             text-transform: uppercase;
-            color: #64748b;
+            color: var(--text-muted);
             margin-bottom: 0.35rem;
         }
         .footer-title {
@@ -361,23 +361,23 @@
             font-size: 1.9rem;
             font-weight: 800;
             line-height: 1.15;
-            color: #0f172a;
+            color: var(--text-dark);
             margin: 0;
         }
         .footer-title span { display: block; color: #dc2626; }
-        .footer-mission { font-size: 0.95rem; line-height: 1.75; color: #64748b; margin: 0 0 1.5rem; }
+        .footer-mission { font-size: 0.95rem; line-height: 1.75; color: var(--text-muted); margin: 0 0 1.5rem; }
         .footer-badges { display: flex; flex-wrap: wrap; gap: 0.6rem; }
         .footer-badge {
             display: inline-flex;
             align-items: center;
             gap: 0.6rem;
             padding: 0.45rem 0.95rem;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--border-light);
             border-radius: 999px;
-            background: #f8fafc;
+            background: var(--bg-page);
             font-size: 0.8rem;
             line-height: 1.25;
-            color: #334155;
+            color: var(--text-body);
         }
         .footer-badge i { font-size: 1.15rem; color: #dc2626; }
         .footer-heading {
@@ -398,8 +398,8 @@
             justify-content: space-between;
             align-items: center;
             padding: 1rem 0;
-            border-bottom: 1px solid #e2e8f0;
-            color: #0f172a;
+            border-bottom: 1px solid var(--border-light);
+            color: var(--text-dark);
             font-weight: 600;
             transition: color 0.2s, padding 0.2s;
         }
@@ -422,7 +422,7 @@
             font-size: 1.15rem;
         }
         .footer-contact-label { font-weight: 700; color: #dc2626; font-size: 0.95rem; }
-        .footer-contact-value { color: #334155; font-size: 0.95rem; line-height: 1.55; word-break: break-word; }
+        .footer-contact-value { color: var(--text-body); font-size: 0.95rem; line-height: 1.55; word-break: break-word; }
         a.footer-contact-value:hover { color: #dc2626; }
         .footer-bottom {
             display: grid;
@@ -436,8 +436,8 @@
             width: 42px;
             height: 42px;
             border-radius: 50%;
-            border: 1px solid #e2e8f0;
-            color: #334155;
+            border: 1px solid var(--border-light);
+            color: var(--text-body);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -445,13 +445,13 @@
             transition: border-color 0.2s, color 0.2s, background 0.2s;
         }
         .footer-social a:hover { border-color: #dc2626; color: #dc2626; background: #fef2f2; }
-        .footer-copy { text-align: center; font-size: 0.9rem; color: #64748b; }
+        .footer-copy { text-align: center; font-size: 0.9rem; color: var(--text-muted); }
         .footer-copy p { margin: 0; }
         .footer-legal { margin-top: 0.5rem !important; }
         .footer-legal a { color: #dc2626; white-space: nowrap; }
         .footer-legal a:hover { color: #b91c1c; }
         .footer-legal span { color: #cbd5e1; margin: 0 0.75rem; }
-        .footer-credit { text-align: right; font-size: 0.78rem; color: #64748b; }
+        .footer-credit { text-align: right; font-size: 0.78rem; color: var(--text-muted); }
 
         @media (max-width: 992px) {
             .footer-grid { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
@@ -562,7 +562,7 @@
     <header class="client-header">
         <div class="client-navbar">
             <div style="display: flex; align-items: center; gap: 12px;">
-                <button class="btn-drawer-close mobile-only-trigger" style="color: #0f172a;" onclick="toggleDrawer(true)" aria-label="Open Navigation Drawer">
+                <button class="btn-drawer-close mobile-only-trigger" style="color: var(--text-dark);" onclick="toggleDrawer(true)" aria-label="Open Navigation Drawer">
                     <i class="bi bi-list"></i>
                 </button>
                 <a href="{{ route('home') }}" class="client-brand">
@@ -660,7 +660,7 @@
                             <span class="drawer-badge">{{ $unreadCount }}</span>
                         @endif
                     </a>
-                    <div style="border-top: 1px solid #f1f5f9; margin: 0.5rem 0;"></div>
+                    <div style="border-top: 1px solid var(--bg-subtle); margin: 0.5rem 0;"></div>
                     <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
                         @csrf
                         <button type="submit" class="drawer-item" style="width: 100%; border: none; background: none; text-align: left; cursor: pointer; color: #ef4444;">

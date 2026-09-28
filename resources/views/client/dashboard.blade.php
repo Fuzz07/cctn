@@ -4,40 +4,40 @@
 
 @push('styles')
 <style>
-    body { background-color: #f8fafc; color: #0f172a; font-family: system-ui, -apple-system, sans-serif; }
+    body { background-color: var(--bg-page); color: var(--text-dark); font-family: system-ui, -apple-system, sans-serif; }
     
     .c-dash-container { max-width: 1280px; margin: 2rem auto; padding: 0 1.5rem; }
 
     /* Welcome Header */
     .c-dash-welcome { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
-    .c-dash-welcome h1 { font-size: 1.65rem; font-weight: 800; color: #0f172a; margin: 0; line-height: 1.2; }
-    .c-dash-welcome p { color: #64748b; margin: 0.25rem 0 0 0; font-size: 0.9rem; }
+    .c-dash-welcome h1 { font-size: 1.65rem; font-weight: 800; color: var(--text-dark); margin: 0; line-height: 1.2; }
+    .c-dash-welcome p { color: var(--text-muted); margin: 0.25rem 0 0 0; font-size: 0.9rem; }
     .btn-new-appt { background: #dc2626; color: #ffffff !important; padding: 0.75rem 1.35rem; border-radius: 12px; font-weight: 700; font-size: 0.9rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; box-shadow: 0 4px 14px rgba(220, 38, 38, 0.3); transition: all 0.2s ease; }
     .btn-new-appt:hover { background: #b91c1c; transform: translateY(-1px); box-shadow: 0 6px 18px rgba(220, 38, 38, 0.4); }
 
     /* Stat Cards Grid */
     .c-stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; margin-bottom: 2rem; }
-    .c-stat-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 1.25rem 1.5rem; display: flex; align-items: center; gap: 1.1rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03); text-decoration: none; transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s; cursor: pointer; }
-    .c-stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06); border-color: #cbd5e1; }
+    .c-stat-card { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 16px; padding: 1.25rem 1.5rem; display: flex; align-items: center; gap: 1.1rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03); text-decoration: none; transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s; cursor: pointer; }
+    .c-stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06); border-color: var(--border); }
     .c-stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .c-stat-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.2rem; }
-    .c-stat-val { font-size: 1.6rem; font-weight: 800; color: #0f172a; line-height: 1; }
+    .c-stat-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 0.2rem; }
+    .c-stat-val { font-size: 1.6rem; font-weight: 800; color: var(--text-dark); line-height: 1; }
 
     /* Main Workspace Split */
     .c-dash-workspace { display: grid; grid-template-columns: 1fr 340px; gap: 1.75rem; }
 
     /* Cards Styling */
-    .c-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 1.75rem; box-shadow: 0 4px 16px rgba(0,0,0,0.03); margin-bottom: 1.75rem; }
+    .c-card { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 20px; padding: 1.75rem; box-shadow: 0 4px 16px rgba(0,0,0,0.03); margin-bottom: 1.75rem; }
     .c-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
-    .c-card-title { font-size: 1.1rem; font-weight: 700; color: #0f172a; margin: 0; display: flex; align-items: center; gap: 0.5rem; }
+    .c-card-title { font-size: 1.1rem; font-weight: 700; color: var(--text-dark); margin: 0; display: flex; align-items: center; gap: 0.5rem; }
     .c-card-link { color: #dc2626; font-weight: 700; font-size: 0.85rem; text-decoration: none; }
     .c-card-link:hover { text-decoration: underline; }
 
     /* Table Styling */
     .c-table-wrap { overflow-x: auto; }
     .c-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem; }
-    .c-table th { background: #f8fafc; padding: 0.75rem 1rem; font-weight: 700; color: #64748b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0; }
-    .c-table td { padding: 1rem; border-bottom: 1px solid #f1f5f9; color: #334155; }
+    .c-table th { background: var(--bg-page); padding: 0.75rem 1rem; font-weight: 700; color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border-light); }
+    .c-table td { padding: 1rem; border-bottom: 1px solid var(--bg-subtle); color: var(--text-body); }
     .c-table tr:last-child td { border-bottom: none; }
 
     /* Status Pills */
@@ -50,20 +50,20 @@
     .c-form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
     .c-form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
     .c-field { margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.35rem; }
-    .c-label { font-size: 0.82rem; font-weight: 700; color: #334155; }
-    .c-input { padding: 0.65rem 0.85rem; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 0.88rem; color: #0f172a; background: #f8fafc; width: 100%; box-sizing: border-box; }
-    .c-input:focus { outline: none; border-color: #dc2626; background: #ffffff; box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1); }
+    .c-label { font-size: 0.82rem; font-weight: 700; color: var(--text-body); }
+    .c-input { padding: 0.65rem 0.85rem; border: 1px solid var(--border); border-radius: 10px; font-size: 0.88rem; color: var(--text-dark); background: var(--bg-page); width: 100%; box-sizing: border-box; }
+    .c-input:focus { outline: none; border-color: #dc2626; background: var(--bg-card); box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1); }
     .btn-save-profile { background: #0f172a; color: #ffffff; padding: 0.7rem 1.25rem; border-radius: 10px; font-weight: 700; font-size: 0.88rem; border: none; cursor: pointer; transition: background 0.2s; margin-top: 1rem; display: inline-block; }
     .btn-save-profile:hover { background: #dc2626; }
 
     /* Right Profile Card */
     .c-profile-card { text-align: center; }
     .c-avatar-img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 4px solid #ffffff; box-shadow: 0 8px 20px rgba(0,0,0,0.1); margin-bottom: 1rem; }
-    .c-profile-name { font-size: 1.2rem; font-weight: 800; color: #0f172a; margin: 0; }
+    .c-profile-name { font-size: 1.2rem; font-weight: 800; color: var(--text-dark); margin: 0; }
     .c-profile-user { font-size: 0.82rem; font-weight: 700; color: #dc2626; margin: 0.2rem 0 1.25rem 0; }
 
-    .c-info-list { border-top: 1px solid #e2e8f0; padding-top: 1.25rem; text-align: left; display: flex; flex-direction: column; gap: 1rem; }
-    .c-info-item span { font-size: 0.72rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.15rem; }
+    .c-info-list { border-top: 1px solid var(--border-light); padding-top: 1.25rem; text-align: left; display: flex; flex-direction: column; gap: 1rem; }
+    .c-info-item span { font-size: 0.72rem; font-weight: 700; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.15rem; }
     .c-info-item strong { font-size: 0.88rem; color: #1e293b; font-weight: 600; }
 
     @media (max-width: 1024px) {
@@ -163,17 +163,17 @@
                             @forelse ($recentAppointments as $appt)
                                 <tr>
                                     <td>
-                                        <div style="font-weight:700; color:#0f172a;">{{ date('M d, Y', strtotime($appt->preferred_date)) }}</div>
-                                        <div style="font-size:0.8rem; color:#64748b;">{{ date('g:i A', strtotime($appt->preferred_time)) }}</div>
+                                        <div style="font-weight:700; color:var(--text-dark);">{{ date('M d, Y', strtotime($appt->preferred_date)) }}</div>
+                                        <div style="font-size:0.8rem; color:var(--text-muted);">{{ date('g:i A', strtotime($appt->preferred_time)) }}</div>
                                     </td>
                                     <td>
                                         <div style="font-weight:600;">{{ $appt->service->service_name }}</div>
-                                        <div style="font-size:0.8rem; color:#64748b;">~{{ $appt->service->duration_minutes }} mins</div>
+                                        <div style="font-size:0.8rem; color:var(--text-muted);">~{{ $appt->service->duration_minutes }} mins</div>
                                     </td>
                                     <td>
                                         <span class="status-pill {{ $appt->status }}">{{ ucfirst($appt->status) }}</span>
                                     </td>
-                                    <td style="font-family:monospace; font-size:0.85rem; color:#94a3b8;">
+                                    <td style="font-family:monospace; font-size:0.85rem; color:var(--text-faint);">
                                         #{{ str_pad($appt->id, 5, '0', STR_PAD_LEFT) }}
                                     </td>
                                     <td style="text-align: right;">
@@ -189,7 +189,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" style="text-align:center; padding: 2rem; color: #94a3b8;">
+                                    <td colspan="5" style="text-align:center; padding: 2rem; color: var(--text-faint);">
                                         No recent appointments found.
                                     </td>
                                 </tr>
@@ -258,7 +258,7 @@
                             <label class="c-label">Age</label>
                             {{-- Filled from the birth date; the server recomputes it on submit. --}}
                             <input type="number" class="c-input" readonly data-age-for="profile_birthdate"
-                                   style="background:#f1f5f9; cursor:not-allowed;">
+                                   style="background:var(--bg-subtle); cursor:not-allowed;">
                         </div>
                     </div>
 
@@ -309,10 +309,10 @@
                         </div>
                     </div>
 
-                    <hr style="border:0; border-top:1px solid #e2e8f0; margin: 1.5rem 0;">
+                    <hr style="border:0; border-top:1px solid var(--border-light); margin: 1.5rem 0;">
 
                     <div class="c-field">
-                        <label class="c-label">New Password <span style="font-weight:400; color:#94a3b8;">(Leave blank to keep current)</span></label>
+                        <label class="c-label">New Password <span style="font-weight:400; color:var(--text-faint);">(Leave blank to keep current)</span></label>
                         <input type="password" name="new_password" class="c-input" placeholder="••••••••">
                     </div>
 

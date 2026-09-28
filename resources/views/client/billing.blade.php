@@ -5,15 +5,15 @@
 @section('content')
 <div class="fade-in" style="padding: 1.5rem 0;">
     <div style="margin-bottom: 2rem;">
-        <h2 style="font-size: 1.5rem; font-weight: 800; color: #0f172a; margin-bottom: 0.35rem;">Statement of Account &amp; Billing History</h2>
-        <p style="color: #64748b; font-size: 0.88rem; margin: 0;">Track your subscription billing statements and payment history.</p>
+        <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--text-dark); margin-bottom: 0.35rem;">Statement of Account &amp; Billing History</h2>
+        <p style="color: var(--text-muted); font-size: 0.88rem; margin: 0;">Track your subscription billing statements and payment history.</p>
     </div>
 
     <!-- BALANCE & ACCOUNT SUMMARY -->
-    <div class="glass-card" style="margin-bottom: 1.5rem; padding: 1.5rem; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+    <div class="glass-card" style="margin-bottom: 1.5rem; padding: 1.5rem; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
             <div>
-                <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; color: #64748b; margin-bottom: 0.25rem;">Total Outstanding Balance</div>
+                <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; color: var(--text-muted); margin-bottom: 0.25rem;">Total Outstanding Balance</div>
                 <div style="font-size: 2rem; font-weight: 800; color: {{ ($balance > 0) ? '#dc2626' : '#16a34a' }};">
                     ₱{{ number_format($balance, 2) }}
                     @if ($balance == 0)
@@ -21,9 +21,9 @@
                     @endif
                 </div>
             </div>
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 0.85rem 1.25rem; display: flex; align-items: center; gap: 1rem;">
+            <div style="background: var(--bg-page); border: 1px solid var(--border-light); border-radius: 12px; padding: 0.85rem 1.25rem; display: flex; align-items: center; gap: 1rem;">
                 <div>
-                    <span style="font-size: 0.7rem; font-weight: 700; color: #64748b; display: block; text-transform: uppercase;">Your Account Number</span>
+                    <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted); display: block; text-transform: uppercase;">Your Account Number</span>
                     <strong style="font-size: 1.1rem; color: #dc2626; font-family: monospace;">{{ $client->account_number ?? 'N/A' }}</strong>
                 </div>
             </div>
@@ -53,37 +53,37 @@
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem;">
             <div style="background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 1rem;">
                 <div style="font-size: 0.75rem; font-weight: 800; color: #60a5fa; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">● GCash Official Account</div>
-                <div style="font-size: 0.82rem; color: #94a3b8;">Account Name:</div>
+                <div style="font-size: 0.82rem; color: var(--text-faint);">Account Name:</div>
                 <strong style="font-size: 0.95rem; color: #ffffff;">Bogo Cable Television Inc. (BCTVI)</strong>
-                <div style="font-size: 0.82rem; color: #94a3b8; margin-top: 0.35rem;">GCash Number:</div>
+                <div style="font-size: 0.82rem; color: var(--text-faint); margin-top: 0.35rem;">GCash Number:</div>
                 <strong style="font-size: 1.1rem; color: #38bdf8; font-family: monospace;">0917 888 2099</strong>
             </div>
 
             <div style="background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 1rem;">
                 <div style="font-size: 0.75rem; font-weight: 800; color: #4ade80; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">● Maya Official Account</div>
-                <div style="font-size: 0.82rem; color: #94a3b8;">Account Name:</div>
+                <div style="font-size: 0.82rem; color: var(--text-faint);">Account Name:</div>
                 <strong style="font-size: 0.95rem; color: #ffffff;">Bogo Cable Television Inc. (BCTVI)</strong>
-                <div style="font-size: 0.82rem; color: #94a3b8; margin-top: 0.35rem;">Maya Number:</div>
+                <div style="font-size: 0.82rem; color: var(--text-faint); margin-top: 0.35rem;">Maya Number:</div>
                 <strong style="font-size: 1.1rem; color: #4ade80; font-family: monospace;">0917 888 2099</strong>
             </div>
 
             <div style="background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 1rem;">
                 <div style="font-size: 0.75rem; font-weight: 800; color: #c084fc; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">● BDO / BPI Bank Account</div>
-                <div style="font-size: 0.82rem; color: #94a3b8;">Account Name:</div>
+                <div style="font-size: 0.82rem; color: var(--text-faint);">Account Name:</div>
                 <strong style="font-size: 0.95rem; color: #ffffff;">Bogo Cable Television Inc.</strong>
-                <div style="font-size: 0.82rem; color: #94a3b8; margin-top: 0.35rem;">Account Number:</div>
+                <div style="font-size: 0.82rem; color: var(--text-faint); margin-top: 0.35rem;">Account Number:</div>
                 <strong style="font-size: 1rem; color: #e9d5ff; font-family: monospace;">0012-3456-7890 (BDO)</strong>
             </div>
         </div>
     </div>
 
     <!-- STATEMENTS TABLE -->
-    <div class="glass-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
-        <h3 style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin-bottom: 1.25rem;">Billing Statements &amp; Payment History</h3>
+    <div class="glass-card" style="background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 16px; padding: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+        <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--text-dark); margin-bottom: 1.25rem;">Billing Statements &amp; Payment History</h3>
         <div style="overflow-x: auto;">
             <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem;">
                 <thead>
-                    <tr style="border-bottom: 2px solid #e2e8f0; text-align: left; color: #64748b; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                    <tr style="border-bottom: 2px solid var(--border-light); text-align: left; color: var(--text-muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em;">
                         <th style="padding: 0.75rem 1rem;">Account No.</th>
                         <th style="padding: 0.75rem 1rem;">Statement Period</th>
                         <th style="padding: 0.75rem 1rem;">Amount Due</th>
@@ -104,13 +104,13 @@
                                 $badge_bg = '#fee2e2'; $badge_fg = '#dc2626'; $badge_label = 'OVERDUE';
                             }
                         @endphp
-                        <tr style="border-bottom: 1px solid #f1f5f9;">
+                        <tr style="border-bottom: 1px solid var(--bg-subtle);">
                             <td style="padding: 1rem;"><strong style="color: #dc2626; font-family: monospace; font-size: 0.85rem;">{{ $row->account_number }}</strong></td>
                             <td style="padding: 1rem; color: #475569; font-weight: 600;">{{ $row->statement_period }}</td>
                             <td style="padding: 1rem; color: #475569;">₱{{ number_format($row->amount_due, 2) }}</td>
                             <td style="padding: 1rem; color: #dc2626;">₱{{ number_format($row->penalty_amount, 2) }}</td>
-                            <td style="padding: 1rem;"><strong style="color: #0f172a; font-size: 0.95rem;">₱{{ number_format($row->total_amount_due, 2) }}</strong></td>
-                            <td style="padding: 1rem; color: #64748b;">{{ date('M d, Y', strtotime($row->due_date)) }}</td>
+                            <td style="padding: 1rem;"><strong style="color: var(--text-dark); font-size: 0.95rem;">₱{{ number_format($row->total_amount_due, 2) }}</strong></td>
+                            <td style="padding: 1rem; color: var(--text-muted);">{{ date('M d, Y', strtotime($row->due_date)) }}</td>
                             <td style="padding: 1rem;">
                                 <span style="background: {{ $badge_bg }}; color: {{ $badge_fg }}; padding: 0.3rem 0.75rem; border-radius: 20px; font-weight: 800; font-size: 0.72rem; letter-spacing: 0.04em; display: inline-block;">
                                     ● {{ $badge_label }}
@@ -120,14 +120,14 @@
                                         ✓ Settled via digital payment on {{ date('M d, Y', strtotime($row->paid_at)) }}
                                     </div>
                                 @elseif ($st !== 'paid')
-                                    <div style="font-size: 0.7rem; color: #64748b; margin-top: 0.25rem;">
+                                    <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.25rem;">
                                         Pay via digital method with Acc#
                                     </div>
                                 @endif
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="7" style="text-align: center; padding: 2.5rem; color: #94a3b8; font-weight: 500;">No billing statements available yet.</td></tr>
+                        <tr><td colspan="7" style="text-align: center; padding: 2.5rem; color: var(--text-faint); font-weight: 500;">No billing statements available yet.</td></tr>
                     @endforelse
                 </tbody>
             </table>

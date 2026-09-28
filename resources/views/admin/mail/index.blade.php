@@ -14,16 +14,16 @@
         .diagnostic-grid { grid-template-columns: 1fr; }
     }
     .diag-card {
-        background: #ffffff;
+        background: var(--bg-card);
         border-radius: 14px;
         padding: 1.5rem;
-        border: 1px solid #e2e8f0;
+        border: 1px solid var(--border-light);
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
     }
     .diag-title {
         font-size: 1.1rem;
         font-weight: 800;
-        color: #0f172a;
+        color: var(--text-dark);
         margin: 0 0 1rem;
         display: flex;
         align-items: center;
@@ -35,7 +35,7 @@
         font-size: 0.88rem;
     }
     .config-table tr {
-        border-bottom: 1px solid #f1f5f9;
+        border-bottom: 1px solid var(--bg-subtle);
     }
     .config-table tr:last-child {
         border-bottom: none;
@@ -44,12 +44,12 @@
         padding: 0.65rem 0.25rem;
     }
     .config-label {
-        color: #64748b;
+        color: var(--text-muted);
         font-weight: 600;
         width: 40%;
     }
     .config-val {
-        color: #0f172a;
+        color: var(--text-dark);
         font-family: monospace;
         font-weight: 700;
     }
@@ -70,12 +70,12 @@
         font-weight: 700;
     }
     .instruction-box {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
+        background: var(--bg-page);
+        border: 1px solid var(--border-light);
         border-radius: 10px;
         padding: 1rem;
         font-size: 0.85rem;
-        color: #334155;
+        color: var(--text-body);
         line-height: 1.6;
         margin-top: 1rem;
     }
@@ -95,7 +95,7 @@
 <div class="page-header" style="margin-bottom: 1.5rem;">
     <div>
         <h1 class="page-title">Email Diagnostics & SMTP Testing</h1>
-        <p style="color: #64748b; font-size: 0.9rem; margin: 0.25rem 0 0;">
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0.25rem 0 0;">
             Verify Hostinger SMTP connectivity, diagnose email delivery issues, and send test emails to Gmail.
         </p>
     </div>
@@ -204,17 +204,17 @@
             Send Test Email to Recipient
         </h3>
 
-        <p style="font-size: 0.88rem; color: #64748b; margin: 0 0 1.25rem;">
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0 0 1.25rem;">
             Test real email delivery right now. Enter any Gmail or email address below and click <strong>Send Test Email</strong>. If there is an SMTP or Hostinger connection problem, the exact error will be displayed immediately.
         </p>
 
         <form action="{{ route('admin.mail.test.send') }}" method="POST">
             @csrf
             <div class="form-group" style="margin-bottom: 1.25rem;">
-                <label class="form-label" style="font-size:0.85rem; font-weight:700; color:#334155; margin-bottom:0.4rem; display:block;">
+                <label class="form-label" style="font-size:0.85rem; font-weight:700; color:var(--text-body); margin-bottom:0.4rem; display:block;">
                     Recipient Email Address (e.g. your personal Gmail)
                 </label>
-                <input type="email" name="test_email" class="form-control" placeholder="your-email@gmail.com" value="{{ old('test_email', auth('admin')->user()?->email) }}" required style="width:100%; padding:0.75rem; border:1px solid #cbd5e1; border-radius:8px; font-size:0.95rem;">
+                <input type="email" name="test_email" class="form-control" placeholder="your-email@gmail.com" value="{{ old('test_email', auth('admin')->user()?->email) }}" required style="width:100%; padding:0.75rem; border:1px solid var(--border); border-radius:8px; font-size:0.95rem;">
             </div>
 
             <button type="submit" class="btn-primary" style="background:#dc2626; color:#ffffff; border:none; padding:0.85rem 1.5rem; border-radius:8px; font-weight:700; font-size:0.95rem; cursor:pointer; display:inline-flex; align-items:center; gap:0.5rem; width:100%; justify-content:center;">
@@ -233,7 +233,7 @@ MAIL_PASSWORD=your_email_password
 MAIL_ENCRYPTION=ssl
 MAIL_FROM_ADDRESS="noreply@yourdomain.com"
 MAIL_FROM_NAME="CCTN Broadband"</pre>
-            <ul style="margin: 0.5rem 0 0; padding-left: 1.2rem; font-size: 0.8rem; color: #64748b;">
+            <ul style="margin: 0.5rem 0 0; padding-left: 1.2rem; font-size: 0.8rem; color: var(--text-muted);">
                 <li><strong>Crucial:</strong> <code>MAIL_FROM_ADDRESS</code> MUST match <code>MAIL_USERNAME</code> exactly, or Hostinger will reject it with error 550.</li>
                 <li>After editing <code>.env</code> on Hostinger, run <code>php artisan config:clear</code> to reload settings.</li>
             </ul>
@@ -246,7 +246,7 @@ MAIL_FROM_NAME="CCTN Broadband"</pre>
         <h3 class="diag-title" style="color: #475569; font-size: 0.95rem;">
             Recent Email / Notification Logs
         </h3>
-        <div style="background: #0f172a; color: #94a3b8; font-family: monospace; font-size: 0.78rem; padding: 1rem; border-radius: 8px; max-height: 200px; overflow-y: auto;">
+        <div style="background: #0f172a; color: var(--text-faint); font-family: monospace; font-size: 0.78rem; padding: 1rem; border-radius: 8px; max-height: 200px; overflow-y: auto;">
             @foreach($recentLogs as $log)
                 <div style="margin-bottom: 0.25rem; {{ stripos($log, 'error') !== false ? 'color:#f87171;' : (stripos($log, 'warning') !== false ? 'color:#fbbf24;' : '') }}">
                     {{ $log }}

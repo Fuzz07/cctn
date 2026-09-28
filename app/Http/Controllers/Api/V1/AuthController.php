@@ -39,6 +39,12 @@ class AuthController extends Controller
             ]);
         }
 
+        if ($client->isArchived()) {
+            throw ValidationException::withMessages([
+                'login_input' => ['This account has been archived. Please contact BCTVI support.'],
+            ]);
+        }
+
         // Auto-verify on first mobile login
         if (empty($client->email_verified_at)) {
             $client->update(['email_verified_at' => now()]);
@@ -102,6 +108,10 @@ class AuthController extends Controller
                 'password'          => Hash::make(bin2hex(random_bytes(16))),
                 'address_province'  => 'Cebu',
                 'email_verified_at' => now(),
+            ]);
+        } elseif ($client->isArchived()) {
+            throw ValidationException::withMessages([
+                'id_token' => ['This account has been archived. Please contact BCTVI support.'],
             ]);
         } elseif (empty($client->email_verified_at)) {
             $client->update(['email_verified_at' => now()]);

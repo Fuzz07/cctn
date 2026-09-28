@@ -16,7 +16,7 @@ class DashboardController extends Controller
         $admin = Auth::guard('admin')->user();
 
         $stats = [
-            'clients'  => Client::count(),
+            'clients'  => Client::active()->count(),
             'total'    => Appointment::count(),
             'pending'  => Appointment::where('status', 'pending')->count(),
             'approved' => Appointment::where('status', 'approved')->count(),

@@ -125,6 +125,8 @@ Route::prefix('admin')->group(function () {
 
         Route::get('/clients', [AdminClient::class, 'index'])->name('admin.clients');
         Route::get('/clients/stats', [AdminClient::class, 'stats'])->name('admin.clients.stats');
+        Route::post('/clients/{id}/archive', [AdminClient::class, 'archive'])->name('admin.clients.archive');
+        Route::post('/clients/{id}/restore', [AdminClient::class, 'restore'])->name('admin.clients.restore');
 
         Route::get('/services', [AdminService::class, 'index'])->name('admin.services');
         Route::post('/services', [AdminService::class, 'store'])->name('admin.services.store');

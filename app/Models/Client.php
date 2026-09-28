@@ -16,7 +16,7 @@ class Client extends Authenticatable
         'place_of_birth', 'gender', 'civil_status', 'address_barangay',
         'address_municipality', 'address_province', 'contact_no', 'email',
         'username', 'password', 'profile_photo', 'proof_of_billing', 'email_verified_at',
-        'verification_token', 'reset_token', 'reset_expires_at',
+        'verification_token', 'reset_token', 'reset_expires_at', 'archived_at',
     ];
 
     protected $hidden = ['password', 'remember_token', 'verification_token', 'reset_token'];
@@ -24,8 +24,24 @@ class Client extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'reset_expires_at'  => 'datetime',
+        'archived_at'       => 'datetime',
         'birthdate'         => 'date',
     ];
+
+    public function scopeActive($query)
+    {
+        return $query->whereNull('archived_at');
+    }
+
+    public function scopeArchived($query)
+    {
+        return $query->whereNotNull('archived_at');
+    }
+
+    public function isArchived(): bool
+    {
+        return $this->archived_at !== null;
+    }
 
     public function appointments()
     {

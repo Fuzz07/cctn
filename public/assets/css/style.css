@@ -4,6 +4,8 @@
    COLOR VARIABLES - Red & White Theme
    ============================================= */
 :root {
+    color-scheme: light;
+
     --primary:       #dc2626; /* Vibrant red */
     --primary-dark:  #991b1b; /* Dark red */
     --primary-light: #ef4444; /* Light red */
@@ -11,15 +13,18 @@
 
     --bg-page:    #f8fafc; /* Slate-50 light background */
     --bg-card:    #ffffff; /* White card */
+    --bg-subtle:  #f1f5f9; /* Subtle fill: zebra rows, nav-link hover, sidebars */
     --bg-sidebar: #ffffff; /* White sidebar */
     --bg-topbar:  #ffffff; /* White topbar */
 
     --text-dark:  #0f172a; /* Slate-900 heading text */
     --text-body:  #334155; /* Slate-700 body text */
     --text-muted: #64748b; /* Slate-500 muted text */
+    --text-faint: #94a3b8; /* Slate-400 faintest text (timestamps, hints) */
     --text-light: #ffffff;
 
-    --border:      #cbd5e1; /* Slate-300 light border */
+    --border:       #cbd5e1; /* Slate-300 stronger border (inputs) */
+    --border-light: #e2e8f0; /* Slate-200 subtle border (card/table dividers) */
     --border-focus: #dc2626;
 
     --success: #10b981;
@@ -49,6 +54,102 @@
     --border-color: var(--border);
     --border-hover: var(--primary);
 }
+
+/* =============================================
+   DARK MODE
+   Toggled by adding data-theme="dark" to <html>.
+   An inline script in each layout's <head> sets this before first paint
+   (from localStorage, falling back to the OS preference) so there is no
+   flash of the wrong theme. See .theme-toggle-btn in each layout for the
+   switch itself.
+   ============================================= */
+:root[data-theme="dark"] {
+    color-scheme: dark;
+
+    --primary:       #ef4444;
+    --primary-dark:  #dc2626;
+    --primary-light: #f87171;
+    --primary-glow:  rgba(239, 68, 68, 0.28);
+
+    --bg-page:    #0b0f18;
+    --bg-card:    #151b28;
+    --bg-subtle:  #1b2231;
+    --bg-sidebar: #0b132b;
+    --bg-topbar:  #151b28;
+
+    --text-dark:  #f1f5f9;
+    --text-body:  #cbd5e1;
+    --text-muted: #94a3b8;
+    --text-faint: #64748b;
+    --text-light: #ffffff;
+
+    --border:       #3a4356;
+    --border-light: #262e3f;
+
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.35), 0 1px 2px rgba(0,0,0,0.25);
+    --shadow-md: 0 4px 14px rgba(0,0,0,0.45);
+    --shadow-lg: 0 12px 34px rgba(0,0,0,0.55);
+}
+
+:root[data-theme="dark"] body {
+    background-color: var(--bg-page);
+    color: var(--text-body);
+}
+
+/* Status pills/badges keep their brand hue but get a tinted-dark background
+   instead of a pastel one, computed from their own text color so every
+   badge-* variant across the app (there are ~25) is covered without
+   hand-listing each class. */
+:root[data-theme="dark"] .badge,
+:root[data-theme="dark"] [class^="badge-"],
+:root[data-theme="dark"] [class*=" badge-"] {
+    background: color-mix(in srgb, currentColor 20%, var(--bg-page)) !important;
+    border-color: color-mix(in srgb, currentColor 45%, var(--bg-page)) !important;
+}
+
+:root[data-theme="dark"] .alert-success { background: color-mix(in srgb, #10b981 18%, var(--bg-page)); border-color: color-mix(in srgb, #10b981 40%, var(--bg-page)); color: #6ee7b7; }
+:root[data-theme="dark"] .alert-danger  { background: color-mix(in srgb, #ef4444 18%, var(--bg-page)); border-color: color-mix(in srgb, #ef4444 40%, var(--bg-page)); color: #fca5a5; }
+:root[data-theme="dark"] .alert-warning { background: color-mix(in srgb, #f59e0b 18%, var(--bg-page)); border-color: color-mix(in srgb, #f59e0b 40%, var(--bg-page)); color: #fcd34d; }
+
+:root[data-theme="dark"] .table th { background: var(--bg-subtle); }
+:root[data-theme="dark"] .table tbody tr:hover td { background: var(--bg-subtle); }
+
+:root[data-theme="dark"] input,
+:root[data-theme="dark"] select,
+:root[data-theme="dark"] textarea {
+    background-color: var(--bg-card);
+    color: var(--text-dark);
+    border-color: var(--border);
+}
+:root[data-theme="dark"] input::placeholder,
+:root[data-theme="dark"] textarea::placeholder {
+    color: var(--text-faint);
+}
+
+/* Theme toggle switch (see layouts/app.blade.php and layouts/admin.blade.php) */
+.theme-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid var(--border-light);
+    background: var(--bg-subtle);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s;
+    flex-shrink: 0;
+}
+.theme-toggle-btn:hover {
+    color: var(--primary);
+    border-color: var(--primary);
+    transform: translateY(-1px);
+}
+.theme-toggle-btn svg { width: 18px; height: 18px; }
+.theme-toggle-btn .icon-sun { display: none; }
+:root[data-theme="dark"] .theme-toggle-btn .icon-sun { display: block; }
+:root[data-theme="dark"] .theme-toggle-btn .icon-moon { display: none; }
 
 /* =============================================
    RESET & BASE
@@ -1101,7 +1202,7 @@ html, body {
     height: 100vh;
     min-height: 0;
     width: 100%;
-    background-color: #f8fafc;
+    background-color: var(--bg-page);
     overflow: hidden;
 }
 
@@ -1201,8 +1302,8 @@ body.admin-app {
 
 .admin-topbar {
     height: 68px;
-    background: #ffffff;
-    border-bottom: 1px solid #e2e8f0;
+    background: var(--bg-topbar);
+    border-bottom: 1px solid var(--border-light);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -1217,7 +1318,7 @@ body.admin-app {
 .admin-content-pane {
     flex: 1;
     padding: 2rem 2.25rem;
-    background-color: #f8fafc;
+    background-color: var(--bg-page);
     min-height: 0;
     height: auto;
     overflow-y: auto;
@@ -1303,9 +1404,9 @@ body.admin-dashboard-page .admin-main-wrapper > footer {
 }
 
 .admin-burger-btn {
-    background: #f1f5f9;
-    border: 1px solid #e2e8f0;
-    color: #0f172a;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border-light);
+    color: var(--text-dark);
     cursor: pointer;
     display: flex;
     align-items: center;

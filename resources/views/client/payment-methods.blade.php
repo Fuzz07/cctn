@@ -12,8 +12,8 @@
     }
 
     .pm-card {
-        background: #ffffff;
-        border: 1.5px solid #e2e8f0;
+        background: var(--bg-card);
+        border: 1.5px solid var(--border-light);
         border-radius: 18px;
         padding: 1.5rem;
         position: relative;
@@ -28,7 +28,7 @@
     .pm-card:hover {
         transform: translateY(-3px);
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-        border-color: #cbd5e1;
+        border-color: var(--border);
     }
 
     .pm-card.is-default {
@@ -74,7 +74,7 @@
     .pm-type-title {
         font-size: 1.15rem;
         font-weight: 800;
-        color: #0f172a;
+        color: var(--text-dark);
         margin: 0 0 0.25rem 0;
     }
 
@@ -89,7 +89,7 @@
 
     .pm-account-name {
         font-size: 0.85rem;
-        color: #64748b;
+        color: var(--text-muted);
         font-weight: 600;
         margin: 0;
         text-transform: uppercase;
@@ -101,7 +101,7 @@
         justify-content: space-between;
         margin-top: 1.5rem;
         padding-top: 1rem;
-        border-top: 1px solid #f1f5f9;
+        border-top: 1px solid var(--bg-subtle);
         gap: 0.5rem;
     }
 
@@ -120,9 +120,9 @@
     }
 
     .btn-pm-default {
-        background: #f8fafc;
+        background: var(--bg-page);
         color: #475569;
-        border-color: #cbd5e1;
+        border-color: var(--border);
     }
     .btn-pm-default:hover {
         background: #dc2626;
@@ -156,7 +156,7 @@
         display: flex;
     }
     .pm-modal-content {
-        background: #ffffff;
+        background: var(--bg-card);
         border-radius: 20px;
         max-width: 520px;
         width: 100%;
@@ -176,11 +176,11 @@
     <!-- Page Header -->
     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
         <div>
-            <h1 style="font-size: 1.65rem; font-weight: 800; color: #0f172a; margin: 0 0 0.35rem 0;">Payment Methods</h1>
-            <p style="color: #64748b; font-size: 0.9rem; margin: 0;">Manage your digital payment methods for broadband bookings and bill payments.</p>
+            <h1 style="font-size: 1.65rem; font-weight: 800; color: var(--text-dark); margin: 0 0 0.35rem 0;">Payment Methods</h1>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0;">Manage your digital payment methods for broadband bookings and bill payments.</p>
         </div>
         <div style="display: flex; gap: 0.75rem;">
-            <a href="{{ route('client.billing') }}" class="btn" style="background: #f1f5f9; color: #334155; font-weight: 700; border-radius: 10px; padding: 0.65rem 1.2rem; text-decoration: none;">
+            <a href="{{ route('client.billing') }}" class="btn" style="background: var(--bg-subtle); color: var(--text-body); font-weight: 700; border-radius: 10px; padding: 0.65rem 1.2rem; text-decoration: none;">
                 <i class="bi bi-arrow-left"></i> View Billing
             </a>
             <button type="button" class="btn" onclick="openAddModal()" style="background: #dc2626; color: #ffffff; font-weight: 700; border-radius: 10px; padding: 0.65rem 1.25rem; display: inline-flex; align-items: center; gap: 0.5rem; border: none; cursor: pointer; box-shadow: 0 4px 14px rgba(220, 38, 38, 0.3);">
@@ -196,7 +196,7 @@
         </div>
         <div>
             <h4 style="font-size: 1.05rem; font-weight: 800; margin: 0 0 0.25rem; color: #ffffff;">Secure Digital Payments Only</h4>
-            <p style="font-size: 0.85rem; color: #94a3b8; margin: 0; line-height: 1.5;">
+            <p style="font-size: 0.85rem; color: var(--text-faint); margin: 0; line-height: 1.5;">
                 Client transactions are processed seamlessly via digital payment methods (GCash, Maya, Bank Transfer, Card). Save your preferred method below to auto-select it when booking appointments or paying monthly statements.
             </p>
         </div>
@@ -220,12 +220,12 @@
                         </div>
 
                         <div class="pm-type-title">{{ $pm->provider_name }}</div>
-                        <div style="font-size: 0.78rem; font-weight: 700; color: #94a3b8; text-transform: uppercase;">{{ $pm->formatted_type }}</div>
+                        <div style="font-size: 0.78rem; font-weight: 700; color: var(--text-faint); text-transform: uppercase;">{{ $pm->formatted_type }}</div>
                         <div class="pm-account-num">{{ $pm->masked_account_number }}</div>
                         <div class="pm-account-name">{{ $pm->account_name }}</div>
 
                         @if ($pm->notes)
-                            <div style="font-size: 0.78rem; color: #64748b; margin-top: 0.5rem; font-style: italic;">
+                            <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.5rem; font-style: italic;">
                                 "{{ $pm->notes }}"
                             </div>
                         @endif
@@ -247,7 +247,7 @@
                             @endif
                         </div>
                         <div style="display: flex; gap: 0.35rem;">
-                            <button type="button" class="btn-pm-action" style="background: #f8fafc; color: #475569; border-color: #e2e8f0;" onclick="openEditModal({{ json_encode($pm) }})">
+                            <button type="button" class="btn-pm-action" style="background: var(--bg-page); color: #475569; border-color: var(--border-light);" onclick="openEditModal({{ json_encode($pm) }})">
                                 <i class="bi bi-pencil"></i>
                             </button>
                             <form action="{{ route('client.payment-methods.destroy', $pm->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to remove this payment method?');" style="display: inline;">
@@ -264,12 +264,12 @@
         </div>
     @else
         <!-- Empty State -->
-        <div style="background: #ffffff; border: 2px dashed #cbd5e1; border-radius: 20px; padding: 4rem 2rem; text-align: center;">
+        <div style="background: var(--bg-card); border: 2px dashed var(--border); border-radius: 20px; padding: 4rem 2rem; text-align: center;">
             <div style="width: 72px; height: 72px; background: #fef2f2; color: #dc2626; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 2rem; margin-bottom: 1.25rem;">
                 <i class="bi bi-credit-card"></i>
             </div>
-            <h3 style="font-size: 1.25rem; font-weight: 800; color: #0f172a; margin: 0 0 0.5rem 0;">No Payment Methods Added Yet</h3>
-            <p style="color: #64748b; font-size: 0.9rem; max-width: 440px; margin: 0 auto 1.5rem auto;">
+            <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-dark); margin: 0 0 0.5rem 0;">No Payment Methods Added Yet</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; max-width: 440px; margin: 0 auto 1.5rem auto;">
                 Add your preferred GCash, Maya, Bank Transfer, or Debit/Credit Card to quickly settle appointments and bills.
             </p>
             <button type="button" onclick="openAddModal()" class="btn" style="background: #dc2626; color: #ffffff; font-weight: 700; border-radius: 10px; padding: 0.75rem 1.5rem; border: none; cursor: pointer;">
@@ -286,15 +286,15 @@
             <div style="font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
                 <i class="bi bi-plus-circle-fill" style="color: #dc2626;"></i> Add Digital Payment Method
             </div>
-            <button type="button" onclick="closeAddModal()" style="background: none; border: none; color: #94a3b8; font-size: 1.4rem; cursor: pointer;"><i class="bi bi-x-lg"></i></button>
+            <button type="button" onclick="closeAddModal()" style="background: none; border: none; color: var(--text-faint); font-size: 1.4rem; cursor: pointer;"><i class="bi bi-x-lg"></i></button>
         </div>
 
         <form action="{{ route('client.payment-methods.store') }}" method="POST" style="padding: 1.5rem;">
             @csrf
             
             <div style="margin-bottom: 1rem;">
-                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 0.35rem;">Payment Category *</label>
-                <select name="payment_type" id="add_payment_type" class="form-control" style="width: 100%; padding: 0.7rem; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 600;" required onchange="onTypeChanged()">
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-body); margin-bottom: 0.35rem;">Payment Category *</label>
+                <select name="payment_type" id="add_payment_type" class="form-control" style="width: 100%; padding: 0.7rem; border-radius: 8px; border: 1px solid var(--border); font-weight: 600;" required onchange="onTypeChanged()">
                     <option value="gcash">GCash (E-Wallet)</option>
                     <option value="maya">Maya (E-Wallet)</option>
                     <option value="bank_transfer">Bank Transfer (BDO, BPI, UnionBank, etc.)</option>
@@ -304,32 +304,32 @@
             </div>
 
             <div style="margin-bottom: 1rem;">
-                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 0.35rem;">Provider / Bank Name *</label>
-                <input type="text" name="provider_name" id="add_provider_name" class="form-control" value="GCash" style="width: 100%; padding: 0.7rem; border-radius: 8px; border: 1px solid #cbd5e1;" required placeholder="e.g. GCash, Maya, BDO, BPI">
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-body); margin-bottom: 0.35rem;">Provider / Bank Name *</label>
+                <input type="text" name="provider_name" id="add_provider_name" class="form-control" value="GCash" style="width: 100%; padding: 0.7rem; border-radius: 8px; border: 1px solid var(--border);" required placeholder="e.g. GCash, Maya, BDO, BPI">
             </div>
 
             <div style="margin-bottom: 1rem;">
-                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 0.35rem;">Account Holder Name *</label>
-                <input type="text" name="account_name" class="form-control" value="{{ $client->firstname }} {{ $client->lastname }}" style="width: 100%; padding: 0.7rem; border-radius: 8px; border: 1px solid #cbd5e1;" required placeholder="Registered full name on account">
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-body); margin-bottom: 0.35rem;">Account Holder Name *</label>
+                <input type="text" name="account_name" class="form-control" value="{{ $client->firstname }} {{ $client->lastname }}" style="width: 100%; padding: 0.7rem; border-radius: 8px; border: 1px solid var(--border);" required placeholder="Registered full name on account">
             </div>
 
             <div style="margin-bottom: 1rem;">
-                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 0.35rem;" id="account_num_label">Mobile / Account Number *</label>
-                <input type="text" name="account_number" id="add_account_number" class="form-control" value="{{ $client->contact_no }}" style="width: 100%; padding: 0.7rem; border-radius: 8px; border: 1px solid #cbd5e1;" required placeholder="0917XXXXXXX or Account / Card Number">
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-body); margin-bottom: 0.35rem;" id="account_num_label">Mobile / Account Number *</label>
+                <input type="text" name="account_number" id="add_account_number" class="form-control" value="{{ $client->contact_no }}" style="width: 100%; padding: 0.7rem; border-radius: 8px; border: 1px solid var(--border);" required placeholder="0917XXXXXXX or Account / Card Number">
             </div>
 
             <div style="margin-bottom: 1rem;">
-                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 0.35rem;">Notes / Remarks (Optional)</label>
-                <input type="text" name="notes" class="form-control" style="width: 100%; padding: 0.7rem; border-radius: 8px; border: 1px solid #cbd5e1;" placeholder="e.g. Primary personal GCash number">
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-body); margin-bottom: 0.35rem;">Notes / Remarks (Optional)</label>
+                <input type="text" name="notes" class="form-control" style="width: 100%; padding: 0.7rem; border-radius: 8px; border: 1px solid var(--border);" placeholder="e.g. Primary personal GCash number">
             </div>
 
             <div style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
                 <input type="checkbox" name="is_default" id="add_is_default" value="1" {{ $paymentMethods->isEmpty() ? 'checked' : '' }} style="width: 18px; height: 18px; accent-color: #dc2626;">
-                <label for="add_is_default" style="font-size: 0.85rem; font-weight: 700; color: #0f172a; cursor: pointer;">Set as default preferred payment method</label>
+                <label for="add_is_default" style="font-size: 0.85rem; font-weight: 700; color: var(--text-dark); cursor: pointer;">Set as default preferred payment method</label>
             </div>
 
             <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
-                <button type="button" onclick="closeAddModal()" class="btn" style="background: #f1f5f9; color: #475569; font-weight: 700; border-radius: 8px; padding: 0.65rem 1.25rem; border: none; cursor: pointer;">Cancel</button>
+                <button type="button" onclick="closeAddModal()" class="btn" style="background: var(--bg-subtle); color: #475569; font-weight: 700; border-radius: 8px; padding: 0.65rem 1.25rem; border: none; cursor: pointer;">Cancel</button>
                 <button type="submit" class="btn" style="background: #dc2626; color: #ffffff; font-weight: 700; border-radius: 8px; padding: 0.65rem 1.5rem; border: none; cursor: pointer;">Save Method</button>
             </div>
         </form>
@@ -343,7 +343,7 @@
             <div style="font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
                 <i class="bi bi-pencil-square" style="color: #dc2626;"></i> Edit Payment Method
             </div>
-            <button type="button" onclick="closeEditModal()" style="background: none; border: none; color: #94a3b8; font-size: 1.4rem; cursor: pointer;"><i class="bi bi-x-lg"></i></button>
+            <button type="button" onclick="closeEditModal()" style="background: none; border: none; color: var(--text-faint); font-size: 1.4rem; cursor: pointer;"><i class="bi bi-x-lg"></i></button>
         </div>
 
         <form id="editForm" method="POST" style="padding: 1.5rem;">
@@ -351,32 +351,32 @@
             @method('PUT')
             
             <div style="margin-bottom: 1rem;">
-                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 0.35rem;">Provider / Bank Name *</label>
-                <input type="text" name="provider_name" id="edit_provider_name" class="form-control" style="width: 100%; padding: 0.7rem; border-radius: 8px; border: 1px solid #cbd5e1;" required>
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-body); margin-bottom: 0.35rem;">Provider / Bank Name *</label>
+                <input type="text" name="provider_name" id="edit_provider_name" class="form-control" style="width: 100%; padding: 0.7rem; border-radius: 8px; border: 1px solid var(--border);" required>
             </div>
 
             <div style="margin-bottom: 1rem;">
-                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 0.35rem;">Account Holder Name *</label>
-                <input type="text" name="account_name" id="edit_account_name" class="form-control" style="width: 100%; padding: 0.7rem; border-radius: 8px; border: 1px solid #cbd5e1;" required>
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-body); margin-bottom: 0.35rem;">Account Holder Name *</label>
+                <input type="text" name="account_name" id="edit_account_name" class="form-control" style="width: 100%; padding: 0.7rem; border-radius: 8px; border: 1px solid var(--border);" required>
             </div>
 
             <div style="margin-bottom: 1rem;">
-                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 0.35rem;">Account / Mobile Number *</label>
-                <input type="text" name="account_number" id="edit_account_number" class="form-control" style="width: 100%; padding: 0.7rem; border-radius: 8px; border: 1px solid #cbd5e1;" required>
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-body); margin-bottom: 0.35rem;">Account / Mobile Number *</label>
+                <input type="text" name="account_number" id="edit_account_number" class="form-control" style="width: 100%; padding: 0.7rem; border-radius: 8px; border: 1px solid var(--border);" required>
             </div>
 
             <div style="margin-bottom: 1rem;">
-                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 0.35rem;">Notes (Optional)</label>
-                <input type="text" name="notes" id="edit_notes" class="form-control" style="width: 100%; padding: 0.7rem; border-radius: 8px; border: 1px solid #cbd5e1;">
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-body); margin-bottom: 0.35rem;">Notes (Optional)</label>
+                <input type="text" name="notes" id="edit_notes" class="form-control" style="width: 100%; padding: 0.7rem; border-radius: 8px; border: 1px solid var(--border);">
             </div>
 
             <div style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
                 <input type="checkbox" name="is_default" id="edit_is_default" value="1" style="width: 18px; height: 18px; accent-color: #dc2626;">
-                <label for="edit_is_default" style="font-size: 0.85rem; font-weight: 700; color: #0f172a; cursor: pointer;">Set as default preferred payment method</label>
+                <label for="edit_is_default" style="font-size: 0.85rem; font-weight: 700; color: var(--text-dark); cursor: pointer;">Set as default preferred payment method</label>
             </div>
 
             <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
-                <button type="button" onclick="closeEditModal()" class="btn" style="background: #f1f5f9; color: #475569; font-weight: 700; border-radius: 8px; padding: 0.65rem 1.25rem; border: none; cursor: pointer;">Cancel</button>
+                <button type="button" onclick="closeEditModal()" class="btn" style="background: var(--bg-subtle); color: #475569; font-weight: 700; border-radius: 8px; padding: 0.65rem 1.25rem; border: none; cursor: pointer;">Cancel</button>
                 <button type="submit" class="btn" style="background: #dc2626; color: #ffffff; font-weight: 700; border-radius: 8px; padding: 0.65rem 1.5rem; border: none; cursor: pointer;">Update Method</button>
             </div>
         </form>

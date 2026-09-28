@@ -59,6 +59,10 @@ class AuthController extends Controller
             return back()->withErrors(['password' => 'Incorrect password. Please try again.'])->withInput();
         }
 
+        if ($client->isArchived()) {
+            return back()->withErrors(['login_input' => 'This account has been archived. Please contact BCTVI support.'])->withInput();
+        }
+
         // Auto-verify email if not verified
         if (empty($client->email_verified_at)) {
             $client->update(['email_verified_at' => now()]);
@@ -291,6 +295,14 @@ class AuthController extends Controller
             session()->flash('success_message', "Welcome, {$client->firstname}! Your BCTVI account has been created with Google. Your account number is {$client->account_number}. Please complete your address and contact details in your profile.");
 
             return redirect()->route('client.dashboard');
+        }
+
+        if ($client->isArchived()) {
+            $message = 'This account has been archived. Please contact BCTVI support.';
+            if ($fromApp) {
+                return $this->redirectToApp(null, $message);
+            }
+            return redirect()->route('login')->withErrors(['login_input' => $message]);
         }
 
         if ($fromApp) {

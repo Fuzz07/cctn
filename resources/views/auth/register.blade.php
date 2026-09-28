@@ -57,16 +57,16 @@
         .auth-right { width: 100%; max-width: 720px; margin: 0; background: transparent; display: flex; flex-direction: column; align-items: center; position: static; padding: 0; }
         .auth-back-link { position: fixed; top: 1.5rem; right: 1.5rem; display: inline-flex; align-items: center; gap: 0.5rem; color: #e2e8f0; text-decoration: none; font-weight: 700; font-size: 0.88rem; transition: color 0.2s; z-index: 10; text-shadow: 0 1px 6px rgba(0,0,0,0.4); }
         .auth-back-link:hover { color: #ffffff; }
-        .auth-form-card { background: #fff; width: 100%; max-width: 720px; border-radius: 20px; padding: 3rem 2.5rem; box-shadow: 0 25px 60px rgba(0,0,0,0.35); border: 1px solid #e5e7eb; position: relative; z-index: 2; margin-top: 0; }
+        .auth-form-card { background: var(--bg-card); width: 100%; max-width: 720px; border-radius: 20px; padding: 3rem 2.5rem; box-shadow: 0 25px 60px rgba(0,0,0,0.35); border: 1px solid #e5e7eb; position: relative; z-index: 2; margin-top: 0; }
         .auth-card-head { margin-bottom: 2rem; }
-        .auth-form-title { text-align: center; font-family: var(--font-heading); font-size: 1.6rem; font-weight: 800; color: #0f172a; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+        .auth-form-title { text-align: center; font-family: var(--font-heading); font-size: 1.6rem; font-weight: 800; color: var(--text-dark); margin-bottom: 0.5rem; letter-spacing: -0.02em; }
         .auth-form-sub { text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem; }
         
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 1.25rem; margin-bottom: 1.5rem; }
         .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem 1.25rem; margin-bottom: 1.5rem; }
         .form-full { grid-column: 1 / -1; }
 
-        .field-hint { font-size: 0.78rem; color: #64748b; margin-top: 0.4rem; line-height: 1.5; }
+        .field-hint { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.4rem; line-height: 1.5; }
 
         /* ── Multi-step wizard ──
            Steps are stacked by default; the .js-wizard class (added by script)
@@ -76,19 +76,19 @@
         .wizard-step { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.45rem; position: relative; }
         .wizard-step:not(:first-child)::before {
             content: ''; position: absolute; top: 17px; right: 50%; width: 100%; height: 3px;
-            background: #e2e8f0; z-index: 0;
+            background: var(--border-light); z-index: 0;
         }
         .wizard-step.done::before, .wizard-step.active::before { background: var(--primary); }
         .wizard-step-num {
             width: 36px; height: 36px; border-radius: 50%;
-            background: #e2e8f0; color: #64748b;
+            background: var(--border-light); color: var(--text-muted);
             display: flex; align-items: center; justify-content: center;
             font-weight: 800; font-size: 0.9rem; position: relative; z-index: 1;
             transition: background 0.2s, color 0.2s;
         }
         .wizard-step.active .wizard-step-num { background: var(--primary); color: #fff; box-shadow: 0 0 0 4px rgba(220,38,38,0.15); }
         .wizard-step.done .wizard-step-num { background: var(--primary); color: #fff; }
-        .wizard-step-label { font-size: 0.78rem; font-weight: 700; color: #94a3b8; text-align: center; }
+        .wizard-step-label { font-size: 0.78rem; font-weight: 700; color: var(--text-faint); text-align: center; }
         .wizard-step.active .wizard-step-label, .wizard-step.done .wizard-step-label { color: var(--primary); }
 
         .js-wizard .form-step { display: none; }
@@ -101,7 +101,7 @@
             display: inline-flex; align-items: center; gap: 0.5rem;
             padding: 0.85rem 1.75rem; border-radius: 8px;
             font-weight: 700; font-size: 1rem; cursor: pointer;
-            border: 1px solid #cbd5e1; background: #fff; color: var(--text-dark);
+            border: 1px solid var(--border); background: var(--bg-card); color: var(--text-dark);
             transition: all 0.2s;
         }
         .btn-wizard:hover { border-color: var(--primary); color: var(--primary); }
@@ -113,14 +113,14 @@
         .btn-auth-primary { margin-top: 0; margin-left: auto; width: auto; }
         
         .auth-input-group label { display: block; font-size: 0.85rem; font-weight: 700; color: var(--text-dark); margin-bottom: 0.5rem; }
-        .auth-input { width: 100%; padding: 0.8rem 1rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; color: var(--text-dark); transition: border-color 0.2s; box-sizing: border-box;}
+        .auth-input { width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem; color: var(--text-dark); transition: border-color 0.2s; box-sizing: border-box;}
         .auth-input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(220,38,38,0.1); }
         .auth-input.name-invalid { border-color: #dc2626 !important; box-shadow: 0 0 0 3px rgba(220,38,38,0.12) !important; }
         .name-error-msg { display: none; font-size: 0.78rem; color: #dc2626; font-weight: 600; margin-top: 0.35rem; align-items: center; gap: 0.3rem; }
         .name-error-msg.visible { display: flex; }
-        select.auth-input { background: #fff url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 1rem center; -webkit-appearance: none; -moz-appearance: none; appearance: none; padding-right: 2.5rem; }
+        select.auth-input { background: var(--bg-card) url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 1rem center; -webkit-appearance: none; -moz-appearance: none; appearance: none; padding-right: 2.5rem; }
 
-        .form-section-title { font-size: 1.1rem; font-weight: 700; color: #0f172a; margin: 2rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid #f1f5f9; display: flex; align-items: center; gap: 0.5rem; }
+        .form-section-title { font-size: 1.1rem; font-weight: 700; color: var(--text-dark); margin: 2rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bg-subtle); display: flex; align-items: center; gap: 0.5rem; }
         
         .btn-auth-primary { width: 100%; background: var(--primary); color: #fff; padding: 1rem; border-radius: 8px; font-weight: 700; font-size: 1.05rem; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 0.5rem; box-shadow: 0 4px 12px rgba(220,38,38,0.25); transition: background 0.2s, transform 0.2s; margin-top: 2rem; }
         .btn-auth-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
@@ -199,14 +199,14 @@
             </div>
 
             <div id="googleBlock">
-            <a href="{{ route('google.redirect') }}" style="display: flex; justify-content: center; align-items: center; gap: 0.5rem; width: 100%; background: #fff; color: var(--text-dark); padding: 0.85rem; border-radius: 8px; font-weight: 700; font-size: 1rem; border: 1px solid #cbd5e1; text-decoration: none; box-sizing: border-box; margin-bottom: 1.25rem;">
+            <a href="{{ route('google.redirect') }}" style="display: flex; justify-content: center; align-items: center; gap: 0.5rem; width: 100%; background: var(--bg-card); color: var(--text-dark); padding: 0.85rem; border-radius: 8px; font-weight: 700; font-size: 1rem; border: 1px solid var(--border); text-decoration: none; box-sizing: border-box; margin-bottom: 1.25rem;">
                 <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303C33.654 32.657 29.223 36 24 36c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="#FF3D00" d="m6.306 14.691 6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/></svg>
                 Sign up with Google
             </a>
-            <div style="display: flex; align-items: center; text-align: center; color: #94a3b8; font-size: 0.85rem; margin-bottom: 1.5rem;">
-                <span style="flex: 1; border-bottom: 1px solid #e2e8f0;"></span>
+            <div style="display: flex; align-items: center; text-align: center; color: var(--text-faint); font-size: 0.85rem; margin-bottom: 1.5rem;">
+                <span style="flex: 1; border-bottom: 1px solid var(--border-light);"></span>
                 <span style="padding: 0 0.75rem;">or fill in the form below</span>
-                <span style="flex: 1; border-bottom: 1px solid #e2e8f0;"></span>
+                <span style="flex: 1; border-bottom: 1px solid var(--border-light);"></span>
             </div>
             </div>
 
@@ -266,7 +266,7 @@
                             <label>Age *</label>
                             {{-- Filled from the birth date above; the server recomputes it on submit. --}}
                             <input type="number" name="age" id="age" class="auth-input" value="{{ old('age') }}" readonly
-                                   data-age-for="birthdate" style="background:#f1f5f9; cursor:not-allowed;">
+                                   data-age-for="birthdate" style="background:var(--bg-subtle); cursor:not-allowed;">
                         </div>
                         <div class="auth-input-group">
                             <label>Gender *</label>
@@ -327,7 +327,7 @@
                     <div class="form-grid-3">
                         <div class="auth-input-group">
                             <label>Province *</label>
-                            <input type="text" name="address_province" class="auth-input" value="Cebu" readonly style="background:#f1f5f9;">
+                            <input type="text" name="address_province" class="auth-input" value="Cebu" readonly style="background:var(--bg-subtle);">
                         </div>
                         <div class="auth-input-group">
                             <label>Municipality *</label>

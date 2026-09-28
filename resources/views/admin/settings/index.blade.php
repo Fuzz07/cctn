@@ -9,11 +9,11 @@
     @media (max-width: 900px) { .settings-page { grid-template-columns: 1fr; } }
 
     /* ── Tab Nav ── */
-    .settings-nav { background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; overflow: hidden; position: sticky; top: 1.5rem; }
-    .settings-nav-header { padding: 1rem 1.25rem; border-bottom: 1px solid #e2e8f0; background: #f8fafc; }
-    .settings-nav-title { font-size: 0.7rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em; }
-    .settings-nav-link { display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem 1.25rem; color: #64748b; font-size: 0.875rem; font-weight: 600; text-decoration: none; border-left: 3px solid transparent; transition: all 0.15s; cursor: pointer; background: none; border-top: none; border-right: none; border-bottom: none; width: 100%; text-align: left; }
-    .settings-nav-link:hover { background: #f8fafc; color: #0f172a; }
+    .settings-nav { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 14px; overflow: hidden; position: sticky; top: 1.5rem; }
+    .settings-nav-header { padding: 1rem 1.25rem; border-bottom: 1px solid var(--border-light); background: var(--bg-page); }
+    .settings-nav-title { font-size: 0.7rem; font-weight: 800; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.08em; }
+    .settings-nav-link { display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem 1.25rem; color: var(--text-muted); font-size: 0.875rem; font-weight: 600; text-decoration: none; border-left: 3px solid transparent; transition: all 0.15s; cursor: pointer; background: none; border-top: none; border-right: none; border-bottom: none; width: 100%; text-align: left; }
+    .settings-nav-link:hover { background: var(--bg-page); color: var(--text-dark); }
     .settings-nav-link.active { color: #dc2626; border-left-color: #dc2626; background: #fef2f2; }
     .settings-nav-link svg { flex-shrink: 0; }
 
@@ -22,11 +22,11 @@
     .settings-panel.active { display: flex; }
 
     /* ── Cards ── */
-    .settings-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; overflow: hidden; }
-    .settings-card-header { padding: 1.1rem 1.5rem; border-bottom: 1px solid #e2e8f0; background: #f8fafc; display: flex; align-items: center; gap: 0.75rem; }
+    .settings-card { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 14px; overflow: hidden; }
+    .settings-card-header { padding: 1.1rem 1.5rem; border-bottom: 1px solid var(--border-light); background: var(--bg-page); display: flex; align-items: center; gap: 0.75rem; }
     .settings-card-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .settings-card-title { font-size: 0.95rem; font-weight: 800; color: #0f172a; }
-    .settings-card-desc  { font-size: 0.78rem; color: #64748b; margin-top: 0.1rem; }
+    .settings-card-title { font-size: 0.95rem; font-weight: 800; color: var(--text-dark); }
+    .settings-card-desc  { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.1rem; }
     .settings-card-body  { padding: 1.5rem; }
 
     /* ── Form ── */
@@ -34,19 +34,19 @@
     @media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } }
     .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
     .form-group.full { grid-column: 1 / -1; }
-    .form-label { font-size: 0.8rem; font-weight: 700; color: #334155; }
+    .form-label { font-size: 0.8rem; font-weight: 700; color: var(--text-body); }
     .form-label .req { color: #dc2626; }
-    .form-control { padding: 0.65rem 0.9rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; color: #0f172a; background: #fff; transition: border-color 0.15s, box-shadow 0.15s; width: 100%; box-sizing: border-box; }
+    .form-control { padding: 0.65rem 0.9rem; border: 1px solid var(--border); border-radius: 8px; font-size: 0.88rem; color: var(--text-dark); background: var(--bg-card); transition: border-color 0.15s, box-shadow 0.15s; width: 100%; box-sizing: border-box; }
     .form-control:focus { outline: none; border-color: #dc2626; box-shadow: 0 0 0 3px rgba(220,38,38,0.1); }
-    .form-hint { font-size: 0.75rem; color: #94a3b8; }
-    .form-footer { display: flex; justify-content: flex-end; padding-top: 1rem; border-top: 1px solid #f1f5f9; margin-top: 1rem; }
+    .form-hint { font-size: 0.75rem; color: var(--text-faint); }
+    .form-footer { display: flex; justify-content: flex-end; padding-top: 1rem; border-top: 1px solid var(--bg-subtle); margin-top: 1rem; }
 
     /* ── Buttons ── */
     .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.65rem 1.25rem; border-radius: 8px; font-size: 0.875rem; font-weight: 700; cursor: pointer; border: none; transition: all 0.15s; text-decoration: none; }
     .btn-primary { background: #dc2626; color: #fff; }
     .btn-primary:hover { background: #b91c1c; }
-    .btn-outline { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
-    .btn-outline:hover { background: #e2e8f0; color: #0f172a; }
+    .btn-outline { background: var(--bg-subtle); color: var(--text-muted); border: 1px solid var(--border-light); }
+    .btn-outline:hover { background: var(--border-light); color: var(--text-dark); }
     .btn-danger  { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
     .btn-danger:hover  { background: #dc2626; color: #fff; }
     .btn-sm { padding: 0.4rem 0.85rem; font-size: 0.78rem; }
@@ -54,21 +54,21 @@
     .btn-success:hover { background: #16a34a; color: #fff; }
 
     /* ── Toggle Switch ── */
-    .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-bottom: 1px solid #f1f5f9; }
+    .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-bottom: 1px solid var(--bg-subtle); }
     .toggle-row:last-child { border-bottom: none; }
-    .toggle-info .toggle-label { font-size: 0.875rem; font-weight: 700; color: #0f172a; }
-    .toggle-info .toggle-desc  { font-size: 0.78rem; color: #64748b; margin-top: 0.1rem; }
+    .toggle-info .toggle-label { font-size: 0.875rem; font-weight: 700; color: var(--text-dark); }
+    .toggle-info .toggle-desc  { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.1rem; }
     .switch { position: relative; display: inline-block; width: 46px; height: 26px; flex-shrink: 0; }
     .switch input { opacity: 0; width: 0; height: 0; }
     .slider { position: absolute; cursor: pointer; inset: 0; background: #cbd5e1; border-radius: 26px; transition: 0.3s; }
-    .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: 0.3s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+    .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background: var(--bg-card); border-radius: 50%; transition: 0.3s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
     input:checked + .slider { background: #dc2626; }
     input:checked + .slider:before { transform: translateX(20px); }
 
     /* ── Admin Table ── */
     .admin-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
-    .admin-table th { padding: 0.75rem 1rem; background: #f8fafc; border-bottom: 2px solid #e2e8f0; color: #64748b; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; text-align: left; }
-    .admin-table td { padding: 0.85rem 1rem; border-bottom: 1px solid #f1f5f9; color: #334155; vertical-align: middle; }
+    .admin-table th { padding: 0.75rem 1rem; background: var(--bg-page); border-bottom: 2px solid var(--border-light); color: var(--text-muted); font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; text-align: left; }
+    .admin-table td { padding: 0.85rem 1rem; border-bottom: 1px solid var(--bg-subtle); color: var(--text-body); vertical-align: middle; }
     .admin-table tbody tr:last-child td { border-bottom: none; }
     .admin-table tbody tr:hover td { background: #fafafa; }
     .role-badge { display: inline-block; padding: 0.25rem 0.7rem; border-radius: 50px; font-size: 0.72rem; font-weight: 700; }
@@ -77,19 +77,19 @@
 
     /* ── Page title ── */
     .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-    .page-title  { font-size: 1.5rem; font-weight: 800; color: #0f172a; margin: 0; }
+    .page-title  { font-size: 1.5rem; font-weight: 800; color: var(--text-dark); margin: 0; }
 
     /* ── Modal ── */
     .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 2000; align-items: center; justify-content: center; }
     .modal-overlay.open { display: flex; }
-    .modal-box { background: #fff; border-radius: 16px; width: 100%; max-width: 520px; box-shadow: 0 25px 60px rgba(0,0,0,0.18); overflow: hidden; animation: modalIn 0.2s ease; }
+    .modal-box { background: var(--bg-card); border-radius: 16px; width: 100%; max-width: 520px; box-shadow: 0 25px 60px rgba(0,0,0,0.18); overflow: hidden; animation: modalIn 0.2s ease; }
     @keyframes modalIn { from { opacity:0; transform:scale(0.95) translateY(-10px); } to { opacity:1; transform:scale(1) translateY(0); } }
-    .modal-header { padding: 1.1rem 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: #f8fafc; }
-    .modal-title  { font-size: 1rem; font-weight: 800; color: #0f172a; }
-    .modal-close  { background: none; border: none; cursor: pointer; color: #64748b; display: flex; }
-    .modal-close:hover { color: #0f172a; }
+    .modal-header { padding: 1.1rem 1.5rem; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; background: var(--bg-page); }
+    .modal-title  { font-size: 1rem; font-weight: 800; color: var(--text-dark); }
+    .modal-close  { background: none; border: none; cursor: pointer; color: var(--text-muted); display: flex; }
+    .modal-close:hover { color: var(--text-dark); }
     .modal-body   { padding: 1.5rem; }
-    .modal-footer { padding: 1rem 1.5rem; border-top: 1px solid #f1f5f9; display: flex; justify-content: flex-end; gap: 0.75rem; background: #f8fafc; }
+    .modal-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--bg-subtle); display: flex; justify-content: flex-end; gap: 0.75rem; background: var(--bg-page); }
 </style>
 @endpush
 
@@ -159,7 +159,7 @@
                             </div>
                             <div class="form-group full">
                                 <label class="form-label">Role</label>
-                                <input type="text" class="form-control" value="{{ $admin->role === 'super_admin' ? 'Super Administrator' : 'Administrator' }}" disabled style="background:#f8fafc; color:#64748b;">
+                                <input type="text" class="form-control" value="{{ $admin->role === 'super_admin' ? 'Super Administrator' : 'Administrator' }}" disabled style="background:var(--bg-page); color:var(--text-muted);">
                                 <span class="form-hint">Role can only be changed by a super admin from the Admin Accounts tab.</span>
                             </div>
                         </div>
@@ -204,7 +204,7 @@
                                 <input id="new_password_confirmation" type="password" name="new_password_confirmation" class="form-control" required autocomplete="new-password">
                             </div>
                             <div class="form-group full">
-                                <div id="pw-strength-bar" style="height:5px; border-radius:3px; background:#e2e8f0; margin-top:0.25rem;">
+                                <div id="pw-strength-bar" style="height:5px; border-radius:3px; background:var(--border-light); margin-top:0.25rem;">
                                     <div id="pw-strength-fill" style="height:100%; border-radius:3px; width:0%; transition:width 0.3s, background 0.3s;"></div>
                                 </div>
                                 <span id="pw-strength-label" class="form-hint"></span>
@@ -313,10 +313,10 @@
                         <tbody>
                             @foreach ($admins as $a)
                             <tr>
-                                <td style="color:#94a3b8; font-weight:600;">{{ $a->id }}</td>
-                                <td style="font-weight:700; color:#0f172a;">{{ $a->fullname }}</td>
-                                <td style="color:#64748b;">{{ '@' . $a->username }}</td>
-                                <td style="color:#64748b;">{{ $a->email ?? '—' }}</td>
+                                <td style="color:var(--text-faint); font-weight:600;">{{ $a->id }}</td>
+                                <td style="font-weight:700; color:var(--text-dark);">{{ $a->fullname }}</td>
+                                <td style="color:var(--text-muted);">{{ '@' . $a->username }}</td>
+                                <td style="color:var(--text-muted);">{{ $a->email ?? '—' }}</td>
                                 <td>
                                     <span class="role-badge {{ $a->role === 'super_admin' ? 'role-super' : 'role-admin' }}">
                                         {{ $a->role === 'super_admin' ? 'Super Admin' : 'Admin' }}

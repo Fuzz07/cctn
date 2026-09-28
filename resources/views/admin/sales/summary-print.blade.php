@@ -7,8 +7,8 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #ffffff;
-            color: #0f172a;
+            background: var(--bg-card);
+            color: var(--text-dark);
             margin: 0;
             padding: 24px;
         }
@@ -28,7 +28,7 @@
         }
         .brand-sub {
             font-size: 0.85rem;
-            color: #64748b;
+            color: var(--text-muted);
             margin: 2px 0 0 0;
             font-weight: 600;
         }
@@ -39,13 +39,13 @@
             margin: 0;
             font-size: 1.25rem;
             font-weight: 800;
-            color: #0f172a;
+            color: var(--text-dark);
             text-transform: uppercase;
         }
         .report-meta p {
             margin: 4px 0 0 0;
             font-size: 0.85rem;
-            color: #64748b;
+            color: var(--text-muted);
         }
 
         .summary-cards {
@@ -55,8 +55,8 @@
             margin-bottom: 1.5rem;
         }
         .sum-card {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
+            background: var(--bg-page);
+            border: 1px solid var(--border-light);
             border-radius: 10px;
             padding: 1rem 1.25rem;
         }
@@ -64,12 +64,12 @@
             font-size: 0.75rem;
             text-transform: uppercase;
             font-weight: 700;
-            color: #64748b;
+            color: var(--text-muted);
         }
         .sum-val {
             font-size: 1.5rem;
             font-weight: 900;
-            color: #0f172a;
+            color: var(--text-dark);
             margin-top: 4px;
         }
 
@@ -80,19 +80,19 @@
             margin-bottom: 2rem;
         }
         .table-data th {
-            background: #f1f5f9;
+            background: var(--bg-subtle);
             color: #475569;
             text-transform: uppercase;
             font-size: 0.72rem;
             letter-spacing: 0.05em;
             padding: 10px 12px;
-            border-bottom: 2px solid #cbd5e1;
+            border-bottom: 2px solid var(--border);
             text-align: left;
         }
         .table-data td {
             padding: 10px 12px;
-            border-bottom: 1px solid #e2e8f0;
-            color: #334155;
+            border-bottom: 1px solid var(--border-light);
+            color: var(--text-body);
         }
         .table-data tr:nth-child(even) {
             background: #fafafa;
@@ -109,11 +109,11 @@
         .footer {
             margin-top: 2rem;
             padding-top: 1rem;
-            border-top: 1px solid #e2e8f0;
+            border-top: 1px solid var(--border-light);
             display: flex;
             justify-content: space-between;
             font-size: 0.8rem;
-            color: #64748b;
+            color: var(--text-muted);
         }
 
         .no-print {
@@ -197,7 +197,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="9" style="text-align:center; padding:2rem; color:#94a3b8;">No payment records found.</td>
+                    <td colspan="9" style="text-align:center; padding:2rem; color:var(--text-faint);">No payment records found.</td>
                 </tr>
             @endforelse
             @if($payments->isNotEmpty())

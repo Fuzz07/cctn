@@ -5,35 +5,35 @@
 @push('styles')
 <style>
     .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
-    .page-title { font-size: 1.5rem; font-weight: 800; color: #0f172a; margin: 0; }
+    .page-title { font-size: 1.5rem; font-weight: 800; color: var(--text-dark); margin: 0; }
 
     .content-grid { display: grid; grid-template-columns: 380px 1fr; gap: 1.5rem; }
     @media(max-width:1024px){ .content-grid { grid-template-columns: 1fr; } }
 
-    .form-card { background:#fff; border-radius:16px; padding:2rem; border:1px solid #e2e8f0; box-shadow:0 4px 15px rgba(0,0,0,0.02); }
-    .form-card-title { font-size:1.1rem; font-weight:800; color:#0f172a; margin:0 0 1.5rem; display:flex; align-items:center; gap:.5rem; }
+    .form-card { background:var(--bg-card); border-radius:16px; padding:2rem; border:1px solid var(--border-light); box-shadow:0 4px 15px rgba(0,0,0,0.02); }
+    .form-card-title { font-size:1.1rem; font-weight:800; color:var(--text-dark); margin:0 0 1.5rem; display:flex; align-items:center; gap:.5rem; }
 
     .form-group { margin-bottom:1.25rem; }
-    .form-label { display:block; font-size:.85rem; font-weight:700; color:#334155; margin-bottom:.5rem; }
-    .form-control { width:100%; padding:.75rem 1rem; border:1px solid #cbd5e1; border-radius:8px; font-size:.9rem; box-sizing:border-box; font-family:inherit; }
+    .form-label { display:block; font-size:.85rem; font-weight:700; color:var(--text-body); margin-bottom:.5rem; }
+    .form-control { width:100%; padding:.75rem 1rem; border:1px solid var(--border); border-radius:8px; font-size:.9rem; box-sizing:border-box; font-family:inherit; }
     .form-control:focus { outline:none; border-color:#dc2626; box-shadow:0 0 0 3px rgba(220,38,38,.1); }
     textarea.form-control { resize:vertical; }
-    select.form-control { background:#fff; }
+    select.form-control { background:var(--bg-card); }
     
     .btn-submit { width:100%; background:#dc2626; color:#fff; padding:.85rem; border-radius:8px; font-weight:700; font-size:1rem; border:none; cursor:pointer; margin-top:.5rem; display:flex; justify-content:center; align-items:center; gap:.5rem; transition:all .2s; }
     .btn-submit:hover { background:#b91c1c; transform:translateY(-1px); }
-    .btn-secondary-submit { background:#f1f5f9; color:#64748b; }
-    .btn-secondary-submit:hover { background:#e2e8f0; color:#0f172a; transform:none; }
+    .btn-secondary-submit { background:var(--bg-subtle); color:var(--text-muted); }
+    .btn-secondary-submit:hover { background:var(--border-light); color:var(--text-dark); transform:none; }
 
     .services-list { display:flex; flex-direction:column; gap:1rem; }
-    .service-item { background:#fff; border-radius:12px; padding:1.25rem 1.5rem; border:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; transition:all .2s; }
-    .service-item:hover { border-color:#cbd5e1; box-shadow:0 4px 15px rgba(0,0,0,0.05); }
-    .service-name { font-size:1rem; font-weight:700; color:#0f172a; margin:0 0 .35rem; }
-    .service-meta { font-size:.82rem; color:#64748b; font-weight:500; }
-    .service-desc { font-size:.82rem; color:#64748b; margin-top:.35rem; font-style:italic; }
+    .service-item { background:var(--bg-card); border-radius:12px; padding:1.25rem 1.5rem; border:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; transition:all .2s; }
+    .service-item:hover { border-color:var(--border); box-shadow:0 4px 15px rgba(0,0,0,0.05); }
+    .service-name { font-size:1rem; font-weight:700; color:var(--text-dark); margin:0 0 .35rem; }
+    .service-meta { font-size:.82rem; color:var(--text-muted); font-weight:500; }
+    .service-desc { font-size:.82rem; color:var(--text-muted); margin-top:.35rem; font-style:italic; }
 
     .badge-active { background:#dcfce7; color:#15803d; padding:.25rem .65rem; border-radius:20px; font-size:.72rem; font-weight:700; }
-    .badge-inactive { background:#f1f5f9; color:#64748b; padding:.25rem .65rem; border-radius:20px; font-size:.72rem; font-weight:700; }
+    .badge-inactive { background:var(--bg-subtle); color:var(--text-muted); padding:.25rem .65rem; border-radius:20px; font-size:.72rem; font-weight:700; }
 
     .action-links { display:flex; gap:.5rem; align-items:center; flex-shrink:0; }
     .btn-action { padding:.4rem .85rem; border-radius:6px; font-size:.8rem; font-weight:600; text-decoration:none; display:inline-flex; align-items:center; gap:.25rem; border:1px solid transparent; cursor:pointer; background:none; }
@@ -113,8 +113,8 @@
     <!-- Services List -->
     <div>
         @if($services->isEmpty())
-            <div style="text-align:center;padding:4rem;background:#fff;border-radius:16px;border:1px dashed #cbd5e1;">
-                <p style="color:#94a3b8;font-size:1rem;font-weight:600;">No services have been created yet.</p>
+            <div style="text-align:center;padding:4rem;background:var(--bg-card);border-radius:16px;border:1px dashed var(--border);">
+                <p style="color:var(--text-faint);font-size:1rem;font-weight:600;">No services have been created yet.</p>
             </div>
         @else
             <div class="services-list">

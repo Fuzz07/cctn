@@ -41,7 +41,7 @@
         text-transform: uppercase;
     }
     .walkin-subtitle {
-        color: #94a3b8;
+        color: var(--text-faint);
         font-size: 0.95rem;
         margin: 0;
     }
@@ -50,8 +50,8 @@
     .stepper {
         display: flex;
         justify-content: space-between;
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
+        background: var(--bg-card);
+        border: 1px solid var(--border-light);
         border-radius: 16px;
         padding: 1rem 1.5rem;
         margin-bottom: 2rem;
@@ -62,7 +62,7 @@
         display: flex;
         align-items: center;
         gap: 0.75rem;
-        color: #64748b;
+        color: var(--text-muted);
         font-weight: 600;
         font-size: 0.88rem;
         padding: 0.5rem 0.75rem;
@@ -82,8 +82,8 @@
         width: 32px;
         height: 32px;
         border-radius: 50%;
-        background: #f1f5f9;
-        color: #64748b;
+        background: var(--bg-subtle);
+        color: var(--text-muted);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -101,9 +101,9 @@
 
     /* Form Body Card */
     .card-box {
-        background: #ffffff;
+        background: var(--bg-card);
         border-radius: 16px;
-        border: 1px solid #e2e8f0;
+        border: 1px solid var(--border-light);
         padding: 2rem;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
     }
@@ -116,10 +116,10 @@
     .section-heading {
         font-size: 1.25rem;
         font-weight: 800;
-        color: #0f172a;
+        color: var(--text-dark);
         margin-bottom: 1.5rem;
         padding-bottom: 0.75rem;
-        border-bottom: 2px solid #f1f5f9;
+        border-bottom: 2px solid var(--bg-subtle);
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -146,7 +146,7 @@
         display: block;
         font-size: 0.85rem;
         font-weight: 700;
-        color: #334155;
+        color: var(--text-body);
         margin-bottom: 0.5rem;
     }
     .form-label span.req {
@@ -155,7 +155,7 @@
     .form-control {
         width: 100%;
         padding: 0.75rem 1rem;
-        border: 1px solid #cbd5e1;
+        border: 1px solid var(--border);
         border-radius: 10px;
         font-size: 0.92rem;
         box-sizing: border-box;
@@ -174,13 +174,13 @@
         gap: 1.25rem;
     }
     .plan-card {
-        border: 2px solid #e2e8f0;
+        border: 2px solid var(--border-light);
         border-radius: 14px;
         padding: 1.5rem;
         cursor: pointer;
         transition: all 0.2s ease;
         position: relative;
-        background: #ffffff;
+        background: var(--bg-card);
     }
     .plan-card:hover {
         border-color: #fca5a5;
@@ -202,7 +202,7 @@
     .plan-title {
         font-size: 1.15rem;
         font-weight: 800;
-        color: #0f172a;
+        color: var(--text-dark);
         margin-bottom: 0.25rem;
     }
     .plan-speed {
@@ -219,17 +219,17 @@
         display: flex;
         justify-content: space-between;
         font-size: 0.85rem;
-        color: #64748b;
+        color: var(--text-muted);
         margin-bottom: 0.4rem;
     }
     .plan-total-highlight {
         margin-top: 1rem;
         padding-top: 0.75rem;
-        border-top: 1px dashed #cbd5e1;
+        border-top: 1px dashed var(--border);
         display: flex;
         justify-content: space-between;
         font-weight: 800;
-        color: #0f172a;
+        color: var(--text-dark);
         font-size: 0.95rem;
     }
 
@@ -244,32 +244,32 @@
         .pm-options { grid-template-columns: repeat(2, 1fr); }
     }
     .pm-btn {
-        border: 2px solid #e2e8f0;
+        border: 2px solid var(--border-light);
         border-radius: 12px;
         padding: 1rem;
         text-align: center;
         font-weight: 700;
         color: #475569;
-        background: #f8fafc;
+        background: var(--bg-page);
         cursor: pointer;
         transition: all 0.2s;
     }
     .pm-btn:hover {
-        border-color: #cbd5e1;
-        background: #ffffff;
+        border-color: var(--border);
+        background: var(--bg-card);
     }
     .pm-btn.active {
         border-color: #dc2626;
-        background: #ffffff;
+        background: var(--bg-card);
         color: #dc2626;
         box-shadow: 0 4px 12px rgba(220, 38, 38, 0.1);
     }
     .pm-box {
         display: none;
-        background: #f8fafc;
+        background: var(--bg-page);
         border-radius: 12px;
         padding: 1.5rem;
-        border: 1px solid #e2e8f0;
+        border: 1px solid var(--border-light);
     }
     .pm-box.active {
         display: block;
@@ -300,19 +300,19 @@
     }
     .summary-table th, .summary-table td {
         padding: 0.85rem 1rem;
-        border-bottom: 1px solid #e2e8f0;
+        border-bottom: 1px solid var(--border-light);
         font-size: 0.9rem;
     }
     .summary-table th {
         width: 35%;
-        color: #64748b;
+        color: var(--text-muted);
         font-weight: 700;
         text-align: left;
-        background: #f8fafc;
+        background: var(--bg-page);
     }
     .summary-table td {
         font-weight: 600;
-        color: #0f172a;
+        color: var(--text-dark);
     }
 
     /* Buttons Footer */
@@ -322,7 +322,7 @@
         align-items: center;
         margin-top: 2rem;
         padding-top: 1.5rem;
-        border-top: 1px solid #e2e8f0;
+        border-top: 1px solid var(--border-light);
     }
     .btn-step {
         padding: 0.75rem 1.75rem;
@@ -337,13 +337,13 @@
         transition: all 0.2s ease;
     }
     .btn-prev {
-        background: #ffffff;
+        background: var(--bg-card);
         color: #475569;
-        border: 1px solid #cbd5e1;
+        border: 1px solid var(--border);
     }
     .btn-prev:hover {
-        background: #f1f5f9;
-        color: #0f172a;
+        background: var(--bg-subtle);
+        color: var(--text-dark);
     }
     .btn-next, .btn-submit {
         background: #dc2626;
@@ -451,7 +451,7 @@
             <div class="form-step-pane active" id="step-pane-1">
                 <div class="section-heading">
                     <span>Step 1 — Client Information</span>
-                    <span style="font-size:0.85rem; color:#64748b; font-weight:600;">Customer Identity & Address</span>
+                    <span style="font-size:0.85rem; color:var(--text-muted); font-weight:600;">Customer Identity & Address</span>
                 </div>
                 
                 <div class="grid-2">
@@ -545,7 +545,7 @@
             <div class="form-step-pane" id="step-pane-2">
                 <div class="section-heading">
                     <span>Step 2 — Select WiFi Plan</span>
-                    <span style="font-size:0.85rem; color:#64748b; font-weight:600;">Choose single broadband package</span>
+                    <span style="font-size:0.85rem; color:var(--text-muted); font-weight:600;">Choose single broadband package</span>
                 </div>
 
                 <div class="plans-grid">
@@ -575,7 +575,7 @@
                             </div>
                         </div>
                     @empty
-                        <div style="grid-column: 1 / -1; text-align:center; padding:2rem; color:#64748b;">
+                        <div style="grid-column: 1 / -1; text-align:center; padding:2rem; color:var(--text-muted);">
                             No active CBTVI Broadband plans found. Please add plans under Admin Services.
                         </div>
                     @endforelse
@@ -595,7 +595,7 @@
             <div class="form-step-pane" id="step-pane-3">
                 <div class="section-heading">
                     <span>Step 3 — Installation Schedule</span>
-                    <span style="font-size:0.85rem; color:#64748b; font-weight:600;">Preferred Date & Time Slot</span>
+                    <span style="font-size:0.85rem; color:var(--text-muted); font-weight:600;">Preferred Date & Time Slot</span>
                 </div>
 
                 <div class="grid-2">
@@ -646,7 +646,7 @@
             <div class="form-step-pane" id="step-pane-4">
                 <div class="section-heading">
                     <span>Step 4 — Payment Method</span>
-                    <span style="font-size:0.85rem; color:#64748b; font-weight:600;">Collect or Schedule Initial Payment</span>
+                    <span style="font-size:0.85rem; color:var(--text-muted); font-weight:600;">Collect or Schedule Initial Payment</span>
                 </div>
 
                 <label class="form-label">Select Upfront Payment Method <span class="req">*</span></label>
@@ -668,7 +668,7 @@
 
                 <!-- Cash Box -->
                 <div class="pm-box active" id="pm-box-Cash">
-                    <h4 style="margin:0 0 1rem 0; font-weight:800; color:#0f172a;">Cash Payment Details</h4>
+                    <h4 style="margin:0 0 1rem 0; font-weight:800; color:var(--text-dark);">Cash Payment Details</h4>
                     <div class="grid-2">
                         <div class="form-group">
                             <label class="form-label">Amount Received (₱)</label>
@@ -676,17 +676,17 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label">Calculated Change (₱)</label>
-                            <input type="text" id="cash_change_display" class="form-control" value="₱0.00" readonly style="background:#e2e8f0; font-weight:800; color:#16a34a;">
+                            <input type="text" id="cash_change_display" class="form-control" value="₱0.00" readonly style="background:var(--border-light); font-weight:800; color:#16a34a;">
                         </div>
                     </div>
-                    <div style="font-size:0.85rem; color:#64748b;">
+                    <div style="font-size:0.85rem; color:var(--text-muted);">
                         Payment Status will automatically set to <strong>Payment Confirmed</strong> upon submitting full payment.
                     </div>
                 </div>
 
                 <!-- GCash Box -->
                 <div class="pm-box" id="pm-box-GCash">
-                    <h4 style="margin:0 0 1rem 0; font-weight:800; color:#0f172a;">GCash Digital Payment</h4>
+                    <h4 style="margin:0 0 1rem 0; font-weight:800; color:var(--text-dark);">GCash Digital Payment</h4>
                     <div class="grid-3">
                         <div class="form-group">
                             <label class="form-label">GCash Ref Number</label>
@@ -709,7 +709,7 @@
 
                 <!-- Bank Transfer Box -->
                 <div class="pm-box" id="pm-box-Bank Transfer">
-                    <h4 style="margin:0 0 1rem 0; font-weight:800; color:#0f172a;">Bank Transfer Details</h4>
+                    <h4 style="margin:0 0 1rem 0; font-weight:800; color:var(--text-dark);">Bank Transfer Details</h4>
                     <div class="grid-2">
                         <div class="form-group">
                             <label class="form-label">Bank Name</label>
@@ -738,11 +738,11 @@
 
                 <!-- Pay Later Box -->
                 <div class="pm-box" id="pm-box-Pay Later">
-                    <h4 style="margin:0 0 1rem 0; font-weight:800; color:#0f172a;">Pay Later Agreement</h4>
+                    <h4 style="margin:0 0 1rem 0; font-weight:800; color:var(--text-dark);">Pay Later Agreement</h4>
                     <div class="grid-2">
                         <div class="form-group">
                             <label class="form-label">Total Amount Due (₱)</label>
-                            <input type="text" id="pay_later_amount_display" class="form-control" readonly style="background:#e2e8f0; font-weight:800;">
+                            <input type="text" id="pay_later_amount_display" class="form-control" readonly style="background:var(--border-light); font-weight:800;">
                         </div>
                         <div class="form-group">
                             <label class="form-label">Promised Due Date</label>
@@ -757,7 +757,7 @@
                 <!-- Total Amount Due Highlight -->
                 <div class="total-due-banner">
                     <div>
-                        <div style="font-size:0.85rem; text-transform:uppercase; letter-spacing:0.05em; color:#94a3b8; font-weight:700;">Formula: Monthly Subscription + Installation Fee</div>
+                        <div style="font-size:0.85rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-faint); font-weight:700;">Formula: Monthly Subscription + Installation Fee</div>
                         <div style="font-size:1.15rem; font-weight:800;">TOTAL AMOUNT DUE</div>
                     </div>
                     <div class="total-due-amount" id="total_amount_due_display">₱0.00</div>
@@ -777,7 +777,7 @@
             <div class="form-step-pane" id="step-pane-5">
                 <div class="section-heading">
                     <span>Step 5 — Booking Summary</span>
-                    <span style="font-size:0.85rem; color:#64748b; font-weight:600;">Verify Details Before Confirmation</span>
+                    <span style="font-size:0.85rem; color:var(--text-muted); font-weight:600;">Verify Details Before Confirmation</span>
                 </div>
 
                 <h3 style="margin-bottom:1rem; font-weight:800; color:#dc2626;">CBTVI WiFi Installation Booking</h3>
@@ -852,7 +852,7 @@
             <div class="form-step-pane" id="step-pane-6">
                 <div class="section-heading">
                     <span>Step 6 — Confirmation</span>
-                    <span style="font-size:0.85rem; color:#64748b; font-weight:600;">Booking Recorded</span>
+                    <span style="font-size:0.85rem; color:var(--text-muted); font-weight:600;">Booking Recorded</span>
                 </div>
 
                 @if (!empty($confirmedBooking))
@@ -860,8 +860,8 @@
                         <div style="width:76px; height:76px; border-radius:50%; background:#dcfce7; color:#16a34a; display:flex; align-items:center; justify-content:center; margin:0 auto 1.25rem;">
                             <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                         </div>
-                        <h3 style="font-size:1.4rem; font-weight:800; color:#0f172a; margin-bottom:0.4rem;">Booking Confirmed</h3>
-                        <p style="color:#64748b; margin:0;">
+                        <h3 style="font-size:1.4rem; font-weight:800; color:var(--text-dark); margin-bottom:0.4rem;">Booking Confirmed</h3>
+                        <p style="color:var(--text-muted); margin:0;">
                             The walk-in booking has been recorded and the client account is now active.
                         </p>
                     </div>
@@ -923,7 +923,7 @@
                         </div>
                     </div>
                 @else
-                    <p style="color:#64748b;">Complete the booking summary to generate a confirmation.</p>
+                    <p style="color:var(--text-muted);">Complete the booking summary to generate a confirmation.</p>
                     <div class="step-actions">
                         <button type="button" class="btn-step btn-prev" onclick="goToStep(5)">
                             &larr; Back to Booking Summary

@@ -15,16 +15,16 @@
     .book-card-header p  { color: rgba(255,255,255,0.65); font-size: 0.82rem; margin-top: 0.3rem; }
     
     .antigravity-card {
-        background: #fff;
+        background: var(--bg-card);
         border-radius: 14px;
         box-shadow: 0 10px 25px rgba(0,0,0,0.05);
         padding: 2rem;
-        border: 1px solid #e2e8f0;
+        border: 1px solid var(--border-light);
     }
 
     .form-group { margin-bottom: 1.5rem; }
     .form-label { display: block; font-weight: 700; margin-bottom: 0.5rem; color: #1e293b; font-size: 0.9rem; }
-    .form-control { width: 100%; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; font-family: inherit; box-sizing: border-box; }
+    .form-control { width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem; font-family: inherit; box-sizing: border-box; }
     .form-control:focus { outline: none; border-color: #dc2626; box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1); }
 
     /* ── Validation States ── */
@@ -108,7 +108,7 @@
         padding: 0.75rem;
         text-align: center;
         background: #f9fafb;
-        border: 1.5px solid #e2e8f0;
+        border: 1.5px solid var(--border-light);
         border-radius: 8px;
         cursor: pointer;
         font-weight: 600;
@@ -255,7 +255,7 @@
                 <!-- Slot Legend -->
                 <div style="display: flex; gap: 1rem; margin-top: 0.75rem; font-size: 0.8rem; flex-wrap: wrap;">
                     <span style="display: flex; align-items: center; gap: 0.35rem;">
-                        <span style="display: inline-block; width: 12px; height: 12px; background: #f9fafb; border: 1.5px solid #e2e8f0; border-radius: 3px;"></span> Available Slot
+                        <span style="display: inline-block; width: 12px; height: 12px; background: #f9fafb; border: 1.5px solid var(--border-light); border-radius: 3px;"></span> Available Slot
                     </span>
                     <span style="display: flex; align-items: center; gap: 0.35rem;">
                         <span style="display: inline-block; width: 12px; height: 12px; background: #f9fafb; border: 1.5px solid #f59e0b; border-radius: 3px;"></span> Overtime Slot
@@ -270,8 +270,8 @@
             </div>
 
             <!-- Payment Method Selection -->
-            <div class="form-group" style="background: #fafafa; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem;">
-                <label class="form-label" for="payment_method" style="display: flex; align-items: center; gap: 0.5rem; color: #0f172a; margin-bottom: 0.75rem;">
+            <div class="form-group" style="background: #fafafa; border: 1px solid var(--border-light); border-radius: 12px; padding: 1.25rem;">
+                <label class="form-label" for="payment_method" style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-dark); margin-bottom: 0.75rem;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
                     Select Digital Payment Method <span style="color:#dc2626">*</span>
                 </label>
@@ -282,7 +282,7 @@
                 </select>
 
                 <!-- DYNAMIC PAYMENT INSTRUCTIONS CARD -->
-                <div id="payment_instructions_box" style="margin-top: 1.25rem; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 1.25rem;">
+                <div id="payment_instructions_box" style="margin-top: 1.25rem; background: var(--bg-page); border: 1.5px solid var(--border-light); border-radius: 14px; padding: 1.25rem;">
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
                         <span style="font-size: 0.85rem; font-weight: 800; color: #dc2626; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-info-circle-fill"></i> Payment Account Instructions
@@ -293,12 +293,12 @@
                     </div>
 
                     <!-- Dynamic Account Info Display -->
-                    <div id="account_details_content" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 1rem; margin-bottom: 1rem;">
+                    <div id="account_details_content" style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 1rem; margin-bottom: 1rem;">
                         <!-- Injected via JavaScript -->
                     </div>
 
                     <div style="margin-bottom: 1rem;">
-                        <label class="form-label" for="reference_number" style="font-size: 0.85rem; font-weight: 700; color: #334155;">
+                        <label class="form-label" for="reference_number" style="font-size: 0.85rem; font-weight: 700; color: var(--text-body);">
                             Reference / Transaction Number <span style="color: #dc2626;">*</span>
                         </label>
                         <input type="text" name="reference_number" id="reference_number"
@@ -310,11 +310,11 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                             {{ $errors->first('reference_number', 'Please enter your payment reference/transaction number.') }}
                         </span>
-                        <small style="color: #64748b; font-size: 0.78rem; display: block; margin-top: 0.25rem;">Enter the reference or reference ID from your payment confirmation screen.</small>
+                        <small style="color: var(--text-muted); font-size: 0.78rem; display: block; margin-top: 0.25rem;">Enter the reference or reference ID from your payment confirmation screen.</small>
                     </div>
 
                     <div>
-                        <label class="form-label" for="payment_proof" style="font-size: 0.85rem; font-weight: 700; color: #334155;">
+                        <label class="form-label" for="payment_proof" style="font-size: 0.85rem; font-weight: 700; color: var(--text-body);">
                             Upload Payment Receipt or Screenshot <span style="color: #dc2626;">*</span>
                         </label>
                         <input type="file" name="payment_proof" id="payment_proof"
@@ -324,7 +324,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                             {{ $errors->first('payment_proof', 'Please upload a screenshot or photo of your payment receipt.') }}
                         </span>
-                        <small style="color: #64748b; font-size: 0.78rem; display: block; margin-top: 0.25rem;">Upload a clear screenshot or photo of your payment receipt.</small>
+                        <small style="color: var(--text-muted); font-size: 0.78rem; display: block; margin-top: 0.25rem;">Upload a clear screenshot or photo of your payment receipt.</small>
                     </div>
 
                     <!-- Pending Status Notice -->
@@ -558,18 +558,18 @@
         const contentEl = document.getElementById('account_details_content');
         if (contentEl) {
             contentEl.innerHTML = `
-                <div style="font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.35rem;">${details.badge} Official Account</div>
+                <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.35rem;">${details.badge} Official Account</div>
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 0.5rem;">
                     <div>
                         <div style="font-size: 0.8rem; color: #475569;">Account Name:</div>
-                        <strong style="font-size: 1rem; color: #0f172a;">${details.name}</strong>
+                        <strong style="font-size: 1rem; color: var(--text-dark);">${details.name}</strong>
                     </div>
                     <div style="text-align: right;">
                         <div style="font-size: 0.8rem; color: #475569;">${details.typeLabel}:</div>
                         <strong style="font-size: 1.15rem; color: #dc2626; font-family: monospace;">${details.accountNumber}</strong>
                     </div>
                 </div>
-                <div style="font-size: 0.82rem; color: #475569; border-top: 1px dashed #e2e8f0; padding-top: 0.5rem; margin-top: 0.5rem;">
+                <div style="font-size: 0.82rem; color: #475569; border-top: 1px dashed var(--border-light); padding-top: 0.5rem; margin-top: 0.5rem;">
                     <strong>Instructions:</strong> ${details.instructions}
                 </div>
             `;

@@ -20,16 +20,16 @@
     .notif-title {
         font-size: 1.5rem;
         font-weight: 800;
-        color: #0f172a;
+        color: var(--text-dark);
         margin: 0;
         display: flex;
         align-items: center;
         gap: 0.5rem;
     }
     .btn-read-all {
-        background: #f1f5f9;
+        background: var(--bg-subtle);
         color: #475569;
-        border: 1px solid #cbd5e1;
+        border: 1px solid var(--border);
         padding: 0.5rem 1rem;
         border-radius: 10px;
         font-weight: 700;
@@ -38,8 +38,8 @@
         transition: all 0.2s;
     }
     .btn-read-all:hover {
-        background: #e2e8f0;
-        color: #0f172a;
+        background: var(--border-light);
+        color: var(--text-dark);
     }
     .notif-list {
         display: flex;
@@ -47,8 +47,8 @@
         gap: 1rem;
     }
     .notif-card {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
+        background: var(--bg-card);
+        border: 1px solid var(--border-light);
         border-radius: 14px;
         padding: 1.25rem 1.5rem;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
@@ -80,7 +80,7 @@
     .notif-item-title {
         font-size: 1rem;
         font-weight: 800;
-        color: #0f172a;
+        color: var(--text-dark);
         margin-bottom: 0.25rem;
     }
     .notif-message {
@@ -92,7 +92,7 @@
     .notif-time {
         font-size: 0.75rem;
         font-weight: 700;
-        color: #94a3b8;
+        color: var(--text-faint);
     }
     .notif-action {
         align-self: center;
@@ -111,12 +111,12 @@
         background: #fef2f2;
     }
     .empty-notif {
-        background: #ffffff;
+        background: var(--bg-card);
         border-radius: 16px;
-        border: 1px solid #e2e8f0;
+        border: 1px solid var(--border-light);
         padding: 3rem 1.5rem;
         text-align: center;
-        color: #64748b;
+        color: var(--text-muted);
     }
 </style>
 @endpush
@@ -170,7 +170,7 @@
         @empty
             <div class="empty-notif">
                 <div style="font-size: 3rem; margin-bottom: 0.5rem;">🔕</div>
-                <h3 style="font-weight: 800; color: #0f172a; margin-bottom: 0.25rem;">No Notifications Yet</h3>
+                <h3 style="font-weight: 800; color: var(--text-dark); margin-bottom: 0.25rem;">No Notifications Yet</h3>
                 <p style="margin: 0; font-size: 0.9rem;">You will receive real-time updates for booking confirmations, installation schedules, and payment receipts here.</p>
             </div>
         @endforelse

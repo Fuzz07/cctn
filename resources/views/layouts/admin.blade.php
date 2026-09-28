@@ -127,36 +127,36 @@
                 <div style="display: flex; align-items: center; gap: 1.25rem; position: relative;">
                     <!-- Notification Bell -->
                     <div style="position: relative;" id="notif-wrapper">
-                        <button type="button" id="notif-bell-btn" style="background: none; border: none; cursor: pointer; color: #64748b; padding: 4px; display: flex; align-items: center; justify-content: center; position: relative;">
+                        <button type="button" id="notif-bell-btn" style="background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 4px; display: flex; align-items: center; justify-content: center; position: relative;">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
                             @if ($unread_count > 0)
                                 <span id="notif-badge" style="position: absolute; top: -2px; right: -2px; background: #dc2626; color: #fff; font-size: 0.6rem; font-weight: 800; min-width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; padding: 0 2px;">{{ $unread_count }}</span>
                             @endif
                         </button>
 
-                        <div id="notif-dropdown" style="display: none; position: absolute; right: 0; top: 42px; width: 340px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; box-shadow: 0 12px 30px rgba(0,0,0,0.12); z-index: 1000; overflow: hidden;">
-                            <div style="padding: 0.85rem 1rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: #f8fafc;">
-                                <strong style="font-size: 0.88rem; color: #0f172a;">Notifications</strong>
+                        <div id="notif-dropdown" style="display: none; position: absolute; right: 0; top: 42px; width: 340px; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 14px; box-shadow: 0 12px 30px rgba(0,0,0,0.12); z-index: 1000; overflow: hidden;">
+                            <div style="padding: 0.85rem 1rem; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; background: var(--bg-page);">
+                                <strong style="font-size: 0.88rem; color: var(--text-dark);">Notifications</strong>
                                 <button type="button" id="mark-all-read-btn" style="background: none; border: none; color: #dc2626; font-size: 0.75rem; font-weight: 700; cursor: pointer;">Mark all read</button>
                             </div>
                             <div style="max-height: 320px; overflow-y: auto;">
                                 @forelse ($notifs as $notif)
-                                    <a href="{{ url($notif->link ?? 'admin/dashboard') }}" class="notif-item-link" data-id="{{ $notif->id }}" style="display: block; padding: 0.85rem 1rem; border-bottom: 1px solid #f1f5f9; text-decoration: none; background: {{ $notif->is_read ? '#ffffff' : '#fef2f2' }}; transition: background 0.15s;">
-                                        <strong style="font-size: 0.82rem; color: #0f172a; display: block; margin-bottom: 0.15rem;">{{ $notif->title }}</strong>
-                                        <p style="font-size: 0.78rem; color: #64748b; margin: 0 0 0.25rem 0; line-height: 1.3;">{{ $notif->message }}</p>
-                                        <span style="font-size: 0.68rem; color: #94a3b8; font-weight: 500;">{{ $notif->created_at->format('M d, g:i A') }}</span>
+                                    <a href="{{ url($notif->link ?? 'admin/dashboard') }}" class="notif-item-link" data-id="{{ $notif->id }}" style="display: block; padding: 0.85rem 1rem; border-bottom: 1px solid var(--bg-subtle); text-decoration: none; background: {{ $notif->is_read ? '#ffffff' : '#fef2f2' }}; transition: background 0.15s;">
+                                        <strong style="font-size: 0.82rem; color: var(--text-dark); display: block; margin-bottom: 0.15rem;">{{ $notif->title }}</strong>
+                                        <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0 0 0.25rem 0; line-height: 1.3;">{{ $notif->message }}</p>
+                                        <span style="font-size: 0.68rem; color: var(--text-faint); font-weight: 500;">{{ $notif->created_at->format('M d, g:i A') }}</span>
                                     </a>
                                 @empty
-                                    <div style="padding: 2rem; text-align: center; color: #94a3b8; font-size: 0.82rem;">No notifications found</div>
+                                    <div style="padding: 2rem; text-align: center; color: var(--text-faint); font-size: 0.82rem;">No notifications found</div>
                                 @endforelse
                             </div>
                         </div>
                     </div>
 
-                    <div style="display: flex; align-items: center; gap: 0.8rem; padding-left: 0.5rem; border-left: 1px solid #e2e8f0;">
+                    <div style="display: flex; align-items: center; gap: 0.8rem; padding-left: 0.5rem; border-left: 1px solid var(--border-light);">
                         <div style="line-height: 1.2;">
-                            <strong style="font-size: 0.85rem; color: #0f172a; display: block; font-weight: 700;">{{ auth('admin')->user()->fullname }}</strong>
-                            <span style="font-size: 0.72rem; color: #64748b; font-weight: 500;">{{ auth('admin')->user()->role == 'super_admin' ? 'Administrator' : 'Sub Administrator' }}</span>
+                            <strong style="font-size: 0.85rem; color: var(--text-dark); display: block; font-weight: 700;">{{ auth('admin')->user()->fullname }}</strong>
+                            <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 500;">{{ auth('admin')->user()->role == 'super_admin' ? 'Administrator' : 'Sub Administrator' }}</span>
                         </div>
                     </div>
                 </div>

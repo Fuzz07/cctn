@@ -7,19 +7,19 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f8fafc;
-            color: #0f172a;
+            background: var(--bg-page);
+            color: var(--text-dark);
             margin: 0;
             padding: 20px;
         }
         .receipt-card {
             max-width: 650px;
             margin: 0 auto;
-            background: #ffffff;
+            background: var(--bg-card);
             border-radius: 14px;
             box-shadow: 0 4px 25px rgba(0,0,0,0.08);
             padding: 2.5rem;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--border-light);
             position: relative;
         }
         .header {
@@ -43,7 +43,7 @@
         }
         .logo-sub {
             font-size: 0.75rem;
-            color: #64748b;
+            color: var(--text-muted);
             font-weight: 700;
             letter-spacing: 0.05em;
         }
@@ -54,7 +54,7 @@
             margin: 0;
             font-size: 1.2rem;
             font-weight: 800;
-            color: #0f172a;
+            color: var(--text-dark);
             text-transform: uppercase;
         }
         .ref-badge {
@@ -79,7 +79,7 @@
             margin: 0 0 8px 0;
             font-size: 0.75rem;
             text-transform: uppercase;
-            color: #64748b;
+            color: var(--text-muted);
             letter-spacing: 0.05em;
         }
         .info-block p {
@@ -94,7 +94,7 @@
             margin-bottom: 1.5rem;
         }
         .table-items th {
-            background: #f1f5f9;
+            background: var(--bg-subtle);
             text-align: left;
             padding: 10px 12px;
             font-size: 0.75rem;
@@ -103,19 +103,19 @@
         }
         .table-items td {
             padding: 12px;
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 1px solid var(--border-light);
             font-size: 0.9rem;
             font-weight: 600;
         }
         .total-box {
-            background: #f8fafc;
+            background: var(--bg-page);
             border-radius: 10px;
             padding: 1.25rem 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1.5rem;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--border-light);
         }
         .watermark {
             position: absolute;
@@ -131,8 +131,8 @@
         .footer-note {
             text-align: center;
             font-size: 0.8rem;
-            color: #64748b;
-            border-top: 1px solid #e2e8f0;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-light);
             padding-top: 1rem;
             margin-top: 1.5rem;
         }
@@ -153,7 +153,7 @@
         }
         @media print {
             .no-print { display: none; }
-            body { background: #ffffff; padding: 0; }
+            body { background: var(--bg-card); padding: 0; }
             .receipt-card { box-shadow: none; border: none; }
         }
     </style>
@@ -212,7 +212,7 @@
                     <td>
                         CBTVI Broadband Cable Service Settlement
                         @if(!empty($payment->notes))
-                            <br><small style="color:#64748b; font-weight:normal;">Note: {{ $payment->notes }}</small>
+                            <br><small style="color:var(--text-muted); font-weight:normal;">Note: {{ $payment->notes }}</small>
                         @endif
                     </td>
                     <td>{{ $payment->billing->statement_period ?? date('F Y') }}</td>
@@ -223,11 +223,11 @@
 
         <div class="total-box">
             <div>
-                <div style="font-size:0.75rem; text-transform:uppercase; color:#64748b; font-weight:700;">Status</div>
+                <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:700;">Status</div>
                 <div style="font-size:0.9rem; font-weight:800; color:#16a34a;">✓ Payment Settled & Confirmed</div>
             </div>
             <div style="text-align:right;">
-                <div style="font-size:0.75rem; text-transform:uppercase; color:#64748b; font-weight:700;">Total Amount Paid</div>
+                <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:700;">Total Amount Paid</div>
                 <div style="font-size:1.6rem; font-weight:900; color:#dc2626;">₱{{ number_format($payment->amount_paid, 2) }}</div>
             </div>
         </div>

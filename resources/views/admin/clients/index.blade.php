@@ -5,33 +5,39 @@
 @push('styles')
 <style>
     .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
-    .page-title { font-size: 1.5rem; font-weight: 800; color: #0f172a; margin: 0; }
+    .page-title { font-size: 1.5rem; font-weight: 800; color: var(--text-dark); margin: 0; }
     
     .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-bottom: 1.5rem; }
-    .stat-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+    .stat-card { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 12px; padding: 1.25rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
     .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .stat-meta { display: flex; flex-direction: column; }
-    .stat-title { font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
-    .stat-val { font-size: 1.5rem; font-weight: 800; color: #0f172a; line-height: 1; }
+    .stat-title { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
+    .stat-val { font-size: 1.5rem; font-weight: 800; color: var(--text-dark); line-height: 1; }
 
-    .filter-card { background: #fff; border-radius: 12px; padding: 1.25rem; border: 1px solid #e2e8f0; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .filter-card { background: var(--bg-card); border-radius: 12px; padding: 1.25rem; border: 1px solid var(--border-light); margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
     .filter-pills { display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.25rem; }
-    .filter-pill { padding: 0.5rem 1rem; border-radius: 99px; background: #f8fafc; border: 1px solid #e2e8f0; color: #64748b; font-size: 0.85rem; font-weight: 600; text-decoration: none; white-space: nowrap; transition: all 0.2s; }
-    .filter-pill:hover { background: #e2e8f0; color: #0f172a; }
+    .filter-pill { padding: 0.5rem 1rem; border-radius: 99px; background: var(--bg-page); border: 1px solid var(--border-light); color: var(--text-muted); font-size: 0.85rem; font-weight: 600; text-decoration: none; white-space: nowrap; transition: all 0.2s; }
+    .filter-pill:hover { background: var(--border-light); color: var(--text-dark); }
     .filter-pill.active { background: #0f172a; color: #fff; border-color: #0f172a; }
 
     .search-form { display: flex; gap: 0.5rem; min-width: 300px; }
-    .search-input { flex: 1; padding: 0.6rem 1rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; }
+    .search-input { flex: 1; padding: 0.6rem 1rem; border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem; }
     .search-input:focus { outline: none; border-color: #dc2626; box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1); }
     .btn-search { background: #dc2626; color: #fff; padding: 0.6rem 1rem; border-radius: 8px; font-weight: 700; border: none; cursor: pointer; }
 
-    .table-card { background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; overflow-x: auto; }
+    .table-card { background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border-light); overflow-x: auto; }
     .data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem; }
-    .data-table th { padding: 1rem; background: #f8fafc; border-bottom: 2px solid #e2e8f0; color: #64748b; font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; }
-    .data-table td { padding: 1rem; border-bottom: 1px solid #f1f5f9; color: #334155; vertical-align: middle; }
-    .data-table tbody tr:hover { background: #f8fafc; }
-    
-    
+    .data-table th { padding: 1rem; background: var(--bg-page); border-bottom: 2px solid var(--border-light); color: var(--text-muted); font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; }
+    .data-table td { padding: 1rem; border-bottom: 1px solid var(--bg-subtle); color: var(--text-body); vertical-align: middle; }
+    .data-table tbody tr:hover { background: var(--bg-page); }
+
+    .btn-row { padding: 0.4rem 0.9rem; border-radius: 8px; font-size: 0.78rem; font-weight: 700; cursor: pointer; white-space: nowrap; background: var(--bg-card); }
+    .btn-archive { color: #b45309; border: 1px solid #fde68a; }
+    .btn-archive:hover { background: #fef9c3; }
+    .btn-restore { color: #15803d; border: 1px solid #bbf7d0; }
+    .btn-restore:hover { background: #f0fdf4; }
+    .archived-tag { display: inline-block; margin-top: 0.25rem; background: var(--bg-subtle); color: var(--text-muted); border: 1px solid var(--border-light); padding: 0.1rem 0.55rem; border-radius: 50px; font-size: 0.7rem; font-weight: 700; }
+
     @media (max-width: 1024px) { .stats-row { grid-template-columns: 1fr; } }
 </style>
 @endpush
@@ -77,13 +83,14 @@
         <a href="{{ route('admin.clients', ['filter' => 'all', 'search' => $search]) }}" class="filter-pill {{ $filter == 'all' ? 'active' : '' }}">All Clients</a>
         <a href="{{ route('admin.clients', ['filter' => 'active_bookings', 'search' => $search]) }}" class="filter-pill {{ $filter == 'active_bookings' ? 'active' : '' }}">With Active Bookings</a>
         <a href="{{ route('admin.clients', ['filter' => 'new_this_month', 'search' => $search]) }}" class="filter-pill {{ $filter == 'new_this_month' ? 'active' : '' }}">Joined This Month</a>
+        <a href="{{ route('admin.clients', ['filter' => 'archived', 'search' => $search]) }}" class="filter-pill {{ $filter == 'archived' ? 'active' : '' }}">Archived ({{ $archivedCount }})</a>
     </div>
     <form action="{{ route('admin.clients') }}" method="GET" class="search-form">
         <input type="hidden" name="filter" value="{{ $filter }}">
         <input type="text" name="search" class="search-input" placeholder="Search name, username, email..." value="{{ $search }}">
         <button type="submit" class="btn-search">Search</button>
         @if($search)
-            <a href="{{ route('admin.clients', ['filter' => $filter]) }}" class="btn-search" style="background:#f1f5f9; color:#64748b; text-decoration:none;">Clear</a>
+            <a href="{{ route('admin.clients', ['filter' => $filter]) }}" class="btn-search" style="background:var(--bg-subtle); color:var(--text-muted); text-decoration:none;">Clear</a>
         @endif
     </form>
 </div>
@@ -97,22 +104,23 @@
                 <th>Location</th>
                 <th>Verification</th>
                 <th>Joined</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
             @forelse ($clients as $client)
                 <tr>
                     <td>
-                        <div style="font-weight:700; color:#0f172a;">{{ $client->firstname }} {{ $client->lastname }}</div>
-                        <div style="font-size:0.75rem; color:#64748b;">{{ '@' . $client->username }} &middot; Acc: {{ $client->account_number ?? 'N/A' }}</div>
+                        <div style="font-weight:700; color:var(--text-dark);">{{ $client->firstname }} {{ $client->lastname }}</div>
+                        <div style="font-size:0.75rem; color:var(--text-muted);">{{ '@' . $client->username }} &middot; Acc: {{ $client->account_number ?? 'N/A' }}</div>
                     </td>
                     <td>
-                        <div style="font-weight:600; color:#334155;">{{ $client->email }}</div>
-                        <div style="font-size:0.8rem; color:#64748b;">{{ $client->contact_no }}</div>
+                        <div style="font-weight:600; color:var(--text-body);">{{ $client->email }}</div>
+                        <div style="font-size:0.8rem; color:var(--text-muted);">{{ $client->contact_no }}</div>
                     </td>
                     <td>
-                        <div style="font-weight:600; color:#334155;">{{ $client->address_barangay }}</div>
-                        <div style="font-size:0.8rem; color:#64748b;">{{ $client->address_municipality }}, {{ $client->address_province }}</div>
+                        <div style="font-weight:600; color:var(--text-body);">{{ $client->address_barangay }}</div>
+                        <div style="font-size:0.8rem; color:var(--text-muted);">{{ $client->address_municipality }}, {{ $client->address_province }}</div>
                     </td>
                     <td>
                         @if ($client->proof_of_billing)
@@ -126,13 +134,30 @@
                         @endif
                     </td>
                     <td>
-                        <div style="color:#64748b;">{{ $client->created_at->format('M d, Y') }}</div>
+                        <div style="color:var(--text-muted);">{{ $client->created_at->format('M d, Y') }}</div>
+                        @if ($client->isArchived())
+                            <span class="archived-tag">Archived {{ $client->archived_at->format('M d, Y') }}</span>
+                        @endif
+                    </td>
+                    <td>
+                        @if ($client->isArchived())
+                            <form action="{{ route('admin.clients.restore', $client->id) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="btn-row btn-restore">Restore</button>
+                            </form>
+                        @else
+                            <form action="{{ route('admin.clients.archive', $client->id) }}" method="POST"
+                                  onsubmit="return confirm({{ json_encode('Archive ' . $client->firstname . ' ' . $client->lastname . '? They will no longer be able to sign in. Their booking and payment history is kept, and you can restore them anytime.') }});">
+                                @csrf
+                                <button type="submit" class="btn-row btn-archive">Archive</button>
+                            </form>
+                        @endif
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5" style="text-align: center; padding: 3rem; color: #94a3b8;">
-                        No clients found matching your search criteria.
+                    <td colspan="6" style="text-align: center; padding: 3rem; color: var(--text-faint);">
+                        {{ $filter === 'archived' && !$search ? 'No archived clients.' : 'No clients found matching your search criteria.' }}
                     </td>
                 </tr>
             @endforelse

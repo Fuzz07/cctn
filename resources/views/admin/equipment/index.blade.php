@@ -5,24 +5,24 @@
 @push('styles')
 <style>
     .page-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem; }
-    .page-title { font-size:1.5rem; font-weight:800; color:#0f172a; margin:0; }
+    .page-title { font-size:1.5rem; font-weight:800; color:var(--text-dark); margin:0; }
     .content-grid { display:grid; grid-template-columns:360px 1fr; gap:1.5rem; }
     @media(max-width:1024px){ .content-grid { grid-template-columns:1fr; } }
 
-    .form-card { background:#fff; border-radius:16px; padding:1.75rem; border:1px solid #e2e8f0; box-shadow:0 4px 15px rgba(0,0,0,0.02); }
-    .form-card-title { font-size:1.1rem; font-weight:800; color:#0f172a; margin:0 0 1.5rem; display:flex; align-items:center; gap:.5rem; }
+    .form-card { background:var(--bg-card); border-radius:16px; padding:1.75rem; border:1px solid var(--border-light); box-shadow:0 4px 15px rgba(0,0,0,0.02); }
+    .form-card-title { font-size:1.1rem; font-weight:800; color:var(--text-dark); margin:0 0 1.5rem; display:flex; align-items:center; gap:.5rem; }
     .form-group { margin-bottom:1.25rem; }
-    .form-label { display:block; font-size:.85rem; font-weight:700; color:#334155; margin-bottom:.5rem; }
-    .form-control { width:100%; padding:.75rem 1rem; border:1px solid #cbd5e1; border-radius:8px; font-size:.9rem; box-sizing:border-box; font-family:inherit; }
+    .form-label { display:block; font-size:.85rem; font-weight:700; color:var(--text-body); margin-bottom:.5rem; }
+    .form-control { width:100%; padding:.75rem 1rem; border:1px solid var(--border); border-radius:8px; font-size:.9rem; box-sizing:border-box; font-family:inherit; }
     .form-control:focus { outline:none; border-color:#dc2626; box-shadow:0 0 0 3px rgba(220,38,38,.1); }
     .btn-submit { width:100%; background:#dc2626; color:#fff; padding:.85rem; border-radius:8px; font-weight:700; font-size:1rem; border:none; cursor:pointer; margin-top:.5rem; transition:all .2s; }
     .btn-submit:hover { background:#b91c1c; }
 
     .eq-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:1rem; }
-    .eq-card { background:#fff; border-radius:14px; padding:1.25rem 1.5rem; border:1px solid #e2e8f0; box-shadow:0 4px 15px rgba(0,0,0,0.02); transition:all .2s; }
-    .eq-card:hover { border-color:#cbd5e1; box-shadow:0 6px 20px rgba(0,0,0,0.06); }
-    .eq-cat { font-size:.72rem; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:#94a3b8; margin-bottom:.5rem; }
-    .eq-name { font-size:1rem; font-weight:700; color:#0f172a; margin-bottom:.5rem; }
+    .eq-card { background:var(--bg-card); border-radius:14px; padding:1.25rem 1.5rem; border:1px solid var(--border-light); box-shadow:0 4px 15px rgba(0,0,0,0.02); transition:all .2s; }
+    .eq-card:hover { border-color:var(--border); box-shadow:0 6px 20px rgba(0,0,0,0.06); }
+    .eq-cat { font-size:.72rem; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:var(--text-faint); margin-bottom:.5rem; }
+    .eq-name { font-size:1rem; font-weight:700; color:var(--text-dark); margin-bottom:.5rem; }
     .eq-meta { display:flex; justify-content:space-between; align-items:center; }
     .eq-qty { font-size:.85rem; font-weight:600; color:#475569; }
     .badge { padding:.3rem .7rem; border-radius:99px; font-size:.72rem; font-weight:700; }
@@ -87,8 +87,8 @@
     <!-- Equipment Cards -->
     <div>
         @if($equipment->isEmpty())
-            <div style="text-align:center;padding:4rem;background:#fff;border-radius:16px;border:1px dashed #cbd5e1;">
-                <p style="color:#94a3b8;font-size:1rem;font-weight:600;">No equipment has been added yet.</p>
+            <div style="text-align:center;padding:4rem;background:var(--bg-card);border-radius:16px;border:1px dashed var(--border);">
+                <p style="color:var(--text-faint);font-size:1rem;font-weight:600;">No equipment has been added yet.</p>
             </div>
         @else
             <div class="eq-grid">
@@ -105,7 +105,7 @@
                         <div class="eq-cat">{{ $item->category }}</div>
                         <div class="eq-name">{{ $item->name }}</div>
                         @if($item->notes)
-                            <div style="font-size:.8rem; color:#94a3b8; margin-bottom:.75rem; font-style:italic;">{{ $item->notes }}</div>
+                            <div style="font-size:.8rem; color:var(--text-faint); margin-bottom:.75rem; font-style:italic;">{{ $item->notes }}</div>
                         @endif
                         <div class="eq-meta">
                             <span class="eq-qty">Qty: {{ $item->quantity }}</span>

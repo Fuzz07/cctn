@@ -15,7 +15,7 @@
 
     /* ── Hero Section ── */
     .bl-hero {
-        background: #ffffff;
+        background: var(--bg-card);
         position: relative;
         overflow: hidden;
         padding-top: 1.5rem;
@@ -179,7 +179,7 @@
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        background: #ffffff;
+        background: var(--bg-card);
         color: var(--bl-red) !important;
         text-decoration: none;
         padding: 0.85rem 1.75rem;
@@ -224,7 +224,7 @@
         top: 40px;
         width: 220px;
         height: 400px;
-        background: #ffffff;
+        background: var(--bg-card);
         border-radius: 32px;
         border: 5px solid #1e293b;
         box-shadow: 0 20px 40px rgba(15, 23, 42, 0.15);
@@ -239,7 +239,7 @@
     .bl-phone-bg-header {
         font-size: 0.75rem;
         font-weight: 800;
-        color: #64748b;
+        color: var(--text-muted);
         text-align: center;
         margin-top: 8px;
         margin-bottom: 12px;
@@ -282,9 +282,9 @@
 
     .bl-phone-bg-chart {
         flex: 1;
-        background: #f8fafc;
+        background: var(--bg-page);
         border-radius: 12px;
-        border: 1px dashed #cbd5e1;
+        border: 1px dashed var(--border);
         padding: 8px;
         display: flex;
         align-items: flex-end;
@@ -295,7 +295,7 @@
         position: relative;
         width: 250px;
         height: 470px;
-        background: #ffffff;
+        background: var(--bg-card);
         border-radius: 36px;
         border: 6px solid #0f172a;
         box-shadow: 0 25px 60px rgba(15, 23, 42, 0.22);
@@ -326,7 +326,7 @@
         align-items: center;
         font-size: 0.68rem;
         font-weight: 700;
-        color: #0f172a;
+        color: var(--text-dark);
         padding: 0 4px;
         margin-top: 2px;
         margin-bottom: 8px;
@@ -381,8 +381,8 @@
     }
 
     .bl-phone-tile {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
+        background: var(--bg-page);
+        border: 1px solid var(--border-light);
         border-radius: 12px;
         padding: 10px 6px;
         text-align: center;
@@ -410,7 +410,7 @@
     .bl-phone-tile span {
         font-size: 0.68rem;
         font-weight: 700;
-        color: #334155;
+        color: var(--text-body);
     }
 
     .bl-phone-btn {
@@ -434,8 +434,8 @@
     }
 
     .bl-features-bar {
-        background: #ffffff;
-        border: 1px solid #f1f5f9;
+        background: var(--bg-card);
+        border: 1px solid var(--bg-subtle);
         border-radius: 24px;
         box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
         padding: 1.5rem 1.25rem;
@@ -453,7 +453,7 @@
     }
 
     .bl-feature-item + .bl-feature-item {
-        border-left: 1px solid #f1f5f9;
+        border-left: 1px solid var(--bg-subtle);
     }
 
     .bl-feature-icon {
@@ -551,7 +551,7 @@
 
     /* ── APK Step-by-Step Guide ── */
     .bl-apk-guide {
-        background: #ffffff;
+        background: var(--bg-card);
         border: 1.5px solid #fecaca;
         border-radius: 20px;
         padding: 2.25rem 2rem;
@@ -587,7 +587,7 @@
     }
     .bl-apk-guide-header p {
         font-size: 0.9rem;
-        color: #64748b;
+        color: var(--text-muted);
         margin: 0;
         line-height: 1.5;
     }
@@ -598,7 +598,7 @@
     }
     .bl-apk-step-card {
         background: #fafafa;
-        border: 1px solid #e2e8f0;
+        border: 1px solid var(--border-light);
         border-radius: 16px;
         padding: 1.6rem 1.15rem 1.4rem;
         position: relative;
@@ -610,7 +610,7 @@
     }
     .bl-apk-step-card:hover {
         transform: translateY(-4px);
-        background: #ffffff;
+        background: var(--bg-card);
         border-color: #fca5a5;
         box-shadow: 0 10px 25px rgba(220, 38, 38, 0.08);
     }
@@ -650,12 +650,12 @@
     }
     .bl-apk-step-card p {
         font-size: 0.82rem;
-        color: #64748b;
+        color: var(--text-muted);
         line-height: 1.55;
         margin: 0;
     }
     .bl-apk-step-card code {
-        background: #f1f5f9;
+        background: var(--bg-subtle);
         color: #dc2626;
         padding: 0.1rem 0.35rem;
         border-radius: 4px;
@@ -673,7 +673,7 @@
 
     /* ── Plans Section ── */
     .bl-plans-section {
-        background: #ffffff;
+        background: var(--bg-card);
         padding: 4.5rem 0 5.5rem;
         position: relative;
         overflow: hidden;
@@ -722,8 +722,8 @@
     }
 
     .bl-plan-card {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
+        background: var(--bg-card);
+        border: 1px solid var(--border-light);
         border-radius: 20px;
         padding: 2.25rem 2rem;
         display: flex;
@@ -731,6 +731,18 @@
         position: relative;
         box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
         transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+        /* Entrance animation: cards start hidden/lowered, then rise into place
+           as they scroll into view (see IntersectionObserver script below). */
+        opacity: 0;
+        transform: translateY(28px);
+    }
+
+    .bl-plan-card.bl-in-view {
+        animation: bl-plan-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes bl-plan-rise {
+        to { opacity: 1; transform: translateY(0); }
     }
 
     .bl-plan-card:hover {
@@ -739,9 +751,35 @@
         box-shadow: 0 14px 40px rgba(220, 38, 38, 0.12);
     }
 
+    .bl-plan-card.bl-in-view:hover {
+        animation-play-state: paused;
+    }
+
     .bl-plan-card.bl-popular-card {
         border: 2px solid var(--bl-red);
         box-shadow: 0 10px 35px rgba(220, 38, 38, 0.14);
+    }
+
+    .bl-plan-card.bl-popular-card.bl-in-view {
+        animation: bl-plan-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards,
+                   bl-popular-glow 2.6s ease-in-out 0.6s infinite;
+    }
+
+    @keyframes bl-popular-glow {
+        0%, 100% { box-shadow: 0 10px 35px rgba(220, 38, 38, 0.14); }
+        50%      { box-shadow: 0 14px 46px rgba(220, 38, 38, 0.3); }
+    }
+
+    @keyframes bl-badge-pulse {
+        0%, 100% { transform: scale(1); }
+        50%      { transform: scale(1.06); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .bl-plan-card { opacity: 1; transform: none; }
+        .bl-plan-card.bl-in-view,
+        .bl-plan-card.bl-popular-card.bl-in-view,
+        .bl-popular-banner { animation: none; }
     }
 
     .bl-popular-banner {
@@ -756,6 +794,7 @@
         padding: 0.35rem 1rem;
         border-radius: 0 18px 0 12px;
         text-transform: uppercase;
+        animation: bl-badge-pulse 2.6s ease-in-out 0.6s infinite;
     }
 
     .bl-plan-badge {
@@ -800,7 +839,7 @@
 
     .bl-plan-divider {
         height: 1px;
-        background: #f1f5f9;
+        background: var(--bg-subtle);
         margin-bottom: 1.5rem;
     }
 
@@ -819,7 +858,7 @@
         align-items: center;
         gap: 0.75rem;
         font-size: 0.95rem;
-        color: #334155;
+        color: var(--text-body);
         font-weight: 600;
     }
 
@@ -1249,10 +1288,10 @@
 </section>
 
 <!-- ========== SUPPORT & ABOUT ========== -->
-<section style="background: #ffffff; padding: 4rem 0;" id="support">
+<section style="background: var(--bg-card); padding: 4rem 0;" id="support">
     <div class="bl-container">
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
-            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 2rem;">
+            <div style="background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 16px; padding: 2rem;">
                 <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--bl-navy); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
                     <i class="bi bi-headset" style="color: var(--bl-red);"></i>
                     24/7 Customer Support
@@ -1263,7 +1302,7 @@
                 </p>
                 <span style="font-size: 1.3rem; font-weight: 900; color: var(--bl-red);">0999 998 8209</span>
             </div>
-            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 2rem;" id="about">
+            <div style="background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 16px; padding: 2rem;" id="about">
                 <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--bl-navy); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
                     <i class="bi bi-info-circle" style="color: var(--bl-red);"></i>
                     About BCTVI
@@ -1278,3 +1317,32 @@
     </div>
 </section>
 @endsection
+
+@push('scripts')
+<script>
+(function () {
+    // Reveal each plan card as it scrolls into view, staggering the delay
+    // by column position so the row rises left-to-right rather than all at once.
+    var cards = document.querySelectorAll('.bl-plan-card');
+    if (!cards.length) return;
+
+    if (!('IntersectionObserver' in window)) {
+        cards.forEach(function (card) { card.classList.add('bl-in-view'); });
+        return;
+    }
+
+    var observer = new IntersectionObserver(function (entries, obs) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            var card = entry.target;
+            var col = Array.prototype.indexOf.call(cards, card) % 3;
+            card.style.animationDelay = (col * 0.12) + 's';
+            card.classList.add('bl-in-view');
+            obs.unobserve(card);
+        });
+    }, { threshold: 0.15 });
+
+    cards.forEach(function (card) { observer.observe(card); });
+})();
+</script>
+@endpush

@@ -5,20 +5,20 @@
 @push('styles')
 <style>
     .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
-    .page-title { font-size: 1.5rem; font-weight: 800; color: #0f172a; margin: 0; }
+    .page-title { font-size: 1.5rem; font-weight: 800; color: var(--text-dark); margin: 0; }
     
-    .filter-card { background: #fff; border-radius: 12px; padding: 1.25rem; border: 1px solid #e2e8f0; margin-bottom: 1.5rem; display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end; }
+    .filter-card { background: var(--bg-card); border-radius: 12px; padding: 1.25rem; border: 1px solid var(--border-light); margin-bottom: 1.5rem; display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end; }
     .filter-group { display: flex; flex-direction: column; gap: 0.4rem; min-width: 200px; flex: 1; }
-    .filter-label { font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
-    .filter-input { padding: 0.6rem 0.85rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; width: 100%; box-sizing: border-box; }
+    .filter-label { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .filter-input { padding: 0.6rem 0.85rem; border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem; width: 100%; box-sizing: border-box; }
     .btn-filter { background: #0f172a; color: #fff; padding: 0.65rem 1.25rem; border-radius: 8px; font-weight: 700; font-size: 0.9rem; border: none; cursor: pointer; white-space: nowrap; }
     .btn-filter:hover { background: #1e293b; }
 
-    .table-card { background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; overflow-x: auto; }
+    .table-card { background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border-light); overflow-x: auto; }
     .data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem; }
-    .data-table th { padding: 1rem; background: #f8fafc; border-bottom: 2px solid #e2e8f0; color: #64748b; font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; }
-    .data-table td { padding: 1rem; border-bottom: 1px solid #f1f5f9; color: #334155; vertical-align: middle; }
-    .data-table tbody tr:hover { background: #f8fafc; }
+    .data-table th { padding: 1rem; background: var(--bg-page); border-bottom: 2px solid var(--border-light); color: var(--text-muted); font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; }
+    .data-table td { padding: 1rem; border-bottom: 1px solid var(--bg-subtle); color: var(--text-body); vertical-align: middle; }
+    .data-table tbody tr:hover { background: var(--bg-page); }
 
     .badge { padding: 0.35rem 0.75rem; border-radius: 99px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; display: inline-block; }
     .badge-pending { background: #fff7ed; color: #ea580c; border: 1px solid #ffedd5; }
@@ -33,36 +33,36 @@
     /* Modal Styles */
     .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
     .modal-overlay.active { opacity: 1; pointer-events: auto; }
-    .modal-content { background: #fff; width: 100%; max-width: 600px; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); transform: scale(0.95); transition: transform 0.2s; max-height: 90vh; overflow-y: auto; }
+    .modal-content { background: var(--bg-card); width: 100%; max-width: 600px; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); transform: scale(0.95); transition: transform 0.2s; max-height: 90vh; overflow-y: auto; }
     .modal-overlay.active .modal-content { transform: scale(1); }
     
-    .modal-header { padding: 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
-    .modal-title { font-size: 1.25rem; font-weight: 800; color: #0f172a; margin: 0; }
-    .btn-close { background: none; border: none; color: #94a3b8; cursor: pointer; padding: 0.5rem; }
-    .btn-close:hover { color: #0f172a; }
+    .modal-header { padding: 1.5rem; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; }
+    .modal-title { font-size: 1.25rem; font-weight: 800; color: var(--text-dark); margin: 0; }
+    .btn-close { background: none; border: none; color: var(--text-faint); cursor: pointer; padding: 0.5rem; }
+    .btn-close:hover { color: var(--text-dark); }
     
     .modal-body { padding: 1.5rem; }
-    .modal-footer { padding: 1.25rem 1.5rem; border-top: 1px solid #e2e8f0; background: #f8fafc; border-radius: 0 0 16px 16px; display: flex; justify-content: flex-end; gap: 0.75rem; }
+    .modal-footer { padding: 1.25rem 1.5rem; border-top: 1px solid var(--border-light); background: var(--bg-page); border-radius: 0 0 16px 16px; display: flex; justify-content: flex-end; gap: 0.75rem; }
     
     .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.5rem; }
     .detail-item { display: flex; flex-direction: column; gap: 0.25rem; }
-    .detail-label { font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; }
-    .detail-value { font-size: 0.95rem; font-weight: 600; color: #0f172a; }
+    .detail-label { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+    .detail-value { font-size: 0.95rem; font-weight: 600; color: var(--text-dark); }
     
     .form-group { margin-bottom: 1.25rem; }
-    .form-label { display: block; font-size: 0.85rem; font-weight: 700; color: #334155; margin-bottom: 0.5rem; }
-    .form-control { width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; box-sizing: border-box; }
+    .form-label { display: block; font-size: 0.85rem; font-weight: 700; color: var(--text-body); margin-bottom: 0.5rem; }
+    .form-control { width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem; box-sizing: border-box; }
     .form-control:focus { outline: none; border-color: #dc2626; box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1); }
     
     .btn-save { background: #0f172a; color: #fff; padding: 0.65rem 1.25rem; border-radius: 8px; font-weight: 700; font-size: 0.9rem; border: none; cursor: pointer; }
     .btn-save:hover { background: #1e293b; }
-    .btn-cancel { background: #fff; color: #64748b; padding: 0.65rem 1.25rem; border-radius: 8px; font-weight: 600; font-size: 0.9rem; border: 1px solid #e2e8f0; cursor: pointer; text-decoration: none; }
-    .btn-cancel:hover { background: #f1f5f9; color: #0f172a; }
+    .btn-cancel { background: var(--bg-card); color: var(--text-muted); padding: 0.65rem 1.25rem; border-radius: 8px; font-weight: 600; font-size: 0.9rem; border: 1px solid var(--border-light); cursor: pointer; text-decoration: none; }
+    .btn-cancel:hover { background: var(--bg-subtle); color: var(--text-dark); }
 
     /* Compact table proof indicators */
     .tbl-pay-cell { font-size: 0.82rem; }
-    .tbl-pay-method { font-weight: 700; color: #0f172a; font-size: 0.82rem; }
-    .tbl-pay-ref { font-family: monospace; font-size: 0.78rem; color: #64748b; font-weight: 600; }
+    .tbl-pay-method { font-weight: 700; color: var(--text-dark); font-size: 0.82rem; }
+    .tbl-pay-ref { font-family: monospace; font-size: 0.78rem; color: var(--text-muted); font-weight: 600; }
     .tbl-proof-thumb {
         display: inline-flex;
         align-items: center;
@@ -107,7 +107,7 @@
         font-weight: 800;
         text-transform: uppercase;
         letter-spacing: 0.08em;
-        color: #94a3b8;
+        color: var(--text-faint);
         margin-bottom: 0.85rem;
         display: flex;
         align-items: center;
@@ -121,7 +121,7 @@
     }
     .proof-meta-item .proof-meta-label {
         font-size: 0.7rem;
-        color: #64748b;
+        color: var(--text-muted);
         font-weight: 700;
         text-transform: uppercase;
         display: block;
@@ -228,7 +228,7 @@
     }
     #proof-lightbox-close:hover { background: #dc2626; }
     #proof-lightbox-caption {
-        color: #94a3b8;
+        color: var(--text-faint);
         font-size: 0.82rem;
         font-weight: 600;
         text-align: center;
@@ -294,7 +294,7 @@
         <input type="date" name="date" class="filter-input" value="{{ $filterDate }}">
     </div>
     <button type="submit" class="btn-filter">Apply Filters</button>
-    <a href="{{ route('admin.appointments') }}" class="btn-filter" style="background:#f1f5f9; color:#64748b; text-decoration:none; text-align:center;">Clear</a>
+    <a href="{{ route('admin.appointments') }}" class="btn-filter" style="background:var(--bg-subtle); color:var(--text-muted); text-decoration:none; text-align:center;">Clear</a>
 </form>
 
 <div class="table-card">
@@ -312,13 +312,13 @@
         <tbody>
             @forelse ($appointments as $appt)
                 <tr>
-                    <td><strong style="color: #64748b; font-family: monospace;">#{{ str_pad($appt->id, 5, '0', STR_PAD_LEFT) }}</strong></td>
+                    <td><strong style="color: var(--text-muted); font-family: monospace;">#{{ str_pad($appt->id, 5, '0', STR_PAD_LEFT) }}</strong></td>
                     <td>
-                        <div style="font-weight:700; color:#0f172a;">{{ $appt->client->firstname }} {{ $appt->client->lastname }}</div>
-                        <div style="font-size:0.8rem; color:#64748b;">{{ $appt->client->contact_no }} &middot; {{ $appt->client->address_barangay }}</div>
+                        <div style="font-weight:700; color:var(--text-dark);">{{ $appt->client->firstname }} {{ $appt->client->lastname }}</div>
+                        <div style="font-size:0.8rem; color:var(--text-muted);">{{ $appt->client->contact_no }} &middot; {{ $appt->client->address_barangay }}</div>
                     </td>
                     <td>
-                        <div style="font-weight:600; color:#0f172a;">{{ $appt->service->service_name }}</div>
+                        <div style="font-weight:600; color:var(--text-dark);">{{ $appt->service->service_name }}</div>
                         <div style="font-size:0.85rem; color:#dc2626; font-weight:700;">{{ date('M d, Y', strtotime($appt->preferred_date)) }} @ {{ date('g:i A', strtotime($appt->preferred_time)) }}</div>
                     </td>
                     <td class="tbl-pay-cell">
@@ -339,7 +339,7 @@
                                 No Receipt
                             </span>
                         @else
-                            <span style="color:#94a3b8; font-size:0.8rem;">&mdash;</span>
+                            <span style="color:var(--text-faint); font-size:0.8rem;">&mdash;</span>
                         @endif
                     </td>
                     <td>
@@ -367,7 +367,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6" style="text-align: center; padding: 3rem; color: #94a3b8;">
+                    <td colspan="6" style="text-align: center; padding: 3rem; color: var(--text-faint);">
                         No appointments found matching your criteria.
                     </td>
                 </tr>
@@ -411,7 +411,7 @@
                     </div>
                     
                     @if($manageAppointment->message)
-                        <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid #e2e8f0;">
+                        <div style="background: var(--bg-page); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid var(--border-light);">
                             <span class="detail-label" style="margin-bottom: 0.5rem; display:block;">Client Note:</span>
                             <span class="detail-value" style="font-weight: 500; font-size: 0.9rem;">{{ $manageAppointment->message }}</span>
                         </div>
@@ -447,7 +447,7 @@
                         </div>
 
                         @if($manageAppointment->payment_proof)
-                            <div style="font-size: 0.7rem; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.5rem;">
+                            <div style="font-size: 0.7rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.5rem;">
                                 Payment Receipt / Screenshot
                             </div>
                             <div class="proof-img-wrap" onclick="openProofLightbox('{{ asset('storage/' . $manageAppointment->payment_proof) }}', '#{{ str_pad($manageAppointment->id, 5, '0', STR_PAD_LEFT) }} — {{ $manageAppointment->client->firstname }} {{ $manageAppointment->client->lastname }}')">
@@ -467,9 +467,9 @@
                                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                                     Download Receipt
                                 </a>
-                                <span style="color: #334155;">|</span>
+                                <span style="color: var(--text-body);">|</span>
                                 <a href="{{ asset('storage/' . $manageAppointment->payment_proof) }}" target="_blank"
-                                   style="font-size: 0.75rem; font-weight: 700; color: #94a3b8; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem;">
+                                   style="font-size: 0.75rem; font-weight: 700; color: var(--text-faint); text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem;">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                                     Open in New Tab
                                 </a>
@@ -477,13 +477,13 @@
                         @else
                             <div class="proof-no-img" style="background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px dashed #334155;">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                                <span style="font-size: 0.8rem; color: #64748b;">No payment receipt uploaded</span>
+                                <span style="font-size: 0.8rem; color: var(--text-muted);">No payment receipt uploaded</span>
                             </div>
                         @endif
                     </div>
                     @endif
 
-                    <h4 style="font-size: 1rem; font-weight: 800; color: #0f172a; margin: 0 0 1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem;">Update Scheduling</h4>
+                    <h4 style="font-size: 1rem; font-weight: 800; color: var(--text-dark); margin: 0 0 1rem; border-bottom: 1px solid var(--border-light); padding-bottom: 0.5rem;">Update Scheduling</h4>
                     
                     <div class="detail-grid" style="margin-bottom: 0;">
                         <div class="form-group">

@@ -17,7 +17,7 @@ class BillingController extends Controller
     public function index()
     {
         $billings = BillingAccount::with('client')->orderBy('id', 'desc')->get();
-        $clients  = Client::orderBy('firstname')->get();
+        $clients  = Client::active()->orderBy('firstname')->get();
 
         return view('admin.billing.index', compact('billings', 'clients'));
     }

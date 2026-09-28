@@ -15,6 +15,16 @@ class AuthenticateClient
             return redirect()->route('login');
         }
 
+        // An admin may archive a client while they are signed in.
+        if (Auth::guard('client')->user()->isArchived()) {
+            Auth::guard('client')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->route('login')
+                ->withErrors(['login_input' => 'This account has been archived. Please contact BCTVI support.']);
+        }
+
         return $next($request);
     }
 }

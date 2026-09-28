@@ -21,7 +21,7 @@
         justify-content: space-between;
         gap: 1.5rem;
         padding: 1.5rem 1.75rem;
-        border: 1px solid #e2e8f0;
+        border: 1px solid var(--border-light);
         border-radius: 18px;
         background: linear-gradient(115deg, #ffffff 0%, #fff7f7 100%);
         box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
@@ -46,7 +46,7 @@
     }
     .dashboard-hero-meta {
         margin-top: 0.6rem;
-        color: #64748b;
+        color: var(--text-muted);
         font-size: 0.85rem;
         font-weight: 600;
     }
@@ -69,11 +69,11 @@
     .welcome-header h2 {
         font-size: 1.65rem;
         font-weight: 800;
-        color: #0f172a;
+        color: var(--text-dark);
         margin: 0 0 0.25rem 0;
     }
     .welcome-header p {
-        color: #64748b;
+        color: var(--text-muted);
         font-size: 0.95rem;
         margin: 0;
     }
@@ -85,8 +85,8 @@
         gap: 1.25rem;
     }
     .stat-card {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
+        background: var(--bg-card);
+        border: 1px solid var(--border-light);
         border-radius: 16px;
         padding: 1.5rem;
         display: flex;
@@ -113,13 +113,13 @@
     .stat-title {
         font-size: 0.85rem;
         font-weight: 700;
-        color: #64748b;
+        color: var(--text-muted);
         margin-bottom: 0.2rem;
     }
     .stat-number {
         font-size: 1.8rem;
         font-weight: 800;
-        color: #0f172a;
+        color: var(--text-dark);
         line-height: 1.1;
     }
 
@@ -131,8 +131,8 @@
     }
 
     .dash-card {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
+        background: var(--bg-card);
+        border: 1px solid var(--border-light);
         border-radius: 16px;
         padding: 1.5rem;
         box-shadow: 0 4px 15px rgba(0,0,0,0.02);
@@ -148,7 +148,7 @@
     .dash-card-title {
         font-size: 1.1rem;
         font-weight: 800;
-        color: #0f172a;
+        color: var(--text-dark);
         margin: 0;
     }
     
@@ -163,15 +163,15 @@
         padding: 0.75rem 1rem;
         font-size: 0.75rem;
         font-weight: 700;
-        color: #64748b;
-        border-bottom: 1px solid #e2e8f0;
+        color: var(--text-muted);
+        border-bottom: 1px solid var(--border-light);
         text-transform: uppercase;
         letter-spacing: 0.05em;
     }
     .table-modern td {
         padding: 1rem;
-        border-bottom: 1px solid #f1f5f9;
-        color: #334155;
+        border-bottom: 1px solid var(--bg-subtle);
+        color: var(--text-body);
         vertical-align: middle;
     }
     .badge-pill {
@@ -184,7 +184,7 @@
     .badge-pill-yellow { background: #fef3c7; color: #d97706; }
     .badge-pill-green { background: #dcfce7; color: #15803d; }
     .badge-pill-red { background: #fee2e2; color: #dc2626; }
-    .badge-pill-gray { background: #f1f5f9; color: #475569; }
+    .badge-pill-gray { background: var(--bg-subtle); color: #475569; }
 
     .quick-actions-grid {
         display: grid;
@@ -192,8 +192,8 @@
         gap: 0.75rem;
     }
     .action-card {
-        background: #ffffff;
-        border: 1px solid #f1f5f9;
+        background: var(--bg-card);
+        border: 1px solid var(--bg-subtle);
         border-radius: 12px;
         padding: 1rem;
         display: flex;
@@ -204,7 +204,7 @@
     }
     .action-card:hover {
         transform: translateY(-2px);
-        border-color: #cbd5e1;
+        border-color: var(--border);
         box-shadow: 0 6px 15px rgba(0,0,0,0.04);
     }
     .action-icon {
@@ -219,7 +219,7 @@
     .action-title {
         font-size: 0.95rem;
         font-weight: 700;
-        color: #0f172a;
+        color: var(--text-dark);
         margin: 0;
     }
 
@@ -329,15 +329,15 @@
                             @endphp
                             <tr>
                                 <td>
-                                    <div style="font-weight:700; color:#0f172a;">{{ $appt->client->firstname }} {{ $appt->client->lastname }}</div>
-                                    <div style="font-size:0.75rem; color:#64748b;">{{ $appt->client->contact_no }}</div>
+                                    <div style="font-weight:700; color:var(--text-dark);">{{ $appt->client->firstname }} {{ $appt->client->lastname }}</div>
+                                    <div style="font-size:0.75rem; color:var(--text-muted);">{{ $appt->client->contact_no }}</div>
                                 </td>
                                 <td>
                                     <div style="font-weight:600;">{{ $appt->service->service_name }}</div>
-                                    <div style="font-size:0.75rem; color:#64748b;">₱{{ number_format($appt->service->price, 2) }}</div>
+                                    <div style="font-size:0.75rem; color:var(--text-muted);">₱{{ number_format($appt->service->price, 2) }}</div>
                                 </td>
                                 <td>
-                                    <div style="font-weight:600; color:#0f172a;">{{ date('M d, Y', strtotime($appt->preferred_date)) }}</div>
+                                    <div style="font-weight:600; color:var(--text-dark);">{{ date('M d, Y', strtotime($appt->preferred_date)) }}</div>
                                     <div style="font-size:0.75rem; color:#dc2626; font-weight:700;">{{ date('g:i A', strtotime($appt->preferred_time)) }}</div>
                                 </td>
                                 <td>
@@ -346,7 +346,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" style="text-align:center; padding: 3rem; color: #94a3b8;">
+                                <td colspan="4" style="text-align:center; padding: 3rem; color: var(--text-faint);">
                                     No recent appointments found.
                                 </td>
                             </tr>

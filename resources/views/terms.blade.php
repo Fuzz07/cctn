@@ -6,7 +6,7 @@
 <style>
     .terms-page-wrap {
         padding: 3rem 0 5rem;
-        background: #f8fafc;
+        background: var(--bg-page);
         min-height: calc(100vh - 120px);
     }
     .terms-header {
@@ -65,7 +65,7 @@
         padding-top: 1.5rem;
         border-top: 1px solid rgba(255,255,255,0.1);
         font-size: 0.85rem;
-        color: #94a3b8;
+        color: var(--text-faint);
     }
     .terms-meta-item {
         display: inline-flex;
@@ -88,16 +88,16 @@
     .terms-sidebar {
         position: sticky;
         top: 90px;
-        background: #ffffff;
+        background: var(--bg-card);
         border-radius: 16px;
-        border: 1px solid #e2e8f0;
+        border: 1px solid var(--border-light);
         box-shadow: 0 4px 20px rgba(15,23,42,0.04);
         padding: 1.5rem;
     }
     .terms-sidebar-title {
         font-size: 0.85rem;
         font-weight: 800;
-        color: #0f172a;
+        color: var(--text-dark);
         text-transform: uppercase;
         letter-spacing: 0.05em;
         margin-bottom: 1rem;
@@ -121,7 +121,7 @@
         border-radius: 8px;
         font-size: 0.85rem;
         font-weight: 600;
-        color: #64748b;
+        color: var(--text-muted);
         text-decoration: none;
         transition: all 0.2s;
     }
@@ -132,7 +132,7 @@
     .terms-toc-num {
         font-size: 0.75rem;
         font-weight: 800;
-        color: #94a3b8;
+        color: var(--text-faint);
         width: 18px;
     }
     .terms-toc-link:hover .terms-toc-num, .terms-toc-link.active .terms-toc-num {
@@ -146,15 +146,15 @@
         gap: 1.75rem;
     }
     .terms-card {
-        background: #ffffff;
+        background: var(--bg-card);
         border-radius: 16px;
-        border: 1px solid #e2e8f0;
+        border: 1px solid var(--border-light);
         box-shadow: 0 4px 20px rgba(15,23,42,0.03);
         padding: 2.25rem 2.5rem;
         transition: border-color 0.2s;
     }
     .terms-card:hover {
-        border-color: #cbd5e1;
+        border-color: var(--border);
     }
     .terms-card-header {
         display: flex;
@@ -162,7 +162,7 @@
         gap: 1rem;
         margin-bottom: 1.25rem;
         padding-bottom: 1rem;
-        border-bottom: 1px solid #f1f5f9;
+        border-bottom: 1px solid var(--bg-subtle);
     }
     .terms-card-num {
         width: 36px;
@@ -180,7 +180,7 @@
     .terms-card-title {
         font-size: 1.25rem;
         font-weight: 800;
-        color: #0f172a;
+        color: var(--text-dark);
         margin: 0;
     }
     .terms-card-body {
@@ -202,25 +202,25 @@
         margin-bottom: 0.5rem;
     }
     .terms-card-body strong {
-        color: #0f172a;
+        color: var(--text-dark);
     }
 
     .terms-highlight-box {
-        background: #f8fafc;
+        background: var(--bg-page);
         border-left: 4px solid #dc2626;
         border-radius: 0 10px 10px 0;
         padding: 1rem 1.25rem;
         margin: 1.25rem 0;
-        color: #334155;
+        color: var(--text-body);
         font-size: 0.92rem;
         line-height: 1.6;
     }
 
     /* Action bar */
     .terms-action-bar {
-        background: #ffffff;
+        background: var(--bg-card);
         border-radius: 16px;
-        border: 1px solid #e2e8f0;
+        border: 1px solid var(--border-light);
         box-shadow: 0 10px 30px rgba(15,23,42,0.06);
         padding: 2rem 2.5rem;
         margin-top: 1rem;
@@ -233,11 +233,11 @@
     .terms-action-info h4 {
         font-size: 1.15rem;
         font-weight: 800;
-        color: #0f172a;
+        color: var(--text-dark);
         margin: 0 0 0.35rem 0;
     }
     .terms-action-info p {
-        color: #64748b;
+        color: var(--text-muted);
         font-size: 0.9rem;
         margin: 0;
     }
@@ -268,9 +268,9 @@
         transform: translateY(-1px);
     }
     .btn-terms-secondary {
-        background: #ffffff;
-        color: #334155;
-        border: 1px solid #cbd5e1;
+        background: var(--bg-card);
+        color: var(--text-body);
+        border: 1px solid var(--border);
         padding: 0.85rem 1.4rem;
         border-radius: 10px;
         font-weight: 700;
@@ -283,8 +283,8 @@
         cursor: pointer;
     }
     .btn-terms-secondary:hover {
-        background: #f1f5f9;
-        color: #0f172a;
+        background: var(--bg-subtle);
+        color: var(--text-dark);
     }
 
     @media (max-width: 991px) {
@@ -305,8 +305,8 @@
 
     @media print {
         .site-header, .site-footer, .terms-sidebar, .terms-action-bar, .bottom-bar { display: none !important; }
-        .terms-page-wrap { padding: 0; background: #fff; }
-        .terms-header { background: #fff; color: #000; border: none; padding: 1rem 0; }
+        .terms-page-wrap { padding: 0; background: var(--bg-card); }
+        .terms-header { background: var(--bg-card); color: #000; border: none; padding: 1rem 0; }
         .terms-title { color: #000; font-size: 1.8rem; }
         .terms-subtitle { color: #555; }
         .terms-card { border: 1px solid #ccc; box-shadow: none; break-inside: avoid; page-break-inside: avoid; margin-bottom: 1.5rem; }
@@ -360,7 +360,7 @@
                     <li><a href="#section-9" class="terms-toc-link"><span class="terms-toc-num">09</span> Maintenance &amp; Outages</a></li>
                     <li><a href="#section-10" class="terms-toc-link"><span class="terms-toc-num">10</span> Support &amp; Disputes</a></li>
                 </ul>
-                <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #f1f5f9;">
+                <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--bg-subtle);">
                     <a href="{{ route('login') }}" class="btn-terms-primary" style="width: 100%; justify-content: center; font-size: 0.88rem; padding: 0.65rem 1rem;">
                         <i class="bi bi-box-arrow-in-right"></i> Go to Client Login
                     </a>

@@ -125,8 +125,8 @@
     max-width: calc(100vw - 32px);
     height: 560px;
     max-height: calc(100vh - 120px);
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
     border-radius: 20px;
     box-shadow: 0 30px 70px rgba(15,23,42,0.22), 0 0 0 1px rgba(220,38,38,0.06);
     display: flex;
@@ -168,7 +168,7 @@
     width: 38px; height: 38px;
     border-radius: 50%;
     object-fit: cover;
-    background: #fff;
+    background: var(--bg-card);
     border: 2px solid rgba(255,255,255,0.3);
 }
 .bctvi-online-dot {
@@ -234,7 +234,7 @@
     flex: 1;
     overflow-y: auto;
     padding: 1rem;
-    background: #f8fafc;
+    background: var(--bg-page);
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
@@ -256,7 +256,7 @@
     width: 28px; height: 28px;
     border-radius: 50%;
     object-fit: cover;
-    border: 1.5px solid #e2e8f0;
+    border: 1.5px solid var(--border-light);
     flex-shrink: 0;
 }
 
@@ -269,9 +269,9 @@
     white-space: pre-line;
 }
 .bctvi-msg.bot {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    color: #334155;
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    color: var(--text-body);
     border-bottom-left-radius: 4px;
     box-shadow: 0 1px 4px rgba(0,0,0,0.04);
 }
@@ -312,8 +312,8 @@
     max-width: calc(100% - 36px);
 }
 .bctvi-plan-card {
-    background: #ffffff;
-    border: 1.5px solid #f1f5f9;
+    background: var(--bg-card);
+    border: 1.5px solid var(--bg-subtle);
     border-left: 3.5px solid #dc2626;
     border-radius: 10px;
     padding: 0.6rem 0.75rem;
@@ -324,8 +324,8 @@
     gap: 0.5rem;
 }
 .bctvi-plan-info { flex: 1; min-width: 0; }
-.bctvi-plan-name { font-size: 0.82rem; font-weight: 800; color: #0f172a; line-height: 1.2; }
-.bctvi-plan-sub { font-size: 0.72rem; color: #64748b; margin-top: 2px; }
+.bctvi-plan-name { font-size: 0.82rem; font-weight: 800; color: var(--text-dark); line-height: 1.2; }
+.bctvi-plan-sub { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
 .bctvi-plan-price { font-size: 0.84rem; font-weight: 800; color: #dc2626; white-space: nowrap; }
 .bctvi-plan-btn {
     background: #dc2626;
@@ -344,7 +344,7 @@
 .bctvi-coverage-box {
     margin-top: 0.4rem;
     margin-left: 36px;
-    background: #ffffff;
+    background: var(--bg-card);
     border: 1px solid #fed7aa;
     background: #fff7ed;
     border-radius: 12px;
@@ -371,8 +371,8 @@
     font-size: 0.76rem;
     padding: 0.4rem 0.5rem;
     border-radius: 6px;
-    border: 1px solid #cbd5e1;
-    background: #fff;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
     color: #1e293b;
 }
 .bctvi-cov-res {
@@ -390,8 +390,8 @@
     display: flex;
     gap: 4px;
     padding: 0.7rem 0.9rem;
-    background: #fff;
-    border: 1px solid #e2e8f0;
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
     border-radius: 16px;
     border-bottom-left-radius: 4px;
     width: fit-content;
@@ -417,8 +417,8 @@
     flex-wrap: wrap;
     gap: 0.4rem;
     padding: 0.6rem 0.85rem;
-    background: #f8fafc;
-    border-top: 1px solid #f1f5f9;
+    background: var(--bg-page);
+    border-top: 1px solid var(--bg-subtle);
     flex-shrink: 0;
 }
 .bctvi-chat-chips:empty { display: none; }
@@ -427,9 +427,9 @@
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
-    border: 1px solid #e2e8f0;
-    background: #ffffff;
-    color: #334155;
+    border: 1px solid var(--border-light);
+    background: var(--bg-card);
+    color: var(--text-body);
     font-size: 0.75rem;
     font-weight: 600;
     padding: 0.38rem 0.75rem;
@@ -453,8 +453,8 @@
     grid-template-columns: 1fr 1fr;
     gap: 0.4rem;
     padding: 0.75rem;
-    background: #f8fafc;
-    border-top: 1px solid #f1f5f9;
+    background: var(--bg-page);
+    border-top: 1px solid var(--bg-subtle);
     flex-shrink: 0;
 }
 .bctvi-welcome-chip {
@@ -462,8 +462,8 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 0.2rem;
-    background: #fff;
-    border: 1px solid #e2e8f0;
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
     border-radius: 12px;
     padding: 0.65rem 0.75rem;
     cursor: pointer;
@@ -490,12 +490,12 @@
 .bctvi-welcome-chip .wc-label {
     font-size: 0.76rem;
     font-weight: 700;
-    color: #0f172a;
+    color: var(--text-dark);
     line-height: 1.2;
 }
 .bctvi-welcome-chip .wc-sub {
     font-size: 0.67rem;
-    color: #94a3b8;
+    color: var(--text-faint);
     line-height: 1.2;
 }
 
@@ -505,34 +505,34 @@
     align-items: center;
     gap: 0.4rem;
     padding: 0.65rem 0.75rem;
-    border-top: 1px solid #e2e8f0;
-    background: #ffffff;
+    border-top: 1px solid var(--border-light);
+    background: var(--bg-card);
     flex-shrink: 0;
 }
 .bctvi-chat-composer input {
     flex: 1;
     min-width: 0;
-    border: 1.5px solid #e2e8f0;
+    border: 1.5px solid var(--border-light);
     border-radius: 10px;
     padding: 0.6rem 0.8rem;
     font-size: 0.85rem;
     font-family: inherit;
-    color: #0f172a;
-    background: #f8fafc;
+    color: var(--text-dark);
+    background: var(--bg-page);
     transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
 }
 .bctvi-chat-composer input:focus {
     outline: none;
     border-color: #dc2626;
-    background: #fff;
+    background: var(--bg-card);
     box-shadow: 0 0 0 3px rgba(220,38,38,0.1);
 }
 
 /* Voice mic button */
 .bctvi-voice-btn {
-    border: 1px solid #e2e8f0;
-    background: #f8fafc;
-    color: #64748b;
+    border: 1px solid var(--border-light);
+    background: var(--bg-page);
+    color: var(--text-muted);
     border-radius: 10px;
     width: 38px; height: 38px;
     cursor: pointer;
@@ -580,7 +580,7 @@
     align-items: center;
     gap: 0.5rem;
     font-size: 0.68rem;
-    color: #94a3b8;
+    color: var(--text-faint);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.06em;
@@ -590,7 +590,7 @@
     content: '';
     flex: 1;
     height: 1px;
-    background: #e2e8f0;
+    background: var(--border-light);
 }
 
 /* ── Mobile ─────────────────────────────────────────────── */

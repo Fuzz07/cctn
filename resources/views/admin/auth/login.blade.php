@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <style>
-        body { background: #f8fafc; min-height: 100vh; overflow-x: hidden; font-family: var(--font-body, sans-serif); margin: 0; }
+        body { background: var(--bg-page); min-height: 100vh; overflow-x: hidden; font-family: var(--font-body, sans-serif); margin: 0; }
         .admin-auth-layout { display: flex; min-height: 100vh; width: 100%; }
         
         .admin-auth-left { width: 50%; background: #060d1b; position: relative; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; color: #ffffff; }
@@ -38,30 +38,30 @@
         .status-text strong { display: block; font-size: 0.95rem; font-weight: 700; color: #ffffff; }
         .status-text span { font-size: 0.8rem; color: rgba(255,255,255,0.6); }
 
-        .admin-auth-right { width: 50%; background: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; padding: 4rem 2rem; }
+        .admin-auth-right { width: 50%; background: var(--bg-card); display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; padding: 4rem 2rem; }
         
-        .admin-back-btn { position: absolute; top: 2.5rem; right: 2.5rem; display: inline-flex; align-items: center; gap: 0.5rem; color: #64748b; text-decoration: none; font-weight: 700; font-size: 0.85rem; padding: 0.6rem 1rem; background: #f1f5f9; border-radius: 8px; transition: all 0.2s; z-index: 10; }
-        .admin-back-btn:hover { background: #e2e8f0; color: #0f172a; }
+        .admin-back-btn { position: absolute; top: 2.5rem; right: 2.5rem; display: inline-flex; align-items: center; gap: 0.5rem; color: var(--text-muted); text-decoration: none; font-weight: 700; font-size: 0.85rem; padding: 0.6rem 1rem; background: var(--bg-subtle); border-radius: 8px; transition: all 0.2s; z-index: 10; }
+        .admin-back-btn:hover { background: var(--border-light); color: var(--text-dark); }
 
         .admin-form-container { width: 100%; max-width: 420px; z-index: 2; }
         .admin-form-header { text-align: center; margin-bottom: 2.5rem; }
         .admin-form-icon { width: 72px; height: 72px; background: #fef2f2; border-radius: 20px; display: flex; align-items: center; justify-content: center; color: #dc2626; margin: 0 auto 1.5rem; transform: rotate(-5deg); box-shadow: 0 10px 25px rgba(220,38,38,0.15); }
-        .admin-form-title { font-size: 1.75rem; font-weight: 800; color: #0f172a; margin-bottom: 0.5rem; font-family: var(--font-heading, sans-serif); }
-        .admin-form-sub { color: #64748b; font-size: 0.95rem; }
+        .admin-form-title { font-size: 1.75rem; font-weight: 800; color: var(--text-dark); margin-bottom: 0.5rem; font-family: var(--font-heading, sans-serif); }
+        .admin-form-sub { color: var(--text-muted); font-size: 0.95rem; }
 
         .admin-input-group { margin-bottom: 1.5rem; }
         .admin-input-group label { display: block; font-size: 0.85rem; font-weight: 700; color: #1e293b; margin-bottom: 0.5rem; }
         .admin-input-wrap { position: relative; }
-        .admin-input-wrap svg { position: absolute; left: 1.25rem; top: 50%; transform: translateY(-50%); color: #94a3b8; }
-        .admin-input { width: 100%; padding: 1rem 1rem 1rem 3rem; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 1rem; color: #0f172a; background: #f8fafc; transition: all 0.2s; font-weight: 500; box-sizing: border-box; }
-        .admin-input:focus { border-color: #dc2626; background: #ffffff; outline: none; box-shadow: 0 0 0 4px rgba(220,38,38,0.1); }
+        .admin-input-wrap svg { position: absolute; left: 1.25rem; top: 50%; transform: translateY(-50%); color: var(--text-faint); }
+        .admin-input { width: 100%; padding: 1rem 1rem 1rem 3rem; border: 2px solid var(--border-light); border-radius: 12px; font-size: 1rem; color: var(--text-dark); background: var(--bg-page); transition: all 0.2s; font-weight: 500; box-sizing: border-box; }
+        .admin-input:focus { border-color: #dc2626; background: var(--bg-card); outline: none; box-shadow: 0 0 0 4px rgba(220,38,38,0.1); }
         
         .btn-admin-submit { width: 100%; background: #0f172a; color: #ffffff; padding: 1.1rem; border-radius: 12px; font-weight: 700; font-size: 1.05rem; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 0.75rem; box-shadow: 0 10px 25px rgba(15,23,42,0.2); transition: all 0.2s; margin-top: 1rem; }
         .btn-admin-submit:hover { background: #1e293b; transform: translateY(-2px); box-shadow: 0 15px 30px rgba(15,23,42,0.3); }
         .btn-admin-submit svg { transition: transform 0.2s; }
         .btn-admin-submit:hover svg { transform: translateX(4px); }
 
-        .admin-footer { position: absolute; bottom: 2rem; color: #94a3b8; font-size: 0.8rem; text-align: center; width: 100%; font-weight: 500; }
+        .admin-footer { position: absolute; bottom: 2rem; color: var(--text-faint); font-size: 0.8rem; text-align: center; width: 100%; font-weight: 500; }
 
         @media (max-width: 1024px) {
             .admin-auth-left { display: none; }

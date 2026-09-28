@@ -14,7 +14,8 @@ class ClientController extends Controller
         $filter = $request->get('filter', 'all');
         $search = $request->get('search', '');
 
-        $query = Client::query();
+        // Archived clients only appear under the "Archived" filter.
+        $query = $filter === 'archived' ? Client::archived() : Client::active();
 
         if ($filter === 'active_bookings') {
             $query->whereIn('id', Appointment::where('status', 'approved')->distinct()->pluck('client_id'));
@@ -37,12 +38,13 @@ class ClientController extends Controller
         $clients = $query->orderBy('id', 'desc')->get();
 
         // Stats (independent of filters)
-        $totalClients   = Client::count();
-        $newThisMonth   = Client::whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->count();
+        $totalClients   = Client::active()->count();
+        $newThisMonth   = Client::active()->whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->count();
         $activeBookings = Appointment::where('status', 'approved')->distinct('client_id')->count('client_id');
+        $archivedCount  = Client::archived()->count();
 
         return view('admin.clients.index', compact(
-            'clients', 'filter', 'search', 'totalClients', 'newThisMonth', 'activeBookings'
+            'clients', 'filter', 'search', 'totalClients', 'newThisMonth', 'activeBookings', 'archivedCount'
         ));
     }
 
@@ -52,13 +54,37 @@ class ClientController extends Controller
     public function stats()
     {
         return response()->json([
-            'total_clients'   => Client::count(),
-            'new_this_month'  => Client::whereMonth('created_at', now()->month)
+            'total_clients'   => Client::active()->count(),
+            'new_this_month'  => Client::active()
+                                       ->whereMonth('created_at', now()->month)
                                        ->whereYear('created_at', now()->year)
                                        ->count(),
             'active_bookings' => Appointment::where('status', 'approved')
                                             ->distinct('client_id')
                                             ->count('client_id'),
         ]);
+    }
+
+    /**
+     * Archive a client: hide them from the active list and block sign-in.
+     * Their bookings, billing and payment history are kept.
+     */
+    public function archive($id)
+    {
+        $client = Client::findOrFail($id);
+        $client->update(['archived_at' => now()]);
+
+        // Sign the client out of the mobile app immediately.
+        $client->tokens()->delete();
+
+        return redirect()->back()->with('success_message', "{$client->full_name} has been archived.");
+    }
+
+    public function restore($id)
+    {
+        $client = Client::findOrFail($id);
+        $client->update(['archived_at' => null]);
+
+        return redirect()->back()->with('success_message', "{$client->full_name} has been restored.");
     }
 }
