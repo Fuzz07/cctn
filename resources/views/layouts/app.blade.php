@@ -475,74 +475,88 @@
 <body class="{{ $isApp ? 'app-mode' : '' }}">
 
     @if(config('cctn.maintenance_mode') && !auth('admin')->check())
-    {{-- ── Client Maintenance Notice Banner ────────────────────────── --}}
+    {{-- ── Client Maintenance Notice Banner (Red/Black) ── --}}
     <div id="client-maintenance-notice" style="
-        background: linear-gradient(135deg, #fff7ed 0%, #fef3c7 100%);
-        border-bottom: 2px solid #f59e0b;
-        padding: 0.85rem 1.25rem;
+        background: #111111;
+        border-bottom: 1px solid rgba(220,38,38,0.3);
+        border-left: 4px solid #dc2626;
+        padding: 0.75rem 1.25rem;
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 1rem;
         flex-wrap: wrap;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+        position: relative;
+        overflow: hidden;
     ">
-        <div style="display:flex; align-items:center; gap:0.85rem; flex-wrap:wrap;">
-            {{-- Animated warning icon --}}
+        {{-- subtle red glow behind --}}
+        <div style="position:absolute; left:0; top:0; bottom:0; width:120px; background:radial-gradient(ellipse at left, rgba(220,38,38,0.08) 0%, transparent 80%); pointer-events:none;"></div>
+
+        <div style="display:flex; align-items:center; gap:0.85rem; flex-wrap:wrap; position:relative;">
+            {{-- Pulsing red dot --}}
+            <span style="position:relative; width:10px; height:10px; flex-shrink:0; display:inline-block;">
+                <span style="position:absolute; inset:0; border-radius:50%; background:#dc2626; animation:mnPulse 1.5s ease-in-out infinite;"></span>
+                <span style="position:absolute; inset:2px; border-radius:50%; background:#ef4444;"></span>
+            </span>
+
+            {{-- Icon --}}
             <span style="
-                width: 36px; height: 36px;
-                border-radius: 50%;
-                background: #f59e0b;
-                display: flex; align-items: center; justify-content: center;
-                flex-shrink: 0;
-                animation: noticeBounce 1.8s ease-in-out infinite;
+                width:34px; height:34px; flex-shrink:0;
+                border-radius:8px;
+                background: rgba(220,38,38,0.12);
+                border: 1px solid rgba(220,38,38,0.25);
+                display:flex; align-items:center; justify-content:center;
             ">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5">
-                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-                    <line x1="12" y1="9" x2="12" y2="13"/>
-                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
                 </svg>
             </span>
+
             <div>
-                <div style="font-size:0.88rem; font-weight:800; color:#92400e; line-height:1.2;">
-                    🔧 Scheduled Maintenance in Progress
+                <div style="font-size:0.84rem; font-weight:800; color:#ffffff; line-height:1.2; letter-spacing:-0.01em;">
+                    Scheduled Maintenance in Progress
                 </div>
-                <div style="font-size:0.78rem; color:#a16207; margin-top:0.2rem; line-height:1.4;">
-                    Some features may be temporarily unavailable. Our team is working to restore full service as soon as possible. Thank you for your patience.
+                <div style="font-size:0.75rem; color:rgba(255,255,255,0.4); margin-top:0.15rem; line-height:1.4;">
+                    Some features may be temporarily unavailable. We're working to restore full service shortly.
                 </div>
             </div>
         </div>
 
-        {{-- Right: dismiss --}}
+        {{-- Dismiss --}}
         <button onclick="
             document.getElementById('client-maintenance-notice').style.display='none';
             sessionStorage.setItem('cctn_notice_dismissed','1');
         " style="
-            background: rgba(245,158,11,0.15);
-            border: 1px solid rgba(245,158,11,0.4);
-            color: #92400e;
-            padding: 0.35rem 0.85rem;
+            background: rgba(220,38,38,0.1);
+            border: 1px solid rgba(220,38,38,0.3);
+            color: #ef4444;
+            padding: 0.35rem 0.9rem;
             border-radius: 6px;
             font-size: 0.75rem;
             font-weight: 700;
             cursor: pointer;
             white-space: nowrap;
             flex-shrink: 0;
-        ">Got it</button>
+            transition: background 0.15s;
+        " onmouseover="this.style.background='rgba(220,38,38,0.22)'"
+           onmouseout="this.style.background='rgba(220,38,38,0.1)'">Dismiss</button>
     </div>
 
     <style>
-        @keyframes noticeBounce {
-            0%, 100% { transform: scale(1); }
-            50%       { transform: scale(1.1); }
+        @keyframes mnPulse {
+            0%,100% { transform: scale(1); opacity: 1; }
+            50%      { transform: scale(2.4); opacity: 0; }
         }
     </style>
     <script>
-        // Respect dismiss across navigations within the same session
         if (sessionStorage.getItem('cctn_notice_dismissed') === '1') {
             document.getElementById('client-maintenance-notice').style.display = 'none';
         }
     </script>
     @endif
+
 
     <!-- Header Navbar -->
     <header class="client-header">
