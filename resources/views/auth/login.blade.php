@@ -65,7 +65,7 @@
         .auth-badge-text strong { display: block; font-size: 0.9rem; color: var(--text-dark); }
         .auth-badge-text span { font-size: 0.75rem; color: var(--text-muted); }
         .auth-image { display: none; }
-        .auth-right { width: 100%; max-width: 440px; background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; position: static; padding: 0; }
+        .auth-right { width: 100%; max-width: 440px; background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; position: static; padding: 0; flex-shrink: 0; }
         .auth-back-link { position: fixed; top: 1.5rem; right: 1.5rem; display: inline-flex; align-items: center; gap: 0.5rem; color: #e2e8f0; text-decoration: none; font-weight: 700; font-size: 0.88rem; transition: color 0.2s; z-index: 10; text-shadow: 0 1px 6px rgba(0,0,0,0.4); }
         .auth-back-link:hover { color: #ffffff; }
         .auth-theme-toggle { position: fixed; top: 1.25rem; left: 1.25rem; z-index: 12; box-shadow: 0 4px 14px rgba(0,0,0,0.25); }
@@ -367,7 +367,7 @@
         }
 
         @media (max-width: 768px) {
-            .auth-layout { padding: 4.5rem 1rem 2.5rem; }
+            .auth-layout { justify-content: flex-start; padding: 4.5rem 1rem 2.5rem; }
             .auth-form-card { padding: 2rem 1.5rem; }
             .terms-modal-actions { width: 100%; justify-content: flex-end; }
         }
