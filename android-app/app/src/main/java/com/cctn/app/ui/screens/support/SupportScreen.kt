@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -125,13 +126,19 @@ fun SupportScreen(
                     )
                 }
 
-                items(state.requests, key = { it.id }) { request -> RequestCard(request) }
+                items(state.requests, key = { it.id }) { request ->
+                    RequestCard(request, onAddMessage = viewModel::openMessageComposer)
+                }
             }
         }
     }
 
     if (state.composerOpen) {
         ComposerDialog(state = state, viewModel = viewModel)
+    }
+
+    if (state.messageRequestId != null) {
+        MessageDialog(state = state, viewModel = viewModel)
     }
 }
 
@@ -214,7 +221,44 @@ private fun ComposerDialog(state: SupportUiState, viewModel: SupportViewModel) {
 }
 
 @Composable
-private fun RequestCard(request: MaintenanceDto) {
+private fun MessageDialog(state: SupportUiState, viewModel: SupportViewModel) {
+    AlertDialog(
+        onDismissRequest = viewModel::closeMessageComposer,
+        title = { Text("Message support") },
+        text = {
+            CctnTextField(
+                value = state.messageDraft,
+                onValueChange = viewModel::onMessageDraft,
+                label = "Message",
+                placeholder = "Add details or ask for an update",
+                error = state.messageError,
+                enabled = !state.sendingMessage,
+                singleLine = false,
+                minLines = 3,
+                imeAction = ImeAction.Done,
+                supportingText = "${state.messageDraft.length}/1000",
+            )
+        },
+        confirmButton = {
+            LoadingButton(
+                text = "Send message",
+                onClick = viewModel::sendMessage,
+                loading = state.sendingMessage,
+            )
+        },
+        dismissButton = {
+            TextButton(
+                onClick = viewModel::closeMessageComposer,
+                enabled = !state.sendingMessage,
+            ) {
+                Text("Cancel")
+            }
+        },
+    )
+}
+
+@Composable
+private fun RequestCard(request: MaintenanceDto, onAddMessage: (Int) -> Unit) {
     SectionCard {
         Column(Modifier.padding(16.dp)) {
             Row(
@@ -255,6 +299,53 @@ private fun RequestCard(request: MaintenanceDto) {
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
+            }
+
+            if (request.messages.isNotEmpty()) {
+                Spacer(Modifier.height(14.dp))
+                Text(
+                    text = "Conversation",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+                Spacer(Modifier.height(6.dp))
+
+                request.messages.forEach { message ->
+                    Text(
+                        text = if (message.senderType.equals("admin", ignoreCase = true)) {
+                            "BCTVI  ·  ${Formatters.timestamp(message.createdAt)}"
+                        } else {
+                            "You  ·  ${Formatters.timestamp(message.createdAt)}"
+                        },
+                        style = MaterialTheme.typography.labelSmall,
+                        color = if (message.senderType.equals("admin", ignoreCase = true)) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        },
+                    )
+                    Text(
+                        text = message.message,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                    Spacer(Modifier.height(8.dp))
+                }
+            }
+
+            Spacer(Modifier.height(4.dp))
+            if (request.status.equals("Closed", ignoreCase = true)) {
+                Text(
+                    text = "This request is closed.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            } else {
+                TextButton(onClick = { onAddMessage(request.id) }) {
+                    Icon(Icons.Filled.Add, contentDescription = null)
+                    Spacer(Modifier.size(6.dp))
+                    Text("Add message")
+                }
             }
         }
     }

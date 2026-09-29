@@ -41,6 +41,11 @@ data class SupportUiState(
     val submitError: String? = null,
     val submitting: Boolean = false,
 
+    val messageRequestId: Int? = null,
+    val messageDraft: String = "",
+    val messageError: String? = null,
+    val sendingMessage: Boolean = false,
+
     val message: String? = null,
 )
 
@@ -163,4 +168,55 @@ class SupportViewModel @Inject constructor(
     }
 
     fun messageShown() = _state.update { it.copy(message = null) }
+
+    fun openMessageComposer(requestId: Int) = _state.update {
+        it.copy(
+            messageRequestId = requestId,
+            messageDraft = "",
+            messageError = null,
+        )
+    }
+
+    fun closeMessageComposer() {
+        if (_state.value.sendingMessage) return
+        _state.update { it.copy(messageRequestId = null, messageDraft = "", messageError = null) }
+    }
+
+    fun onMessageDraft(value: String) = _state.update {
+        it.copy(messageDraft = value, messageError = null)
+    }
+
+    fun sendMessage() {
+        val current = _state.value
+        val requestId = current.messageRequestId ?: return
+        if (current.sendingMessage) return
+
+        val error = Validators.required(current.messageDraft, "Message", max = 1000)
+        if (error != null) {
+            _state.update { it.copy(messageError = error) }
+            return
+        }
+
+        _state.update { it.copy(sendingMessage = true, messageError = null) }
+
+        viewModelScope.launch {
+            when (val result = repository.sendMessage(requestId, current.messageDraft)) {
+                is AppResult.Success -> {
+                    _state.update {
+                        it.copy(
+                            sendingMessage = false,
+                            messageRequestId = null,
+                            messageDraft = "",
+                            message = result.data,
+                        )
+                    }
+                    load(isRefresh = true)
+                }
+
+                is AppResult.Failure -> _state.update {
+                    it.copy(sendingMessage = false, messageError = result.error.message)
+                }
+            }
+        }
+    }
 }

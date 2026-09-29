@@ -9,19 +9,43 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // Only backfill when the columns are being added for the first time, so a
+        // re-run never overwrites subscription data that already exists.
+        $needsBackfill = ! Schema::hasColumn('clients', 'account_status');
+
         Schema::table('clients', function (Blueprint $table) {
-            $table->string('account_status', 20)->default('Inactive')->after('archived_at')->index();
-            $table->string('subscription_status', 20)->nullable()->after('account_status')->index();
-            $table->unsignedBigInteger('current_service_id')->nullable()->after('subscription_status');
-            $table->unsignedBigInteger('current_appointment_id')->nullable()->after('current_service_id');
-            $table->dateTime('subscription_started_at')->nullable()->after('current_appointment_id');
-            $table->dateTime('subscription_ends_at')->nullable()->after('subscription_started_at')->index();
-            $table->dateTime('subscription_cancelled_at')->nullable()->after('subscription_ends_at');
+            if (! Schema::hasColumn('clients', 'account_status')) {
+                $table->string('account_status', 20)->default('Inactive')->after('archived_at')->index();
+            }
+            if (! Schema::hasColumn('clients', 'subscription_status')) {
+                $table->string('subscription_status', 20)->nullable()->after('account_status')->index();
+            }
+            if (! Schema::hasColumn('clients', 'current_service_id')) {
+                $table->unsignedBigInteger('current_service_id')->nullable()->after('subscription_status');
+            }
+            if (! Schema::hasColumn('clients', 'current_appointment_id')) {
+                $table->unsignedBigInteger('current_appointment_id')->nullable()->after('current_service_id');
+            }
+            if (! Schema::hasColumn('clients', 'subscription_started_at')) {
+                $table->dateTime('subscription_started_at')->nullable()->after('current_appointment_id');
+            }
+            if (! Schema::hasColumn('clients', 'subscription_ends_at')) {
+                $table->dateTime('subscription_ends_at')->nullable()->after('subscription_started_at')->index();
+            }
+            if (! Schema::hasColumn('clients', 'subscription_cancelled_at')) {
+                $table->dateTime('subscription_cancelled_at')->nullable()->after('subscription_ends_at');
+            }
         });
 
-        Schema::table('appointments', function (Blueprint $table) {
-            $table->dateTime('subscription_ends_at')->nullable()->after('due_date');
-        });
+        if (! Schema::hasColumn('appointments', 'subscription_ends_at')) {
+            Schema::table('appointments', function (Blueprint $table) {
+                $table->dateTime('subscription_ends_at')->nullable()->after('due_date');
+            });
+        }
+
+        if (! $needsBackfill) {
+            return;
+        }
 
         DB::table('clients')->orderBy('id')->each(function ($client) {
             $latestPlan = DB::table('appointments')

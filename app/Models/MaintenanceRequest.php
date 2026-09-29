@@ -15,4 +15,9 @@ class MaintenanceRequest extends Model
     {
         return $this->belongsTo(Client::class);
     }
+
+    public function messages()
+    {
+        return $this->hasMany(MaintenanceMessage::class)->oldest();
+    }
 }

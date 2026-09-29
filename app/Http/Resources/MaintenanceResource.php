@@ -15,6 +15,7 @@ class MaintenanceResource extends JsonResource
             'priority'       => $this->priority,
             'status'         => $this->status,
             'follow_up_note' => $this->follow_up_note,
+            'messages'       => MaintenanceMessageResource::collection($this->whenLoaded('messages')),
             'created_at'     => $this->created_at?->toIso8601String(),
             'updated_at'     => $this->updated_at?->toIso8601String(),
         ];

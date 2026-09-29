@@ -126,6 +126,7 @@ Route::prefix('admin')->group(function () {
 
         Route::get('/clients', [AdminClient::class, 'index'])->name('admin.clients');
         Route::get('/clients/{id}/proof-of-billing', [AdminClient::class, 'proofOfBilling'])->name('admin.clients.proof-of-billing');
+        Route::post('/clients/{id}/proof-of-billing', [AdminClient::class, 'updateProofOfBilling'])->name('admin.clients.proof-of-billing.update');
         Route::post('/clients/{id}/archive', [AdminClient::class, 'archive'])->name('admin.clients.archive');
         Route::post('/clients/{id}/restore', [AdminClient::class, 'restore'])->name('admin.clients.restore');
         Route::post('/clients/{id}/disconnection/approve', [AdminClient::class, 'approveDisconnection'])->name('admin.clients.disconnection.approve');

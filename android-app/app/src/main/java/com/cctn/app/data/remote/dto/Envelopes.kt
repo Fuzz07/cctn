@@ -105,6 +105,11 @@ data class MaintenanceRequestBody(
     val priority: String,
 )
 
+@Serializable
+data class MaintenanceMessageBody(
+    val message: String,
+)
+
 // ─── Responses ───────────────────────────────────────────────────────────────
 
 @Serializable

@@ -121,6 +121,13 @@
                                 Not Submitted
                             </span>
                         @endif
+                        <form action="{{ route('admin.clients.proof-of-billing.update', $client->id) }}" method="POST" enctype="multipart/form-data" style="display:grid; gap:0.35rem; margin-top:0.5rem; min-width:150px;">
+                            @csrf
+                            <input type="file" name="proof_of_billing" accept="image/jpeg,image/png,image/webp" required style="width:150px; font-size:0.7rem; color:var(--text-muted);">
+                            <button type="submit" class="btn-row" style="border:1px solid var(--border-light); background:var(--bg-card); color:var(--text-body);">
+                                {{ $client->proof_of_billing ? 'Replace Proof' : 'Upload Proof' }}
+                            </button>
+                        </form>
                     </td>
                     <td>
                         <div style="font-weight:700; color:var(--text-dark);">{{ $client->currentService?->service_name ?? 'No plan assigned' }}</div>

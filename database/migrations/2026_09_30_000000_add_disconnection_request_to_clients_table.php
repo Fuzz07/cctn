@@ -9,10 +9,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('clients', function (Blueprint $table) {
-            $table->string('disconnection_request_status', 20)->nullable()->after('subscription_cancelled_at')->index();
-            $table->dateTime('disconnection_requested_at')->nullable()->after('disconnection_request_status');
-            $table->dateTime('disconnection_reviewed_at')->nullable()->after('disconnection_requested_at');
-            $table->text('disconnection_review_note')->nullable()->after('disconnection_reviewed_at');
+            if (! Schema::hasColumn('clients', 'disconnection_request_status')) {
+                $table->string('disconnection_request_status', 20)->nullable()->after('subscription_cancelled_at')->index();
+            }
+            if (! Schema::hasColumn('clients', 'disconnection_requested_at')) {
+                $table->dateTime('disconnection_requested_at')->nullable()->after('disconnection_request_status');
+            }
+            if (! Schema::hasColumn('clients', 'disconnection_reviewed_at')) {
+                $table->dateTime('disconnection_reviewed_at')->nullable()->after('disconnection_requested_at');
+            }
+            if (! Schema::hasColumn('clients', 'disconnection_review_note')) {
+                $table->text('disconnection_review_note')->nullable()->after('disconnection_reviewed_at');
+            }
         });
     }
 

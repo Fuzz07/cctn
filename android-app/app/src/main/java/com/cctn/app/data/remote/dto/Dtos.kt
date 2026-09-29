@@ -82,6 +82,14 @@ data class BillingStatementDto(
 )
 
 @Serializable
+data class MaintenanceMessageDto(
+    val id: Int,
+    @SerialName("sender_type") val senderType: String = "client",
+    val message: String = "",
+    @SerialName("created_at") val createdAt: String? = null,
+)
+
+@Serializable
 data class MaintenanceDto(
     val id: Int,
     val subject: String = "",
@@ -89,6 +97,7 @@ data class MaintenanceDto(
     val priority: String = "medium",
     val status: String = "pending",
     @SerialName("follow_up_note") val followUpNote: String? = null,
+    val messages: List<MaintenanceMessageDto> = emptyList(),
     @SerialName("created_at") val createdAt: String? = null,
     @SerialName("updated_at") val updatedAt: String? = null,
 )

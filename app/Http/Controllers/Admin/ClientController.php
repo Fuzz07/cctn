@@ -7,26 +7,39 @@ use App\Models\Client;
 use App\Models\Appointment;
 use App\Models\Notification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ClientController extends Controller
 {
     public function proofOfBilling($id)
     {
         $client = Client::findOrFail($id);
-        $storedPath = str_replace('\\', '/', ltrim((string) $client->proof_of_billing, '/'));
+        $storedValue = (string) $client->proof_of_billing;
+        $urlPath = parse_url($storedValue, PHP_URL_PATH);
+        $storedPath = str_replace('\\', '/', ltrim($urlPath ?: $storedValue, '/'));
 
-        if ($storedPath === '' || str_contains($storedPath, '..')) {
+        $filename = basename($storedPath);
+        $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        if ($storedPath === ''
+            || str_contains($storedPath, '..')
+            || ! in_array($extension, ['jpg', 'jpeg', 'png', 'webp'], true)) {
             return redirect()->back()->with('error_message', 'The proof of billing file is unavailable.');
         }
 
-        $storageRelativePath = str_starts_with($storedPath, 'storage/')
-            ? substr($storedPath, strlen('storage/'))
+        $withoutPublicPrefix = str_starts_with($storedPath, 'public/')
+            ? substr($storedPath, strlen('public/'))
             : $storedPath;
+        $storageRelativePath = str_starts_with($withoutPublicPrefix, 'storage/')
+            ? substr($withoutPublicPrefix, strlen('storage/'))
+            : $withoutPublicPrefix;
 
         $candidates = array_unique([
-            public_path($storedPath),
-            storage_path('app/public/' . $storageRelativePath),
-            public_path('uploads/' . ltrim($storageRelativePath, '/')),
+            public_path($withoutPublicPrefix),
+            Storage::disk('public')->path($storageRelativePath),
+            public_path('uploads/proof_of_billing/' . $filename),
+            base_path('uploads/proof_of_billing/' . $filename),
+            Storage::disk('public')->path('proof_of_billing/' . $filename),
+            Storage::disk('public')->path('uploads/proof_of_billing/' . $filename),
         ]);
 
         foreach ($candidates as $candidate) {
@@ -40,6 +53,36 @@ class ClientController extends Controller
         }
 
         return redirect()->back()->with('error_message', 'The proof of billing file could not be found on the server.');
+    }
+
+    public function updateProofOfBilling(Request $request, $id)
+    {
+        $request->validate([
+            'proof_of_billing' => 'required|image|mimes:jpeg,jpg,png,webp|max:5120',
+        ], [
+            'proof_of_billing.required' => 'Please choose a proof of billing image.',
+            'proof_of_billing.image' => 'The proof of billing must be a valid image.',
+            'proof_of_billing.max' => 'The proof of billing image must not exceed 5 MB.',
+        ]);
+
+        $client = Client::findOrFail($id);
+        $oldPath = (string) $client->proof_of_billing;
+        $storedPath = $request->file('proof_of_billing')->store('proof_of_billing', 'public');
+
+        if (! $storedPath) {
+            return redirect()->back()->with('error_message', 'The proof of billing image could not be saved.');
+        }
+
+        $client->update(['proof_of_billing' => 'storage/' . $storedPath]);
+
+        if (str_starts_with($oldPath, 'storage/')) {
+            $oldStoragePath = substr($oldPath, strlen('storage/'));
+            if ($oldStoragePath !== $storedPath) {
+                Storage::disk('public')->delete($oldStoragePath);
+            }
+        }
+
+        return redirect()->back()->with('success_message', "{$client->full_name}'s proof of billing was updated.");
     }
 
     public function index(Request $request)

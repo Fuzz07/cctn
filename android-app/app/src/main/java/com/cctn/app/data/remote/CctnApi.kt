@@ -11,6 +11,7 @@ import com.cctn.app.data.remote.dto.LoginRequest
 import com.cctn.app.data.remote.dto.CreatePaymentMethodRequest
 import com.cctn.app.data.remote.dto.MaintenanceCreateResponse
 import com.cctn.app.data.remote.dto.MaintenanceListResponse
+import com.cctn.app.data.remote.dto.MaintenanceMessageBody
 import com.cctn.app.data.remote.dto.MaintenanceRequestBody
 import com.cctn.app.data.remote.dto.NotificationsResponse
 import com.cctn.app.data.remote.dto.PaymentMethodResponse
@@ -119,6 +120,12 @@ interface CctnApi {
 
     @POST("maintenance")
     suspend fun submitMaintenance(@Body body: MaintenanceRequestBody): MaintenanceCreateResponse
+
+    @POST("maintenance/{id}/messages")
+    suspend fun sendMaintenanceMessage(
+        @Path("id") id: Int,
+        @Body body: MaintenanceMessageBody,
+    ): SimpleResponse
 
     // ── Notifications ────────────────────────────────────────────────────────
     @GET("notifications")

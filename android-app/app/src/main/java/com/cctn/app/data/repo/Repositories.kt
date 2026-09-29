@@ -18,6 +18,7 @@ import com.cctn.app.data.remote.dto.LoginRequest
 import com.cctn.app.data.remote.dto.CreatePaymentMethodRequest
 import com.cctn.app.data.remote.dto.MaintenanceDto
 import com.cctn.app.data.remote.dto.MaintenanceRequestBody
+import com.cctn.app.data.remote.dto.MaintenanceMessageBody
 import com.cctn.app.data.remote.dto.NotificationsPayload
 import com.cctn.app.data.remote.dto.NotificationDto
 import com.cctn.app.data.remote.dto.PaymentMethodDto
@@ -283,6 +284,10 @@ class MaintenanceRepository @Inject constructor(
             MaintenanceRequestBody(subject.trim(), description.trim(), priority)
         )
     }.map { it.message ?: "Request submitted." }
+
+    suspend fun sendMessage(requestId: Int, message: String): AppResult<String> = apiCall(json) {
+        api.sendMaintenanceMessage(requestId, MaintenanceMessageBody(message.trim()))
+    }.map { it.message ?: "Message sent." }
 }
 
 @Singleton

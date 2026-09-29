@@ -5,7 +5,9 @@ namespace Tests\Feature;
 use App\Models\Admin;
 use App\Models\Client;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class AdminProofOfBillingTest extends TestCase
@@ -73,5 +75,26 @@ class AdminProofOfBillingTest extends TestCase
             ->get(route('admin.clients.proof-of-billing', $this->client->id))
             ->assertRedirect(route('admin.clients'))
             ->assertSessionHas('error_message');
+    }
+
+    public function test_admin_can_replace_a_missing_proof_and_view_the_new_image(): void
+    {
+        Storage::fake('public');
+        $this->client->update(['proof_of_billing' => 'uploads/proof_of_billing/missing.png']);
+
+        $this->actingAs($this->admin, 'admin')
+            ->post(route('admin.clients.proof-of-billing.update', $this->client->id), [
+                'proof_of_billing' => UploadedFile::fake()->image('replacement.jpg', 600, 800),
+            ])
+            ->assertRedirect()
+            ->assertSessionHas('success_message');
+
+        $storedValue = $this->client->fresh()->proof_of_billing;
+        $this->assertStringStartsWith('storage/proof_of_billing/', $storedValue);
+        Storage::disk('public')->assertExists(substr($storedValue, strlen('storage/')));
+
+        $this->get(route('admin.clients.proof-of-billing', $this->client->id))
+            ->assertOk()
+            ->assertHeader('x-content-type-options', 'nosniff');
     }
 }

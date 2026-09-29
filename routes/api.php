@@ -66,6 +66,7 @@ Route::prefix('v1')->group(function () {
         // Maintenance
         Route::get('/maintenance',  [MaintenanceController::class, 'index']);
         Route::post('/maintenance', [MaintenanceController::class, 'store']);
+        Route::post('/maintenance/{id}/messages', [MaintenanceController::class, 'storeMessage']);
 
         // Assistant — the same rules the website's chat bubble runs on
         Route::post('/chat', [ChatbotController::class, 'reply']);
