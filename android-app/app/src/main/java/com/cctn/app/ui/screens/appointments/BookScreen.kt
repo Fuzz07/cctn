@@ -7,7 +7,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -51,16 +50,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cctn.app.core.Formatters
-import com.cctn.app.R
 import com.cctn.app.data.remote.dto.ServiceDto
 import com.cctn.app.data.remote.dto.SlotDto
 import com.cctn.app.ui.components.CctnDatePickerDialog
@@ -367,22 +363,12 @@ fun BookScreen(
 }
 
 private data class PaymentAccountInstructions(
-    val badge: String,
-    val heading: String,
-    val accountName: String,
-    val accountLabel: String,
     val accountNumber: String,
-    val instructions: String,
     val accent: Color,
 )
 
 private fun paymentInstructionsFor(@Suppress("UNUSED_PARAMETER") method: String) = PaymentAccountInstructions(
-    badge = "GCash E-Wallet",
-    heading = "GCASH E-WALLET OFFICIAL ACCOUNT",
-    accountName = "JO*Y M.",
-    accountLabel = "GCash Number",
-    accountNumber = "+63 985 838 ****",
-    instructions = "Scan the administrator's official GCash QR code and send the exact payment.",
+    accountNumber = "+63 985 838 4534",
     accent = Color(0xFF1D4ED8),
 )
 
@@ -398,32 +384,18 @@ private fun PaymentInstructionsCard(method: String) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Filled.Info,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(18.dp),
-                )
-                Spacer(Modifier.size(7.dp))
-                Text(
-                    text = "PAYMENT ACCOUNT INSTRUCTIONS",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-            }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                imageVector = Icons.Filled.Info,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(18.dp),
+            )
+            Spacer(Modifier.size(7.dp))
             Text(
-                text = details.badge,
-                style = MaterialTheme.typography.labelSmall,
-                color = details.accent,
-                modifier = Modifier
-                    .background(details.accent.copy(alpha = 0.12f), RoundedCornerShape(50))
-                    .padding(horizontal = 9.dp, vertical = 5.dp),
+                text = "GCASH PAYMENT NUMBER",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.primary,
             )
         }
 
@@ -433,33 +405,11 @@ private fun PaymentInstructionsCard(method: String) {
                 .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(10.dp))
                 .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(10.dp))
                 .padding(14.dp),
-            verticalArrangement = Arrangement.spacedBy(5.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            Text(details.heading, style = MaterialTheme.typography.labelMedium, color = details.accent)
-            Text("Account Name", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Text(details.accountName, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.onSurface)
-            Spacer(Modifier.height(2.dp))
-            Text(details.accountLabel, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text("GCash Number", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Text(details.accountNumber, style = MaterialTheme.typography.titleMedium, color = details.accent)
-            Spacer(Modifier.height(3.dp))
-            Text(
-                text = "Instructions: ${details.instructions}",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Image(
-                painter = painterResource(id = R.drawable.gcash_admin_qr),
-                contentDescription = "Official administrator GCash QR code",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-                contentScale = ContentScale.FillWidth,
-            )
-            Text(
-                text = "Confirm that the recipient is ${details.accountName} before sending.",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
         }
     }
 }
