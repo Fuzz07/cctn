@@ -29,7 +29,9 @@
     .btn-archive:hover { background: #fef9c3; }
     .btn-restore { color: #15803d; border: 1px solid #bbf7d0; }
     .btn-restore:hover { background: #f0fdf4; }
-    .archived-tag { display: inline-block; margin-top: 0.25rem; background: var(--bg-subtle); color: var(--text-muted); border: 1px solid var(--border-light); padding: 0.1rem 0.55rem; border-radius: 50px; font-size: 0.7rem; font-weight: 700; }
+    .status-tag { display: inline-block; padding: 0.3rem 0.75rem; border-radius: 50px; font-size: 0.75rem; font-weight: 700; }
+    .status-tag--active { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+    .status-tag--inactive { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
 
     .unsubscribe-modal { display: none; position: fixed; inset: 0; z-index: 100000; align-items: center; justify-content: center; padding: 1rem; }
     .unsubscribe-modal.is-open { display: flex; }
@@ -58,9 +60,9 @@
         <a href="{{ route('admin.clients', ['filter' => 'active_bookings', 'search' => $search]) }}" class="filter-pill {{ $filter == 'active_bookings' ? 'active' : '' }}">With Active Bookings</a>
         <a href="{{ route('admin.clients', ['filter' => 'new_this_month', 'search' => $search]) }}" class="filter-pill {{ $filter == 'new_this_month' ? 'active' : '' }}">Joined This Month</a>
         @if ($archivingSupported)
-            <a href="{{ route('admin.clients', ['filter' => 'archived', 'search' => $search]) }}" class="filter-pill {{ $filter == 'archived' ? 'active' : '' }}">Unsubscribed ({{ $archivedCount }})</a>
+            <a href="{{ route('admin.clients', ['filter' => 'archived', 'search' => $search]) }}" class="filter-pill {{ $filter == 'archived' ? 'active' : '' }}">Inactive ({{ $archivedCount }})</a>
         @else
-            <span class="filter-pill" title="Run the unsubscribe migration to enable this feature" style="opacity:0.65; cursor:not-allowed;">Unsubscribed unavailable</span>
+            <span class="filter-pill" title="Run the unsubscribe migration to enable this feature" style="opacity:0.65; cursor:not-allowed;">Inactive unavailable</span>
         @endif
     </div>
     <form action="{{ route('admin.clients') }}" method="GET" class="search-form">
@@ -81,6 +83,7 @@
                 <th>Contact</th>
                 <th>Location</th>
                 <th>Verification</th>
+                <th>Status</th>
                 <th>Joined</th>
                 <th>Actions</th>
             </tr>
@@ -112,11 +115,16 @@
                         @endif
                     </td>
                     <td>
+                        @if ($archivingSupported && $client->isArchived())
+                            <span class="status-tag status-tag--inactive">Inactive</span>
+                        @else
+                            <span class="status-tag status-tag--active">Active</span>
+                        @endif
+                    </td>
+                    <td>
                         <div style="color:var(--text-muted);">{{ $client->created_at->format('M d, Y') }}</div>
                         @if (! $archivingSupported)
                             <span style="font-size:0.75rem; color:var(--text-muted);">Archive migration required</span>
-                        @elseif ($client->isArchived())
-                            <span class="archived-tag">Unsubscribed {{ $client->archived_at->format('M d, Y') }}</span>
                         @endif
                     </td>
                     <td>
@@ -137,8 +145,8 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6" style="text-align: center; padding: 3rem; color: var(--text-faint);">
-                        {{ $filter === 'archived' && !$search ? 'No unsubscribed clients.' : 'No clients found matching your search criteria.' }}
+                    <td colspan="7" style="text-align: center; padding: 3rem; color: var(--text-faint);">
+                        {{ $filter === 'archived' && !$search ? 'No inactive clients.' : 'No clients found matching your search criteria.' }}
                     </td>
                 </tr>
             @endforelse
