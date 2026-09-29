@@ -169,7 +169,7 @@
                             </div>
                             <div id="ref-field-{{ $appt->id }}">
                                 <label style="display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.35rem; color: var(--text-body);">Reference / Transaction No.</label>
-                                <input type="text" name="reference_number" class="form-control" style="width: 100%; padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid var(--border); font-family: monospace; font-weight: 700;" placeholder="e.g. 10029384756" value="{{ $appt->reference_number }}">
+                                <input type="text" name="reference_number" class="form-control" style="width: 100%; padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid var(--border); font-family: monospace; font-weight: 700;" placeholder="e.g. 10029384756" value="{{ $appt->reference_number }}" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/\D/g, '')">
                             </div>
                             <div id="proof-field-{{ $appt->id }}">
                                 <label style="display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.35rem; color: var(--text-body);">Upload Payment Proof (Receipt)</label>

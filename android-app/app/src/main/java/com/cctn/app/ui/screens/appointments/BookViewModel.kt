@@ -132,7 +132,8 @@ class BookViewModel @Inject constructor(
     }
 
     fun onReferenceNumberChange(value: String) = _state.update {
-        it.copy(referenceNumber = value.take(100), referenceNumberError = null, submitError = null)
+        val digitsOnly = value.filter { it.isDigit() }.take(100)
+        it.copy(referenceNumber = digitsOnly, referenceNumberError = null, submitError = null)
     }
 
     fun onPaymentProofSelected(uri: String?, name: String?, mimeType: String?, size: Long?) = _state.update {
@@ -182,9 +183,11 @@ class BookViewModel @Inject constructor(
         val time = current.selectedTime ?: return
         if (current.submitting) return
 
-        val referenceError = if (current.referenceNumber.isBlank()) {
-            "Enter the reference number from your payment confirmation."
-        } else null
+        val referenceError = when {
+            current.referenceNumber.isBlank() -> "Enter the reference number from your payment confirmation."
+            !current.referenceNumber.all { it.isDigit() } -> "Reference number must contain numbers only."
+            else -> null
+        }
         val proofError = if (current.paymentProofUri == null) {
             current.paymentProofError ?: "Upload a screenshot or photo of your payment receipt."
         } else null

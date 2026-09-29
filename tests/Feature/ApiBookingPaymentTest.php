@@ -64,6 +64,19 @@ class ApiBookingPaymentTest extends TestCase
             ->assertJsonValidationErrors(['payment_method']);
     }
 
+    public function test_mobile_booking_rejects_non_numeric_reference_number(): void
+    {
+        $this->postJson('/api/v1/appointments', [
+            'service_id' => $this->service->id,
+            'preferred_date' => now()->addDay()->format('Y-m-d'),
+            'preferred_time' => '09:00',
+            'payment_method' => 'GCash',
+            'reference_number' => 'ABC-1234XYZ',
+            'payment_proof' => UploadedFile::fake()->image('receipt.jpg'),
+        ])->assertStatus(422)
+            ->assertJsonValidationErrors(['reference_number']);
+    }
+
     public function test_mobile_booking_stores_payment_reference_and_receipt(): void
     {
         Storage::fake('public');

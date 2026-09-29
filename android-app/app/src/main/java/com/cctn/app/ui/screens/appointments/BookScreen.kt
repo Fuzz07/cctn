@@ -55,6 +55,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -274,7 +275,8 @@ fun BookScreen(
                 onValueChange = viewModel::onReferenceNumberChange,
                 label = "Reference / Transaction Number *",
                 placeholder = "e.g. 10029384756",
-                supportingText = "Enter the reference ID from your payment confirmation screen.",
+                supportingText = "Enter the reference ID from your payment confirmation screen (numbers only).",
+                keyboardType = KeyboardType.Number,
                 error = state.referenceNumberError,
                 enabled = !state.submitting,
             )
