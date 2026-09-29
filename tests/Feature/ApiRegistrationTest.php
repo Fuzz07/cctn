@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
 class ApiRegistrationTest extends TestCase
@@ -94,8 +95,9 @@ class ApiRegistrationTest extends TestCase
         ])->assertStatus(201);
 
         $responseWebLogin = $this->post('/login', [
-            'login_input' => 'apiuser',
-            'password'    => 'password123',
+            'login_input'  => 'apiuser',
+            'password'     => 'password123',
+            'agree_terms'  => '1',
         ]);
         $responseWebLogin->assertRedirect(route('client.dashboard'));
 
@@ -111,6 +113,8 @@ class ApiRegistrationTest extends TestCase
             'address_barangay'     => 'San Vicente',
             'address_municipality' => 'Bantayan',
             'address_province'     => 'Cebu',
+            'proof_of_billing'     => UploadedFile::fake()->image('proof.jpg', 600, 800),
+            'agree_terms'          => '1',
         ])->assertRedirect(route('client.dashboard'));
 
         $responseApiLogin = $this->postJson('/api/v1/auth/login', [

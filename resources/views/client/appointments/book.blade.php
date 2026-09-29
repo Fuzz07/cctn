@@ -374,15 +374,24 @@
     /* ══════════════════════════════════════════════
        CLIENT-SIDE FORM VALIDATION
     ══════════════════════════════════════════════ */
+    let isPaymentProofValid = false;
 
     function setFieldError(fieldId, errorId, message) {
         const field = document.getElementById(fieldId);
         const errorEl = document.getElementById(errorId);
         if (field) field.classList.add('is-invalid');
         if (errorEl) {
-            if (message) errorEl.querySelector('svg').nextSibling
-                ? errorEl.lastChild.textContent = ' ' + message
-                : (errorEl.textContent = message);
+            const errorTextSpan = document.getElementById(errorId + '-text');
+            if (errorTextSpan) {
+                errorTextSpan.textContent = message;
+            } else {
+                const svg = errorEl.querySelector('svg');
+                if (svg && svg.nextSibling) {
+                    svg.nextSibling.textContent = ' ' + message;
+                } else {
+                    errorEl.textContent = message;
+                }
+            }
             errorEl.classList.add('visible');
         }
     }
@@ -536,7 +545,7 @@
             });
         }
 
-        let isPaymentProofValid = false;
+        isPaymentProofValid = false;
         const payProofInput = document.getElementById('payment_proof');
         if (payProofInput) {
             payProofInput.addEventListener('change', function () {

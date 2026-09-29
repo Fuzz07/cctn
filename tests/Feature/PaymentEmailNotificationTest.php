@@ -142,7 +142,7 @@ class PaymentEmailNotificationTest extends TestCase
         $this->actingAs($admin, 'admin')
             ->post(route('admin.billing.payment'), [
                 'billing_id'  => $billing->id,
-                'amount_paid' => 500.00,
+                'amount_paid' => $billing->total_amount_due,
             ])
             ->assertRedirect(route('admin.billing'));
 
