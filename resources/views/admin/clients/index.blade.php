@@ -84,9 +84,9 @@
         <a href="{{ route('admin.clients', ['filter' => 'active_bookings', 'search' => $search]) }}" class="filter-pill {{ $filter == 'active_bookings' ? 'active' : '' }}">With Active Bookings</a>
         <a href="{{ route('admin.clients', ['filter' => 'new_this_month', 'search' => $search]) }}" class="filter-pill {{ $filter == 'new_this_month' ? 'active' : '' }}">Joined This Month</a>
         @if ($archivingSupported)
-            <a href="{{ route('admin.clients', ['filter' => 'archived', 'search' => $search]) }}" class="filter-pill {{ $filter == 'archived' ? 'active' : '' }}">Archived ({{ $archivedCount }})</a>
+            <a href="{{ route('admin.clients', ['filter' => 'archived', 'search' => $search]) }}" class="filter-pill {{ $filter == 'archived' ? 'active' : '' }}">Unsubscribed ({{ $archivedCount }})</a>
         @else
-            <span class="filter-pill" title="Run the archive migration to enable this feature" style="opacity:0.65; cursor:not-allowed;">Archived unavailable</span>
+            <span class="filter-pill" title="Run the unsubscribe migration to enable this feature" style="opacity:0.65; cursor:not-allowed;">Unsubscribed unavailable</span>
         @endif
     </div>
     <form action="{{ route('admin.clients') }}" method="GET" class="search-form">
@@ -142,20 +142,20 @@
                         @if (! $archivingSupported)
                             <span style="font-size:0.75rem; color:var(--text-muted);">Archive migration required</span>
                         @elseif ($client->isArchived())
-                            <span class="archived-tag">Archived {{ $client->archived_at->format('M d, Y') }}</span>
+                            <span class="archived-tag">Unsubscribed {{ $client->archived_at->format('M d, Y') }}</span>
                         @endif
                     </td>
                     <td>
                         @if ($client->isArchived())
                             <form action="{{ route('admin.clients.restore', $client->id) }}" method="POST">
                                 @csrf
-                                <button type="submit" class="btn-row btn-restore">Restore</button>
+                                <button type="submit" class="btn-row btn-restore">Re-subscribe</button>
                             </form>
                         @else
                             <form action="{{ route('admin.clients.archive', $client->id) }}" method="POST"
-                                  onsubmit="return confirm({{ json_encode('Archive ' . $client->firstname . ' ' . $client->lastname . '? They will no longer be able to sign in. Their booking and payment history is kept, and you can restore them anytime.') }});">
+                                  onsubmit="return confirm({{ json_encode('Unsubscribe ' . $client->firstname . ' ' . $client->lastname . '? They will no longer be able to sign in. Their booking and payment history is kept, and you can re-subscribe them anytime.') }});">
                                 @csrf
-                                <button type="submit" class="btn-row btn-archive">Archive</button>
+                                <button type="submit" class="btn-row btn-archive">Unsubscribe</button>
                             </form>
                         @endif
                     </td>
@@ -163,7 +163,7 @@
             @empty
                 <tr>
                     <td colspan="6" style="text-align: center; padding: 3rem; color: var(--text-faint);">
-                        {{ $filter === 'archived' && !$search ? 'No archived clients.' : 'No clients found matching your search criteria.' }}
+                        {{ $filter === 'archived' && !$search ? 'No unsubscribed clients.' : 'No clients found matching your search criteria.' }}
                     </td>
                 </tr>
             @endforelse

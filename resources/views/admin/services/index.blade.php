@@ -87,8 +87,8 @@
                     <textarea name="description" class="form-control" rows="3" placeholder="Brief description of this service...">{{ old('description', $editService->description ?? '') }}</textarea>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Duration (minutes) *</label>
-                    <input type="number" name="duration_minutes" class="form-control" value="{{ old('duration_minutes', $editService->duration_minutes ?? '') }}" required min="1" placeholder="e.g. 120">
+                    <label class="form-label">Duration (hours) *</label>
+                    <input type="number" name="duration_hours" class="form-control" value="{{ old('duration_hours', isset($editService) ? rtrim(rtrim(number_format($editService->duration_minutes / 60, 2), '0'), '.') : '') }}" required min="0.25" step="0.25" placeholder="e.g. 2">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Price (₱) *</label>
@@ -126,7 +126,7 @@
                                 <span class="badge-{{ strtolower($svc->status) == 'active' ? 'active' : 'inactive' }}">{{ $svc->status }}</span>
                             </div>
                             <div class="service-meta">
-                                ₱{{ number_format($svc->price, 2) }} &middot; ~{{ $svc->duration_minutes }} minutes
+                                ₱{{ number_format($svc->price, 2) }} &middot; ~{{ rtrim(rtrim(number_format($svc->duration_minutes / 60, 2), '0'), '.') }} {{ $svc->duration_minutes == 60 ? 'hour' : 'hours' }}
                             </div>
                             @if($svc->description)
                                 <div class="service-desc">{{ $svc->description }}</div>

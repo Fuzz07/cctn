@@ -168,7 +168,7 @@
                                     </td>
                                     <td>
                                         <div style="font-weight:600;">{{ $appt->service->service_name }}</div>
-                                        <div style="font-size:0.8rem; color:var(--text-muted);">~{{ $appt->service->duration_minutes }} mins</div>
+                                        <div style="font-size:0.8rem; color:var(--text-muted);">~{{ rtrim(rtrim(number_format($appt->service->duration_minutes / 60, 2), '0'), '.') }} {{ $appt->service->duration_minutes == 60 ? 'hour' : 'hours' }}</div>
                                     </td>
                                     <td>
                                         <span class="status-pill {{ $appt->status }}">{{ ucfirst($appt->status) }}</span>

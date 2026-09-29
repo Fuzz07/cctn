@@ -74,7 +74,7 @@ class ClientController extends Controller
     {
         if (!Client::supportsArchiving()) {
             return redirect()->route('admin.clients')->with('error_message',
-                'Customer archiving is unavailable until the database migration is run.'
+                'Customer unsubscribe management is unavailable until the database migration is run.'
             );
         }
 
@@ -84,20 +84,20 @@ class ClientController extends Controller
         // Sign the client out of the mobile app immediately.
         $client->tokens()->delete();
 
-        return redirect()->back()->with('success_message', "{$client->full_name} has been archived.");
+        return redirect()->back()->with('success_message', "{$client->full_name} has been unsubscribed.");
     }
 
     public function restore($id)
     {
         if (!Client::supportsArchiving()) {
             return redirect()->route('admin.clients')->with('error_message',
-                'Customer archiving is unavailable until the database migration is run.'
+                'Customer unsubscribe management is unavailable until the database migration is run.'
             );
         }
 
         $client = Client::findOrFail($id);
         $client->update(['archived_at' => null]);
 
-        return redirect()->back()->with('success_message', "{$client->full_name} has been restored.");
+        return redirect()->back()->with('success_message', "{$client->full_name} has been re-subscribed and returned to the registered clients list.");
     }
 }

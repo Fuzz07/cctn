@@ -79,7 +79,7 @@ class AdminClientArchiveTest extends TestCase
             ->get(route('admin.clients', ['filter' => 'archived']))
             ->assertOk()
             ->assertSee('Dela Cruz')
-            ->assertSee('Restore');
+            ->assertSee('Re-subscribe');
     }
 
     public function test_admin_can_restore_an_archived_client()

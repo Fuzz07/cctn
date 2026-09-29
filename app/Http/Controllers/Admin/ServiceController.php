@@ -24,7 +24,15 @@ class ServiceController extends Controller
     {
         $id = (int) $request->input('service_id', 0);
 
-        $request->validate([
+        // Durations are stored in minutes so appointment scheduling remains
+        // precise, while the admin form accepts the more readable hour value.
+        if (! $request->has('duration_hours') && $request->has('duration_minutes')) {
+            $request->merge([
+                'duration_hours' => (float) $request->input('duration_minutes') / 60,
+            ]);
+        }
+
+        $validated = $request->validate([
             'service_name'     => [
                 'required', 'string', 'max:100',
                 // Only enforce uniqueness when creating a new service; allow editing existing
@@ -32,13 +40,14 @@ class ServiceController extends Controller
                     ? \Illuminate\Validation\Rule::unique('services', 'service_name')->ignore($id)
                     : \Illuminate\Validation\Rule::unique('services', 'service_name'),
             ],
-            'duration_minutes' => 'required|integer|min:1',
+            'duration_hours'   => 'required|numeric|min:0.25',
             'price'            => 'required|numeric|min:0',
         ], [
             'service_name.unique' => 'A service with this name already exists. Please use a different name or edit the existing service.',
         ]);
 
-        $data = $request->only(['service_name', 'description', 'duration_minutes', 'price', 'status']);
+        $data = $request->only(['service_name', 'description', 'price', 'status']);
+        $data['duration_minutes'] = (int) round(((float) $validated['duration_hours']) * 60);
 
         if ($id > 0) {
             $service = Service::findOrFail($id);
