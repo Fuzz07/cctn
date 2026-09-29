@@ -26,7 +26,7 @@ class BillingController extends Controller
     {
         $request->validate([
             'client_id'        => 'required|exists:clients,id',
-            'account_number'   => 'required|string',
+            'account_number'   => ['required', 'string', 'regex:/^\d+$/'],
             'statement_period' => 'required|string',
             'amount_due'       => 'required|numeric|min:0',
             'due_date'         => 'required|date|after_or_equal:2026-01-01',

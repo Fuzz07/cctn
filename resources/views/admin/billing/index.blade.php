@@ -84,7 +84,7 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Account Number *</label>
-                    <input type="text" name="account_number" class="form-control" value="{{ old('account_number') }}" required placeholder="e.g. 2026-01-01">
+                    <input type="text" name="account_number" class="form-control" value="{{ old('account_number') }}" required inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/\D/g, '')" placeholder="e.g. 20260001">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Statement Period *</label>
