@@ -102,10 +102,6 @@
                     <label class="form-label">Due Date *</label>
                     <input type="date" name="due_date" class="form-control" value="{{ old('due_date') }}" required>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Notes</label>
-                    <input type="text" name="notes" class="form-control" value="{{ old('notes') }}" placeholder="Optional...">
-                </div>
                 <button type="submit" class="btn-submit danger">Generate Statement</button>
             </form>
         </div>
