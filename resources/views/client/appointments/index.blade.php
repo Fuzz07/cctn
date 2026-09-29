@@ -119,7 +119,7 @@
                             {{ $appt->payment_method ? 'Update Payment Method' : 'Set Digital Payment Method' }}
                         </button>
 
-                        <form action="{{ route('client.appointments.destroy', $appt->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this booking appointment? This action cannot be undone.');" style="margin: 0;">
+                        <form action="{{ route('client.appointments.destroy', $appt->id) }}" method="POST" onsubmit="return showBookingDeleteModal(this, 'REF #{{ str_pad($appt->id, 6, '0', STR_PAD_LEFT) }}');" style="margin: 0;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn-action btn-outline-danger" style="font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem;">
@@ -202,6 +202,8 @@
         @endforelse
     </div>
 </div>
+
+@include('partials.delete-booking-modal')
 
 <!-- Sample GCash Receipt Modal -->
 <div id="sampleReceiptModal" style="display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.65); backdrop-filter: blur(4px); align-items: center; justify-content: center; padding: 1rem;" onclick="if(event.target === this) toggleSampleReceiptModal(false)">

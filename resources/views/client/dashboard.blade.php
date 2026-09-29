@@ -192,7 +192,7 @@
                                         #{{ str_pad($appt->id, 5, '0', STR_PAD_LEFT) }}
                                     </td>
                                     <td style="text-align: right;">
-                                        <form action="{{ route('client.appointments.destroy', $appt->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this booking appointment?');" style="display:inline;">
+                                        <form action="{{ route('client.appointments.destroy', $appt->id) }}" method="POST" onsubmit="return showBookingDeleteModal(this, 'REF #{{ str_pad($appt->id, 6, '0', STR_PAD_LEFT) }}');" style="display:inline;">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" style="background:none; border:none; color:#dc2626; cursor:pointer; padding:4px; font-size:0.85rem; font-weight:700;" title="Delete Booking">
@@ -398,6 +398,8 @@
     </div>
 
 </div>
+
+@include('partials.delete-booking-modal')
 
 <div id="client-unsubscribe-modal" class="client-unsubscribe-modal" role="dialog" aria-modal="true" aria-labelledby="client-unsubscribe-title" aria-describedby="client-unsubscribe-message" aria-hidden="true">
     <div class="client-unsubscribe-modal__backdrop" onclick="hideClientUnsubscribeModal()"></div>
