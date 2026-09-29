@@ -341,11 +341,16 @@
                 <div class="c-card-header" style="margin-bottom:0;">
                     <h3 class="c-card-title" style="color:#b91c1c;">Account subscription</h3>
                 </div>
-                <p>Need to stop your BCTVI service? Unsubscribing deactivates your account and signs you out. Your booking and payment history will be kept, and you can ask support to re-subscribe later.</p>
-                <form id="client-unsubscribe-form" action="{{ route('client.unsubscribe') }}" method="POST" onsubmit="return showClientUnsubscribeModal(this);">
-                    @csrf
-                    <button type="submit" class="btn-unsubscribe">Unsubscribe account</button>
-                </form>
+                @if($client->isAccountActive())
+                    <p>Need to stop your BCTVI service? Cancelling marks your subscription and account Inactive. Your booking and payment history will be kept.</p>
+                    <form id="client-unsubscribe-form" action="{{ route('client.unsubscribe') }}" method="POST" onsubmit="return showClientUnsubscribeModal(this);">
+                        @csrf
+                        <button type="submit" class="btn-unsubscribe">Cancel current plan</button>
+                    </form>
+                @else
+                    <p>Your account is <strong>Inactive</strong>. Choose a new plan and, once approved, your account will automatically return to Active.</p>
+                    <a href="{{ route('home') }}#plans" class="btn-save-profile" style="display:inline-block; text-decoration:none;">Browse plans</a>
+                @endif
             </div>
         </div>
 
@@ -370,6 +375,18 @@
                         <strong>{{ $client->address_barangay }}, {{ $client->address_municipality }}</strong>
                     </div>
                     <div class="c-info-item">
+                        <span>Account Status</span>
+                        <strong style="color:{{ $client->isAccountActive() ? '#15803d' : '#b91c1c' }};">{{ $client->isAccountActive() ? 'Active' : 'Inactive' }}</strong>
+                    </div>
+                    <div class="c-info-item">
+                        <span>Subscription</span>
+                        <strong>{{ $client->subscription_status_label }}</strong>
+                    </div>
+                    <div class="c-info-item">
+                        <span>Current Plan</span>
+                        <strong>{{ $client->currentService?->service_name ?? 'None' }}</strong>
+                    </div>
+                    <div class="c-info-item">
                         <span>Member Since</span>
                         <strong>{{ $client->created_at->format('M d, Y') }}</strong>
                     </div>
@@ -388,8 +405,8 @@
         <div class="client-unsubscribe-modal__icon" aria-hidden="true">
             <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v4M14 11v4"/></svg>
         </div>
-        <h2 id="client-unsubscribe-title" class="client-unsubscribe-modal__title">Unsubscribe your account?</h2>
-        <p id="client-unsubscribe-message" class="client-unsubscribe-modal__message">You will be signed out and unable to sign in until BCTVI support re-subscribes your account. Your booking and payment history will be retained.</p>
+        <h2 id="client-unsubscribe-title" class="client-unsubscribe-modal__title">Cancel your current plan?</h2>
+        <p id="client-unsubscribe-message" class="client-unsubscribe-modal__message">Your account will become Inactive and the subscription will be marked cancelled. Your booking and payment history will be retained.</p>
         <div class="client-unsubscribe-modal__actions">
             <button type="button" class="client-unsubscribe-modal__button client-unsubscribe-modal__cancel" onclick="hideClientUnsubscribeModal()">Keep account</button>
             <button type="button" id="client-unsubscribe-confirm" class="client-unsubscribe-modal__button client-unsubscribe-modal__confirm" onclick="confirmClientUnsubscribe()">Yes, unsubscribe</button>

@@ -279,25 +279,25 @@
             </div>
         </a>
 
-        <!-- Registered Clients -->
-        <a href="{{ route('admin.clients') }}" class="stat-card">
+        <!-- Active Subscribers -->
+        <a href="{{ route('admin.clients', ['filter' => 'active']) }}" class="stat-card">
             <div class="stat-icon-wrap" style="background: #f0fdf4; color: #16a34a;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
             </div>
             <div class="stat-meta">
-                <span class="stat-title">Total Clients</span>
-                <span class="stat-number">{{ $stats['clients'] }}</span>
+                <span class="stat-title">Active Subscribers</span>
+                <span class="stat-number">{{ $stats['active_clients'] }}</span>
             </div>
         </a>
 
-        <!-- Active Services -->
-        <a href="{{ route('admin.services') }}" class="stat-card">
-            <div class="stat-icon-wrap" style="background: #eff6ff; color: #2563eb;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+        <!-- Inactive Subscribers -->
+        <a href="{{ route('admin.clients', ['filter' => 'inactive']) }}" class="stat-card">
+            <div class="stat-icon-wrap" style="background: #fef2f2; color: #b91c1c;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M9 9l6 6M15 9l-6 6"></path></svg>
             </div>
             <div class="stat-meta">
-                <span class="stat-title">Active Services</span>
-                <span class="stat-number">{{ $stats['services'] }}</span>
+                <span class="stat-title">Inactive Subscribers</span>
+                <span class="stat-number">{{ $stats['inactive_clients'] }}</span>
             </div>
         </a>
     </div>
@@ -331,6 +331,9 @@
                                 <td>
                                     <div style="font-weight:700; color:var(--text-dark);">{{ $appt->client->firstname }} {{ $appt->client->lastname }}</div>
                                     <div style="font-size:0.75rem; color:var(--text-muted);">{{ $appt->client->contact_no }}</div>
+                                    <div style="font-size:0.72rem; font-weight:700; margin-top:0.25rem; color:{{ $appt->client->isAccountActive() ? '#15803d' : '#b91c1c' }};">
+                                        {{ $appt->client->isAccountActive() ? 'Active' : 'Inactive' }} · {{ $appt->client->subscription_status_label }}
+                                    </div>
                                 </td>
                                 <td>
                                     <div style="font-weight:600;">{{ $appt->service->service_name }}</div>

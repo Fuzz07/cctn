@@ -80,7 +80,7 @@ class AdminClientArchiveTest extends TestCase
         $this->assertGuest('client');
     }
 
-    public function test_archived_clients_are_hidden_from_the_default_list_but_shown_under_archived()
+    public function test_inactive_clients_are_hidden_from_the_default_list_but_shown_under_inactive()
     {
         $this->client->update(['archived_at' => now()]);
 
@@ -90,10 +90,10 @@ class AdminClientArchiveTest extends TestCase
             ->assertDontSee('Dela Cruz');
 
         $this->actingAs($this->admin, 'admin')
-            ->get(route('admin.clients', ['filter' => 'archived']))
+            ->get(route('admin.clients', ['filter' => 'inactive']))
             ->assertOk()
             ->assertSee('Dela Cruz')
-            ->assertSee('Re-subscribe');
+            ->assertSee('Inactive');
     }
 
     public function test_admin_can_restore_an_archived_client()

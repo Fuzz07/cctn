@@ -56,11 +56,11 @@
 
 <div class="filter-card">
     <div class="filter-pills">
-        <a href="{{ route('admin.clients', ['filter' => 'all', 'search' => $search]) }}" class="filter-pill {{ $filter == 'all' ? 'active' : '' }}">All Clients</a>
+        <a href="{{ route('admin.clients', ['filter' => 'all', 'search' => $search]) }}" class="filter-pill {{ in_array($filter, ['all', 'active']) ? 'active' : '' }}">Active Clients</a>
         <a href="{{ route('admin.clients', ['filter' => 'active_bookings', 'search' => $search]) }}" class="filter-pill {{ $filter == 'active_bookings' ? 'active' : '' }}">With Active Bookings</a>
         <a href="{{ route('admin.clients', ['filter' => 'new_this_month', 'search' => $search]) }}" class="filter-pill {{ $filter == 'new_this_month' ? 'active' : '' }}">Joined This Month</a>
         @if ($archivingSupported)
-            <a href="{{ route('admin.clients', ['filter' => 'archived', 'search' => $search]) }}" class="filter-pill {{ $filter == 'archived' ? 'active' : '' }}">Inactive ({{ $archivedCount }})</a>
+            <a href="{{ route('admin.clients', ['filter' => 'inactive', 'search' => $search]) }}" class="filter-pill {{ in_array($filter, ['inactive', 'archived']) ? 'active' : '' }}">Inactive ({{ $archivedCount }})</a>
         @else
             <span class="filter-pill" title="Run the unsubscribe migration to enable this feature" style="opacity:0.65; cursor:not-allowed;">Inactive unavailable</span>
         @endif
@@ -83,6 +83,7 @@
                 <th>Contact</th>
                 <th>Location</th>
                 <th>Verification</th>
+                <th>Current Plan</th>
                 <th>Status</th>
                 <th>Joined</th>
                 <th>Actions</th>
@@ -115,10 +116,18 @@
                         @endif
                     </td>
                     <td>
-                        @if ($archivingSupported && $client->isArchived())
+                        <div style="font-weight:700; color:var(--text-dark);">{{ $client->currentService?->service_name ?? 'No plan assigned' }}</div>
+                        @if($client->subscription_ends_at)
+                            <div style="font-size:0.75rem; color:var(--text-muted);">Ends {{ $client->subscription_ends_at->format('M d, Y') }}</div>
+                        @endif
+                    </td>
+                    <td>
+                        @if (! $client->isAccountActive())
                             <span class="status-tag status-tag--inactive">Inactive</span>
+                            <div style="font-size:0.75rem; color:#b91c1c; font-weight:600; margin-top:0.35rem;">{{ $client->subscription_status_label }}</div>
                         @else
                             <span class="status-tag status-tag--active">Active</span>
+                            <div style="font-size:0.75rem; color:#15803d; font-weight:600; margin-top:0.35rem;">{{ $client->subscription_status_label }}</div>
                         @endif
                     </td>
                     <td>
@@ -128,25 +137,27 @@
                         @endif
                     </td>
                     <td>
-                        @if ($client->isArchived())
+                        @if (! $client->isAccountActive() && $client->currentService && $client->currentAppointment)
                             <form action="{{ route('admin.clients.restore', $client->id) }}" method="POST">
                                 @csrf
                                 <button type="submit" class="btn-row btn-restore">Re-subscribe</button>
                             </form>
+                        @elseif (! $client->isAccountActive())
+                            <a href="{{ route('admin.appointments') }}" class="btn-row btn-restore" style="display:inline-block; text-decoration:none;">Approve a plan</a>
                         @else
                             <form action="{{ route('admin.clients.archive', $client->id) }}" method="POST"
                                   data-client-name="{{ $client->firstname }} {{ $client->lastname }}"
                                   onsubmit="return showUnsubscribeModal(this);">
                                 @csrf
-                                <button type="submit" class="btn-row btn-archive">Unsubscribe</button>
+                                <button type="submit" class="btn-row btn-archive">Cancel plan</button>
                             </form>
                         @endif
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="7" style="text-align: center; padding: 3rem; color: var(--text-faint);">
-                        {{ $filter === 'archived' && !$search ? 'No inactive clients.' : 'No clients found matching your search criteria.' }}
+                    <td colspan="8" style="text-align: center; padding: 3rem; color: var(--text-faint);">
+                        {{ in_array($filter, ['inactive', 'archived']) && !$search ? 'No inactive clients.' : 'No clients found matching your search criteria.' }}
                     </td>
                 </tr>
             @endforelse
@@ -160,11 +171,11 @@
         <div class="unsubscribe-modal__icon" aria-hidden="true">
             <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v4M14 11v4"/></svg>
         </div>
-        <h2 id="unsubscribe-modal-title" class="unsubscribe-modal__title">Unsubscribe client?</h2>
+        <h2 id="unsubscribe-modal-title" class="unsubscribe-modal__title">Cancel current plan?</h2>
         <p id="unsubscribe-modal-message" class="unsubscribe-modal__message"></p>
         <div class="unsubscribe-modal__actions">
             <button type="button" class="unsubscribe-modal__button unsubscribe-modal__button--cancel" onclick="hideUnsubscribeModal()">Cancel</button>
-            <button type="button" id="unsubscribe-modal-confirm" class="unsubscribe-modal__button unsubscribe-modal__button--confirm" onclick="confirmUnsubscribe()">Yes, unsubscribe</button>
+            <button type="button" id="unsubscribe-modal-confirm" class="unsubscribe-modal__button unsubscribe-modal__button--confirm" onclick="confirmUnsubscribe()">Yes, cancel plan</button>
         </div>
     </div>
 </div>
@@ -181,7 +192,7 @@ function showUnsubscribeModal(form) {
 
     var clientName = form.dataset.clientName;
     document.getElementById('unsubscribe-modal-message').textContent =
-        'Unsubscribe ' + clientName + '? They will no longer be able to sign in. Their booking and payment history is kept, and you can re-subscribe them anytime.';
+        'Cancel ' + clientName + '\'s current plan? Their account will become Inactive and show the subscription as cancelled. Booking and payment history will be kept.';
 
     var modal = document.getElementById('unsubscribe-modal');
     modal.classList.add('is-open');

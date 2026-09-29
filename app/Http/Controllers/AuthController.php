@@ -68,9 +68,11 @@ class AuthController extends Controller
             return back()->withErrors(['login_input' => $error])->withInput();
         }
 
+        $client->syncSubscriptionStatus();
+
         if ($client->isArchived()) {
             RateLimiter::hit($throttleKey, 60);
-            return back()->withErrors(['login_input' => 'This account has been archived. Please contact BCTVI support.'])->withInput();
+            return back()->withErrors(['login_input' => 'This account is Inactive because its subscription was cancelled or expired. Please contact BCTVI support.'])->withInput();
         }
 
         // Clear throttle on successful login
@@ -310,8 +312,10 @@ class AuthController extends Controller
             return redirect()->route('client.dashboard');
         }
 
+        $client->syncSubscriptionStatus();
+
         if ($client->isArchived()) {
-            $message = 'This account has been archived. Please contact BCTVI support.';
+            $message = 'This account is Inactive because its subscription was cancelled or expired. Please contact BCTVI support.';
             if ($fromApp) {
                 return $this->redirectToApp(null, $message);
             }

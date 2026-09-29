@@ -13,6 +13,7 @@ class Client extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     private static ?bool $archivingSupported = null;
+    private static ?bool $subscriptionStatusSupported = null;
 
     protected $fillable = [
         'account_number', 'firstname', 'middlename', 'lastname', 'birthdate', 'age',
@@ -20,6 +21,9 @@ class Client extends Authenticatable
         'address_municipality', 'address_province', 'contact_no', 'email',
         'username', 'password', 'profile_photo', 'proof_of_billing', 'email_verified_at',
         'verification_token', 'reset_token', 'reset_expires_at', 'archived_at',
+        'account_status', 'subscription_status', 'current_service_id',
+        'current_appointment_id', 'subscription_started_at', 'subscription_ends_at',
+        'subscription_cancelled_at',
     ];
 
     protected $hidden = ['password', 'remember_token', 'verification_token', 'reset_token'];
@@ -28,14 +32,30 @@ class Client extends Authenticatable
         'email_verified_at' => 'datetime',
         'reset_expires_at'  => 'datetime',
         'archived_at'       => 'datetime',
+        'subscription_started_at'   => 'datetime',
+        'subscription_ends_at'      => 'datetime',
+        'subscription_cancelled_at' => 'datetime',
         'birthdate'         => 'date',
     ];
 
     public function scopeActive($query)
     {
+        if (static::supportsSubscriptionStatus()) {
+            return $query->where('account_status', 'Active');
+        }
+
+        return static::supportsArchiving() ? $query->whereNull('archived_at') : $query;
+    }
+
+    public function scopeInactive($query)
+    {
+        if (static::supportsSubscriptionStatus()) {
+            return $query->where('account_status', 'Inactive');
+        }
+
         return static::supportsArchiving()
-            ? $query->whereNull('archived_at')
-            : $query;
+            ? $query->whereNotNull('archived_at')
+            : $query->whereRaw('1 = 0');
     }
 
     public function scopeArchived($query)
@@ -58,14 +78,128 @@ class Client extends Authenticatable
         );
     }
 
+    public static function supportsSubscriptionStatus(): bool
+    {
+        return static::$subscriptionStatusSupported ??= Schema::hasColumn(
+            (new static)->getTable(),
+            'account_status',
+        );
+    }
+
     public function isArchived(): bool
     {
         return $this->archived_at !== null;
     }
 
+    public function isAccountActive(): bool
+    {
+        if (! static::supportsSubscriptionStatus()) {
+            return ! $this->isArchived();
+        }
+
+        return $this->account_status === 'Active';
+    }
+
+    public function activateSubscription(
+        ?Service $service = null,
+        ?Appointment $appointment = null,
+        $endsAt = null
+    ): void {
+        if (! static::supportsSubscriptionStatus()) {
+            if (static::supportsArchiving()) {
+                $this->update(['archived_at' => null]);
+            }
+            return;
+        }
+
+        $this->update([
+            'account_status'            => 'Active',
+            'subscription_status'       => 'active',
+            'current_service_id'        => $service?->id ?? $this->current_service_id,
+            'current_appointment_id'    => $appointment?->id ?? $this->current_appointment_id,
+            'subscription_started_at'   => now(),
+            'subscription_ends_at'      => $endsAt,
+            'subscription_cancelled_at' => null,
+            'archived_at'               => null,
+        ]);
+    }
+
+    public function deactivateSubscription(string $reason = 'cancelled'): void
+    {
+        $reason = $reason === 'expired' ? 'expired' : 'cancelled';
+
+        if (! static::supportsSubscriptionStatus()) {
+            if (static::supportsArchiving()) {
+                $this->update(['archived_at' => now()]);
+            }
+            return;
+        }
+
+        $this->update([
+            'account_status'            => 'Inactive',
+            'subscription_status'       => $reason,
+            'subscription_cancelled_at' => $reason === 'cancelled' ? now() : null,
+            'archived_at'               => now(),
+        ]);
+
+        $this->tokens()->delete();
+    }
+
+    public function syncSubscriptionStatus(): bool
+    {
+        if (! static::supportsSubscriptionStatus()
+            || $this->account_status !== 'Active'
+            || $this->subscription_status !== 'active'
+            || ! $this->subscription_ends_at
+            || $this->subscription_ends_at->isFuture()) {
+            return false;
+        }
+
+        $this->deactivateSubscription('expired');
+        return true;
+    }
+
+    public static function expireSubscriptions(): int
+    {
+        if (! static::supportsSubscriptionStatus()) {
+            return 0;
+        }
+
+        $expired = static::query()
+            ->where('account_status', 'Active')
+            ->where('subscription_status', 'active')
+            ->whereNotNull('subscription_ends_at')
+            ->where('subscription_ends_at', '<=', now())
+            ->get();
+
+        $expired->each->deactivateSubscription('expired');
+
+        return $expired->count();
+    }
+
+    public function getSubscriptionStatusLabelAttribute(): string
+    {
+        return match ($this->subscription_status) {
+            'active' => 'Active subscription',
+            'expired' => 'Subscription expired',
+            'cancelled' => 'Subscription cancelled',
+            default => 'No active subscription',
+        };
+    }
+
     public function appointments()
     {
         return $this->hasMany(Appointment::class);
+    }
+
+    public function currentService()
+    {
+        return $this->belongsTo(Service::class, 'current_service_id');
+    }
+
+    public function currentAppointment()
+    {
+        return $this->belongsTo(Appointment::class, 'current_appointment_id');
     }
 
     public function billingAccounts()

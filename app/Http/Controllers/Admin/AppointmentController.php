@@ -54,6 +54,7 @@ class AppointmentController extends Controller
             'preferred_time' => 'required',
             'status'         => 'required|in:pending,approved,cancelled',
             'payment_status' => 'nullable|string|in:Pending Payment,Payment Confirmed,Cancelled,paid,unpaid,pending',
+            'subscription_ends_at' => 'nullable|date|after_or_equal:today',
         ]);
 
         $appointment = Appointment::with(['client', 'service'])->findOrFail($request->appointment_id);
@@ -74,6 +75,7 @@ class AppointmentController extends Controller
             'preferred_time' => $request->preferred_time,
             'status'         => $request->status,
             'admin_notes'    => $request->input('admin_notes', ''),
+            'subscription_ends_at' => $request->input('subscription_ends_at'),
         ];
 
         if ($newPaymentStatus) {

@@ -39,9 +39,11 @@ class AuthController extends Controller
             ]);
         }
 
+        $client->syncSubscriptionStatus();
+
         if ($client->isArchived()) {
             throw ValidationException::withMessages([
-                'login_input' => ['This account has been archived. Please contact BCTVI support.'],
+                'login_input' => ['This account is Inactive because its subscription was cancelled or expired. Please contact BCTVI support.'],
             ]);
         }
 
@@ -109,9 +111,13 @@ class AuthController extends Controller
                 'address_province'  => 'Cebu',
                 'email_verified_at' => now(),
             ]);
-        } elseif ($client->isArchived()) {
+        } else {
+            $client->syncSubscriptionStatus();
+        }
+
+        if ($client->isArchived()) {
             throw ValidationException::withMessages([
-                'id_token' => ['This account has been archived. Please contact BCTVI support.'],
+                'id_token' => ['This account is Inactive because its subscription was cancelled or expired. Please contact BCTVI support.'],
             ]);
         } elseif (empty($client->email_verified_at)) {
             $client->update(['email_verified_at' => now()]);

@@ -77,10 +77,7 @@ class DashboardController extends Controller
         return redirect()->route('client.dashboard')->with('success_message', 'Profile updated successfully!');
     }
 
-    /**
-     * Let a signed-in client deactivate their own account while retaining their
-     * booking and payment history for a future re-subscription.
-     */
+    /** Cancel the current subscription while retaining account history. */
     public function unsubscribe(Request $request)
     {
         if (! Client::supportsArchiving()) {
@@ -90,8 +87,8 @@ class DashboardController extends Controller
         }
 
         $client = Auth::guard('client')->user();
-        $client->update(['archived_at' => now()]);
-        $client->tokens()->delete();
+        $client->load('currentService');
+        $client->deactivateSubscription('cancelled');
 
         Auth::guard('client')->logout();
         $request->session()->invalidate();
@@ -99,7 +96,7 @@ class DashboardController extends Controller
 
         return redirect()->route('home')->with(
             'success_message',
-            'Your account has been unsubscribed. Your booking and payment history is retained; contact BCTVI support whenever you would like to re-subscribe.'
+            'Your subscription has been cancelled and your account is now Inactive. Your booking and payment history is retained; contact BCTVI support whenever you would like to subscribe again.'
         );
     }
 }

@@ -13,17 +13,21 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        Client::expireSubscriptions();
+
         $admin = Auth::guard('admin')->user();
 
         $stats = [
-            'clients'  => Client::active()->count(),
+            'clients'  => Client::count(),
+            'active_clients' => Client::active()->count(),
+            'inactive_clients' => Client::inactive()->count(),
             'total'    => Appointment::count(),
             'pending'  => Appointment::where('status', 'pending')->count(),
             'approved' => Appointment::where('status', 'approved')->count(),
             'services' => Service::where('status', 'Active')->count(),
         ];
 
-        $recentBookings = Appointment::with(['client', 'service'])
+        $recentBookings = Appointment::with(['client.currentService', 'service'])
             ->orderBy('created_at', 'desc')
             ->limit(5)
             ->get();

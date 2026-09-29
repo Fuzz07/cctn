@@ -11,15 +11,22 @@ class ClientController extends Controller
 {
     public function index(Request $request)
     {
+        Client::expireSubscriptions();
+
         $filter = $request->get('filter', 'all');
         $search = $request->get('search', '');
         $archivingSupported = Client::supportsArchiving();
 
-        // Archived clients only appear under the "Archived" filter.
-        $query = $filter === 'archived' ? Client::archived() : Client::active();
+        $query = Client::with('currentService');
+
+        if (in_array($filter, ['inactive', 'archived'], true)) {
+            $query->inactive();
+        } else {
+            $query->active();
+        }
 
         if ($filter === 'active_bookings') {
-            $query->whereIn('id', Appointment::where('status', 'approved')->distinct()->pluck('client_id'));
+            $query->active()->whereIn('id', Appointment::where('status', 'approved')->distinct()->pluck('client_id'));
         } elseif ($filter === 'new_this_month') {
             $query->whereMonth('created_at', now()->month)->whereYear('created_at', now()->year);
         }
@@ -38,17 +45,14 @@ class ClientController extends Controller
 
         $clients = $query->orderBy('id', 'desc')->get();
 
-        $archivedCount  = Client::archived()->count();
+        $archivedCount = Client::inactive()->count();
 
         return view('admin.clients.index', compact(
             'clients', 'filter', 'search', 'archivedCount', 'archivingSupported'
         ));
     }
 
-    /**
-     * Archive a client: hide them from the active list and block sign-in.
-     * Their bookings, billing and payment history are kept.
-     */
+    /** Cancel the client's current subscription and mark the account inactive. */
     public function archive($id)
     {
         if (!Client::supportsArchiving()) {
@@ -58,12 +62,9 @@ class ClientController extends Controller
         }
 
         $client = Client::findOrFail($id);
-        $client->update(['archived_at' => now()]);
+        $client->deactivateSubscription('cancelled');
 
-        // Sign the client out of the mobile app immediately.
-        $client->tokens()->delete();
-
-        return redirect()->back()->with('success_message', "{$client->full_name} has been unsubscribed.");
+        return redirect()->back()->with('success_message', "{$client->full_name}'s subscription has been cancelled and the account is now Inactive.");
     }
 
     public function restore($id)
@@ -74,9 +75,23 @@ class ClientController extends Controller
             );
         }
 
-        $client = Client::findOrFail($id);
-        $client->update(['archived_at' => null]);
+        $client = Client::with(['currentService', 'currentAppointment'])->findOrFail($id);
 
-        return redirect()->back()->with('success_message', "{$client->full_name} has been re-subscribed and returned to the registered clients list.");
+        if (! $client->currentService || ! $client->currentAppointment) {
+            $client->update(['archived_at' => null]);
+
+            return redirect()->back()->with(
+                'success_message',
+                "{$client->full_name}'s account was restored but remains Inactive until a plan is approved."
+            );
+        }
+
+        $client->activateSubscription(
+            $client->currentService,
+            $client->currentAppointment,
+            $client->currentAppointment->subscription_ends_at,
+        );
+
+        return redirect()->back()->with('success_message', "{$client->full_name} has been re-subscribed and the account is now Active.");
     }
 }

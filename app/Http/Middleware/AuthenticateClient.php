@@ -15,14 +15,17 @@ class AuthenticateClient
             return redirect()->route('login');
         }
 
-        // An admin may archive a client while they are signed in.
-        if (Auth::guard('client')->user()->isArchived()) {
+        $client = Auth::guard('client')->user();
+        $client->syncSubscriptionStatus();
+
+        // An admin may cancel or expire a subscription while the client is signed in.
+        if ($client->isArchived()) {
             Auth::guard('client')->logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
             return redirect()->route('login')
-                ->withErrors(['login_input' => 'This account has been archived. Please contact BCTVI support.']);
+                ->withErrors(['login_input' => 'This account is inactive because its subscription was cancelled or expired. Please contact BCTVI support.']);
         }
 
         return $next($request);

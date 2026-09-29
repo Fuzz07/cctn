@@ -26,6 +26,11 @@ class ClientResource extends JsonResource
             'address_municipality' => $this->address_municipality,
             'address_province'     => $this->address_province,
             'contact_no'           => $this->contact_no,
+            'account_status'       => $this->account_status ?? ($this->isArchived() ? 'Inactive' : 'Active'),
+            'subscription_status'  => $this->subscription_status,
+            'subscription_status_label' => $this->subscription_status_label,
+            'current_plan'         => $this->currentService?->service_name,
+            'subscription_ends_at' => $this->subscription_ends_at?->toIso8601String(),
             'profile_photo'        => $this->profile_photo
                 ? asset($this->profile_photo)
                 : null,

@@ -515,6 +515,14 @@
                         </div>
                     </div>
 
+                    <div class="form-group">
+                        <label class="form-label">Subscription End Date (Optional)</label>
+                        <input type="date" name="subscription_ends_at" class="form-control"
+                               min="{{ now()->format('Y-m-d') }}"
+                               value="{{ old('subscription_ends_at', $manageAppointment->subscription_ends_at?->format('Y-m-d')) }}">
+                        <small style="display:block; margin-top:0.35rem; color:var(--text-muted);">Leave blank for an ongoing plan. On this date, the account automatically becomes Inactive and the subscription is marked expired.</small>
+                    </div>
+
                     @if($manageAppointment->client?->email)
                         <div style="font-size: 0.75rem; color: #0369a1; background: #e0f2fe; padding: 0.45rem 0.75rem; border-radius: 6px; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.4rem; border: 1px solid #bae6fd;">
                             <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
