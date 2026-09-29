@@ -512,7 +512,7 @@
             name: 'JO*Y M.',
             accountNumber: '+63 985 838 ****',
             typeLabel: 'GCash Number',
-            qrImage: @json(asset('assets/images/gcash-admin-qr.png')),
+            qrImage: @json(asset('assets/images/gcash-admin-qr.png') . '?v=3bc4c37b'),
             instructions: 'Scan the administrator\'s official GCash QR code and send the exact payment. Enter your Name or Account No. in the message/notes field.'
         },
     };
