@@ -528,8 +528,8 @@
 
                     <div class="form-group">
                         <label class="form-label">Valid ID Number <span class="req">*</span></label>
-                        <input type="text" name="valid_id_number" id="valid_id_number" class="form-control" placeholder="e.g. N01-12-345678" value="{{ old('valid_id_number') }}" required
-                               data-restrict="idnumber" style="text-transform:uppercase;">
+                        <input type="tel" name="valid_id_number" id="valid_id_number" class="form-control" placeholder="Enter ID number" value="{{ old('valid_id_number') }}" required
+                               data-restrict="number" inputmode="numeric" maxlength="50" title="Enter numbers only.">
                     </div>
                 </div>
 

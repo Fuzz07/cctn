@@ -44,7 +44,7 @@ class WalkInController extends Controller
             'address_barangay'     => InputRules::address(true, 100),
             'installation_address' => InputRules::address(true, 255),
             'valid_id_type'        => 'required|string|max:50',
-            'valid_id_number'      => InputRules::idNumber(true, 50),
+            'valid_id_number'      => array_merge(InputRules::number(true), ['max:50']),
 
             // Step 2: WiFi Plan
             'service_id'           => 'required|exists:services,id',
@@ -69,7 +69,7 @@ class WalkInController extends Controller
         ], InputRules::messages([
             'name'     => ['full_name'],
             'address'  => ['complete_address', 'address_barangay', 'installation_address'],
-            'idnumber' => ['valid_id_number'],
+            'number'   => ['valid_id_number'],
             'mobile'   => ['contact_no'],
         ]));
 

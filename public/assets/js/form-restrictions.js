@@ -188,6 +188,17 @@
             }, 2000);
         }
 
+        // Reject invalid keyboard characters before the browser puts them in
+        // the field. The input handler below remains as a safety net for
+        // autofill, scripts and input methods that do not emit beforeinput.
+        input.addEventListener('beforeinput', function (e) {
+            if (e.inputType !== 'insertText' || !e.data) return;
+            if (rule.strip(e.data) !== e.data) {
+                e.preventDefault();
+                flashRejection();
+            }
+        });
+
         input.addEventListener('input', function () {
             var original = input.value;
             var caret = input.selectionStart;
