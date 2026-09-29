@@ -199,6 +199,7 @@ class AppointmentController extends Controller
         // Create notification for admin
         Notification::create([
             'for_admin' => true,
+            'client_id' => $client->id,
             'title'     => 'Booking Deleted',
             'message'   => "{$client->firstname} {$client->lastname} deleted booking #{$appointmentNum}.",
             'link'      => 'admin/appointments',

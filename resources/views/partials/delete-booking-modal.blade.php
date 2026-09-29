@@ -96,10 +96,13 @@
     var deleteBookingForm = null;
     var deleteBookingTrigger = null;
 
-    function showBookingDeleteModal(form, appointmentReference) {
+    function showBookingDeleteModal(form) {
+        if (!form) return;
+
         deleteBookingForm = form;
         deleteBookingTrigger = document.activeElement;
 
+        var appointmentReference = form.dataset.bookingReference || 'selected booking';
         var message = 'Booking ' + appointmentReference + ' will be permanently deleted. This action cannot be undone.';
         document.getElementById('delete-booking-message').textContent = message;
 
@@ -119,12 +122,18 @@
         document.body.style.overflow = '';
 
         if (deleteBookingTrigger) deleteBookingTrigger.focus();
+        var confirmButton = document.getElementById('delete-booking-confirm');
+        confirmButton.disabled = false;
+        confirmButton.textContent = 'Delete booking';
         deleteBookingForm = null;
         deleteBookingTrigger = null;
     }
 
     function confirmBookingDelete() {
         if (deleteBookingForm) {
+            var confirmButton = document.getElementById('delete-booking-confirm');
+            confirmButton.disabled = true;
+            confirmButton.textContent = 'Deleting...';
             deleteBookingForm.submit();
         }
     }

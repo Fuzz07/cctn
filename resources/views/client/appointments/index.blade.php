@@ -119,10 +119,10 @@
                             {{ $appt->payment_method ? 'Update Payment Method' : 'Set Digital Payment Method' }}
                         </button>
 
-                        <form action="{{ route('client.appointments.destroy', $appt->id) }}" method="POST" onsubmit="return showBookingDeleteModal(this, 'REF #{{ str_pad($appt->id, 6, '0', STR_PAD_LEFT) }}');" style="margin: 0;">
+                        <form action="{{ route('client.appointments.destroy', $appt->id) }}" method="POST" data-booking-reference="REF #{{ str_pad($appt->id, 6, '0', STR_PAD_LEFT) }}" style="margin: 0;">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn-action btn-outline-danger" style="font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem;">
+                            <button type="button" class="btn-action btn-outline-danger" onclick="showBookingDeleteModal(this.form)" style="font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem;">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2 2v2"></path></svg>
                                 Delete Booking
                             </button>

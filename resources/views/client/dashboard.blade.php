@@ -195,10 +195,10 @@
                                         #{{ str_pad($appt->id, 5, '0', STR_PAD_LEFT) }}
                                     </td>
                                     <td style="text-align: right;">
-                                        <form action="{{ route('client.appointments.destroy', $appt->id) }}" method="POST" onsubmit="return showBookingDeleteModal(this, 'REF #{{ str_pad($appt->id, 6, '0', STR_PAD_LEFT) }}');" style="display:inline;">
+                                        <form action="{{ route('client.appointments.destroy', $appt->id) }}" method="POST" data-booking-reference="REF #{{ str_pad($appt->id, 6, '0', STR_PAD_LEFT) }}" style="display:inline;">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" style="background:none; border:none; color:#dc2626; cursor:pointer; padding:4px; font-size:0.85rem; font-weight:700;" title="Delete Booking">
+                                            <button type="button" onclick="showBookingDeleteModal(this.form)" style="background:none; border:none; color:#dc2626; cursor:pointer; padding:4px; font-size:0.85rem; font-weight:700;" title="Delete Booking">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                                                 Delete
                                             </button>
