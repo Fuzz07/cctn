@@ -7,13 +7,6 @@
     .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
     .page-title { font-size: 1.5rem; font-weight: 800; color: var(--text-dark); margin: 0; }
     
-    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-bottom: 1.5rem; }
-    .stat-card { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 12px; padding: 1.25rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
-    .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .stat-meta { display: flex; flex-direction: column; }
-    .stat-title { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
-    .stat-val { font-size: 1.5rem; font-weight: 800; color: var(--text-dark); line-height: 1; }
-
     .filter-card { background: var(--bg-card); border-radius: 12px; padding: 1.25rem; border: 1px solid var(--border-light); margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
     .filter-pills { display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.25rem; }
     .filter-pill { padding: 0.5rem 1rem; border-radius: 99px; background: var(--bg-page); border: 1px solid var(--border-light); color: var(--text-muted); font-size: 0.85rem; font-weight: 600; text-decoration: none; white-space: nowrap; transition: all 0.2s; }
@@ -51,44 +44,12 @@
     .unsubscribe-modal__button--confirm { border: none; background: #dc2626; color: #fff; }
     @keyframes unsubscribe-modal-in { from { opacity: 0; transform: scale(0.88) translateY(12px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 
-    @media (max-width: 1024px) { .stats-row { grid-template-columns: 1fr; } }
 </style>
 @endpush
 
 @section('content')
 <div class="page-header">
     <h1 class="page-title">Client Database</h1>
-</div>
-
-<!-- Stats -->
-<div class="stats-row">
-    <div class="stat-card">
-        <div class="stat-icon" style="background:#fef2f2; color:#dc2626;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-        </div>
-        <div class="stat-meta">
-            <span class="stat-title">Total Registered</span>
-            <span class="stat-val" id="stat-total-clients">{{ $totalClients }}</span>
-        </div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-icon" style="background:#eff6ff; color:#2563eb;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        </div>
-        <div class="stat-meta">
-            <span class="stat-title">New This Month</span>
-            <span class="stat-val" id="stat-new-this-month">{{ $newThisMonth }}</span>
-        </div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-icon" style="background:#f0fdf4; color:#16a34a;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-        </div>
-        <div class="stat-meta">
-            <span class="stat-title">Active Bookings</span>
-            <span class="stat-val" id="stat-active-bookings">{{ $activeBookings }}</span>
-        </div>
-    </div>
 </div>
 
 <div class="filter-card">
@@ -203,48 +164,6 @@
 
 @push('scripts')
 <script>
-(function () {
-    const POLL_INTERVAL = 30000; // 30 seconds
-    const STATS_URL     = '{{ route("admin.clients.stats") }}';
-
-    const elTotal   = document.getElementById('stat-total-clients');
-    const elNew     = document.getElementById('stat-new-this-month');
-    const elActive  = document.getElementById('stat-active-bookings');
-
-    function animateUpdate(el, newVal) {
-        const current = parseInt(el.textContent, 10);
-        if (current === newVal) return;
-
-        el.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
-        el.style.opacity    = '0';
-        el.style.transform  = 'translateY(-6px)';
-
-        setTimeout(function () {
-            el.textContent  = newVal;
-            el.style.opacity   = '1';
-            el.style.transform = 'translateY(0)';
-        }, 260);
-    }
-
-    function fetchStats() {
-        fetch(STATS_URL, {
-            headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
-        })
-        .then(function (res) { return res.ok ? res.json() : Promise.reject(res.status); })
-        .then(function (data) {
-            animateUpdate(elTotal,  data.total_clients);
-            animateUpdate(elNew,    data.new_this_month);
-            animateUpdate(elActive, data.active_bookings);
-        })
-        .catch(function (err) {
-            console.warn('[Client Stats] Poll failed:', err);
-        });
-    }
-
-    // Start polling after first interval
-    setInterval(fetchStats, POLL_INTERVAL);
-})();
-
 var unsubscribeForm = null;
 var unsubscribeTrigger = null;
 

@@ -123,7 +123,6 @@ Route::prefix('admin')->group(function () {
         Route::get('/walk-in/receipt/{id}', [AdminWalkIn::class, 'receipt'])->name('admin.walkin.receipt');
 
         Route::get('/clients', [AdminClient::class, 'index'])->name('admin.clients');
-        Route::get('/clients/stats', [AdminClient::class, 'stats'])->name('admin.clients.stats');
         Route::post('/clients/{id}/archive', [AdminClient::class, 'archive'])->name('admin.clients.archive');
         Route::post('/clients/{id}/restore', [AdminClient::class, 'restore'])->name('admin.clients.restore');
 

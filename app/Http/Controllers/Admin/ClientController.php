@@ -38,32 +38,11 @@ class ClientController extends Controller
 
         $clients = $query->orderBy('id', 'desc')->get();
 
-        // Stats (independent of filters)
-        $totalClients   = Client::active()->count();
-        $newThisMonth   = Client::active()->whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->count();
-        $activeBookings = Appointment::where('status', 'approved')->distinct('client_id')->count('client_id');
         $archivedCount  = Client::archived()->count();
 
         return view('admin.clients.index', compact(
-            'clients', 'filter', 'search', 'totalClients', 'newThisMonth', 'activeBookings', 'archivedCount', 'archivingSupported'
+            'clients', 'filter', 'search', 'archivedCount', 'archivingSupported'
         ));
-    }
-
-    /**
-     * Return live stats as JSON for real-time polling.
-     */
-    public function stats()
-    {
-        return response()->json([
-            'total_clients'   => Client::active()->count(),
-            'new_this_month'  => Client::active()
-                                       ->whereMonth('created_at', now()->month)
-                                       ->whereYear('created_at', now()->year)
-                                       ->count(),
-            'active_bookings' => Appointment::where('status', 'approved')
-                                            ->distinct('client_id')
-                                            ->count('client_id'),
-        ]);
     }
 
     /**
