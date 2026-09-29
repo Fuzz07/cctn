@@ -83,6 +83,7 @@ Route::middleware('auth.client')->group(function () {
     Route::get('/dashboard', [ClientDashboard::class, 'index'])->name('client.dashboard');
     Route::post('/dashboard/update-profile', [ClientDashboard::class, 'updateProfile'])->name('client.update-profile');
     Route::post('/dashboard/unsubscribe', [ClientDashboard::class, 'unsubscribe'])->name('client.unsubscribe');
+    Route::post('/dashboard/request-disconnection', [ClientDashboard::class, 'requestDisconnection'])->name('client.disconnection.request');
 
     Route::get('/my-appointments', [ClientAppointment::class, 'index'])->name('client.appointments');
     Route::post('/my-appointments/{id}/payment-method', [ClientAppointment::class, 'updatePaymentMethod'])->name('client.appointments.payment-method');
@@ -126,6 +127,8 @@ Route::prefix('admin')->group(function () {
         Route::get('/clients', [AdminClient::class, 'index'])->name('admin.clients');
         Route::post('/clients/{id}/archive', [AdminClient::class, 'archive'])->name('admin.clients.archive');
         Route::post('/clients/{id}/restore', [AdminClient::class, 'restore'])->name('admin.clients.restore');
+        Route::post('/clients/{id}/disconnection/approve', [AdminClient::class, 'approveDisconnection'])->name('admin.clients.disconnection.approve');
+        Route::post('/clients/{id}/disconnection/reject', [AdminClient::class, 'rejectDisconnection'])->name('admin.clients.disconnection.reject');
 
         Route::get('/services', [AdminService::class, 'index'])->name('admin.services');
         Route::post('/services', [AdminService::class, 'store'])->name('admin.services.store');

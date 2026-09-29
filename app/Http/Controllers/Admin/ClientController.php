@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Client;
 use App\Models\Appointment;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 
 class ClientController extends Controller
@@ -16,10 +17,15 @@ class ClientController extends Controller
         $filter = $request->get('filter', 'all');
         $search = $request->get('search', '');
         $archivingSupported = Client::supportsArchiving();
+        $disconnectionRequestsSupported = Client::supportsDisconnectionRequests();
 
         $query = Client::with('currentService');
 
-        if (in_array($filter, ['inactive', 'archived'], true)) {
+        if ($filter === 'disconnection_requests' && $disconnectionRequestsSupported) {
+            $query->active()->where('disconnection_request_status', 'pending');
+        } elseif ($filter === 'disconnection_requests') {
+            $query->whereRaw('1 = 0');
+        } elseif (in_array($filter, ['inactive', 'archived'], true)) {
             $query->inactive();
         } else {
             $query->active();
@@ -46,9 +52,13 @@ class ClientController extends Controller
         $clients = $query->orderBy('id', 'desc')->get();
 
         $archivedCount = Client::inactive()->count();
+        $pendingDisconnectionCount = $disconnectionRequestsSupported
+            ? Client::active()->where('disconnection_request_status', 'pending')->count()
+            : 0;
 
         return view('admin.clients.index', compact(
-            'clients', 'filter', 'search', 'archivedCount', 'archivingSupported'
+            'clients', 'filter', 'search', 'archivedCount', 'pendingDisconnectionCount',
+            'archivingSupported', 'disconnectionRequestsSupported'
         ));
     }
 
@@ -62,7 +72,19 @@ class ClientController extends Controller
         }
 
         $client = Client::findOrFail($id);
-        $client->deactivateSubscription('cancelled');
+        if ($client->hasPendingDisconnectionRequest()) {
+            $client->approveDisconnection('Approved by administrator.');
+        } else {
+            $client->deactivateSubscription('cancelled');
+        }
+
+        Notification::create([
+            'for_admin' => false,
+            'client_id' => $client->id,
+            'title' => 'Subscription Deactivated',
+            'message' => 'Your subscription has been deactivated and your account is now Inactive.',
+            'link' => 'dashboard',
+        ]);
 
         return redirect()->back()->with('success_message', "{$client->full_name}'s subscription has been cancelled and the account is now Inactive.");
     }
@@ -93,5 +115,47 @@ class ClientController extends Controller
         );
 
         return redirect()->back()->with('success_message', "{$client->full_name} has been re-subscribed and the account is now Active.");
+    }
+
+    public function approveDisconnection(Request $request, $id)
+    {
+        $request->validate(['review_note' => 'nullable|string|max:500']);
+
+        $client = Client::findOrFail($id);
+        if (! $client->approveDisconnection($request->input('review_note'))) {
+            return redirect()->back()->with('error_message', 'This disconnection request is no longer pending.');
+        }
+
+        Notification::create([
+            'for_admin' => false,
+            'client_id' => $client->id,
+            'title' => 'Disconnection Approved',
+            'message' => 'Your disconnection request was approved. Your subscription and account are now Inactive.',
+            'link' => 'dashboard',
+        ]);
+
+        return redirect()->route('admin.clients', ['filter' => 'disconnection_requests'])
+            ->with('success_message', "{$client->full_name}'s disconnection request was approved.");
+    }
+
+    public function rejectDisconnection(Request $request, $id)
+    {
+        $request->validate(['review_note' => 'nullable|string|max:500']);
+
+        $client = Client::findOrFail($id);
+        if (! $client->rejectDisconnection($request->input('review_note'))) {
+            return redirect()->back()->with('error_message', 'This disconnection request is no longer pending.');
+        }
+
+        Notification::create([
+            'for_admin' => false,
+            'client_id' => $client->id,
+            'title' => 'Disconnection Request Declined',
+            'message' => 'Your disconnection request was declined. Your subscription remains Active.',
+            'link' => 'dashboard',
+        ]);
+
+        return redirect()->route('admin.clients', ['filter' => 'disconnection_requests'])
+            ->with('success_message', "{$client->full_name}'s disconnection request was declined.");
     }
 }

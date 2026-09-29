@@ -78,10 +78,10 @@
         margin: 0;
     }
 
-    /* 4 Stat Cards Grid */
+    /* KPI Stat Cards Grid */
     .stats-row {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
         gap: 1.25rem;
     }
     .stat-card {
@@ -247,6 +247,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             Manage bookings
         </a>
+
     </div>
 
     @if (session('success_message'))
@@ -255,7 +256,7 @@
         </div>
     @endif
 
-    <!-- 4 KPI Stat Cards -->
+    <!-- KPI Stat Cards -->
     <div class="stats-row">
         <!-- Total Bookings -->
         <a href="{{ route('admin.appointments') }}" class="stat-card">
@@ -298,6 +299,17 @@
             <div class="stat-meta">
                 <span class="stat-title">Inactive Subscribers</span>
                 <span class="stat-number">{{ $stats['inactive_clients'] }}</span>
+            </div>
+        </a>
+
+        <!-- Pending Disconnection Requests -->
+        <a href="{{ route('admin.clients', ['filter' => 'disconnection_requests']) }}" class="stat-card">
+            <div class="stat-icon-wrap" style="background: #fffbeb; color: #a16207;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2h4M12 14v-4"/><circle cx="12" cy="14" r="8"/></svg>
+            </div>
+            <div class="stat-meta">
+                <span class="stat-title">Disconnection Requests</span>
+                <span class="stat-number">{{ $stats['disconnection_requests'] }}</span>
             </div>
         </a>
     </div>

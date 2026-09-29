@@ -66,18 +66,25 @@ class AdminClientArchiveTest extends TestCase
         $this->assertSame(0, $this->client->tokens()->count());
     }
 
-    public function test_client_can_unsubscribe_their_own_account()
+    public function test_legacy_unsubscribe_endpoint_creates_a_disconnection_request()
     {
+        $this->client->update([
+            'account_status' => 'Active',
+            'subscription_status' => 'active',
+        ]);
         $this->client->createToken('mobile-app');
 
         $this->actingAs($this->client, 'client')
             ->post(route('client.unsubscribe'))
-            ->assertRedirect(route('home'))
+            ->assertRedirect(route('client.dashboard'))
             ->assertSessionHas('success_message');
 
-        $this->assertNotNull($this->client->fresh()->archived_at);
-        $this->assertSame(0, $this->client->tokens()->count());
-        $this->assertGuest('client');
+        $client = $this->client->fresh();
+        $this->assertSame('pending', $client->disconnection_request_status);
+        $this->assertSame('Active', $client->account_status);
+        $this->assertNull($client->archived_at);
+        $this->assertSame(1, $client->tokens()->count());
+        $this->assertAuthenticatedAs($client, 'client');
     }
 
     public function test_inactive_clients_are_hidden_from_the_default_list_but_shown_under_inactive()

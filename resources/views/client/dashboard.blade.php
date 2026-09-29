@@ -59,6 +59,9 @@
     .c-danger-card p { margin: 0.35rem 0 1.25rem; color: var(--text-muted); font-size: 0.88rem; line-height: 1.55; }
     .btn-unsubscribe { padding: 0.7rem 1.1rem; border: 1px solid #fecaca; border-radius: 10px; background: #fff; color: #b91c1c; font-weight: 700; font-size: 0.88rem; cursor: pointer; }
     .btn-unsubscribe:hover { background: #fef2f2; }
+    .subscription-state { display: flex; align-items: center; gap: 0.5rem; margin: 0.75rem 0; font-size: 0.88rem; color: var(--text-body); }
+    .subscription-state strong { color: #15803d; }
+    .disconnection-pending { margin-top: 0.85rem; padding: 0.85rem 1rem; border: 1px solid #fde68a; border-radius: 8px; background: #fffbeb; color: #92400e; font-size: 0.85rem; line-height: 1.45; }
     .client-unsubscribe-modal { display: none; position: fixed; inset: 0; z-index: 100000; align-items: center; justify-content: center; padding: 1rem; }
     .client-unsubscribe-modal.is-open { display: flex; }
     .client-unsubscribe-modal__backdrop { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.55); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
@@ -342,11 +345,25 @@
                     <h3 class="c-card-title" style="color:#b91c1c;">Account subscription</h3>
                 </div>
                 @if($client->isAccountActive())
-                    <p>Need to stop your BCTVI service? Cancelling marks your subscription and account Inactive. Your booking and payment history will be kept.</p>
-                    <form id="client-unsubscribe-form" action="{{ route('client.unsubscribe') }}" method="POST" onsubmit="return showClientUnsubscribeModal(this);">
-                        @csrf
-                        <button type="submit" class="btn-unsubscribe">Cancel current plan</button>
-                    </form>
+                    <div class="subscription-state"><span>Subscription Status:</span> <strong>Active</strong></div>
+                    @if($client->hasPendingDisconnectionRequest())
+                        <div class="disconnection-pending">
+                            <strong>Disconnection request pending</strong><br>
+                            Sent {{ $client->disconnection_requested_at?->format('M d, Y \a\t g:i A') }}. Your subscription remains Active until an administrator approves the request.
+                        </div>
+                        <button type="button" class="btn-unsubscribe" disabled style="margin-top:0.85rem; opacity:0.6; cursor:not-allowed;">Request Pending</button>
+                    @else
+                        <p>Submit a disconnection request for administrator review. Your service stays Active while the request is pending.</p>
+                        @if($client->disconnection_request_status === 'rejected')
+                            <div class="disconnection-pending" style="border-color:#bfdbfe; background:#eff6ff; color:#1e40af; margin-bottom:0.85rem;">
+                                Your previous request was declined. Your subscription remains Active.
+                            </div>
+                        @endif
+                        <form id="client-unsubscribe-form" action="{{ route('client.disconnection.request') }}" method="POST" onsubmit="return showClientUnsubscribeModal(this);">
+                            @csrf
+                            <button type="submit" class="btn-unsubscribe">Request Disconnection</button>
+                        </form>
+                    @endif
                 @else
                     <p>Your account is <strong>Inactive</strong>. Choose a new plan and, once approved, your account will automatically return to Active.</p>
                     <a href="{{ route('home') }}#plans" class="btn-save-profile" style="display:inline-block; text-decoration:none;">Browse plans</a>
@@ -407,11 +424,11 @@
         <div class="client-unsubscribe-modal__icon" aria-hidden="true">
             <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v4M14 11v4"/></svg>
         </div>
-        <h2 id="client-unsubscribe-title" class="client-unsubscribe-modal__title">Cancel your current plan?</h2>
-        <p id="client-unsubscribe-message" class="client-unsubscribe-modal__message">Your account will become Inactive and the subscription will be marked cancelled. Your booking and payment history will be retained.</p>
+        <h2 id="client-unsubscribe-title" class="client-unsubscribe-modal__title">Request Disconnection?</h2>
+        <p id="client-unsubscribe-message" class="client-unsubscribe-modal__message">Your request will be sent to the administrator for confirmation. Your subscription will remain active until the request is approved.</p>
         <div class="client-unsubscribe-modal__actions">
-            <button type="button" class="client-unsubscribe-modal__button client-unsubscribe-modal__cancel" onclick="hideClientUnsubscribeModal()">Keep account</button>
-            <button type="button" id="client-unsubscribe-confirm" class="client-unsubscribe-modal__button client-unsubscribe-modal__confirm" onclick="confirmClientUnsubscribe()">Yes, unsubscribe</button>
+            <button type="button" class="client-unsubscribe-modal__button client-unsubscribe-modal__cancel" onclick="hideClientUnsubscribeModal()">Cancel</button>
+            <button type="button" id="client-unsubscribe-confirm" class="client-unsubscribe-modal__button client-unsubscribe-modal__confirm" onclick="confirmClientUnsubscribe()">Confirm Request</button>
         </div>
     </div>
 </div>

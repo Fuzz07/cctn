@@ -7,6 +7,7 @@ use App\Models\Appointment;
 use App\Models\Client;
 use App\Models\BillingAccount;
 use App\Models\MaintenanceRequest;
+use App\Models\Notification;
 use App\Support\InputRules;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -77,26 +78,51 @@ class DashboardController extends Controller
         return redirect()->route('client.dashboard')->with('success_message', 'Profile updated successfully!');
     }
 
-    /** Cancel the current subscription while retaining account history. */
-    public function unsubscribe(Request $request)
+    /** Submit a disconnection request without deactivating the subscription yet. */
+    public function requestDisconnection()
     {
-        if (! Client::supportsArchiving()) {
+        if (! Client::supportsDisconnectionRequests()) {
             return redirect()->route('client.dashboard')->with('error_message',
-                'Account unsubscribe is temporarily unavailable. Please contact support.'
+                'Disconnection requests are temporarily unavailable. Please contact support.'
             );
         }
 
         $client = Auth::guard('client')->user();
         $client->load('currentService');
-        $client->deactivateSubscription('cancelled');
 
-        Auth::guard('client')->logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        if (! $client->isAccountActive()) {
+            return redirect()->route('client.dashboard')->with(
+                'error_message',
+                'Only an active subscription can request disconnection.'
+            );
+        }
 
-        return redirect()->route('home')->with(
+        if (! $client->requestDisconnection()) {
+            return redirect()->route('client.dashboard')->with(
+                'success_message',
+                'Your disconnection request is already awaiting administrator review.'
+            );
+        }
+
+        $planName = $client->currentService?->service_name ?? 'their current subscription';
+
+        Notification::create([
+            'for_admin' => true,
+            'client_id' => $client->id,
+            'title' => 'Disconnection Request',
+            'message' => "{$client->full_name} requested disconnection of {$planName}.",
+            'link' => 'admin/clients?filter=disconnection_requests',
+        ]);
+
+        return redirect()->route('client.dashboard')->with(
             'success_message',
-            'Your subscription has been cancelled and your account is now Inactive. Your booking and payment history is retained; contact BCTVI support whenever you would like to subscribe again.'
+            'Your disconnection request was sent to the administrator. Your subscription remains Active until it is approved.'
         );
+    }
+
+    /** Backwards-compatible endpoint for older links. */
+    public function unsubscribe()
+    {
+        return $this->requestDisconnection();
     }
 }
