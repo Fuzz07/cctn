@@ -113,7 +113,7 @@
                     </td>
                     <td>
                         @if ($client->proof_of_billing)
-                            <a href="{{ asset($client->proof_of_billing) }}" target="_blank" style="display:inline-block; background:#f0fdf4; color:#15803d; border:1px solid #bbf7d0; padding:0.3rem 0.75rem; border-radius:50px; font-size:0.75rem; font-weight:700; text-decoration:none;">
+                            <a href="{{ route('admin.clients.proof-of-billing', $client->id) }}" target="_blank" rel="noopener" style="display:inline-block; background:#f0fdf4; color:#15803d; border:1px solid #bbf7d0; padding:0.3rem 0.75rem; border-radius:50px; font-size:0.75rem; font-weight:700; text-decoration:none;">
                                 View Proof of Billing
                             </a>
                         @else

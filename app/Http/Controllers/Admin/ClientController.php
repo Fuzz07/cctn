@@ -10,6 +10,38 @@ use Illuminate\Http\Request;
 
 class ClientController extends Controller
 {
+    public function proofOfBilling($id)
+    {
+        $client = Client::findOrFail($id);
+        $storedPath = str_replace('\\', '/', ltrim((string) $client->proof_of_billing, '/'));
+
+        if ($storedPath === '' || str_contains($storedPath, '..')) {
+            return redirect()->back()->with('error_message', 'The proof of billing file is unavailable.');
+        }
+
+        $storageRelativePath = str_starts_with($storedPath, 'storage/')
+            ? substr($storedPath, strlen('storage/'))
+            : $storedPath;
+
+        $candidates = array_unique([
+            public_path($storedPath),
+            storage_path('app/public/' . $storageRelativePath),
+            public_path('uploads/' . ltrim($storageRelativePath, '/')),
+        ]);
+
+        foreach ($candidates as $candidate) {
+            if (is_file($candidate)) {
+                return response()->file($candidate, [
+                    'Content-Disposition' => 'inline; filename="' . basename($candidate) . '"',
+                    'Cache-Control' => 'private, no-store, max-age=0',
+                    'X-Content-Type-Options' => 'nosniff',
+                ]);
+            }
+        }
+
+        return redirect()->back()->with('error_message', 'The proof of billing file could not be found on the server.');
+    }
+
     public function index(Request $request)
     {
         Client::expireSubscriptions();
