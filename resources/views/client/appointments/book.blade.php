@@ -278,7 +278,6 @@
 
                 <select name="payment_method" id="payment_method" class="form-control" required style="font-weight: 600;" onchange="updatePaymentInstructions()">
                     <option value="GCash" {{ old('payment_method', 'GCash') == 'GCash' ? 'selected' : '' }}>GCash (E-Wallet)</option>
-                    <option value="Maya" {{ old('payment_method', '') == 'Maya' ? 'selected' : '' }}>Maya (E-Wallet)</option>
                 </select>
 
                 <!-- DYNAMIC PAYMENT INSTRUCTIONS CARD -->
@@ -510,19 +509,11 @@
             badge: 'GCash E-Wallet',
             badgeBg: '#dbeafe',
             badgeFg: '#1d4ed8',
-            name: 'Bogo Cable Television Inc. (BCTVI)',
-            accountNumber: '0917 888 2099',
+            name: 'JO*Y M.',
+            accountNumber: '+63 985 838 ****',
             typeLabel: 'GCash Number',
-            instructions: 'Send exact payment to the GCash account above. Enter your Name or Account No. in the message/notes field.'
-        },
-        'Maya': {
-            badge: 'Maya E-Wallet',
-            badgeBg: '#dcfce7',
-            badgeFg: '#15803d',
-            name: 'Bogo Cable Television Inc. (BCTVI)',
-            accountNumber: '0917 888 2099',
-            typeLabel: 'Maya Number',
-            instructions: 'Transfer exact amount to the official Maya account details above.'
+            qrImage: @json(asset('assets/images/gcash-admin-qr.png')),
+            instructions: 'Scan the administrator\'s official GCash QR code and send the exact payment. Enter your Name or Account No. in the message/notes field.'
         },
     };
 
@@ -571,6 +562,14 @@
                 </div>
                 <div style="font-size: 0.82rem; color: #475569; border-top: 1px dashed var(--border-light); padding-top: 0.5rem; margin-top: 0.5rem;">
                     <strong>Instructions:</strong> ${details.instructions}
+                </div>
+                <div style="border-top: 1px dashed var(--border-light); padding-top: 1rem; margin-top: 1rem; text-align: center;">
+                    <div style="font-size: 0.8rem; font-weight: 800; color: #1d4ed8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.65rem;">Scan to pay with GCash</div>
+                    <img src="${details.qrImage}"
+                         alt="Official administrator GCash QR code"
+                         style="display: block; width: min(100%, 360px); height: auto; margin: 0 auto; border-radius: 12px; border: 1px solid var(--border-light);"
+                         loading="eager">
+                    <small style="display: block; color: var(--text-muted); margin-top: 0.55rem;">Confirm that the recipient is <strong>${details.name}</strong> before sending.</small>
                 </div>
             `;
         }

@@ -74,11 +74,11 @@ class AppointmentController extends Controller
             'preferred_date'   => 'required|date|after_or_equal:today',
             'preferred_time'   => 'required|string',
             'message'          => 'nullable|string|max:500',
-            'payment_method'   => 'required|string|max:50|not_in:Cash,cash',
+            'payment_method'   => 'required|string|in:GCash',
             'reference_number' => 'required|string|max:100',
             'payment_proof'    => 'required|image|mimes:jpeg,png,jpg,webp|max:4096',
         ], [
-            'payment_method.not_in' => 'Cash is not available. Please select a digital payment method (GCash or Maya).',
+            'payment_method.in' => 'GCash is the only available digital payment method.',
             'reference_number.required' => 'Enter the reference number from your payment confirmation.',
             'payment_proof.required' => 'Upload a screenshot or photo of your payment receipt.',
         ]);
@@ -90,8 +90,7 @@ class AppointmentController extends Controller
             $paymentProofPath = $request->file('payment_proof')->store('payments', 'public');
         }
 
-        $defaultMethod = $client->defaultPaymentMethod?->provider_name;
-        $paymentMethod = $request->input('payment_method') ?: ($defaultMethod ?: 'GCash');
+        $paymentMethod = 'GCash';
 
         // Check conflict → auto-reschedule
         if (Appointment::hasConflict($request->preferred_date, $request->preferred_time)) {
@@ -162,11 +161,11 @@ class AppointmentController extends Controller
     public function updatePaymentMethod(Request $request, int $id)
     {
         $request->validate([
-            'payment_method'   => 'required|string|max:50|not_in:Cash,cash',
+            'payment_method'   => 'required|string|in:GCash',
             'reference_number' => 'nullable|string|max:100',
             'payment_proof'    => 'nullable|image|mimes:jpeg,png,jpg,webp|max:4096',
         ], [
-            'payment_method.not_in' => 'Cash is not available. Please select a digital payment method.',
+            'payment_method.in' => 'GCash is the only available digital payment method.',
         ]);
 
         $client      = $request->user();

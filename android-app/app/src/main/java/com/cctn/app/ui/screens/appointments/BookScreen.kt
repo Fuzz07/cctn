@@ -7,6 +7,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -50,12 +51,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cctn.app.core.Formatters
+import com.cctn.app.R
 import com.cctn.app.data.remote.dto.ServiceDto
 import com.cctn.app.data.remote.dto.SlotDto
 import com.cctn.app.ui.components.CctnDatePickerDialog
@@ -226,12 +230,7 @@ fun BookScreen(
                 }
             }
 
-            val digitalOptions = listOf("GCash", "Maya")
-            val availableMethods = if (state.paymentMethods.isNotEmpty()) {
-                state.paymentMethods.map { it.providerName }.distinct() + digitalOptions.filter { opt ->
-                    state.paymentMethods.none { it.providerName.equals(opt, ignoreCase = true) }
-                }
-            } else digitalOptions
+            val availableMethods = listOf("GCash")
 
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 availableMethods.chunked(2).forEach { row ->
@@ -375,31 +374,15 @@ private data class PaymentAccountInstructions(
     val accent: Color,
 )
 
-private fun paymentInstructionsFor(method: String): PaymentAccountInstructions {
-    val normalized = method.lowercase()
-    return when {
-        "maya" in normalized -> PaymentAccountInstructions(
-            badge = "Maya E-Wallet",
-            heading = "MAYA E-WALLET OFFICIAL ACCOUNT",
-            accountName = "Bogo Cable Television Inc. (BCTVI)",
-            accountLabel = "Maya Number",
-            accountNumber = "0917 888 2099",
-            instructions = "Transfer the exact amount to the official Maya account above.",
-            accent = Color(0xFF15803D),
-        )
-
-
-        else -> PaymentAccountInstructions(
-            badge = "GCash E-Wallet",
-            heading = "GCASH E-WALLET OFFICIAL ACCOUNT",
-            accountName = "Bogo Cable Television Inc. (BCTVI)",
-            accountLabel = "GCash Number",
-            accountNumber = "0917 888 2099",
-            instructions = "Send the exact payment to the GCash account above. Enter your name or account number in the message field.",
-            accent = Color(0xFF1D4ED8),
-        )
-    }
-}
+private fun paymentInstructionsFor(@Suppress("UNUSED_PARAMETER") method: String) = PaymentAccountInstructions(
+    badge = "GCash E-Wallet",
+    heading = "GCASH E-WALLET OFFICIAL ACCOUNT",
+    accountName = "JO*Y M.",
+    accountLabel = "GCash Number",
+    accountNumber = "+63 985 838 ****",
+    instructions = "Scan the administrator's official GCash QR code and send the exact payment.",
+    accent = Color(0xFF1D4ED8),
+)
 
 @Composable
 private fun PaymentInstructionsCard(method: String) {
@@ -459,6 +442,19 @@ private fun PaymentInstructionsCard(method: String) {
             Spacer(Modifier.height(3.dp))
             Text(
                 text = "Instructions: ${details.instructions}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Image(
+                painter = painterResource(id = R.drawable.gcash_admin_qr),
+                contentDescription = "Official administrator GCash QR code",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+                contentScale = ContentScale.FillWidth,
+            )
+            Text(
+                text = "Confirm that the recipient is ${details.accountName} before sending.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

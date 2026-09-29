@@ -100,14 +100,12 @@ class BookViewModel @Inject constructor(
         viewModelScope.launch {
             when (val result = paymentMethodRepository.list()) {
                 is AppResult.Success -> {
-                    val methods = result.data
-                    val defaultMethod = methods.firstOrNull { it.isDefault }?.providerName
-                        ?: methods.firstOrNull()?.providerName
-                        ?: "GCash"
                     _state.update {
                         it.copy(
-                            paymentMethods = methods,
-                            selectedPaymentMethod = defaultMethod,
+                            paymentMethods = result.data.filter {
+                                method -> method.providerName.equals("GCash", ignoreCase = true)
+                            },
+                            selectedPaymentMethod = "GCash",
                         )
                     }
                 }

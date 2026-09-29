@@ -148,9 +148,9 @@
                             </div>
                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; font-size: 0.8rem;">
                                 <div style="background: var(--bg-page); padding: 0.6rem 0.75rem; border-radius: 6px; border: 1px solid var(--border);">
-                                    <strong style="color: #007DFE;">GCash / Maya:</strong><br>
-                                    Acc Name: <strong>BCTVI Broadband</strong><br>
-                                    Number: <strong style="font-family: monospace; color: #dc2626;">0917 888 2099</strong>
+                                    <strong style="color: #007DFE;">GCash:</strong><br>
+                                    Account Name: <strong>JO*Y M.</strong><br>
+                                    Number: <strong style="font-family: monospace; color: #dc2626;">+63 985 838 ****</strong>
                                 </div>
                                 <div style="background: var(--bg-page); padding: 0.6rem 0.75rem; border-radius: 6px; border: 1px solid var(--border);">
                                     <strong style="color: #6b21a8;">Bank Transfer (BDO):</strong><br>
@@ -165,7 +165,6 @@
                                 <label style="display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.35rem; color: var(--text-body);">Digital Payment Method</label>
                                 <select name="payment_method" class="form-control" style="width: 100%; padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid var(--border); font-weight: 600;" required>
                                     <option value="GCash" {{ ($appt->payment_method == 'GCash' || !$appt->payment_method || $appt->payment_method == 'Cash') ? 'selected' : '' }}>GCash (E-Wallet)</option>
-                                    <option value="Maya" {{ $appt->payment_method == 'Maya' ? 'selected' : '' }}>Maya (E-Wallet)</option>
                                 </select>
                             </div>
                             <div id="ref-field-{{ $appt->id }}">

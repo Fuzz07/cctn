@@ -51,6 +51,19 @@ class ApiBookingPaymentTest extends TestCase
             ->assertJsonValidationErrors(['reference_number', 'payment_proof']);
     }
 
+    public function test_mobile_booking_rejects_non_gcash_payment_methods(): void
+    {
+        $this->postJson('/api/v1/appointments', [
+            'service_id' => $this->service->id,
+            'preferred_date' => now()->addDay()->format('Y-m-d'),
+            'preferred_time' => '09:00',
+            'payment_method' => 'Maya',
+            'reference_number' => '10029384756',
+            'payment_proof' => UploadedFile::fake()->image('maya-receipt.jpg'),
+        ])->assertStatus(422)
+            ->assertJsonValidationErrors(['payment_method']);
+    }
+
     public function test_mobile_booking_stores_payment_reference_and_receipt(): void
     {
         Storage::fake('public');
