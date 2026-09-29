@@ -147,16 +147,11 @@
                                 💡 Official BCTVI Payment Accounts
                             </div>
                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; font-size: 0.8rem;">
-                                <div style="background: var(--bg-page); padding: 0.6rem 0.75rem; border-radius: 6px; border: 1px solid var(--border);">
-                                    <strong style="color: #007DFE;">GCash:</strong><br>
-                                    Account Name: <strong>JO*Y M.</strong><br>
-                                    Number: <strong style="font-family: monospace; color: #dc2626;">+63 985 838 ****</strong>
-                                </div>
-                                <div style="background: var(--bg-page); padding: 0.6rem 0.75rem; border-radius: 6px; border: 1px solid var(--border);">
-                                    <strong style="color: #6b21a8;">Bank Transfer (BDO):</strong><br>
-                                    Acc Name: <strong>Bogo Cable Television Inc.</strong><br>
-                                    Acc #: <strong style="font-family: monospace; color: #dc2626;">0012-3456-7890</strong>
-                                </div>
+                        <!-- Payment Accounts Info -->
+                        <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 0.85rem 1rem; margin-bottom: 1rem;">
+                            <div style="font-size: 0.78rem; font-weight: 700; color: #1d4ed8; text-transform: uppercase; margin-bottom: 0.4rem;">GCash Official Account</div>
+                            <div style="background: var(--bg-page); padding: 0.6rem 0.75rem; border-radius: 6px; border: 1px solid var(--border);">
+                                <strong style="color: #007DFE;">GCash:</strong> Account Name: <strong>JO*Y M.</strong> &bull; Number: <strong style="font-family: monospace; color: #dc2626;">+63 985 838 ****</strong>
                             </div>
                         </div>
 
@@ -164,7 +159,7 @@
                             <div>
                                 <label style="display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.35rem; color: var(--text-body);">Digital Payment Method</label>
                                 <select name="payment_method" class="form-control" style="width: 100%; padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid var(--border); font-weight: 600;" required>
-                                    <option value="GCash" {{ ($appt->payment_method == 'GCash' || !$appt->payment_method || $appt->payment_method == 'Cash') ? 'selected' : '' }}>GCash (E-Wallet)</option>
+                                    <option value="GCash" selected>GCash (E-Wallet)</option>
                                 </select>
                             </div>
                             <div id="ref-field-{{ $appt->id }}">
@@ -172,10 +167,18 @@
                                 <input type="text" name="reference_number" class="form-control" style="width: 100%; padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid var(--border); font-family: monospace; font-weight: 700;" placeholder="e.g. 10029384756" value="{{ $appt->reference_number }}" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/\D/g, '')">
                             </div>
                             <div id="proof-field-{{ $appt->id }}">
-                                <label style="display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.35rem; color: var(--text-body);">Upload Payment Proof (Receipt)</label>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                                    <label style="display: block; font-size: 0.8rem; font-weight: 700; color: var(--text-body); margin: 0;">Upload Payment Proof</label>
+                                    <button type="button" onclick="toggleSampleReceiptModal(true)" style="background: none; border: none; color: #1d4ed8; font-size: 0.75rem; font-weight: 700; cursor: pointer; padding: 0;">View Sample</button>
+                                </div>
                                 <input type="file" name="payment_proof" class="form-control" style="width: 100%; padding: 0.4rem 0.75rem; border-radius: 6px; border: 1px solid var(--border);" accept="image/jpeg,image/png,image/jpg,image/webp">
                                 <small style="display: block; font-size: 0.72rem; color: var(--text-muted); margin-top: 0.25rem;">Vertical (portrait) GCash screenshot (min 300&times;500px, max 4MB).</small>
                             </div>
+                        </div>
+
+                        <!-- GCash Receipt Required Notice -->
+                        <div style="background: #eff6ff; border-left: 3px solid #3b82f6; border-radius: 4px; padding: 0.55rem 0.85rem; font-size: 0.78rem; color: #1e40af; margin-bottom: 0.75rem;">
+                            <strong>GCash Receipt Required:</strong> Only official GCash payment receipts submitted through this interface with a visible reference number will be accepted.
                         </div>
 
                         <!-- Pending status advisory -->
@@ -200,8 +203,40 @@
     </div>
 </div>
 
+<!-- Sample GCash Receipt Modal -->
+<div id="sampleReceiptModal" style="display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.65); backdrop-filter: blur(4px); align-items: center; justify-content: center; padding: 1rem;" onclick="if(event.target === this) toggleSampleReceiptModal(false)">
+    <div style="background: #ffffff; border-radius: 16px; max-width: 400px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);">
+        <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin: 0; font-size: 1.05rem; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 0.5rem;">
+                <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #2563eb;"></span>
+                Sample GCash Receipt
+            </h3>
+            <button type="button" onclick="toggleSampleReceiptModal(false)" style="background: none; border: none; font-size: 1.5rem; line-height: 1; color: #94a3b8; cursor: pointer; padding: 0;">&times;</button>
+        </div>
+        <div style="padding: 1.25rem 1.5rem; text-align: center;">
+            <div style="margin-bottom: 1rem; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 0.75rem; font-size: 0.8rem; color: #1e40af; text-align: left;">
+                <strong>GCash Receipt Required:</strong> Please make sure your uploaded screenshot clearly shows the <strong>Total Amount Sent</strong> and <strong>Ref No. / Reference Number</strong> in vertical (portrait) view.
+            </div>
+            <img src="{{ asset('assets/images/gcash-sample-receipt.png') }}"
+                 alt="Valid GCash receipt sample"
+                 style="width: 100%; max-width: 280px; height: auto; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; display: inline-block;">
+        </div>
+        <div style="padding: 1rem 1.5rem; border-top: 1px solid #e2e8f0; text-align: right;">
+            <button type="button" onclick="toggleSampleReceiptModal(false)" style="background: #2563eb; color: #fff; font-weight: 600; font-size: 0.85rem; padding: 0.5rem 1.25rem; border-radius: 8px; border: none; cursor: pointer;">
+                Got it
+            </button>
+        </div>
+    </div>
+</div>
+
 @push('scripts')
 <script>
+    function toggleSampleReceiptModal(show) {
+        const modal = document.getElementById('sampleReceiptModal');
+        if (modal) {
+            modal.style.display = show ? 'flex' : 'none';
+        }
+    }
     function togglePaymentForm(id) {
         const formEl = document.getElementById('payment-form-' + id);
         if (formEl) {

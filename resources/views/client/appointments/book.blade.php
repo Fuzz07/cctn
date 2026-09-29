@@ -316,9 +316,15 @@
                     </div>
 
                     <div>
-                        <label class="form-label" for="payment_proof" style="font-size: 0.85rem; font-weight: 700; color: var(--text-body);">
-                            Upload Payment Receipt or Screenshot <span style="color: #dc2626;">*</span>
-                        </label>
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.35rem;">
+                            <label class="form-label" for="payment_proof" style="font-size: 0.85rem; font-weight: 700; color: var(--text-body); margin-bottom: 0;">
+                                Upload Payment Receipt or Screenshot <span style="color: #dc2626;">*</span>
+                            </label>
+                            <button type="button" onclick="toggleSampleReceiptModal(true)" style="background: none; border: none; color: #1d4ed8; font-size: 0.78rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 0.3rem; padding: 0;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                View Sample Receipt
+                            </button>
+                        </div>
                         <input type="file" name="payment_proof" id="payment_proof"
                                class="form-control {{ $errors->has('payment_proof') ? 'is-invalid' : '' }}"
                                accept="image/jpeg,image/png,image/jpg,image/webp">
@@ -326,9 +332,11 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                             <span id="error-payment_proof-text">{{ $errors->first('payment_proof', 'Please upload a vertical screenshot of your GCash receipt.') }}</span>
                         </span>
-                        <small style="color: var(--text-muted); font-size: 0.78rem; display: block; margin-top: 0.25rem;">
-                            Upload a vertical (portrait) phone screenshot of your GCash receipt (min 300&times;500px, max 4MB).
-                        </small>
+                        
+                        <!-- Policy Callout -->
+                        <div style="margin-top: 0.5rem; background: #eff6ff; border-left: 3px solid #3b82f6; border-radius: 4px; padding: 0.5rem 0.75rem; font-size: 0.78rem; color: #1e40af;">
+                            <strong>GCash Receipt Required:</strong> Only official GCash payment receipts submitted through this interface with a visible reference number will be accepted.
+                        </div>
 
                         <!-- Preview Card -->
                         <div id="payment_proof_preview" style="display: none; margin-top: 0.75rem; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-card); align-items: center; gap: 0.75rem;">
@@ -367,10 +375,43 @@
         </form>
     </div>
 </div>
+
+<!-- Sample GCash Receipt Modal -->
+<div id="sampleReceiptModal" style="display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.65); backdrop-filter: blur(4px); align-items: center; justify-content: center; padding: 1rem;" onclick="if(event.target === this) toggleSampleReceiptModal(false)">
+    <div style="background: #ffffff; border-radius: 16px; max-width: 400px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); animation: fadeIn 0.2s ease;">
+        <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin: 0; font-size: 1.05rem; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 0.5rem;">
+                <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #2563eb;"></span>
+                Sample GCash Receipt
+            </h3>
+            <button type="button" onclick="toggleSampleReceiptModal(false)" style="background: none; border: none; font-size: 1.5rem; line-height: 1; color: #94a3b8; cursor: pointer; padding: 0;">&times;</button>
+        </div>
+        <div style="padding: 1.25rem 1.5rem; text-align: center;">
+            <div style="margin-bottom: 1rem; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 0.75rem; font-size: 0.8rem; color: #1e40af; text-align: left;">
+                <strong>GCash Receipt Required:</strong> Please make sure your uploaded screenshot clearly shows the <strong>Total Amount Sent</strong> and <strong>Ref No. / Reference Number</strong> in vertical (portrait) view.
+            </div>
+            <img src="{{ asset('assets/images/gcash-sample-receipt.png') }}"
+                 alt="Valid GCash receipt sample"
+                 style="width: 100%; max-width: 280px; height: auto; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; display: inline-block;">
+        </div>
+        <div style="padding: 1rem 1.5rem; border-top: 1px solid #e2e8f0; text-align: right;">
+            <button type="button" onclick="toggleSampleReceiptModal(false)" style="background: #2563eb; color: #fff; font-weight: 600; font-size: 0.85rem; padding: 0.5rem 1.25rem; border-radius: 8px; border: none; cursor: pointer;">
+                Got it
+            </button>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('scripts')
 <script>
+    function toggleSampleReceiptModal(show) {
+        const modal = document.getElementById('sampleReceiptModal');
+        if (modal) {
+            modal.style.display = show ? 'flex' : 'none';
+        }
+    }
+
     /* ══════════════════════════════════════════════
        CLIENT-SIDE FORM VALIDATION
     ══════════════════════════════════════════════ */
