@@ -8,6 +8,7 @@ use App\Models\Service;
 use App\Models\TimeSlot;
 use App\Models\Notification;
 use App\Models\ClientPaymentMethod;
+use App\Rules\PortraitPaymentScreenshot;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -76,12 +77,12 @@ class AppointmentController extends Controller
             'preferred_time'   => 'required',
             'payment_method'   => 'required|string|in:GCash',
             'reference_number' => ['required', 'string', 'regex:/^[0-9]+$/', 'max:100'],
-            'payment_proof'    => 'required|image|mimes:jpeg,png,jpg,webp|max:4096',
+            'payment_proof'    => ['required', 'image', 'mimes:jpeg,png,jpg,webp', 'max:4096', new PortraitPaymentScreenshot],
         ], [
             'payment_method.in'         => 'GCash is the only available digital payment method.',
             'reference_number.required' => 'Please enter the reference or transaction number from your payment confirmation.',
             'reference_number.regex'    => 'The reference/transaction number must contain numbers only.',
-            'payment_proof.required'    => 'Please upload a screenshot or photo of your payment receipt.',
+            'payment_proof.required'    => 'Please upload a vertical GCash screenshot (portrait, min 300×500 px).',
             'payment_proof.image'       => 'The payment receipt must be an image file (JPEG, PNG, JPG, or WebP).',
             'payment_proof.max'         => 'The payment receipt file must not exceed 4MB.',
         ]);
@@ -157,7 +158,7 @@ class AppointmentController extends Controller
         $request->validate([
             'payment_method'   => 'required|string|in:GCash',
             'reference_number' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'max:100'],
-            'payment_proof'    => 'nullable|image|mimes:jpeg,png,jpg,webp|max:4096',
+            'payment_proof'    => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:4096', new PortraitPaymentScreenshot],
         ], [
             'payment_method.in'      => 'GCash is the only available digital payment method.',
             'reference_number.regex' => 'The reference/transaction number must contain numbers only.',

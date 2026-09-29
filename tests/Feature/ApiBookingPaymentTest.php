@@ -115,4 +115,32 @@ class ApiBookingPaymentTest extends TestCase
         $this->assertTrue($overtimeSlot['is_overtime']);
         $this->assertStringContainsString('Overtime', $overtimeSlot['label']);
     }
+
+    public function test_mobile_booking_rejects_landscape_screenshot(): void
+    {
+        // Landscape image: width (1200) > height (800) — should be rejected
+        $this->postJson('/api/v1/appointments', [
+            'service_id'       => $this->service->id,
+            'preferred_date'   => now()->addDay()->format('Y-m-d'),
+            'preferred_time'   => '09:00',
+            'payment_method'   => 'GCash',
+            'reference_number' => '10029384756',
+            'payment_proof'    => UploadedFile::fake()->image('landscape.jpg', 1200, 800)->size(200),
+        ])->assertStatus(422)
+            ->assertJsonValidationErrors(['payment_proof']);
+    }
+
+    public function test_mobile_booking_rejects_tiny_file_as_proof(): void
+    {
+        // File smaller than 15 KB should be rejected
+        $this->postJson('/api/v1/appointments', [
+            'service_id'       => $this->service->id,
+            'preferred_date'   => now()->addDay()->format('Y-m-d'),
+            'preferred_time'   => '09:00',
+            'payment_method'   => 'GCash',
+            'reference_number' => '10029384756',
+            'payment_proof'    => UploadedFile::fake()->image('tiny.jpg', 400, 700)->size(5),
+        ])->assertStatus(422)
+            ->assertJsonValidationErrors(['payment_proof']);
+    }
 }

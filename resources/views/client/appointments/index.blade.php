@@ -173,7 +173,8 @@
                             </div>
                             <div id="proof-field-{{ $appt->id }}">
                                 <label style="display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.35rem; color: var(--text-body);">Upload Payment Proof (Receipt)</label>
-                                <input type="file" name="payment_proof" class="form-control" style="width: 100%; padding: 0.4rem 0.75rem; border-radius: 6px; border: 1px solid var(--border);" accept="image/*">
+                                <input type="file" name="payment_proof" class="form-control" style="width: 100%; padding: 0.4rem 0.75rem; border-radius: 6px; border: 1px solid var(--border);" accept="image/jpeg,image/png,image/jpg,image/webp">
+                                <small style="display: block; font-size: 0.72rem; color: var(--text-muted); margin-top: 0.25rem;">Vertical (portrait) GCash screenshot (min 300&times;500px, max 4MB).</small>
                             </div>
                         </div>
 
@@ -207,6 +208,103 @@
             formEl.style.display = formEl.style.display === 'none' ? 'block' : 'none';
         }
     }
+
+    /* ── Portrait screenshot validation for each payment update form ── */
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('input[name="payment_proof"][type="file"]').forEach(function (input) {
+            const form = input.closest('form');
+
+            input.addEventListener('change', function () {
+                const file = this.files && this.files[0];
+
+                // Clear previous custom error
+                let errEl = input.nextElementSibling;
+                if (errEl && errEl.classList.contains('proof-validation-error')) {
+                    errEl.remove();
+                }
+
+                if (!file) return;
+
+                // ── Size lower bound (15 KB) ──
+                if (file.size < 15 * 1024) {
+                    showInlineError(input, 'The file is too small to be a real screenshot. Please upload the full GCash receipt.');
+                    input.value = '';
+                    return;
+                }
+
+                // ── Size upper bound (4 MB) ──
+                if (file.size > 4 * 1024 * 1024) {
+                    showInlineError(input, 'File exceeds 4 MB. Please upload a smaller screenshot.');
+                    input.value = '';
+                    return;
+                }
+
+                // ── Orientation + resolution ──
+                const url = URL.createObjectURL(file);
+                const img = new Image();
+                img.onload = function () {
+                    const w = img.naturalWidth;
+                    const h = img.naturalHeight;
+                    URL.revokeObjectURL(url);
+
+                    if (h <= w) {
+                        showInlineError(input, 'Please upload a vertical (portrait) GCash screenshot. Landscape images are not accepted.');
+                        input.value = '';
+                        return;
+                    }
+                    if (w < 300 || h < 500) {
+                        showInlineError(input, 'Screenshot resolution too low (' + w + '×' + h + ' px). Upload a full-resolution portrait screenshot.');
+                        input.value = '';
+                        return;
+                    }
+                    // Valid — show a small confirmation
+                    showInlineSuccess(input, '✓ Portrait screenshot accepted (' + w + '×' + h + ' px).');
+                };
+                img.onerror = function () {
+                    URL.revokeObjectURL(url);
+                    showInlineError(input, 'Could not read the image. Please try a different file.');
+                    input.value = '';
+                };
+                img.src = url;
+            });
+
+            // ── Block form submit if proof is invalid ──
+            if (form) {
+                form.addEventListener('submit', function (e) {
+                    const errEl = input.nextElementSibling;
+                    if (errEl && errEl.classList.contains('proof-validation-error')) {
+                        e.preventDefault();
+                        input.focus();
+                    }
+                });
+            }
+        });
+
+        function showInlineError(input, msg) {
+            clearInlineFeedback(input);
+            const span = document.createElement('span');
+            span.className = 'proof-validation-error';
+            span.style.cssText = 'display:block;font-size:0.75rem;font-weight:600;color:#dc2626;margin-top:0.25rem;';
+            span.textContent = msg;
+            input.insertAdjacentElement('afterend', span);
+        }
+
+        function showInlineSuccess(input, msg) {
+            clearInlineFeedback(input);
+            const span = document.createElement('span');
+            span.className = 'proof-validation-error'; // same class so it gets cleaned up
+            span.style.cssText = 'display:block;font-size:0.75rem;font-weight:700;color:#16a34a;margin-top:0.25rem;';
+            span.textContent = msg;
+            input.insertAdjacentElement('afterend', span);
+        }
+
+        function clearInlineFeedback(input) {
+            const existing = input.nextElementSibling;
+            if (existing && existing.classList.contains('proof-validation-error')) {
+                existing.remove();
+            }
+        }
+    });
 </script>
 @endpush
 @endsection

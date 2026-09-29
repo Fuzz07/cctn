@@ -7,6 +7,7 @@ use App\Http\Resources\AppointmentResource;
 use App\Models\Appointment;
 use App\Models\Notification;
 use App\Models\TimeSlot;
+use App\Rules\PortraitPaymentScreenshot;
 use Illuminate\Http\Request;
 
 class AppointmentController extends Controller
@@ -76,12 +77,12 @@ class AppointmentController extends Controller
             'message'          => 'nullable|string|max:500',
             'payment_method'   => 'required|string|in:GCash',
             'reference_number' => ['required', 'string', 'regex:/^[0-9]+$/', 'max:100'],
-            'payment_proof'    => 'required|image|mimes:jpeg,png,jpg,webp|max:4096',
+            'payment_proof'    => ['required', 'image', 'mimes:jpeg,png,jpg,webp', 'max:4096', new PortraitPaymentScreenshot],
         ], [
-            'payment_method.in' => 'GCash is the only available digital payment method.',
+            'payment_method.in'         => 'GCash is the only available digital payment method.',
             'reference_number.required' => 'Enter the reference number from your payment confirmation.',
             'reference_number.regex'    => 'The reference number must contain numbers only.',
-            'payment_proof.required' => 'Upload a screenshot or photo of your payment receipt.',
+            'payment_proof.required'    => 'Upload a vertical GCash screenshot (portrait, min 300×500 px).',
         ]);
 
         $client = $request->user();
@@ -164,7 +165,7 @@ class AppointmentController extends Controller
         $request->validate([
             'payment_method'   => 'required|string|in:GCash',
             'reference_number' => ['nullable', 'string', 'regex:/^[0-9]+$/', 'max:100'],
-            'payment_proof'    => 'nullable|image|mimes:jpeg,png,jpg,webp|max:4096',
+            'payment_proof'    => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:4096', new PortraitPaymentScreenshot],
         ], [
             'payment_method.in'      => 'GCash is the only available digital payment method.',
             'reference_number.regex' => 'The reference number must contain numbers only.',

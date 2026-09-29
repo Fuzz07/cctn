@@ -324,9 +324,24 @@
                                accept="image/jpeg,image/png,image/jpg,image/webp">
                         <span class="field-error {{ $errors->has('payment_proof') ? 'visible' : '' }}" id="error-payment_proof">
                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                            {{ $errors->first('payment_proof', 'Please upload a screenshot or photo of your payment receipt.') }}
+                            <span id="error-payment_proof-text">{{ $errors->first('payment_proof', 'Please upload a vertical screenshot of your GCash receipt.') }}</span>
                         </span>
-                        <small style="color: var(--text-muted); font-size: 0.78rem; display: block; margin-top: 0.25rem;">Upload a clear screenshot or photo of your payment receipt.</small>
+                        <small style="color: var(--text-muted); font-size: 0.78rem; display: block; margin-top: 0.25rem;">
+                            Upload a vertical (portrait) phone screenshot of your GCash receipt (min 300&times;500px, max 4MB).
+                        </small>
+
+                        <!-- Preview Card -->
+                        <div id="payment_proof_preview" style="display: none; margin-top: 0.75rem; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-card); align-items: center; gap: 0.75rem;">
+                            <img id="payment_proof_img" src="" alt="Receipt Preview" style="width: 48px; height: 72px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border); flex-shrink: 0;">
+                            <div style="flex: 1; min-width: 0;">
+                                <div id="payment_proof_name" style="font-weight: 700; font-size: 0.82rem; color: var(--text-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></div>
+                                <div id="payment_proof_meta" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.15rem;"></div>
+                                <div style="font-size: 0.72rem; color: #16a34a; font-weight: 700; display: flex; align-items: center; gap: 0.25rem; margin-top: 0.25rem;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                                    Valid Portrait Receipt Screenshot
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Pending Status Notice -->
@@ -449,8 +464,11 @@
         // 5. Payment Proof
         const payProof = document.getElementById('payment_proof');
         if (!payProof || !payProof.files || payProof.files.length === 0) {
-            setFieldError('payment_proof', 'error-payment_proof', 'Please upload a screenshot or photo of your payment receipt.');
-            errors.push('Payment Receipt: Please upload a screenshot or photo of your payment receipt.');
+            setFieldError('payment_proof', 'error-payment_proof', 'Please upload a vertical screenshot of your GCash receipt.');
+            errors.push('Payment Receipt: Please upload a vertical screenshot of your GCash receipt.');
+        } else if (!isPaymentProofValid) {
+            setFieldError('payment_proof', 'error-payment_proof', 'Please upload a valid vertical (portrait) phone screenshot of your GCash receipt.');
+            errors.push('Payment Receipt: Invalid screenshot format or orientation.');
         }
 
         return errors;
@@ -515,6 +533,88 @@
                     this.selectionStart = this.selectionEnd = start + clean.length;
                     this.dispatchEvent(new Event('input'));
                 }
+            });
+        }
+
+        let isPaymentProofValid = false;
+        const payProofInput = document.getElementById('payment_proof');
+        if (payProofInput) {
+            payProofInput.addEventListener('change', function () {
+                const file = this.files && this.files[0];
+                const preview = document.getElementById('payment_proof_preview');
+                const img = document.getElementById('payment_proof_img');
+                const nameEl = document.getElementById('payment_proof_name');
+                const metaEl = document.getElementById('payment_proof_meta');
+
+                if (!file) {
+                    isPaymentProofValid = false;
+                    if (preview) preview.style.display = 'none';
+                    return;
+                }
+
+                // File size checks (15 KB to 4 MB)
+                if (file.size < 15 * 1024) {
+                    isPaymentProofValid = false;
+                    this.value = '';
+                    if (preview) preview.style.display = 'none';
+                    setFieldError('payment_proof', 'error-payment_proof', 'The file is too small to be a valid screenshot. Please upload a full GCash receipt.');
+                    return;
+                }
+                if (file.size > 4 * 1024 * 1024) {
+                    isPaymentProofValid = false;
+                    this.value = '';
+                    if (preview) preview.style.display = 'none';
+                    setFieldError('payment_proof', 'error-payment_proof', 'File size exceeds 4MB. Please upload a smaller image.');
+                    return;
+                }
+
+                // Image dimensions and orientation check
+                const objectUrl = URL.createObjectURL(file);
+                const tempImg = new Image();
+                tempImg.onload = function () {
+                    const width = tempImg.naturalWidth;
+                    const height = tempImg.naturalHeight;
+                    URL.revokeObjectURL(objectUrl);
+
+                    // Require portrait orientation: height must be strictly greater than width
+                    if (height <= width) {
+                        isPaymentProofValid = false;
+                        payProofInput.value = '';
+                        if (preview) preview.style.display = 'none';
+                        setFieldError('payment_proof', 'error-payment_proof', 'Please upload a vertical (portrait) phone screenshot of your GCash receipt, not a landscape photo.');
+                        return;
+                    }
+
+                    // Minimum resolution: 300x500
+                    if (width < 300 || height < 500) {
+                        isPaymentProofValid = false;
+                        payProofInput.value = '';
+                        if (preview) preview.style.display = 'none';
+                        setFieldError('payment_proof', 'error-payment_proof', 'Image resolution is too low (' + width + '×' + height + ' px). Please upload a full-resolution screenshot.');
+                        return;
+                    }
+
+                    // All checks passed!
+                    isPaymentProofValid = true;
+                    clearFieldError('payment_proof', 'error-payment_proof');
+
+                    if (preview && img && nameEl && metaEl) {
+                        img.src = URL.createObjectURL(file);
+                        nameEl.textContent = file.name;
+                        metaEl.textContent = width + ' × ' + height + ' px · ' + (file.size / 1024).toFixed(1) + ' KB';
+                        preview.style.display = 'flex';
+                    }
+                };
+
+                tempImg.onerror = function () {
+                    URL.revokeObjectURL(objectUrl);
+                    isPaymentProofValid = false;
+                    payProofInput.value = '';
+                    if (preview) preview.style.display = 'none';
+                    setFieldError('payment_proof', 'error-payment_proof', 'Could not read image file. Please upload a valid JPG, PNG, or WebP screenshot.');
+                };
+
+                tempImg.src = objectUrl;
             });
         }
 
