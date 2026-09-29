@@ -88,7 +88,7 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Statement Period *</label>
-                    <input type="text" name="statement_period" class="form-control" value="{{ old('statement_period') }}" required placeholder="e.g. January 2025">
+                    <input type="text" name="statement_period" class="form-control" value="{{ old('statement_period') }}" required placeholder="e.g. January 2026">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Amount Due (₱) *</label>
@@ -100,7 +100,7 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Due Date *</label>
-                    <input type="date" name="due_date" class="form-control" value="{{ old('due_date') }}" required>
+                    <input type="date" name="due_date" class="form-control" value="{{ old('due_date') }}" min="2026-01-01" required>
                 </div>
                 <button type="submit" class="btn-submit danger">Generate Statement</button>
             </form>

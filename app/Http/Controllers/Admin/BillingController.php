@@ -29,7 +29,7 @@ class BillingController extends Controller
             'account_number'   => 'required|string',
             'statement_period' => 'required|string',
             'amount_due'       => 'required|numeric|min:0',
-            'due_date'         => 'required|date',
+            'due_date'         => 'required|date|after_or_equal:2026-01-01',
         ]);
 
         $totalDue = $request->amount_due + ($request->penalty_amount ?? 0);
