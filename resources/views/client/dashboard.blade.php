@@ -55,6 +55,21 @@
     .c-input:focus { outline: none; border-color: #dc2626; background: var(--bg-card); box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1); }
     .btn-save-profile { background: #0f172a; color: #ffffff; padding: 0.7rem 1.25rem; border-radius: 10px; font-weight: 700; font-size: 0.88rem; border: none; cursor: pointer; transition: background 0.2s; margin-top: 1rem; display: inline-block; }
     .btn-save-profile:hover { background: #dc2626; }
+    .c-danger-card { border-color: #fecaca; background: #fffafa; }
+    .c-danger-card p { margin: 0.35rem 0 1.25rem; color: var(--text-muted); font-size: 0.88rem; line-height: 1.55; }
+    .btn-unsubscribe { padding: 0.7rem 1.1rem; border: 1px solid #fecaca; border-radius: 10px; background: #fff; color: #b91c1c; font-weight: 700; font-size: 0.88rem; cursor: pointer; }
+    .btn-unsubscribe:hover { background: #fef2f2; }
+    .client-unsubscribe-modal { display: none; position: fixed; inset: 0; z-index: 100000; align-items: center; justify-content: center; padding: 1rem; }
+    .client-unsubscribe-modal.is-open { display: flex; }
+    .client-unsubscribe-modal__backdrop { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.55); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+    .client-unsubscribe-modal__dialog { position: relative; width: min(100%, 430px); padding: 2rem; border-radius: 16px; background: #fff; box-shadow: 0 20px 60px rgba(0,0,0,0.18); text-align: center; }
+    .client-unsubscribe-modal__icon { width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.1rem; border-radius: 50%; background: #fef2f2; color: #dc2626; }
+    .client-unsubscribe-modal__title { margin: 0 0 0.4rem; font-size: 1.1rem; color: var(--text-dark); }
+    .client-unsubscribe-modal__message { margin: 0 0 1.5rem; color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; }
+    .client-unsubscribe-modal__actions { display: flex; gap: 0.75rem; }
+    .client-unsubscribe-modal__button { flex: 1; padding: 0.65rem 1rem; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
+    .client-unsubscribe-modal__cancel { border: 1.5px solid #e2e8f0; background: #f8fafc; color: #334155; }
+    .client-unsubscribe-modal__confirm { border: 0; background: #dc2626; color: #fff; }
 
     /* Right Profile Card */
     .c-profile-card { text-align: center; }
@@ -321,6 +336,17 @@
                     </div>
                 </form>
             </div>
+
+            <div class="c-card c-danger-card">
+                <div class="c-card-header" style="margin-bottom:0;">
+                    <h3 class="c-card-title" style="color:#b91c1c;">Account subscription</h3>
+                </div>
+                <p>Need to stop your BCTVI service? Unsubscribing deactivates your account and signs you out. Your booking and payment history will be kept, and you can ask support to re-subscribe later.</p>
+                <form id="client-unsubscribe-form" action="{{ route('client.unsubscribe') }}" method="POST" onsubmit="return showClientUnsubscribeModal(this);">
+                    @csrf
+                    <button type="submit" class="btn-unsubscribe">Unsubscribe account</button>
+                </form>
+            </div>
         </div>
 
         <!-- Right Side: Profile Summary -->
@@ -355,9 +381,64 @@
     </div>
 
 </div>
+
+<div id="client-unsubscribe-modal" class="client-unsubscribe-modal" role="dialog" aria-modal="true" aria-labelledby="client-unsubscribe-title" aria-describedby="client-unsubscribe-message" aria-hidden="true">
+    <div class="client-unsubscribe-modal__backdrop" onclick="hideClientUnsubscribeModal()"></div>
+    <div class="client-unsubscribe-modal__dialog">
+        <div class="client-unsubscribe-modal__icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v4M14 11v4"/></svg>
+        </div>
+        <h2 id="client-unsubscribe-title" class="client-unsubscribe-modal__title">Unsubscribe your account?</h2>
+        <p id="client-unsubscribe-message" class="client-unsubscribe-modal__message">You will be signed out and unable to sign in until BCTVI support re-subscribes your account. Your booking and payment history will be retained.</p>
+        <div class="client-unsubscribe-modal__actions">
+            <button type="button" class="client-unsubscribe-modal__button client-unsubscribe-modal__cancel" onclick="hideClientUnsubscribeModal()">Keep account</button>
+            <button type="button" id="client-unsubscribe-confirm" class="client-unsubscribe-modal__button client-unsubscribe-modal__confirm" onclick="confirmClientUnsubscribe()">Yes, unsubscribe</button>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('scripts')
 <script src="{{ asset('assets/js/form-restrictions.js') }}?v={{ filemtime(public_path('assets/js/form-restrictions.js')) }}"></script>
 @include('partials.address-age-scripts')
+<script>
+var clientUnsubscribeForm = null;
+var clientUnsubscribeTrigger = null;
+
+function showClientUnsubscribeModal(form) {
+    if (form.dataset.confirmed === 'true') return true;
+
+    clientUnsubscribeForm = form;
+    clientUnsubscribeTrigger = document.activeElement;
+    var modal = document.getElementById('client-unsubscribe-modal');
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('client-unsubscribe-confirm').focus();
+    return false;
+}
+
+function hideClientUnsubscribeModal() {
+    var modal = document.getElementById('client-unsubscribe-modal');
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    if (clientUnsubscribeTrigger) clientUnsubscribeTrigger.focus();
+    clientUnsubscribeForm = null;
+    clientUnsubscribeTrigger = null;
+}
+
+function confirmClientUnsubscribe() {
+    if (clientUnsubscribeForm) {
+        clientUnsubscribeForm.dataset.confirmed = 'true';
+        clientUnsubscribeForm.requestSubmit();
+    }
+}
+
+document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && document.getElementById('client-unsubscribe-modal').classList.contains('is-open')) {
+        hideClientUnsubscribeModal();
+    }
+});
+</script>
 @endpush

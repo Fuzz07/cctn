@@ -76,4 +76,30 @@ class DashboardController extends Controller
 
         return redirect()->route('client.dashboard')->with('success_message', 'Profile updated successfully!');
     }
+
+    /**
+     * Let a signed-in client deactivate their own account while retaining their
+     * booking and payment history for a future re-subscription.
+     */
+    public function unsubscribe(Request $request)
+    {
+        if (! Client::supportsArchiving()) {
+            return redirect()->route('client.dashboard')->with('error_message',
+                'Account unsubscribe is temporarily unavailable. Please contact support.'
+            );
+        }
+
+        $client = Auth::guard('client')->user();
+        $client->update(['archived_at' => now()]);
+        $client->tokens()->delete();
+
+        Auth::guard('client')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('home')->with(
+            'success_message',
+            'Your account has been unsubscribed. Your booking and payment history is retained; contact BCTVI support whenever you would like to re-subscribe.'
+        );
+    }
 }

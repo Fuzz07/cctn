@@ -66,6 +66,20 @@ class AdminClientArchiveTest extends TestCase
         $this->assertSame(0, $this->client->tokens()->count());
     }
 
+    public function test_client_can_unsubscribe_their_own_account()
+    {
+        $this->client->createToken('mobile-app');
+
+        $this->actingAs($this->client, 'client')
+            ->post(route('client.unsubscribe'))
+            ->assertRedirect(route('home'))
+            ->assertSessionHas('success_message');
+
+        $this->assertNotNull($this->client->fresh()->archived_at);
+        $this->assertSame(0, $this->client->tokens()->count());
+        $this->assertGuest('client');
+    }
+
     public function test_archived_clients_are_hidden_from_the_default_list_but_shown_under_archived()
     {
         $this->client->update(['archived_at' => now()]);
