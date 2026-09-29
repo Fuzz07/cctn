@@ -209,8 +209,8 @@ class ClientController extends Controller
             'link' => 'dashboard',
         ]);
 
-        return redirect()->route('admin.clients', ['filter' => 'disconnection_requests'])
-            ->with('success_message', "{$client->full_name}'s disconnection request was approved.");
+        return redirect()->route('admin.clients', ['filter' => 'inactive'])
+            ->with('success_message', "{$client->full_name}'s disconnection request was approved. The account is now listed as Inactive.");
     }
 
     public function rejectDisconnection(Request $request, $id)

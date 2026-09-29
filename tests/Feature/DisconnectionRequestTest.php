@@ -96,7 +96,7 @@ class DisconnectionRequestTest extends TestCase
 
         $this->actingAs($this->admin, 'admin')
             ->post(route('admin.clients.disconnection.approve', $this->client->id))
-            ->assertRedirect(route('admin.clients', ['filter' => 'disconnection_requests']))
+            ->assertRedirect(route('admin.clients', ['filter' => 'inactive']))
             ->assertSessionHas('success_message');
 
         $client = $this->client->fresh();
@@ -112,6 +112,13 @@ class DisconnectionRequestTest extends TestCase
             'client_id' => $client->id,
             'title' => 'Disconnection Approved',
         ]);
+
+        $this->actingAs($this->admin, 'admin')
+            ->get(route('admin.clients', ['filter' => 'inactive']))
+            ->assertOk()
+            ->assertSee('Active Subscriber')
+            ->assertSee('Inactive')
+            ->assertSee('Subscription cancelled');
     }
 
     public function test_admin_can_reject_a_request_without_deactivating_the_subscription(): void
@@ -147,5 +154,26 @@ class DisconnectionRequestTest extends TestCase
             ->assertSee('Active Subscriber')
             ->assertSee('Disconnection requested')
             ->assertSee('Approve Disconnection');
+    }
+
+    public function test_account_without_an_active_subscription_is_listed_as_inactive(): void
+    {
+        $client = Client::create([
+            'firstname' => 'No Plan',
+            'lastname' => 'Client',
+            'email' => 'no-plan@example.com',
+            'username' => 'no-plan-client',
+            'password' => bcrypt('password123'),
+            'account_status' => 'Active',
+            'subscription_status' => null,
+        ]);
+
+        $this->assertFalse($client->isAccountActive());
+
+        $this->actingAs($this->admin, 'admin')
+            ->get(route('admin.clients', ['filter' => 'inactive']))
+            ->assertOk()
+            ->assertSee('No Plan Client')
+            ->assertSee('No active subscription');
     }
 }

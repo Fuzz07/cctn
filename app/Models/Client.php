@@ -46,7 +46,10 @@ class Client extends Authenticatable
     public function scopeActive($query)
     {
         if (static::supportsSubscriptionStatus()) {
-            return $query->where('account_status', 'Active');
+            return $query
+                ->where('account_status', 'Active')
+                ->where('subscription_status', 'active')
+                ->whereNull('archived_at');
         }
 
         return static::supportsArchiving() ? $query->whereNull('archived_at') : $query;
@@ -55,7 +58,12 @@ class Client extends Authenticatable
     public function scopeInactive($query)
     {
         if (static::supportsSubscriptionStatus()) {
-            return $query->where('account_status', 'Inactive');
+            return $query->where(function ($statusQuery) {
+                $statusQuery->where('account_status', 'Inactive')
+                    ->orWhere('subscription_status', '!=', 'active')
+                    ->orWhereNull('subscription_status')
+                    ->orWhereNotNull('archived_at');
+            });
         }
 
         return static::supportsArchiving()
@@ -110,7 +118,9 @@ class Client extends Authenticatable
             return ! $this->isArchived();
         }
 
-        return $this->account_status === 'Active';
+        return $this->account_status === 'Active'
+            && $this->subscription_status === 'active'
+            && ! $this->isArchived();
     }
 
     public function activateSubscription(
