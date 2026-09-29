@@ -38,6 +38,19 @@
     .btn-restore:hover { background: #f0fdf4; }
     .archived-tag { display: inline-block; margin-top: 0.25rem; background: var(--bg-subtle); color: var(--text-muted); border: 1px solid var(--border-light); padding: 0.1rem 0.55rem; border-radius: 50px; font-size: 0.7rem; font-weight: 700; }
 
+    .unsubscribe-modal { display: none; position: fixed; inset: 0; z-index: 100000; align-items: center; justify-content: center; padding: 1rem; }
+    .unsubscribe-modal.is-open { display: flex; }
+    .unsubscribe-modal__backdrop { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.55); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+    .unsubscribe-modal__dialog { position: relative; width: min(100%, 430px); padding: 2rem; background: #fff; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.18), 0 4px 16px rgba(0,0,0,0.1); text-align: center; animation: unsubscribe-modal-in 0.22s cubic-bezier(.34,1.56,.64,1) both; }
+    .unsubscribe-modal__icon { width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.1rem; border-radius: 50%; background: #fef2f2; color: #dc2626; }
+    .unsubscribe-modal__title { margin: 0 0 0.4rem; font-size: 1.1rem; font-weight: 700; color: #0f172a; }
+    .unsubscribe-modal__message { margin: 0 0 1.6rem; color: #64748b; font-size: 0.9rem; line-height: 1.5; }
+    .unsubscribe-modal__actions { display: flex; gap: 0.75rem; }
+    .unsubscribe-modal__button { flex: 1; padding: 0.65rem 1rem; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
+    .unsubscribe-modal__button--cancel { border: 1.5px solid #e2e8f0; background: #f8fafc; color: #334155; }
+    .unsubscribe-modal__button--confirm { border: none; background: #dc2626; color: #fff; }
+    @keyframes unsubscribe-modal-in { from { opacity: 0; transform: scale(0.88) translateY(12px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
     @media (max-width: 1024px) { .stats-row { grid-template-columns: 1fr; } }
 </style>
 @endpush
@@ -153,7 +166,8 @@
                             </form>
                         @else
                             <form action="{{ route('admin.clients.archive', $client->id) }}" method="POST"
-                                  onsubmit="return confirm({{ json_encode('Unsubscribe ' . $client->firstname . ' ' . $client->lastname . '? They will no longer be able to sign in. Their booking and payment history is kept, and you can re-subscribe them anytime.') }});">
+                                  data-client-name="{{ $client->firstname }} {{ $client->lastname }}"
+                                  onsubmit="return showUnsubscribeModal(this);">
                                 @csrf
                                 <button type="submit" class="btn-row btn-archive">Unsubscribe</button>
                             </form>
@@ -169,6 +183,21 @@
             @endforelse
         </tbody>
     </table>
+</div>
+
+<div id="unsubscribe-modal" class="unsubscribe-modal" role="dialog" aria-modal="true" aria-labelledby="unsubscribe-modal-title" aria-describedby="unsubscribe-modal-message" aria-hidden="true">
+    <div class="unsubscribe-modal__backdrop" onclick="hideUnsubscribeModal()"></div>
+    <div class="unsubscribe-modal__dialog">
+        <div class="unsubscribe-modal__icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v4M14 11v4"/></svg>
+        </div>
+        <h2 id="unsubscribe-modal-title" class="unsubscribe-modal__title">Unsubscribe client?</h2>
+        <p id="unsubscribe-modal-message" class="unsubscribe-modal__message"></p>
+        <div class="unsubscribe-modal__actions">
+            <button type="button" class="unsubscribe-modal__button unsubscribe-modal__button--cancel" onclick="hideUnsubscribeModal()">Cancel</button>
+            <button type="button" id="unsubscribe-modal-confirm" class="unsubscribe-modal__button unsubscribe-modal__button--confirm" onclick="confirmUnsubscribe()">Yes, unsubscribe</button>
+        </div>
+    </div>
 </div>
 @endsection
 
@@ -215,5 +244,47 @@
     // Start polling after first interval
     setInterval(fetchStats, POLL_INTERVAL);
 })();
+
+var unsubscribeForm = null;
+var unsubscribeTrigger = null;
+
+function showUnsubscribeModal(form) {
+    unsubscribeForm = form;
+    unsubscribeTrigger = document.activeElement;
+
+    var clientName = form.dataset.clientName;
+    document.getElementById('unsubscribe-modal-message').textContent =
+        'Unsubscribe ' + clientName + '? They will no longer be able to sign in. Their booking and payment history is kept, and you can re-subscribe them anytime.';
+
+    var modal = document.getElementById('unsubscribe-modal');
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('unsubscribe-modal-confirm').focus();
+    return false;
+}
+
+function hideUnsubscribeModal() {
+    var modal = document.getElementById('unsubscribe-modal');
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    if (unsubscribeTrigger) unsubscribeTrigger.focus();
+    unsubscribeForm = null;
+    unsubscribeTrigger = null;
+}
+
+function confirmUnsubscribe() {
+    if (unsubscribeForm) {
+        unsubscribeForm.onsubmit = null;
+        unsubscribeForm.submit();
+    }
+}
+
+document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && document.getElementById('unsubscribe-modal').classList.contains('is-open')) {
+        hideUnsubscribeModal();
+    }
+});
 </script>
 @endpush
