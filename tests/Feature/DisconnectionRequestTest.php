@@ -7,6 +7,7 @@ use App\Models\Appointment;
 use App\Models\Client;
 use App\Models\Service;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class DisconnectionRequestTest extends TestCase
@@ -87,6 +88,46 @@ class DisconnectionRequestTest extends TestCase
             ->assertRedirect(route('client.dashboard'));
 
         $this->assertDatabaseCount('notifications', 1);
+    }
+
+    public function test_mobile_client_can_submit_a_disconnection_request(): void
+    {
+        Sanctum::actingAs($this->client);
+
+        $this->postJson('/api/v1/profile/request-disconnection')
+            ->assertOk()
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('client.account_status', 'Active')
+            ->assertJsonPath('client.subscription_status', 'active')
+            ->assertJsonPath('client.disconnection_request_status', 'pending');
+
+        $client = $this->client->fresh();
+        $this->assertTrue($client->isAccountActive());
+        $this->assertTrue($client->hasPendingDisconnectionRequest());
+        $this->assertDatabaseHas('notifications', [
+            'for_admin' => true,
+            'client_id' => $client->id,
+            'title' => 'Disconnection Request',
+        ]);
+
+        $this->postJson('/api/v1/profile/request-disconnection')
+            ->assertOk()
+            ->assertJsonPath('client.disconnection_request_status', 'pending');
+
+        $this->assertDatabaseCount('notifications', 1);
+    }
+
+    public function test_mobile_client_without_an_active_subscription_cannot_request_disconnection(): void
+    {
+        $this->client->deactivateSubscription('cancelled');
+        Sanctum::actingAs($this->client);
+
+        $this->postJson('/api/v1/profile/request-disconnection')
+            ->assertUnprocessable()
+            ->assertJsonPath('success', false)
+            ->assertJsonPath('message', 'Only an active subscription can request disconnection.');
+
+        $this->assertDatabaseCount('notifications', 0);
     }
 
     public function test_admin_can_approve_a_pending_disconnection_request(): void

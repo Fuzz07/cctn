@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -120,6 +121,14 @@ fun ProfileScreen(
             }
 
             item {
+                AccountSubscriptionCard(
+                    client = current,
+                    requesting = state.requestingDisconnection,
+                    onRequestDisconnection = viewModel::askToDisconnect,
+                )
+            }
+
+            item {
                 OutlinedButton(
                     onClick = onPaymentMethods,
                     modifier = Modifier
@@ -183,6 +192,88 @@ fun ProfileScreen(
                 TextButton(onClick = viewModel::dismissSignOut) { Text("Stay signed in") }
             },
         )
+    }
+
+    if (state.disconnectionDialogOpen) {
+        AlertDialog(
+            onDismissRequest = viewModel::dismissDisconnection,
+            title = { Text("Request Disconnection?") },
+            text = {
+                Text(
+                    "Your request will be sent to the administrator for confirmation. " +
+                        "Your subscription will remain active until the request is approved."
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = viewModel::confirmDisconnection,
+                    enabled = !state.requestingDisconnection,
+                ) {
+                    Text("Confirm Request", color = MaterialTheme.colorScheme.error)
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = viewModel::dismissDisconnection,
+                    enabled = !state.requestingDisconnection,
+                ) {
+                    Text("Cancel")
+                }
+            },
+        )
+    }
+}
+
+@Composable
+private fun AccountSubscriptionCard(
+    client: ClientDto,
+    requesting: Boolean,
+    onRequestDisconnection: () -> Unit,
+) {
+    val isActive = client.accountStatus.equals("Active", ignoreCase = true) &&
+        client.subscriptionStatus.equals("active", ignoreCase = true)
+    val isPending = client.disconnectionRequestStatus.equals("pending", ignoreCase = true)
+
+    SectionCard {
+        Column(Modifier.padding(16.dp)) {
+            Text(
+                text = "Account subscription",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+
+            Spacer(Modifier.height(8.dp))
+            DetailRow("Subscription status", if (isActive) "Active" else "Inactive")
+            if (!client.currentPlan.isNullOrBlank()) {
+                DetailRow("Current plan", client.currentPlan.orEmpty())
+            }
+            if (!client.subscriptionStatusLabel.isNullOrBlank()) {
+                DetailRow("Plan status", client.subscriptionStatusLabel.orEmpty())
+            }
+
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = when {
+                    isPending -> "Your disconnection request is awaiting administrator review. Your subscription remains Active until it is approved."
+                    isActive -> "Submit a disconnection request for administrator review. Your service stays Active while the request is pending."
+                    else -> "There is no active subscription available for disconnection."
+                },
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+            if (isActive) {
+                Spacer(Modifier.height(14.dp))
+                LoadingButton(
+                    text = if (isPending) "Request Pending" else "Request Disconnection",
+                    onClick = onRequestDisconnection,
+                    modifier = Modifier.fillMaxWidth(),
+                    loading = requesting,
+                    enabled = !isPending,
+                    icon = Icons.Filled.PowerSettingsNew,
+                )
+            }
+        }
     }
 }
 

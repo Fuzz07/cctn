@@ -22,6 +22,7 @@ import com.cctn.app.data.remote.dto.MaintenanceMessageBody
 import com.cctn.app.data.remote.dto.NotificationsPayload
 import com.cctn.app.data.remote.dto.NotificationDto
 import com.cctn.app.data.remote.dto.PaymentMethodDto
+import com.cctn.app.data.remote.dto.ProfileResponse
 import com.cctn.app.data.remote.dto.RegisterRequest
 import com.cctn.app.data.remote.dto.ServiceDto
 import com.cctn.app.data.remote.dto.SlotDto
@@ -95,6 +96,10 @@ class ProfileRepository @Inject constructor(
         apiCall(json) { api.updateProfile(body) }
             .also { if (it is AppResult.Success) session.updateClient(it.data.client) }
             .map { it.client }
+
+    suspend fun requestDisconnection(): AppResult<ProfileResponse> =
+        apiCall(json) { api.requestDisconnection() }
+            .also { if (it is AppResult.Success) session.updateClient(it.data.client) }
 }
 
 @Singleton

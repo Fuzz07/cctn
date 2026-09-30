@@ -31,6 +31,13 @@ data class ClientDto(
     @SerialName("address_municipality") val addressMunicipality: String? = null,
     @SerialName("address_province") val addressProvince: String? = null,
     @SerialName("contact_no") val contactNo: String? = null,
+    @SerialName("account_status") val accountStatus: String? = null,
+    @SerialName("subscription_status") val subscriptionStatus: String? = null,
+    @SerialName("subscription_status_label") val subscriptionStatusLabel: String? = null,
+    @SerialName("current_plan") val currentPlan: String? = null,
+    @SerialName("subscription_ends_at") val subscriptionEndsAt: String? = null,
+    @SerialName("disconnection_request_status") val disconnectionRequestStatus: String? = null,
+    @SerialName("disconnection_requested_at") val disconnectionRequestedAt: String? = null,
     @SerialName("profile_photo") val profilePhoto: String? = null,
     @SerialName("created_at") val createdAt: String? = null,
 )

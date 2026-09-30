@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ClientResource;
+use App\Models\Client;
+use App\Models\Notification;
 use App\Support\InputRules;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -63,6 +65,51 @@ class ProfileController extends Controller
             'success' => true,
             'message' => 'Profile updated successfully.',
             'client'  => new ClientResource($client->fresh()),
+        ]);
+    }
+
+    /** Submit a disconnection request for administrator review. */
+    public function requestDisconnection(Request $request)
+    {
+        if (! Client::supportsDisconnectionRequests()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Disconnection requests are temporarily unavailable. Please contact support.',
+            ], 503);
+        }
+
+        $client = $request->user();
+        $client->load('currentService');
+
+        if (! $client->isAccountActive()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Only an active subscription can request disconnection.',
+            ], 422);
+        }
+
+        if (! $client->requestDisconnection()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Your disconnection request is already awaiting administrator review.',
+                'client' => new ClientResource($client->fresh()->load('currentService')),
+            ]);
+        }
+
+        $planName = $client->currentService?->service_name ?? 'their current subscription';
+
+        Notification::create([
+            'for_admin' => true,
+            'client_id' => $client->id,
+            'title' => 'Disconnection Request',
+            'message' => "{$client->full_name} requested disconnection of {$planName}.",
+            'link' => 'admin/clients?filter=disconnection_requests',
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Your disconnection request was sent to the administrator. Your subscription remains Active until it is approved.',
+            'client' => new ClientResource($client->fresh()->load('currentService')),
         ]);
     }
 }
