@@ -8,6 +8,7 @@ use App\Models\Client;
 use App\Models\BillingAccount;
 use App\Models\MaintenanceRequest;
 use App\Models\Notification;
+use App\Models\Service;
 use App\Support\InputRules;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -31,9 +32,27 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
+        $client->load('currentService');
+
+        // Plans an Inactive client can choose from to subscribe again; the same
+        // list as the home page, which leaves out the free visit-only services.
+        $availablePlans = $client->isAccountActive()
+            ? collect()
+            : Service::active()->where('price', '>', 0)->orderBy('price')->get()->unique('service_name')->values();
+
+        // A plan already chosen and waiting for approval, so the client does not book it twice.
+        $pendingPlan = $client->isAccountActive()
+            ? null
+            : Appointment::with('service')
+                ->where('client_id', $client->id)
+                ->where('status', 'pending')
+                ->whereHas('service', fn ($query) => $query->where('price', '>', 0))
+                ->latest()
+                ->first();
+
         return view('client.dashboard', compact(
             'client', 'totalAppointments', 'pendingAppointments',
-            'approvedAppointments', 'recentAppointments'
+            'approvedAppointments', 'recentAppointments', 'availablePlans', 'pendingPlan'
         ));
     }
 
@@ -78,7 +97,36 @@ class DashboardController extends Controller
         return redirect()->route('client.dashboard')->with('success_message', 'Profile updated successfully!');
     }
 
-    /** Submit a disconnection request without deactivating the subscription yet. */
+    /** Cancel the current plan. The account and its history stay, and the client can subscribe again. */
+    public function unsubscribe()
+    {
+        $client = Auth::guard('client')->user();
+        $client->load('currentService');
+
+        if (! $client->unsubscribe()) {
+            return redirect()->route('client.dashboard')->with(
+                'error_message',
+                'You do not have an active subscription to cancel.'
+            );
+        }
+
+        $planName = $client->currentService?->service_name ?? 'their subscription';
+
+        Notification::create([
+            'for_admin' => true,
+            'client_id' => $client->id,
+            'title' => 'Client Unsubscribed',
+            'message' => "{$client->full_name} unsubscribed from {$planName}. The account is now Inactive.",
+            'link' => 'admin/clients?filter=inactive',
+        ]);
+
+        return redirect()->route('client.dashboard')->with(
+            'success_message',
+            'You have unsubscribed. Your subscription is now Inactive, and your account and subscription history have been kept. You can choose a plan to subscribe again at any time.'
+        );
+    }
+
+    /** Ask for the service to be disconnected. This is separate from the subscription status. */
     public function requestDisconnection()
     {
         if (! Client::supportsDisconnectionRequests()) {
@@ -90,21 +138,23 @@ class DashboardController extends Controller
         $client = Auth::guard('client')->user();
         $client->load('currentService');
 
-        if (! $client->isAccountActive()) {
-            return redirect()->route('client.dashboard')->with(
-                'error_message',
-                'Only an active subscription can request disconnection.'
-            );
-        }
-
-        if (! $client->requestDisconnection()) {
+        if ($client->hasPendingDisconnectionRequest()) {
             return redirect()->route('client.dashboard')->with(
                 'success_message',
                 'Your disconnection request is already awaiting administrator review.'
             );
         }
 
-        $planName = $client->currentService?->service_name ?? 'their current subscription';
+        if (! $client->requestDisconnection()) {
+            return redirect()->route('client.dashboard')->with(
+                'error_message',
+                $client->isDisconnected()
+                    ? 'Your service has already been disconnected.'
+                    : 'You do not have a connected service to disconnect.'
+            );
+        }
+
+        $planName = $client->currentService?->service_name ?? 'their current service';
 
         Notification::create([
             'for_admin' => true,
@@ -116,13 +166,7 @@ class DashboardController extends Controller
 
         return redirect()->route('client.dashboard')->with(
             'success_message',
-            'Your disconnection request was sent to the administrator. Your subscription remains Active until it is approved.'
+            'Your disconnection request was sent to the administrator. Your account and subscription history will be kept.'
         );
-    }
-
-    /** Backwards-compatible endpoint for older links. */
-    public function unsubscribe()
-    {
-        return $this->requestDisconnection();
     }
 }

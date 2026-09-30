@@ -37,7 +37,9 @@ data class ClientDto(
     @SerialName("current_plan") val currentPlan: String? = null,
     @SerialName("subscription_ends_at") val subscriptionEndsAt: String? = null,
     @SerialName("disconnection_request_status") val disconnectionRequestStatus: String? = null,
+    @SerialName("disconnection_status_label") val disconnectionStatusLabel: String? = null,
     @SerialName("disconnection_requested_at") val disconnectionRequestedAt: String? = null,
+    @SerialName("can_request_disconnection") val canRequestDisconnection: Boolean? = null,
     @SerialName("profile_photo") val profilePhoto: String? = null,
     @SerialName("created_at") val createdAt: String? = null,
 )

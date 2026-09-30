@@ -210,6 +210,7 @@ private fun MainNavHost(navController: NavHostController = rememberNavController
                 ProfileScreen(
                     onOpenAssistant = openAssistant,
                     onPaymentMethods = { navController.navigate(Routes.PAYMENT_METHODS) },
+                    onChoosePlan = { navController.navigate(Routes.BOOK) },
                 )
             }
             composable(Routes.PAYMENT_METHODS) {

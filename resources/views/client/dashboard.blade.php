@@ -6,7 +6,7 @@
 <style>
     body { background-color: var(--bg-page); color: var(--text-dark); font-family: system-ui, -apple-system, sans-serif; }
     
-    .c-dash-container { max-width: 1280px; margin: 2rem auto; padding: 0 1.5rem; }
+    .c-dash-container { max-width: 1280px; margin: 2rem auto; padding: 0 1.5rem; min-width: 0; }
 
     /* Welcome Header */
     .c-dash-welcome { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
@@ -25,6 +25,7 @@
 
     /* Main Workspace Split */
     .c-dash-workspace { display: grid; grid-template-columns: 1fr 340px; gap: 1.75rem; }
+    .c-dash-workspace > div { min-width: 0; } /* lets wide tables scroll inside their wrapper on phones */
 
     /* Cards Styling */
     .c-card { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 20px; padding: 1.75rem; box-shadow: 0 4px 16px rgba(0,0,0,0.03); margin-bottom: 1.75rem; }
@@ -55,24 +56,49 @@
     .c-input:focus { outline: none; border-color: #dc2626; background: var(--bg-card); box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1); }
     .btn-save-profile { background: #0f172a; color: #ffffff; padding: 0.7rem 1.25rem; border-radius: 10px; font-weight: 700; font-size: 0.88rem; border: none; cursor: pointer; transition: background 0.2s; margin-top: 1rem; display: inline-block; }
     .btn-save-profile:hover { background: #dc2626; }
-    .c-danger-card { border-color: #fecaca; background: #fffafa; }
-    .c-danger-card p { margin: 0.35rem 0 1.25rem; color: var(--text-muted); font-size: 0.88rem; line-height: 1.55; }
-    .btn-unsubscribe { padding: 0.7rem 1.1rem; border: 1px solid #fecaca; border-radius: 10px; background: #fff; color: #b91c1c; font-weight: 700; font-size: 0.88rem; cursor: pointer; }
-    .btn-unsubscribe:hover { background: #fef2f2; }
-    .subscription-state { display: flex; align-items: center; gap: 0.5rem; margin: 0.75rem 0; font-size: 0.88rem; color: var(--text-body); }
-    .subscription-state strong { color: #15803d; }
-    .disconnection-pending { margin-top: 0.85rem; padding: 0.85rem 1rem; border: 1px solid #fde68a; border-radius: 8px; background: #fffbeb; color: #92400e; font-size: 0.85rem; line-height: 1.45; }
-    .client-unsubscribe-modal { display: none; position: fixed; inset: 0; z-index: 100000; align-items: center; justify-content: center; padding: 1rem; }
-    .client-unsubscribe-modal.is-open { display: flex; }
-    .client-unsubscribe-modal__backdrop { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.55); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
-    .client-unsubscribe-modal__dialog { position: relative; width: min(100%, 430px); padding: 2rem; border-radius: 16px; background: #fff; box-shadow: 0 20px 60px rgba(0,0,0,0.18); text-align: center; }
-    .client-unsubscribe-modal__icon { width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.1rem; border-radius: 50%; background: #fef2f2; color: #dc2626; }
-    .client-unsubscribe-modal__title { margin: 0 0 0.4rem; font-size: 1.1rem; color: var(--text-dark); }
-    .client-unsubscribe-modal__message { margin: 0 0 1.5rem; color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; }
-    .client-unsubscribe-modal__actions { display: flex; gap: 0.75rem; }
-    .client-unsubscribe-modal__button { flex: 1; padding: 0.65rem 1rem; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
-    .client-unsubscribe-modal__cancel { border: 1.5px solid #e2e8f0; background: #f8fafc; color: #334155; }
-    .client-unsubscribe-modal__confirm { border: 0; background: #dc2626; color: #fff; }
+    /* Subscription and Disconnection: two separate options */
+    .c-sub-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 1.25rem; margin-bottom: 1.75rem; }
+    .c-sub-grid .c-card { margin-bottom: 0; }
+    .c-sub-grid .c-card-header { margin-bottom: 1rem; }
+    .c-pill { display: inline-block; padding: 0.25rem 0.7rem; border-radius: 999px; font-size: 0.72rem; font-weight: 700; white-space: nowrap; }
+    .c-pill--active { background: rgba(34, 197, 94, 0.12); color: #15803d; border: 1px solid rgba(34, 197, 94, 0.35); }
+    .c-pill--inactive { background: rgba(220, 38, 38, 0.08); color: #b91c1c; border: 1px solid rgba(220, 38, 38, 0.3); }
+    .c-pill--pending { background: rgba(245, 158, 11, 0.12); color: #a16207; border: 1px solid rgba(245, 158, 11, 0.4); }
+    .c-pill--neutral { background: var(--bg-subtle); color: var(--text-muted); border: 1px solid var(--border-light); }
+    .c-sub-facts { margin: 0 0 1rem; display: grid; gap: 0.55rem; }
+    .c-sub-facts div { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.86rem; }
+    .c-sub-facts dt { color: var(--text-muted); }
+    .c-sub-facts dd { margin: 0; font-weight: 700; color: var(--text-dark); text-align: right; }
+    .c-sub-note { margin: 0 0 1rem; color: var(--text-muted); font-size: 0.86rem; line-height: 1.55; }
+    .c-plan-list { display: flex; flex-direction: column; gap: 0.6rem; }
+    .c-plan-row { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0.7rem 0.85rem; border: 1px solid var(--border-light); border-radius: 12px; }
+    .c-plan-row strong { display: block; font-size: 0.88rem; color: var(--text-dark); }
+    .c-plan-row span { font-size: 0.78rem; color: var(--text-muted); }
+    .btn-subscribe { flex-shrink: 0; padding: 0.5rem 0.95rem; border-radius: 10px; background: #dc2626; color: #ffffff !important; font-weight: 700; font-size: 0.82rem; text-decoration: none; }
+    .btn-subscribe:hover { background: #b91c1c; }
+    .btn-unsubscribe { padding: 0.7rem 1.1rem; border: 1px solid rgba(220, 38, 38, 0.35); border-radius: 10px; background: transparent; color: #b91c1c; font-weight: 700; font-size: 0.88rem; cursor: pointer; }
+    .btn-unsubscribe:hover { background: rgba(220, 38, 38, 0.08); }
+    .btn-unsubscribe:disabled { opacity: 0.6; cursor: not-allowed; }
+    .disconnection-pending { margin-bottom: 1rem; padding: 0.85rem 1rem; border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 8px; background: rgba(245, 158, 11, 0.1); color: #92400e; font-size: 0.85rem; line-height: 1.45; }
+    .disconnection-pending--info { border-color: rgba(59, 130, 246, 0.35); background: rgba(59, 130, 246, 0.08); color: #1e40af; }
+    :root[data-theme="dark"] .c-pill--active { color: #4ade80; }
+    :root[data-theme="dark"] .c-pill--inactive,
+    :root[data-theme="dark"] .btn-unsubscribe { color: #f87171; }
+    :root[data-theme="dark"] .c-pill--pending,
+    :root[data-theme="dark"] .disconnection-pending { color: #fbbf24; }
+    :root[data-theme="dark"] .disconnection-pending--info { color: #93c5fd; }
+
+    .client-confirm-modal { display: none; position: fixed; inset: 0; z-index: 100000; align-items: center; justify-content: center; padding: 1rem; }
+    .client-confirm-modal.is-open { display: flex; }
+    .client-confirm-modal__backdrop { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.55); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+    .client-confirm-modal__dialog { position: relative; width: min(100%, 430px); padding: 2rem; border-radius: 16px; background: var(--bg-card); box-shadow: 0 20px 60px rgba(0,0,0,0.18); text-align: center; }
+    .client-confirm-modal__icon { width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.1rem; border-radius: 50%; background: rgba(220, 38, 38, 0.1); color: #dc2626; }
+    .client-confirm-modal__title { margin: 0 0 0.4rem; font-size: 1.1rem; color: var(--text-dark); }
+    .client-confirm-modal__message { margin: 0 0 1.5rem; color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; }
+    .client-confirm-modal__actions { display: flex; gap: 0.75rem; }
+    .client-confirm-modal__button { flex: 1; padding: 0.65rem 1rem; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
+    .client-confirm-modal__cancel { border: 1.5px solid var(--border-light); background: var(--bg-subtle); color: var(--text-body); }
+    .client-confirm-modal__confirm { border: 0; background: #dc2626; color: #fff; }
 
     /* Right Profile Card */
     .c-profile-card { text-align: center; }
@@ -82,7 +108,7 @@
 
     .c-info-list { border-top: 1px solid var(--border-light); padding-top: 1.25rem; text-align: left; display: flex; flex-direction: column; gap: 1rem; }
     .c-info-item span { font-size: 0.72rem; font-weight: 700; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.15rem; }
-    .c-info-item strong { font-size: 0.88rem; color: #1e293b; font-weight: 600; }
+    .c-info-item strong { font-size: 0.88rem; color: var(--text-dark); font-weight: 600; }
 
     @media (max-width: 1024px) {
         .c-stats-grid { grid-template-columns: repeat(2, 1fr); }
@@ -91,6 +117,7 @@
     @media (max-width: 640px) {
         .c-stats-grid { grid-template-columns: 1fr; }
         .c-form-grid-2, .c-form-grid-3 { grid-template-columns: 1fr; }
+        .c-sub-grid { grid-template-columns: 1fr; }
     }
 </style>
 @endpush
@@ -156,6 +183,117 @@
         
         <!-- Left Side -->
         <div>
+            <!-- Subscription and Disconnection are managed separately -->
+            <div class="c-sub-grid" id="subscription">
+                <div class="c-card">
+                    <div class="c-card-header">
+                        <h3 class="c-card-title">Subscription</h3>
+                        @if($client->isAccountActive())
+                            <span class="c-pill c-pill--active">Active</span>
+                        @else
+                            <span class="c-pill c-pill--inactive">Inactive</span>
+                        @endif
+                    </div>
+
+                    @if($client->isAccountActive())
+                        <dl class="c-sub-facts">
+                            <div><dt>Current plan</dt><dd>{{ $client->currentService?->service_name ?? 'Active plan' }}</dd></div>
+                            @if($client->subscription_started_at)
+                                <div><dt>Active since</dt><dd>{{ $client->subscription_started_at->format('M d, Y') }}</dd></div>
+                            @endif
+                            @if($client->subscription_ends_at)
+                                <div><dt>Ends</dt><dd>{{ $client->subscription_ends_at->format('M d, Y') }}</dd></div>
+                            @endif
+                        </dl>
+                        <p class="c-sub-note">Unsubscribing sets your subscription to Inactive. Your account and subscription history are kept, and you can subscribe again at any time.</p>
+                        <form action="{{ route('client.unsubscribe') }}" method="POST"
+                              onsubmit="return showClientConfirmModal(this);"
+                              data-confirm-title="Unsubscribe from your plan?"
+                              data-confirm-message="Your subscription will become Inactive right away. Your account and subscription history are kept, and you can choose a plan to subscribe again at any time."
+                              data-confirm-label="Unsubscribe">
+                            @csrf
+                            <button type="submit" class="btn-unsubscribe">Unsubscribe</button>
+                        </form>
+                    @else
+                        <p class="c-sub-note">
+                            {{ $client->subscription_status_label }}.
+                            @if($client->currentService)
+                                Your last plan was <strong>{{ $client->currentService->service_name }}</strong>.
+                            @endif
+                            Choose a plan to subscribe again. Your status becomes Active once the plan is activated.
+                        </p>
+
+                        @if($pendingPlan)
+                            <div class="disconnection-pending">
+                                <strong>{{ $pendingPlan->service?->service_name ?? 'Your plan' }} is awaiting activation</strong><br>
+                                Requested {{ $pendingPlan->created_at->format('M d, Y') }}. Your status changes to Active once it is approved.
+                            </div>
+                        @endif
+
+                        <div class="c-plan-list">
+                            @forelse($availablePlans as $plan)
+                                <div class="c-plan-row">
+                                    <div>
+                                        <strong>{{ $plan->service_name }}</strong>
+                                        <span>₱{{ number_format($plan->price, 0) }}/month</span>
+                                    </div>
+                                    <a href="{{ route('client.book', ['service_id' => $plan->id]) }}" class="btn-subscribe">Subscribe</a>
+                                </div>
+                            @empty
+                                <p class="c-sub-note" style="margin:0;">No plans are available right now. Please check back later.</p>
+                            @endforelse
+                        </div>
+                    @endif
+                </div>
+
+                <div class="c-card">
+                    <div class="c-card-header">
+                        <h3 class="c-card-title">Disconnection</h3>
+                        @if($client->hasPendingDisconnectionRequest())
+                            <span class="c-pill c-pill--pending">Pending review</span>
+                        @elseif($client->isDisconnected())
+                            <span class="c-pill c-pill--inactive">Disconnected</span>
+                        @elseif($client->current_service_id)
+                            <span class="c-pill c-pill--active">Connected</span>
+                        @else
+                            <span class="c-pill c-pill--neutral">No service</span>
+                        @endif
+                    </div>
+
+                    @if(! \App\Models\Client::supportsDisconnectionRequests())
+                        <p class="c-sub-note">Disconnection requests are temporarily unavailable. Please contact support.</p>
+                    @elseif($client->hasPendingDisconnectionRequest())
+                        <div class="disconnection-pending">
+                            <strong>Disconnection request pending</strong><br>
+                            Sent {{ $client->disconnection_requested_at?->format('M d, Y \a\t g:i A') }}. An administrator will review it. Your subscription status is not changed by this request.
+                        </div>
+                        <button type="button" class="btn-unsubscribe" disabled>Request Pending</button>
+                    @elseif($client->isDisconnected())
+                        <p class="c-sub-note">
+                            Your service was disconnected{{ $client->disconnection_reviewed_at ? ' on ' . $client->disconnection_reviewed_at->format('M d, Y') : '' }}.
+                            Your account and subscription history are kept. Subscribe to a plan to reconnect.
+                        </p>
+                    @elseif($client->canRequestDisconnection())
+                        <p class="c-sub-note">Request disconnection of your {{ $client->currentService?->service_name ?? 'current service' }}. This is separate from your subscription: an administrator reviews the request, and your account and subscription history are kept.</p>
+                        @if($client->disconnection_request_status === 'rejected')
+                            <div class="disconnection-pending disconnection-pending--info">
+                                Your previous disconnection request was declined.
+                            </div>
+                        @endif
+                        <form action="{{ route('client.disconnection.request') }}" method="POST"
+                              onsubmit="return showClientConfirmModal(this);"
+                              data-confirm-title="Request Disconnection?"
+                              data-confirm-message="Your request will be sent to the administrator for review. Your account and subscription history are kept."
+                              data-confirm-label="Confirm Request">
+                            @csrf
+                            <button type="submit" class="btn-unsubscribe">Request Disconnection</button>
+                        </form>
+                    @else
+                        <p class="c-sub-note">You do not have a connected service to disconnect.</p>
+                    @endif
+                </div>
+            </div>
+
             <!-- Recent Appointments Table -->
             <div class="c-card">
                 <div class="c-card-header">
@@ -339,36 +477,6 @@
                     </div>
                 </form>
             </div>
-
-            <div class="c-card c-danger-card">
-                <div class="c-card-header" style="margin-bottom:0;">
-                    <h3 class="c-card-title" style="color:#b91c1c;">Account subscription</h3>
-                </div>
-                @if($client->isAccountActive())
-                    <div class="subscription-state"><span>Subscription Status:</span> <strong>Active</strong></div>
-                    @if($client->hasPendingDisconnectionRequest())
-                        <div class="disconnection-pending">
-                            <strong>Disconnection request pending</strong><br>
-                            Sent {{ $client->disconnection_requested_at?->format('M d, Y \a\t g:i A') }}. Your subscription remains Active until an administrator approves the request.
-                        </div>
-                        <button type="button" class="btn-unsubscribe" disabled style="margin-top:0.85rem; opacity:0.6; cursor:not-allowed;">Request Pending</button>
-                    @else
-                        <p>Submit a disconnection request for administrator review. Your service stays Active while the request is pending.</p>
-                        @if($client->disconnection_request_status === 'rejected')
-                            <div class="disconnection-pending" style="border-color:#bfdbfe; background:#eff6ff; color:#1e40af; margin-bottom:0.85rem;">
-                                Your previous request was declined. Your subscription remains Active.
-                            </div>
-                        @endif
-                        <form id="client-unsubscribe-form" action="{{ route('client.disconnection.request') }}" method="POST" onsubmit="return showClientUnsubscribeModal(this);">
-                            @csrf
-                            <button type="submit" class="btn-unsubscribe">Request Disconnection</button>
-                        </form>
-                    @endif
-                @else
-                    <p>Your account is <strong>Inactive</strong>. Choose a new plan and, once approved, your account will automatically return to Active.</p>
-                    <a href="{{ route('home') }}#plans" class="btn-save-profile" style="display:inline-block; text-decoration:none;">Browse plans</a>
-                @endif
-            </div>
         </div>
 
         <!-- Right Side: Profile Summary -->
@@ -404,6 +512,10 @@
                         <strong>{{ $client->currentService?->service_name ?? 'None' }}</strong>
                     </div>
                     <div class="c-info-item">
+                        <span>Service</span>
+                        <strong>{{ $client->disconnection_status_label }}</strong>
+                    </div>
+                    <div class="c-info-item">
                         <span>Member Since</span>
                         <strong>{{ $client->created_at->format('M d, Y') }}</strong>
                     </div>
@@ -418,17 +530,18 @@
 
 @include('partials.delete-booking-modal')
 
-<div id="client-unsubscribe-modal" class="client-unsubscribe-modal" role="dialog" aria-modal="true" aria-labelledby="client-unsubscribe-title" aria-describedby="client-unsubscribe-message" aria-hidden="true">
-    <div class="client-unsubscribe-modal__backdrop" onclick="hideClientUnsubscribeModal()"></div>
-    <div class="client-unsubscribe-modal__dialog">
-        <div class="client-unsubscribe-modal__icon" aria-hidden="true">
-            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v4M14 11v4"/></svg>
+{{-- Shared confirmation for Unsubscribe and Request Disconnection; each form supplies its own wording. --}}
+<div id="client-confirm-modal" class="client-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="client-confirm-title" aria-describedby="client-confirm-message" aria-hidden="true">
+    <div class="client-confirm-modal__backdrop" onclick="hideClientConfirmModal()"></div>
+    <div class="client-confirm-modal__dialog">
+        <div class="client-confirm-modal__icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
         </div>
-        <h2 id="client-unsubscribe-title" class="client-unsubscribe-modal__title">Request Disconnection?</h2>
-        <p id="client-unsubscribe-message" class="client-unsubscribe-modal__message">Your request will be sent to the administrator for confirmation. Your subscription will remain active until the request is approved.</p>
-        <div class="client-unsubscribe-modal__actions">
-            <button type="button" class="client-unsubscribe-modal__button client-unsubscribe-modal__cancel" onclick="hideClientUnsubscribeModal()">Cancel</button>
-            <button type="button" id="client-unsubscribe-confirm" class="client-unsubscribe-modal__button client-unsubscribe-modal__confirm" onclick="confirmClientUnsubscribe()">Confirm Request</button>
+        <h2 id="client-confirm-title" class="client-confirm-modal__title"></h2>
+        <p id="client-confirm-message" class="client-confirm-modal__message"></p>
+        <div class="client-confirm-modal__actions">
+            <button type="button" class="client-confirm-modal__button client-confirm-modal__cancel" onclick="hideClientConfirmModal()">Cancel</button>
+            <button type="button" id="client-confirm-button" class="client-confirm-modal__button client-confirm-modal__confirm" onclick="confirmClientAction()"></button>
         </div>
     </div>
 </div>
@@ -438,42 +551,46 @@
 <script src="{{ asset('assets/js/form-restrictions.js') }}?v={{ filemtime(public_path('assets/js/form-restrictions.js')) }}"></script>
 @include('partials.address-age-scripts')
 <script>
-var clientUnsubscribeForm = null;
-var clientUnsubscribeTrigger = null;
+var clientConfirmForm = null;
+var clientConfirmTrigger = null;
 
-function showClientUnsubscribeModal(form) {
+function showClientConfirmModal(form) {
     if (form.dataset.confirmed === 'true') return true;
 
-    clientUnsubscribeForm = form;
-    clientUnsubscribeTrigger = document.activeElement;
-    var modal = document.getElementById('client-unsubscribe-modal');
+    clientConfirmForm = form;
+    clientConfirmTrigger = document.activeElement;
+    document.getElementById('client-confirm-title').textContent = form.dataset.confirmTitle;
+    document.getElementById('client-confirm-message').textContent = form.dataset.confirmMessage;
+    document.getElementById('client-confirm-button').textContent = form.dataset.confirmLabel;
+
+    var modal = document.getElementById('client-confirm-modal');
     modal.classList.add('is-open');
     modal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
-    document.getElementById('client-unsubscribe-confirm').focus();
+    document.getElementById('client-confirm-button').focus();
     return false;
 }
 
-function hideClientUnsubscribeModal() {
-    var modal = document.getElementById('client-unsubscribe-modal');
+function hideClientConfirmModal() {
+    var modal = document.getElementById('client-confirm-modal');
     modal.classList.remove('is-open');
     modal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
-    if (clientUnsubscribeTrigger) clientUnsubscribeTrigger.focus();
-    clientUnsubscribeForm = null;
-    clientUnsubscribeTrigger = null;
+    if (clientConfirmTrigger) clientConfirmTrigger.focus();
+    clientConfirmForm = null;
+    clientConfirmTrigger = null;
 }
 
-function confirmClientUnsubscribe() {
-    if (clientUnsubscribeForm) {
-        clientUnsubscribeForm.dataset.confirmed = 'true';
-        clientUnsubscribeForm.requestSubmit();
+function confirmClientAction() {
+    if (clientConfirmForm) {
+        clientConfirmForm.dataset.confirmed = 'true';
+        clientConfirmForm.requestSubmit();
     }
 }
 
 document.addEventListener('keydown', function (event) {
-    if (event.key === 'Escape' && document.getElementById('client-unsubscribe-modal').classList.contains('is-open')) {
-        hideClientUnsubscribeModal();
+    if (event.key === 'Escape' && document.getElementById('client-confirm-modal').classList.contains('is-open')) {
+        hideClientConfirmModal();
     }
 });
 </script>

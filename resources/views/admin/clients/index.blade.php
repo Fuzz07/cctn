@@ -142,10 +142,14 @@
                         @else
                             <span class="status-tag status-tag--active">Active</span>
                             <div style="font-size:0.75rem; color:#15803d; font-weight:600; margin-top:0.35rem;">{{ $client->subscription_status_label }}</div>
-                            @if($client->hasPendingDisconnectionRequest())
-                                <span class="status-tag status-tag--pending">Disconnection requested</span>
-                                <div style="font-size:0.7rem; color:var(--text-muted); margin-top:0.25rem;">{{ $client->disconnection_requested_at?->format('M d, Y g:i A') }}</div>
-                            @endif
+                        @endif
+                        {{-- Disconnection is tracked apart from the subscription status. --}}
+                        @if($client->hasPendingDisconnectionRequest())
+                            <span class="status-tag status-tag--pending">Disconnection requested</span>
+                            <div style="font-size:0.7rem; color:var(--text-muted); margin-top:0.25rem;">{{ $client->disconnection_requested_at?->format('M d, Y g:i A') }}</div>
+                        @elseif($client->isDisconnected())
+                            <span class="status-tag status-tag--inactive">Service disconnected</span>
+                            <div style="font-size:0.7rem; color:var(--text-muted); margin-top:0.25rem;">{{ $client->disconnection_reviewed_at?->format('M d, Y g:i A') }}</div>
                         @endif
                     </td>
                     <td>

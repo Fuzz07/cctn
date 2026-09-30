@@ -16,6 +16,7 @@ class DisconnectionRequestTest extends TestCase
 
     private Admin $admin;
     private Client $client;
+    private Service $service;
 
     protected function setUp(): void
     {
@@ -36,7 +37,7 @@ class DisconnectionRequestTest extends TestCase
             'password' => bcrypt('password123'),
         ]);
 
-        $service = Service::create([
+        $this->service = Service::create([
             'service_name' => 'Fiber 100',
             'price' => 1499,
             'status' => 'Active',
@@ -44,7 +45,7 @@ class DisconnectionRequestTest extends TestCase
 
         Appointment::create([
             'client_id' => $this->client->id,
-            'service_id' => $service->id,
+            'service_id' => $this->service->id,
             'preferred_date' => now()->addDay()->format('Y-m-d'),
             'preferred_time' => '09:00:00',
             'status' => 'approved',
@@ -117,17 +118,46 @@ class DisconnectionRequestTest extends TestCase
         $this->assertDatabaseCount('notifications', 1);
     }
 
-    public function test_mobile_client_without_an_active_subscription_cannot_request_disconnection(): void
+    public function test_client_without_a_service_cannot_request_disconnection(): void
     {
-        $this->client->deactivateSubscription('cancelled');
-        Sanctum::actingAs($this->client);
+        $client = Client::create([
+            'firstname' => 'Never',
+            'lastname' => 'Subscribed',
+            'email' => 'never@example.com',
+            'username' => 'never-subscribed',
+            'password' => bcrypt('password123'),
+        ]);
+        Sanctum::actingAs($client);
 
         $this->postJson('/api/v1/profile/request-disconnection')
             ->assertUnprocessable()
             ->assertJsonPath('success', false)
-            ->assertJsonPath('message', 'Only an active subscription can request disconnection.');
+            ->assertJsonPath('message', 'You do not have a connected service to disconnect.');
 
+        $this->assertNull($client->fresh()->disconnection_request_status);
         $this->assertDatabaseCount('notifications', 0);
+    }
+
+    public function test_inactive_client_can_still_request_disconnection_separately(): void
+    {
+        $this->client->unsubscribe();
+
+        $this->actingAs($this->client->fresh(), 'client')
+            ->post(route('client.disconnection.request'))
+            ->assertRedirect(route('client.dashboard'))
+            ->assertSessionHas('success_message');
+
+        $client = $this->client->fresh();
+        $this->assertSame('pending', $client->disconnection_request_status);
+        // The request leaves the subscription status exactly as it was.
+        $this->assertSame('Inactive', $client->account_status);
+        $this->assertSame('cancelled', $client->subscription_status);
+
+        $this->actingAs($this->admin, 'admin')
+            ->get(route('admin.clients', ['filter' => 'disconnection_requests']))
+            ->assertOk()
+            ->assertSee('Active Subscriber')
+            ->assertSee('Approve Disconnection');
     }
 
     public function test_admin_can_approve_a_pending_disconnection_request(): void
@@ -145,8 +175,11 @@ class DisconnectionRequestTest extends TestCase
         $this->assertNotNull($client->disconnection_reviewed_at);
         $this->assertSame('Inactive', $client->account_status);
         $this->assertSame('cancelled', $client->subscription_status);
-        $this->assertNotNull($client->archived_at);
-        $this->assertSame(0, $client->tokens()->count());
+
+        // Disconnecting keeps the account, its subscription history and its sign-in.
+        $this->assertSame($this->service->id, $client->current_service_id);
+        $this->assertSame(1, $client->appointments()->count());
+        $this->assertSame(1, $client->tokens()->count());
 
         $this->assertDatabaseHas('notifications', [
             'for_admin' => false,
@@ -216,5 +249,57 @@ class DisconnectionRequestTest extends TestCase
             ->assertOk()
             ->assertSee('No Plan Client')
             ->assertSee('No active subscription');
+    }
+
+    public function test_disconnected_client_keeps_portal_access_and_cannot_request_again(): void
+    {
+        $this->client->requestDisconnection();
+        $this->client->approveDisconnection();
+
+        $this->actingAs($this->client->fresh(), 'client')
+            ->get(route('client.dashboard'))
+            ->assertOk()
+            ->assertSee('Disconnected')
+            ->assertSee('Subscribe to a plan to reconnect.')
+            ->assertSee('Fiber 100');
+
+        $this->post(route('client.disconnection.request'))
+            ->assertRedirect(route('client.dashboard'))
+            ->assertSessionHas('error_message', 'Your service has already been disconnected.');
+
+        $this->assertSame('approved', $this->client->fresh()->disconnection_request_status);
+    }
+
+    public function test_approving_disconnection_keeps_the_reason_an_ended_subscription_ended_with(): void
+    {
+        $this->client->deactivateSubscription('expired');
+        $this->client->requestDisconnection();
+
+        $this->assertTrue($this->client->approveDisconnection());
+
+        $client = $this->client->fresh();
+        $this->assertSame('approved', $client->disconnection_request_status);
+        $this->assertSame('expired', $client->subscription_status);
+    }
+
+    public function test_subscribing_again_after_disconnection_reconnects_the_service(): void
+    {
+        $this->client->requestDisconnection();
+        $this->client->approveDisconnection();
+
+        Appointment::create([
+            'client_id' => $this->client->id,
+            'service_id' => $this->service->id,
+            'preferred_date' => now()->addDays(2)->format('Y-m-d'),
+            'preferred_time' => '10:00:00',
+            'status' => 'approved',
+        ]);
+
+        $client = $this->client->fresh();
+        $this->assertSame('Active', $client->account_status);
+        $this->assertSame('active', $client->subscription_status);
+        $this->assertNull($client->disconnection_request_status);
+        $this->assertTrue($client->canRequestDisconnection());
+        $this->assertSame(2, $client->appointments()->count());
     }
 }

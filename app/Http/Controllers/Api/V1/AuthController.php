@@ -39,13 +39,9 @@ class AuthController extends Controller
             ]);
         }
 
+        // An Inactive subscription does not block sign-in: the client still
+        // needs the app to choose a plan and subscribe again.
         $client->syncSubscriptionStatus();
-
-        if ($client->isArchived()) {
-            throw ValidationException::withMessages([
-                'login_input' => ['This account is Inactive because its subscription was cancelled or expired. Please contact BCTVI support.'],
-            ]);
-        }
 
         // Auto-verify on first mobile login
         if (empty($client->email_verified_at)) {
@@ -115,11 +111,7 @@ class AuthController extends Controller
             $client->syncSubscriptionStatus();
         }
 
-        if ($client->isArchived()) {
-            throw ValidationException::withMessages([
-                'id_token' => ['This account is Inactive because its subscription was cancelled or expired. Please contact BCTVI support.'],
-            ]);
-        } elseif (empty($client->email_verified_at)) {
+        if (empty($client->email_verified_at)) {
             $client->update(['email_verified_at' => now()]);
         }
 

@@ -163,20 +163,48 @@ class Client extends Authenticatable
         return $this->disconnection_request_status === 'pending';
     }
 
+    public function isDisconnected(): bool
+    {
+        return $this->disconnection_request_status === 'approved';
+    }
+
+    /**
+     * Disconnection is tracked separately from the subscription: any client
+     * with a service on record may ask for it, whether the subscription is
+     * Active or Inactive, until it is pending or already carried out.
+     */
+    public function canRequestDisconnection(): bool
+    {
+        return static::supportsDisconnectionRequests()
+            && $this->current_service_id !== null
+            && ! $this->hasPendingDisconnectionRequest()
+            && ! $this->isDisconnected();
+    }
+
+    /** Cancel the current plan. The account and its history stay, and the client may subscribe again. */
+    public function unsubscribe(): bool
+    {
+        if (! $this->isAccountActive()) {
+            return false;
+        }
+
+        $this->deactivateSubscription('cancelled');
+
+        return true;
+    }
+
     public function requestDisconnection(): bool
     {
-        if (! static::supportsDisconnectionRequests()
-            || ! $this->isAccountActive()
-            || $this->hasPendingDisconnectionRequest()) {
+        if (! $this->canRequestDisconnection()) {
             return false;
         }
 
         $updated = static::query()
             ->whereKey($this->getKey())
-            ->where('account_status', 'Active')
+            ->whereNotNull('current_service_id')
             ->where(function ($query) {
                 $query->whereNull('disconnection_request_status')
-                    ->orWhere('disconnection_request_status', '!=', 'pending');
+                    ->orWhereNotIn('disconnection_request_status', ['pending', 'approved']);
             })
             ->update([
                 'disconnection_request_status' => 'pending',
@@ -202,7 +230,12 @@ class Client extends Authenticatable
             'disconnection_reviewed_at' => now(),
             'disconnection_review_note' => $note,
         ]);
-        $this->deactivateSubscription('cancelled');
+
+        // A disconnected line cannot keep an Active plan, but a subscription
+        // that already ended keeps the reason it ended with.
+        if ($this->isAccountActive()) {
+            $this->deactivateSubscription('cancelled');
+        }
 
         return true;
     }
@@ -222,6 +255,11 @@ class Client extends Authenticatable
         return true;
     }
 
+    /**
+     * Mark the subscription Inactive. archived_at records when that happened;
+     * it does not lock the client out, so they can still sign in and choose a
+     * new plan. Any disconnection request is left exactly as it was.
+     */
     public function deactivateSubscription(string $reason = 'cancelled'): void
     {
         $reason = $reason === 'expired' ? 'expired' : 'cancelled';
@@ -233,23 +271,12 @@ class Client extends Authenticatable
             return;
         }
 
-        $attributes = [
+        $this->update([
             'account_status'            => 'Inactive',
             'subscription_status'       => $reason,
             'subscription_cancelled_at' => $reason === 'cancelled' ? now() : null,
             'archived_at'               => now(),
-        ];
-
-        if (static::supportsDisconnectionRequests() && $this->hasPendingDisconnectionRequest()) {
-            $attributes += [
-                'disconnection_request_status' => $reason === 'expired' ? 'expired' : 'approved',
-                'disconnection_reviewed_at' => now(),
-            ];
-        }
-
-        $this->update($attributes);
-
-        $this->tokens()->delete();
+        ]);
     }
 
     public function syncSubscriptionStatus(): bool
@@ -291,6 +318,16 @@ class Client extends Authenticatable
             'expired' => 'Subscription expired',
             'cancelled' => 'Subscription cancelled',
             default => 'No active subscription',
+        };
+    }
+
+    public function getDisconnectionStatusLabelAttribute(): string
+    {
+        return match ($this->disconnection_request_status) {
+            'pending' => 'Disconnection requested',
+            'approved' => 'Service disconnected',
+            'rejected' => 'Disconnection request declined',
+            default => $this->current_service_id ? 'Connected' : 'No connected service',
         };
     }
 

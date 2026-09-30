@@ -15,18 +15,9 @@ class AuthenticateClient
             return redirect()->route('login');
         }
 
-        $client = Auth::guard('client')->user();
-        $client->syncSubscriptionStatus();
-
-        // An admin may cancel or expire a subscription while the client is signed in.
-        if ($client->isArchived()) {
-            Auth::guard('client')->logout();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
-
-            return redirect()->route('login')
-                ->withErrors(['login_input' => 'This account is inactive because its subscription was cancelled or expired. Please contact BCTVI support.']);
-        }
+        // A subscription that lapses mid-session turns Inactive here; the
+        // client stays signed in so they can subscribe again.
+        Auth::guard('client')->user()->syncSubscriptionStatus();
 
         return $next($request);
     }

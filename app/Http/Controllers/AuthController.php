@@ -68,12 +68,9 @@ class AuthController extends Controller
             return back()->withErrors(['login_input' => $error])->withInput();
         }
 
+        // An Inactive subscription does not block sign-in: the client still
+        // needs the portal to choose a plan and subscribe again.
         $client->syncSubscriptionStatus();
-
-        if ($client->isArchived()) {
-            RateLimiter::hit($throttleKey, 60);
-            return back()->withErrors(['login_input' => 'This account is Inactive because its subscription was cancelled or expired. Please contact BCTVI support.'])->withInput();
-        }
 
         // Clear throttle on successful login
         RateLimiter::clear($throttleKey);
@@ -313,14 +310,6 @@ class AuthController extends Controller
         }
 
         $client->syncSubscriptionStatus();
-
-        if ($client->isArchived()) {
-            $message = 'This account is Inactive because its subscription was cancelled or expired. Please contact BCTVI support.';
-            if ($fromApp) {
-                return $this->redirectToApp(null, $message);
-            }
-            return redirect()->route('login')->withErrors(['login_input' => $message]);
-        }
 
         if ($fromApp) {
             $token = $client->createToken('mobile-app')->plainTextToken;

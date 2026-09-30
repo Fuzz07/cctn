@@ -7,6 +7,7 @@ use App\Models\Appointment;
 use App\Models\Client;
 use App\Models\Service;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class ClientSubscriptionStatusTest extends TestCase
@@ -112,6 +113,152 @@ class ClientSubscriptionStatusTest extends TestCase
             ->assertSee('Inactive')
             ->assertSee('Subscription cancelled')
             ->assertSee('Fiber 100');
+    }
+
+    public function test_client_can_unsubscribe_and_keeps_account_and_history(): void
+    {
+        $this->createAppointment('approved');
+        $this->client->refresh()->createToken('mobile-app');
+
+        $this->actingAs($this->client, 'client')
+            ->post(route('client.unsubscribe'))
+            ->assertRedirect(route('client.dashboard'))
+            ->assertSessionHas('success_message');
+
+        $client = $this->client->fresh();
+        $this->assertSame('Inactive', $client->account_status);
+        $this->assertSame('cancelled', $client->subscription_status);
+        $this->assertNotNull($client->subscription_cancelled_at);
+
+        // The account, its plan history and its sign-in all remain.
+        $this->assertSame($this->service->id, $client->current_service_id);
+        $this->assertSame(1, $client->appointments()->count());
+        $this->assertSame(1, $client->tokens()->count());
+        $this->assertAuthenticatedAs($client, 'client');
+
+        $this->assertDatabaseHas('notifications', [
+            'for_admin' => true,
+            'client_id' => $client->id,
+            'title' => 'Client Unsubscribed',
+        ]);
+    }
+
+    public function test_unsubscribing_is_separate_from_disconnection(): void
+    {
+        $this->createAppointment('approved');
+        $this->client->refresh()->requestDisconnection();
+
+        $this->actingAs($this->client->fresh(), 'client')
+            ->post(route('client.unsubscribe'))
+            ->assertRedirect(route('client.dashboard'));
+
+        $client = $this->client->fresh();
+        $this->assertSame('Inactive', $client->account_status);
+        $this->assertSame('pending', $client->disconnection_request_status);
+        $this->assertNull($client->disconnection_reviewed_at);
+    }
+
+    public function test_client_without_an_active_subscription_cannot_unsubscribe(): void
+    {
+        $this->actingAs($this->client, 'client')
+            ->post(route('client.unsubscribe'))
+            ->assertRedirect(route('client.dashboard'))
+            ->assertSessionHas('error_message', 'You do not have an active subscription to cancel.');
+
+        $this->assertNull($this->client->fresh()->subscription_status);
+        $this->assertDatabaseCount('notifications', 0);
+    }
+
+    public function test_mobile_client_can_unsubscribe(): void
+    {
+        $this->createAppointment('approved');
+        Sanctum::actingAs($this->client->fresh());
+
+        $this->postJson('/api/v1/profile/unsubscribe')
+            ->assertOk()
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('client.account_status', 'Inactive')
+            ->assertJsonPath('client.subscription_status', 'cancelled')
+            ->assertJsonPath('client.current_plan', 'Fiber 100')
+            ->assertJsonPath('client.can_request_disconnection', true);
+
+        $this->postJson('/api/v1/profile/unsubscribe')
+            ->assertUnprocessable()
+            ->assertJsonPath('message', 'You do not have an active subscription to cancel.');
+    }
+
+    public function test_active_dashboard_offers_unsubscribe_and_a_separate_disconnection_option(): void
+    {
+        $this->createAppointment('approved');
+
+        $this->actingAs($this->client->fresh(), 'client')
+            ->get(route('client.dashboard'))
+            ->assertOk()
+            ->assertSee('Subscription')
+            ->assertSee('Active')
+            ->assertSee(route('client.unsubscribe'))
+            ->assertSee('Disconnection')
+            ->assertSee(route('client.disconnection.request'));
+    }
+
+    public function test_inactive_dashboard_lists_plans_to_subscribe_again(): void
+    {
+        $this->createAppointment('approved')->update(['status' => 'cancelled']);
+        $repairVisit = Service::create([
+            'service_name' => 'Technical Repair Visit',
+            'price' => 0,
+            'status' => 'Active',
+        ]);
+
+        $this->actingAs($this->client->fresh(), 'client')
+            ->get(route('client.dashboard'))
+            ->assertOk()
+            ->assertSee('Inactive')
+            ->assertSee('Subscription cancelled')
+            ->assertSee('Fiber 100')
+            ->assertSee(route('client.book', ['service_id' => $this->service->id]), false)
+            ->assertDontSee(route('client.book', ['service_id' => $repairVisit->id]), false)
+            ->assertDontSee(route('client.unsubscribe'));
+    }
+
+    public function test_inactive_client_subscribes_again_and_becomes_active_once_activated(): void
+    {
+        $this->createAppointment('approved');
+        $this->actingAs($this->client->fresh(), 'client')->post(route('client.unsubscribe'));
+        $this->assertSame('Inactive', $this->client->fresh()->account_status);
+
+        $newService = Service::create([
+            'service_name' => 'Fiber 150',
+            'price' => 1699,
+            'status' => 'Active',
+        ]);
+        $request = $this->createAppointment('pending', null, $newService);
+
+        $this->get(route('client.dashboard'))
+            ->assertOk()
+            ->assertSee('Fiber 150 is awaiting activation');
+        $this->assertSame('Inactive', $this->client->fresh()->account_status);
+
+        $request->update(['status' => 'approved']);
+
+        $client = $this->client->fresh();
+        $this->assertSame('Active', $client->account_status);
+        $this->assertSame('active', $client->subscription_status);
+        $this->assertSame($newService->id, $client->current_service_id);
+        $this->assertSame(2, $client->appointments()->count());
+    }
+
+    public function test_subscription_that_expires_mid_session_keeps_the_client_signed_in(): void
+    {
+        $this->createAppointment('approved', now()->subMinute());
+
+        $this->actingAs($this->client->fresh(), 'client')
+            ->get(route('client.dashboard'))
+            ->assertOk()
+            ->assertSee('Subscription expired');
+
+        $this->assertSame('expired', $this->client->fresh()->subscription_status);
+        $this->assertAuthenticated('client');
     }
 
     private function createAppointment(

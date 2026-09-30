@@ -97,7 +97,7 @@ class ClientController extends Controller
         $query = Client::with('currentService');
 
         if ($filter === 'disconnection_requests' && $disconnectionRequestsSupported) {
-            $query->active()->where('disconnection_request_status', 'pending');
+            $query->where('disconnection_request_status', 'pending');
         } elseif ($filter === 'disconnection_requests') {
             $query->whereRaw('1 = 0');
         } elseif (in_array($filter, ['inactive', 'archived'], true)) {
@@ -128,7 +128,7 @@ class ClientController extends Controller
 
         $archivedCount = Client::inactive()->count();
         $pendingDisconnectionCount = $disconnectionRequestsSupported
-            ? Client::active()->where('disconnection_request_status', 'pending')->count()
+            ? Client::where('disconnection_request_status', 'pending')->count()
             : 0;
 
         return view('admin.clients.index', compact(
@@ -146,18 +146,16 @@ class ClientController extends Controller
             );
         }
 
+        // Only the subscription changes; a pending disconnection request is
+        // reviewed separately with Approve / Decline.
         $client = Client::findOrFail($id);
-        if ($client->hasPendingDisconnectionRequest()) {
-            $client->approveDisconnection('Approved by administrator.');
-        } else {
-            $client->deactivateSubscription('cancelled');
-        }
+        $client->deactivateSubscription('cancelled');
 
         Notification::create([
             'for_admin' => false,
             'client_id' => $client->id,
             'title' => 'Subscription Deactivated',
-            'message' => 'Your subscription has been deactivated and your account is now Inactive.',
+            'message' => 'Your subscription has been deactivated and is now Inactive. Your account and history are kept, and you can choose a plan to subscribe again.',
             'link' => 'dashboard',
         ]);
 
@@ -205,7 +203,7 @@ class ClientController extends Controller
             'for_admin' => false,
             'client_id' => $client->id,
             'title' => 'Disconnection Approved',
-            'message' => 'Your disconnection request was approved. Your subscription and account are now Inactive.',
+            'message' => 'Your disconnection request was approved and your service has been disconnected. Your account and subscription history are kept, and you can choose a plan to subscribe again.',
             'link' => 'dashboard',
         ]);
 
@@ -226,7 +224,7 @@ class ClientController extends Controller
             'for_admin' => false,
             'client_id' => $client->id,
             'title' => 'Disconnection Request Declined',
-            'message' => 'Your disconnection request was declined. Your subscription remains Active.',
+            'message' => 'Your disconnection request was declined. Your service stays connected.',
             'link' => 'dashboard',
         ]);
 

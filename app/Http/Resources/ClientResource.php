@@ -32,7 +32,9 @@ class ClientResource extends JsonResource
             'current_plan'         => $this->currentService?->service_name,
             'subscription_ends_at' => $this->subscription_ends_at?->toIso8601String(),
             'disconnection_request_status' => $this->disconnection_request_status,
+            'disconnection_status_label' => $this->disconnection_status_label,
             'disconnection_requested_at' => $this->disconnection_requested_at?->toIso8601String(),
+            'can_request_disconnection' => $this->canRequestDisconnection(),
             'profile_photo'        => $this->profile_photo
                 ? asset($this->profile_photo)
                 : null,

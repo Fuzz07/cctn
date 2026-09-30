@@ -59,6 +59,9 @@ interface CctnApi {
     @PUT("profile")
     suspend fun updateProfile(@Body body: UpdateProfileRequest): ProfileResponse
 
+    @POST("profile/unsubscribe")
+    suspend fun unsubscribe(): ProfileResponse
+
     @POST("profile/request-disconnection")
     suspend fun requestDisconnection(): ProfileResponse
 

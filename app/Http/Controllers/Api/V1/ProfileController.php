@@ -68,7 +68,38 @@ class ProfileController extends Controller
         ]);
     }
 
-    /** Submit a disconnection request for administrator review. */
+    // ─── POST /api/v1/profile/unsubscribe ────────────────────────────────────
+    /** Cancel the current plan. The account and its history stay, and the client can subscribe again. */
+    public function unsubscribe(Request $request)
+    {
+        $client = $request->user();
+        $client->load('currentService');
+
+        if (! $client->unsubscribe()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You do not have an active subscription to cancel.',
+            ], 422);
+        }
+
+        $planName = $client->currentService?->service_name ?? 'their subscription';
+
+        Notification::create([
+            'for_admin' => true,
+            'client_id' => $client->id,
+            'title' => 'Client Unsubscribed',
+            'message' => "{$client->full_name} unsubscribed from {$planName}. The account is now Inactive.",
+            'link' => 'admin/clients?filter=inactive',
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'You have unsubscribed. Your subscription is now Inactive, and your account and subscription history have been kept. You can choose a plan to subscribe again at any time.',
+            'client' => new ClientResource($client->fresh()->load('currentService')),
+        ]);
+    }
+
+    /** Ask for the service to be disconnected. This is separate from the subscription status. */
     public function requestDisconnection(Request $request)
     {
         if (! Client::supportsDisconnectionRequests()) {
@@ -81,22 +112,24 @@ class ProfileController extends Controller
         $client = $request->user();
         $client->load('currentService');
 
-        if (! $client->isAccountActive()) {
+        if ($client->hasPendingDisconnectionRequest()) {
             return response()->json([
-                'success' => false,
-                'message' => 'Only an active subscription can request disconnection.',
-            ], 422);
+                'success' => true,
+                'message' => 'Your disconnection request is already awaiting administrator review.',
+                'client' => new ClientResource($client),
+            ]);
         }
 
         if (! $client->requestDisconnection()) {
             return response()->json([
-                'success' => true,
-                'message' => 'Your disconnection request is already awaiting administrator review.',
-                'client' => new ClientResource($client->fresh()->load('currentService')),
-            ]);
+                'success' => false,
+                'message' => $client->isDisconnected()
+                    ? 'Your service has already been disconnected.'
+                    : 'You do not have a connected service to disconnect.',
+            ], 422);
         }
 
-        $planName = $client->currentService?->service_name ?? 'their current subscription';
+        $planName = $client->currentService?->service_name ?? 'their current service';
 
         Notification::create([
             'for_admin' => true,
@@ -108,7 +141,7 @@ class ProfileController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Your disconnection request was sent to the administrator. Your subscription remains Active until it is approved.',
+            'message' => 'Your disconnection request was sent to the administrator. Your account and subscription history will be kept.',
             'client' => new ClientResource($client->fresh()->load('currentService')),
         ]);
     }

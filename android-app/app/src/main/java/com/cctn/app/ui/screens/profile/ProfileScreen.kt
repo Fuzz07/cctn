@@ -63,6 +63,7 @@ import com.cctn.app.ui.components.SectionCard
 fun ProfileScreen(
     onOpenAssistant: () -> Unit,
     onPaymentMethods: () -> Unit = {},
+    onChoosePlan: () -> Unit = {},
     viewModel: ProfileViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -121,7 +122,16 @@ fun ProfileScreen(
             }
 
             item {
-                AccountSubscriptionCard(
+                SubscriptionCard(
+                    client = current,
+                    unsubscribing = state.unsubscribing,
+                    onUnsubscribe = viewModel::askToUnsubscribe,
+                    onChoosePlan = onChoosePlan,
+                )
+            }
+
+            item {
+                DisconnectionCard(
                     client = current,
                     requesting = state.requestingDisconnection,
                     onRequestDisconnection = viewModel::askToDisconnect,
@@ -194,14 +204,43 @@ fun ProfileScreen(
         )
     }
 
+    if (state.unsubscribeDialogOpen) {
+        AlertDialog(
+            onDismissRequest = viewModel::dismissUnsubscribe,
+            title = { Text("Unsubscribe from your plan?") },
+            text = {
+                Text(
+                    "Your subscription will become Inactive right away. Your account and " +
+                        "subscription history are kept, and you can choose a plan to subscribe again at any time."
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = viewModel::confirmUnsubscribe,
+                    enabled = !state.unsubscribing,
+                ) {
+                    Text("Unsubscribe", color = MaterialTheme.colorScheme.error)
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = viewModel::dismissUnsubscribe,
+                    enabled = !state.unsubscribing,
+                ) {
+                    Text("Keep plan")
+                }
+            },
+        )
+    }
+
     if (state.disconnectionDialogOpen) {
         AlertDialog(
             onDismissRequest = viewModel::dismissDisconnection,
             title = { Text("Request Disconnection?") },
             text = {
                 Text(
-                    "Your request will be sent to the administrator for confirmation. " +
-                        "Your subscription will remain active until the request is approved."
+                    "Your request will be sent to the administrator for review. " +
+                        "Your account and subscription history are kept."
                 )
             },
             confirmButton = {
@@ -225,19 +264,19 @@ fun ProfileScreen(
 }
 
 @Composable
-private fun AccountSubscriptionCard(
+private fun SubscriptionCard(
     client: ClientDto,
-    requesting: Boolean,
-    onRequestDisconnection: () -> Unit,
+    unsubscribing: Boolean,
+    onUnsubscribe: () -> Unit,
+    onChoosePlan: () -> Unit,
 ) {
     val isActive = client.accountStatus.equals("Active", ignoreCase = true) &&
         client.subscriptionStatus.equals("active", ignoreCase = true)
-    val isPending = client.disconnectionRequestStatus.equals("pending", ignoreCase = true)
 
     SectionCard {
         Column(Modifier.padding(16.dp)) {
             Text(
-                text = "Account subscription",
+                text = "Subscription",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface,
             )
@@ -245,7 +284,7 @@ private fun AccountSubscriptionCard(
             Spacer(Modifier.height(8.dp))
             DetailRow("Subscription status", if (isActive) "Active" else "Inactive")
             if (!client.currentPlan.isNullOrBlank()) {
-                DetailRow("Current plan", client.currentPlan.orEmpty())
+                DetailRow(if (isActive) "Current plan" else "Last plan", client.currentPlan.orEmpty())
             }
             if (!client.subscriptionStatusLabel.isNullOrBlank()) {
                 DetailRow("Plan status", client.subscriptionStatusLabel.orEmpty())
@@ -253,16 +292,76 @@ private fun AccountSubscriptionCard(
 
             Spacer(Modifier.height(8.dp))
             Text(
-                text = when {
-                    isPending -> "Your disconnection request is awaiting administrator review. Your subscription remains Active until it is approved."
-                    isActive -> "Submit a disconnection request for administrator review. Your service stays Active while the request is pending."
-                    else -> "There is no active subscription available for disconnection."
+                text = if (isActive) {
+                    "Unsubscribing sets your subscription to Inactive. Your account and subscription history are kept, and you can subscribe again at any time."
+                } else {
+                    "Choose a plan to subscribe again. Your status becomes Active once the plan is activated."
                 },
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
 
+            Spacer(Modifier.height(14.dp))
             if (isActive) {
+                OutlinedButton(
+                    onClick = onUnsubscribe,
+                    enabled = !unsubscribing,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp),
+                    shape = MaterialTheme.shapes.small,
+                ) {
+                    Text("Unsubscribe", color = MaterialTheme.colorScheme.error)
+                }
+            } else {
+                LoadingButton(
+                    text = "Choose a plan",
+                    onClick = onChoosePlan,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+        }
+    }
+}
+
+/** Disconnection is its own option: it never depends on, or directly changes, the subscription status shown above. */
+@Composable
+private fun DisconnectionCard(
+    client: ClientDto,
+    requesting: Boolean,
+    onRequestDisconnection: () -> Unit,
+) {
+    val isPending = client.disconnectionRequestStatus.equals("pending", ignoreCase = true)
+    val isDisconnected = client.disconnectionRequestStatus.equals("approved", ignoreCase = true)
+    val canRequest = client.canRequestDisconnection
+        ?: (!client.currentPlan.isNullOrBlank() && !isPending && !isDisconnected)
+
+    SectionCard {
+        Column(Modifier.padding(16.dp)) {
+            Text(
+                text = "Disconnection",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+
+            if (!client.disconnectionStatusLabel.isNullOrBlank()) {
+                Spacer(Modifier.height(8.dp))
+                DetailRow("Service", client.disconnectionStatusLabel.orEmpty())
+            }
+
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = when {
+                    isPending -> "Your disconnection request is awaiting administrator review. It does not change your subscription status."
+                    isDisconnected -> "Your service has been disconnected. Your account and subscription history are kept. Subscribe to a plan to reconnect."
+                    canRequest -> "Request disconnection of your service. This is separate from your subscription: an administrator reviews the request, and your account and subscription history are kept."
+                    else -> "You do not have a connected service to disconnect."
+                },
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+            if (isPending || canRequest) {
                 Spacer(Modifier.height(14.dp))
                 LoadingButton(
                     text = if (isPending) "Request Pending" else "Request Disconnection",

@@ -45,6 +45,9 @@ data class ProfileUiState(
     val errors: Map<String, String> = emptyMap(),
     val saving: Boolean = false,
 
+    val unsubscribeDialogOpen: Boolean = false,
+    val unsubscribing: Boolean = false,
+
     val disconnectionDialogOpen: Boolean = false,
     val requestingDisconnection: Boolean = false,
 
@@ -239,7 +242,42 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    // ── Sign out ─────────────────────────────────────────────────────────────
+    // ── Subscription ─────────────────────────────────────────────────────────
+
+    fun askToUnsubscribe() = _state.update { it.copy(unsubscribeDialogOpen = true) }
+
+    fun dismissUnsubscribe() {
+        if (_state.value.unsubscribing) return
+        _state.update { it.copy(unsubscribeDialogOpen = false) }
+    }
+
+    fun confirmUnsubscribe() {
+        if (_state.value.unsubscribing) return
+        _state.update { it.copy(unsubscribing = true) }
+
+        viewModelScope.launch {
+            when (val result = profileRepository.unsubscribe()) {
+                is AppResult.Success -> _state.update {
+                    it.copy(
+                        unsubscribing = false,
+                        unsubscribeDialogOpen = false,
+                        message = result.data.message
+                            ?: "You have unsubscribed. Your subscription is now Inactive.",
+                    )
+                }
+
+                is AppResult.Failure -> _state.update {
+                    it.copy(
+                        unsubscribing = false,
+                        unsubscribeDialogOpen = false,
+                        message = result.error.message,
+                    )
+                }
+            }
+        }
+    }
+
+    // ── Disconnection (separate from the subscription) ───────────────────────
 
     fun askToDisconnect() = _state.update { it.copy(disconnectionDialogOpen = true) }
 
@@ -273,6 +311,8 @@ class ProfileViewModel @Inject constructor(
             }
         }
     }
+
+    // ── Sign out ─────────────────────────────────────────────────────────────
 
     fun askToSignOut() = _state.update { it.copy(signOutDialogOpen = true) }
 

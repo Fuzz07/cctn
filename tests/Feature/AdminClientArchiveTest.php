@@ -56,17 +56,18 @@ class AdminClientArchiveTest extends TestCase
         $this->assertNotNull($this->client->fresh()->archived_at);
     }
 
-    public function test_archiving_revokes_mobile_app_tokens()
+    public function test_deactivating_a_subscription_keeps_the_client_signed_in_on_mobile()
     {
         $this->client->createToken('mobile-app');
 
         $this->actingAs($this->admin, 'admin')
             ->post(route('admin.clients.archive', $this->client->id));
 
-        $this->assertSame(0, $this->client->tokens()->count());
+        // Inactive clients keep app access so they can subscribe again.
+        $this->assertSame(1, $this->client->tokens()->count());
     }
 
-    public function test_legacy_unsubscribe_endpoint_creates_a_disconnection_request()
+    public function test_unsubscribe_endpoint_sets_the_subscription_inactive_without_a_disconnection_request()
     {
         $this->client->update([
             'account_status' => 'Active',
@@ -80,9 +81,9 @@ class AdminClientArchiveTest extends TestCase
             ->assertSessionHas('success_message');
 
         $client = $this->client->fresh();
-        $this->assertSame('pending', $client->disconnection_request_status);
-        $this->assertSame('Active', $client->account_status);
-        $this->assertNull($client->archived_at);
+        $this->assertSame('Inactive', $client->account_status);
+        $this->assertSame('cancelled', $client->subscription_status);
+        $this->assertNull($client->disconnection_request_status);
         $this->assertSame(1, $client->tokens()->count());
         $this->assertAuthenticatedAs($client, 'client');
     }
@@ -115,27 +116,29 @@ class AdminClientArchiveTest extends TestCase
         $this->assertNull($this->client->fresh()->archived_at);
     }
 
-    public function test_archived_client_cannot_sign_in_on_the_website()
+    public function test_inactive_client_can_sign_in_on_the_website_to_subscribe_again()
     {
-        $this->client->update(['archived_at' => now()]);
+        $this->client->deactivateSubscription('cancelled');
 
         $this->post('/login', [
             'login_input' => 'juan',
             'password'    => 'password123',
             'agree_terms' => '1',
-        ])->assertSessionHasErrors('login_input');
+        ])->assertRedirect(route('client.dashboard'));
 
-        $this->assertGuest('client');
+        $this->assertAuthenticatedAs($this->client->fresh(), 'client');
     }
 
-    public function test_archived_client_cannot_sign_in_on_the_mobile_api()
+    public function test_inactive_client_can_sign_in_on_the_mobile_api()
     {
-        $this->client->update(['archived_at' => now()]);
+        $this->client->deactivateSubscription('cancelled');
 
         $this->postJson('/api/v1/auth/login', [
             'login_input' => 'juan',
             'password'    => 'password123',
-        ])->assertStatus(422)->assertJsonValidationErrors(['login_input']);
+        ])->assertOk()
+            ->assertJsonStructure(['token'])
+            ->assertJsonPath('client.account_status', 'Inactive');
     }
 
     public function test_restored_client_can_sign_in_again()
@@ -149,18 +152,19 @@ class AdminClientArchiveTest extends TestCase
         ])->assertOk()->assertJsonStructure(['token']);
     }
 
-    public function test_signed_in_client_is_logged_out_once_archived()
+    public function test_signed_in_client_stays_signed_in_once_deactivated()
     {
         $this->actingAs($this->client, 'client')
             ->get(route('client.dashboard'))
             ->assertOk();
 
-        $this->client->update(['archived_at' => now()]);
+        $this->client->deactivateSubscription('cancelled');
 
         $this->actingAs($this->client->fresh(), 'client')
             ->get(route('client.dashboard'))
-            ->assertRedirect(route('login'));
+            ->assertOk()
+            ->assertSee('Inactive');
 
-        $this->assertGuest('client');
+        $this->assertAuthenticatedAs($this->client->fresh(), 'client');
     }
 }
