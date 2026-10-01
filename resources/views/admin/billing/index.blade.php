@@ -92,11 +92,11 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Amount Due (₱) *</label>
-                    <input type="number" name="amount_due" class="form-control" step="0.01" value="{{ old('amount_due') }}" required min="0">
+                    <input type="number" name="amount_due" class="form-control" step="0.01" value="{{ old('amount_due') }}" required min="0" max="99999.99" oninput="limitPaymentAmount(this)">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Penalty Amount (₱)</label>
-                    <input type="number" name="penalty_amount" class="form-control" step="0.01" value="{{ old('penalty_amount', 0) }}" min="0">
+                    <input type="number" name="penalty_amount" class="form-control" step="0.01" value="{{ old('penalty_amount', 0) }}" min="0" max="99999.99" oninput="limitPaymentAmount(this)">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Due Date *</label>
@@ -194,7 +194,7 @@
 
                 <div class="form-group">
                     <label class="form-label">Amount Received (₱) *</label>
-                    <input type="number" name="amount_paid" id="modal_amount" class="form-control" step="0.01" min="0.01" required>
+                    <input type="number" name="amount_paid" id="modal_amount" class="form-control" step="0.01" min="0.01" max="99999.99" oninput="limitPaymentAmount(this)" required>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Payment Method *</label>
@@ -225,6 +225,12 @@
 
 @push('scripts')
 <script>
+    function limitPaymentAmount(input) {
+        if (input.value !== '' && Number(input.value) > 99999.99) {
+            input.value = '99999.99';
+        }
+    }
+
     function openPayModal(id, accNo, totalDue) {
         document.getElementById('modal_billing_id').value = id;
         document.getElementById('modal_account_no').textContent = accNo;

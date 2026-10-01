@@ -28,11 +28,21 @@ class BillingController extends Controller
             'client_id'        => 'required|exists:clients,id',
             'account_number'   => ['required', 'string', 'regex:/^\d+$/'],
             'statement_period' => 'required|string',
-            'amount_due'       => 'required|numeric|min:0',
+            'amount_due'       => 'required|numeric|min:0|max:99999.99',
+            'penalty_amount'   => 'nullable|numeric|min:0|max:99999.99',
             'due_date'         => 'required|date|after_or_equal:2026-01-01',
+        ], [
+            'amount_due.max' => 'The amount due may contain at most five digits before the decimal point.',
+            'penalty_amount.max' => 'The penalty amount may contain at most five digits before the decimal point.',
         ]);
 
         $totalDue = $request->amount_due + ($request->penalty_amount ?? 0);
+
+        if ($totalDue > 99999.99) {
+            return back()->withErrors([
+                'amount_due' => 'The total payment amount cannot exceed ₱99,999.99.',
+            ])->withInput();
+        }
 
         BillingAccount::create([
             'client_id'        => $request->client_id,
@@ -53,7 +63,9 @@ class BillingController extends Controller
     {
         $request->validate([
             'billing_id'  => 'required|exists:billing_accounts,id',
-            'amount_paid' => 'required|numeric|min:0.01',
+            'amount_paid' => 'required|numeric|min:0.01|max:99999.99',
+        ], [
+            'amount_paid.max' => 'The payment amount may contain at most five digits before the decimal point.',
         ]);
 
         $billing = BillingAccount::findOrFail($request->billing_id);

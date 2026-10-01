@@ -96,6 +96,28 @@ class PaymentEmailNotificationTest extends TestCase
         );
     }
 
+    public function test_payment_amount_rejects_more_than_five_digits(): void
+    {
+        Notification::fake();
+
+        $admin = $this->admin();
+        $client = $this->client();
+        $billing = $this->billing($client);
+
+        $this->actingAs($admin, 'admin')
+            ->from(route('admin.billing'))
+            ->post(route('admin.billing.payment'), [
+                'billing_id' => $billing->id,
+                'amount_paid' => 100000,
+                'payment_method' => 'cash',
+            ])
+            ->assertRedirect(route('admin.billing'))
+            ->assertSessionHasErrors('amount_paid');
+
+        $this->assertDatabaseCount('payments', 0);
+        $this->assertSame('unpaid', $billing->fresh()->status);
+    }
+
     public function test_approving_appointment_with_payment_sends_confirmation_email(): void
     {
         Notification::fake();

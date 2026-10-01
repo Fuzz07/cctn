@@ -672,7 +672,7 @@
                     <div class="grid-2">
                         <div class="form-group">
                             <label class="form-label">Amount Received (₱)</label>
-                            <input type="number" step="0.01" name="cash_received" id="cash_received" class="form-control" placeholder="0.00" oninput="calculateChange()">
+                            <input type="number" step="0.01" min="0" max="99999.99" name="cash_received" id="cash_received" class="form-control" placeholder="0.00" oninput="limitPaymentAmount(this); calculateChange()">
                         </div>
                         <div class="form-group">
                             <label class="form-label">Calculated Change (₱)</label>
@@ -694,7 +694,7 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label">Amount Paid (₱)</label>
-                            <input type="number" step="0.01" name="gcash_amount" id="gcash_amount" class="form-control" placeholder="0.00">
+                            <input type="number" step="0.01" min="0" max="99999.99" name="gcash_amount" id="gcash_amount" class="form-control" placeholder="0.00" oninput="limitPaymentAmount(this)">
                         </div>
                         <div class="form-group">
                             <label class="form-label">Payment Date</label>
@@ -723,7 +723,7 @@
                     <div class="grid-2">
                         <div class="form-group">
                             <label class="form-label">Amount Paid (₱)</label>
-                            <input type="number" step="0.01" name="bank_amount" id="bank_amount" class="form-control" placeholder="0.00">
+                            <input type="number" step="0.01" min="0" max="99999.99" name="bank_amount" id="bank_amount" class="form-control" placeholder="0.00" oninput="limitPaymentAmount(this)">
                         </div>
                         <div class="form-group">
                             <label class="form-label">Payment Date</label>
@@ -942,6 +942,12 @@
 <script src="{{ asset('assets/js/form-restrictions.js') }}?v={{ filemtime(public_path('assets/js/form-restrictions.js')) }}"></script>
 @include('partials.address-age-scripts')
 <script>
+    function limitPaymentAmount(input) {
+        if (input.value !== '' && Number(input.value) > 99999.99) {
+            input.value = '99999.99';
+        }
+    }
+
     let currentStep = 1;
     let selectedPlan = {
         id: '',

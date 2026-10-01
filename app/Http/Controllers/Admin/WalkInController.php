@@ -56,13 +56,13 @@ class WalkInController extends Controller
 
             // Step 4: Payment
             'payment_method'       => 'required|in:Cash,GCash,Bank Transfer,Pay Later',
-            'cash_received'        => 'nullable|numeric|min:0',
+            'cash_received'        => 'nullable|numeric|min:0|max:99999.99',
             'gcash_ref'            => 'nullable|string|max:100',
-            'gcash_amount'         => 'nullable|numeric|min:0',
+            'gcash_amount'         => 'nullable|numeric|min:0|max:99999.99',
             'gcash_date'           => 'nullable|date',
             'bank_name'            => 'nullable|string|max:100',
             'bank_ref'             => 'nullable|string|max:100',
-            'bank_amount'          => 'nullable|numeric|min:0',
+            'bank_amount'          => 'nullable|numeric|min:0|max:99999.99',
             'bank_date'            => 'nullable|date',
             'pay_later_due_date'   => 'nullable|date',
             'payment_proof'        => 'nullable|image|mimes:jpeg,png,jpg|max:4096',
@@ -71,7 +71,11 @@ class WalkInController extends Controller
             'address'  => ['complete_address', 'address_barangay', 'installation_address'],
             'number'   => ['valid_id_number'],
             'mobile'   => ['contact_no'],
-        ]));
+        ]) + [
+            'cash_received.max' => 'The cash amount may contain at most five digits before the decimal point.',
+            'gcash_amount.max' => 'The GCash amount may contain at most five digits before the decimal point.',
+            'bank_amount.max' => 'The bank amount may contain at most five digits before the decimal point.',
+        ]);
 
         // Check slot conflict
         if (Appointment::hasConflict($request->preferred_date, $request->preferred_time)) {
