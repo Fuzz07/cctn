@@ -53,6 +53,7 @@
     .plan-row { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0.7rem 0.85rem; border: 1px solid var(--border-light); border-radius: 12px; }
     .plan-row strong { display: block; color: var(--text-dark); font-size: 0.88rem; }
     .plan-row span { color: var(--text-muted); font-size: 0.78rem; }
+    .plan-row form { flex-shrink: 0; margin: 0; }
     .subscribe-button { flex-shrink: 0; padding: 0.5rem 0.95rem; border-radius: 10px; background: #dc2626; color: #fff !important; font-size: 0.82rem; font-weight: 700; text-decoration: none; }
     .subscribe-button:hover { background: #b91c1c; }
     .danger-button { padding: 0.68rem 1.05rem; border: 1px solid rgba(220,38,38,0.35); border-radius: 10px; background: transparent; color: #b91c1c; font-size: 0.86rem; font-weight: 700; cursor: pointer; }
@@ -248,7 +249,7 @@
                             <p class="service-note">
                                 {{ $client->subscription_status_label }}.
                                 @if($client->currentService) Your last plan was <strong>{{ $client->currentService->service_name }}</strong>. @endif
-                                Choose a plan to subscribe again.
+                                Choose a plan to reactivate your subscription immediately.
                             </p>
                             @if($pendingPlan)
                                 <div class="service-message"><strong>{{ $pendingPlan->service?->service_name ?? 'Your plan' }} is awaiting activation</strong><br>Requested {{ $pendingPlan->created_at->format('M d, Y') }}.</div>
@@ -257,7 +258,10 @@
                                 @forelse($availablePlans as $plan)
                                     <div class="plan-row">
                                         <div><strong>{{ $plan->service_name }}</strong><span>₱{{ number_format($plan->price, 0) }}/month</span></div>
-                                        <a href="{{ route('client.book', ['service_id' => $plan->id]) }}" class="subscribe-button">Subscribe</a>
+                                        <form action="{{ route('client.subscribe', $plan) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="subscribe-button" style="border:0; cursor:pointer;">Subscribe</button>
+                                        </form>
                                     </div>
                                 @empty
                                     <p class="service-note" style="margin:0;">No plans are available right now.</p>

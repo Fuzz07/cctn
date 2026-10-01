@@ -216,36 +216,40 @@ class ClientSubscriptionStatusTest extends TestCase
             ->assertSee('Inactive')
             ->assertSee('Subscription cancelled')
             ->assertSee('Fiber 100')
-            ->assertSee(route('client.book', ['service_id' => $this->service->id]), false)
-            ->assertDontSee(route('client.book', ['service_id' => $repairVisit->id]), false)
+            ->assertSee(route('client.subscribe', $this->service), false)
+            ->assertDontSee(route('client.subscribe', $repairVisit), false)
             ->assertDontSee(route('client.unsubscribe'));
     }
 
-    public function test_inactive_client_subscribes_again_and_becomes_active_once_activated(): void
+    public function test_inactive_client_selects_a_plan_and_becomes_active_immediately(): void
     {
         $this->createAppointment('approved');
         $this->actingAs($this->client->fresh(), 'client')->post(route('client.unsubscribe'));
         $this->assertSame('Inactive', $this->client->fresh()->account_status);
+        $this->assertTrue(Client::inactive()->whereKey($this->client->id)->exists());
 
         $newService = Service::create([
             'service_name' => 'Fiber 150',
             'price' => 1699,
             'status' => 'Active',
         ]);
-        $request = $this->createAppointment('pending', null, $newService);
 
-        $this->get(route('client.settings', ['tab' => 'service']))
-            ->assertOk()
-            ->assertSee('Fiber 150 is awaiting activation');
-        $this->assertSame('Inactive', $this->client->fresh()->account_status);
-
-        $request->update(['status' => 'approved']);
+        $this->post(route('client.subscribe', $newService))
+            ->assertRedirect(route('client.settings', ['tab' => 'service']))
+            ->assertSessionHas('success_message', 'Your Fiber 150 subscription is now Active.');
 
         $client = $this->client->fresh();
         $this->assertSame('Active', $client->account_status);
         $this->assertSame('active', $client->subscription_status);
         $this->assertSame($newService->id, $client->current_service_id);
-        $this->assertSame(2, $client->appointments()->count());
+        $this->assertNull($client->current_appointment_id);
+        $this->assertNull($client->archived_at);
+        $this->assertFalse(Client::inactive()->whereKey($client->id)->exists());
+        $this->assertTrue(Client::active()->whereKey($client->id)->exists());
+        $this->assertDatabaseHas('notifications', [
+            'client_id' => $client->id,
+            'title' => 'Client Resubscribed',
+        ]);
     }
 
     public function test_subscription_that_expires_mid_session_keeps_the_client_signed_in(): void

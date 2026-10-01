@@ -132,6 +132,44 @@ class DashboardController extends Controller
         );
     }
 
+    /** Immediately reactivate an inactive customer with the plan they selected. */
+    public function subscribe(Service $service)
+    {
+        $client = Auth::guard('client')->user();
+
+        if ($client->isAccountActive()) {
+            return redirect()->route('client.settings', ['tab' => 'service'])->with(
+                'error_message',
+                'You already have an active subscription.'
+            );
+        }
+
+        if ($service->status !== 'Active' || (float) $service->price <= 0) {
+            return redirect()->route('client.settings', ['tab' => 'service'])->with(
+                'error_message',
+                'That subscription plan is not available.'
+            );
+        }
+
+        $client->activateSubscription($service);
+
+        // A direct resubscription is not tied to the customer's old installation appointment.
+        $client->update(['current_appointment_id' => null]);
+
+        Notification::create([
+            'for_admin' => true,
+            'client_id' => $client->id,
+            'title' => 'Client Resubscribed',
+            'message' => "{$client->full_name} subscribed to {$service->service_name}. The account is now Active.",
+            'link' => 'admin/clients',
+        ]);
+
+        return redirect()->route('client.settings', ['tab' => 'service'])->with(
+            'success_message',
+            "Your {$service->service_name} subscription is now Active."
+        );
+    }
+
     /** Ask for the service to be disconnected. This is separate from the subscription status. */
     public function requestDisconnection()
     {
