@@ -60,7 +60,7 @@ class DisconnectionRequestTest extends TestCase
 
         $this->actingAs($this->client, 'client')
             ->post(route('client.disconnection.request'))
-            ->assertRedirect(route('client.dashboard'))
+            ->assertRedirect(route('client.settings', ['tab' => 'service']))
             ->assertSessionHas('success_message');
 
         $client = $this->client->fresh();
@@ -83,10 +83,10 @@ class DisconnectionRequestTest extends TestCase
     {
         $this->actingAs($this->client, 'client')
             ->post(route('client.disconnection.request'))
-            ->assertRedirect(route('client.dashboard'));
+            ->assertRedirect(route('client.settings', ['tab' => 'service']));
 
         $this->post(route('client.disconnection.request'))
-            ->assertRedirect(route('client.dashboard'));
+            ->assertRedirect(route('client.settings', ['tab' => 'service']));
 
         $this->assertDatabaseCount('notifications', 1);
     }
@@ -144,7 +144,7 @@ class DisconnectionRequestTest extends TestCase
 
         $this->actingAs($this->client->fresh(), 'client')
             ->post(route('client.disconnection.request'))
-            ->assertRedirect(route('client.dashboard'))
+            ->assertRedirect(route('client.settings', ['tab' => 'service']))
             ->assertSessionHas('success_message');
 
         $client = $this->client->fresh();
@@ -257,14 +257,14 @@ class DisconnectionRequestTest extends TestCase
         $this->client->approveDisconnection();
 
         $this->actingAs($this->client->fresh(), 'client')
-            ->get(route('client.dashboard'))
+            ->get(route('client.settings', ['tab' => 'service']))
             ->assertOk()
             ->assertSee('Disconnected')
             ->assertSee('Subscribe to a plan to reconnect.')
             ->assertSee('Fiber 100');
 
         $this->post(route('client.disconnection.request'))
-            ->assertRedirect(route('client.dashboard'))
+            ->assertRedirect(route('client.settings', ['tab' => 'service']))
             ->assertSessionHas('error_message', 'Your service has already been disconnected.');
 
         $this->assertSame('approved', $this->client->fresh()->disconnection_request_status);

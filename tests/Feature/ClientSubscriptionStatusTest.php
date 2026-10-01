@@ -122,7 +122,7 @@ class ClientSubscriptionStatusTest extends TestCase
 
         $this->actingAs($this->client, 'client')
             ->post(route('client.unsubscribe'))
-            ->assertRedirect(route('client.dashboard'))
+            ->assertRedirect(route('client.settings', ['tab' => 'service']))
             ->assertSessionHas('success_message');
 
         $client = $this->client->fresh();
@@ -150,7 +150,7 @@ class ClientSubscriptionStatusTest extends TestCase
 
         $this->actingAs($this->client->fresh(), 'client')
             ->post(route('client.unsubscribe'))
-            ->assertRedirect(route('client.dashboard'));
+            ->assertRedirect(route('client.settings', ['tab' => 'service']));
 
         $client = $this->client->fresh();
         $this->assertSame('Inactive', $client->account_status);
@@ -162,7 +162,7 @@ class ClientSubscriptionStatusTest extends TestCase
     {
         $this->actingAs($this->client, 'client')
             ->post(route('client.unsubscribe'))
-            ->assertRedirect(route('client.dashboard'))
+            ->assertRedirect(route('client.settings', ['tab' => 'service']))
             ->assertSessionHas('error_message', 'You do not have an active subscription to cancel.');
 
         $this->assertNull($this->client->fresh()->subscription_status);
@@ -187,12 +187,12 @@ class ClientSubscriptionStatusTest extends TestCase
             ->assertJsonPath('message', 'You do not have an active subscription to cancel.');
     }
 
-    public function test_active_dashboard_offers_unsubscribe_and_a_separate_disconnection_option(): void
+    public function test_active_settings_offers_unsubscribe_and_a_separate_disconnection_option(): void
     {
         $this->createAppointment('approved');
 
         $this->actingAs($this->client->fresh(), 'client')
-            ->get(route('client.dashboard'))
+            ->get(route('client.settings', ['tab' => 'service']))
             ->assertOk()
             ->assertSee('Subscription')
             ->assertSee('Active')
@@ -201,7 +201,7 @@ class ClientSubscriptionStatusTest extends TestCase
             ->assertSee(route('client.disconnection.request'));
     }
 
-    public function test_inactive_dashboard_lists_plans_to_subscribe_again(): void
+    public function test_inactive_settings_lists_plans_to_subscribe_again(): void
     {
         $this->createAppointment('approved')->update(['status' => 'cancelled']);
         $repairVisit = Service::create([
@@ -211,7 +211,7 @@ class ClientSubscriptionStatusTest extends TestCase
         ]);
 
         $this->actingAs($this->client->fresh(), 'client')
-            ->get(route('client.dashboard'))
+            ->get(route('client.settings', ['tab' => 'service']))
             ->assertOk()
             ->assertSee('Inactive')
             ->assertSee('Subscription cancelled')
@@ -234,7 +234,7 @@ class ClientSubscriptionStatusTest extends TestCase
         ]);
         $request = $this->createAppointment('pending', null, $newService);
 
-        $this->get(route('client.dashboard'))
+        $this->get(route('client.settings', ['tab' => 'service']))
             ->assertOk()
             ->assertSee('Fiber 150 is awaiting activation');
         $this->assertSame('Inactive', $this->client->fresh()->account_status);

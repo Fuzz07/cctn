@@ -614,6 +614,7 @@
                             <span class="drawer-badge" style="margin-left: 0;">{{ $unreadCount }}</span>
                         @endif
                     </a>
+                    <a href="{{ route('client.settings') }}" class="top-nav-link {{ request()->routeIs('client.settings*') ? 'active' : '' }}"><i class="bi bi-gear" aria-hidden="true"></i> Settings</a>
                     <a href="{{ route('client.book') }}" class="top-nav-btn-solid">Book Installation</a>
                     <form action="{{ route('logout') }}" method="POST" class="top-nav-logout-form" id="logoutFormDesktop" onsubmit="return false;">
                         @csrf
@@ -689,6 +690,9 @@
                         @if(isset($unreadCount) && $unreadCount > 0)
                             <span class="drawer-badge">{{ $unreadCount }}</span>
                         @endif
+                    </a>
+                    <a href="{{ route('client.settings') }}" class="drawer-item {{ request()->routeIs('client.settings*') ? 'active' : '' }}">
+                        <span class="drawer-item-icon"><i class="bi bi-gear"></i></span> Settings
                     </a>
                     <div style="border-top: 1px solid var(--bg-subtle); margin: 0.5rem 0;"></div>
                     <form action="{{ route('logout') }}" method="POST" style="margin: 0;" id="logoutFormDrawer" onsubmit="return false;">

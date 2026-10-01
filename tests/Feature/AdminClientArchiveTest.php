@@ -77,7 +77,7 @@ class AdminClientArchiveTest extends TestCase
 
         $this->actingAs($this->client, 'client')
             ->post(route('client.unsubscribe'))
-            ->assertRedirect(route('client.dashboard'))
+            ->assertRedirect(route('client.settings', ['tab' => 'service']))
             ->assertSessionHas('success_message');
 
         $client = $this->client->fresh();

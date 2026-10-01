@@ -12,6 +12,10 @@
     .c-dash-welcome { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
     .c-dash-welcome h1 { font-size: 1.65rem; font-weight: 800; color: var(--text-dark); margin: 0; line-height: 1.2; }
     .c-dash-welcome p { color: var(--text-muted); margin: 0.25rem 0 0 0; font-size: 0.9rem; }
+    .c-welcome-actions { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+    .btn-settings { background: var(--bg-card); color: var(--text-body) !important; padding: 0.7rem 1.15rem; border: 1px solid var(--border); border-radius: 12px; font-weight: 700; font-size: 0.9rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.2s ease; }
+    .btn-settings:hover { color: #dc2626 !important; border-color: rgba(220,38,38,0.45); background: #fef2f2; }
+    :root[data-theme="dark"] .btn-settings:hover { background: rgba(220,38,38,0.12); }
     .btn-new-appt { background: #dc2626; color: #ffffff !important; padding: 0.75rem 1.35rem; border-radius: 12px; font-weight: 700; font-size: 0.9rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; box-shadow: 0 4px 14px rgba(220, 38, 38, 0.3); transition: all 0.2s ease; }
     .btn-new-appt:hover { background: #b91c1c; transform: translateY(-1px); box-shadow: 0 6px 18px rgba(220, 38, 38, 0.4); }
 
@@ -129,10 +133,15 @@
             <h1>Welcome back, {{ $client->firstname }}! 👋</h1>
             <p>Manage your profile, monitor booking requests, and view service details.</p>
         </div>
-        <a href="{{ route('client.book') }}" class="btn-new-appt">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-            Book New Appointment
-        </a>
+        <div class="c-welcome-actions">
+            <a href="{{ route('client.settings') }}" class="btn-settings">
+                <i class="bi bi-gear"></i> Settings
+            </a>
+            <a href="{{ route('client.book') }}" class="btn-new-appt">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Book New Appointment
+            </a>
+        </div>
     </div>
 
     <!-- Stat Cards -->
@@ -183,6 +192,7 @@
         
         <!-- Left Side -->
         <div>
+            @if(false) {{-- Moved to the dedicated Settings page. --}}
             <!-- Subscription and Disconnection are managed separately -->
             <div class="c-sub-grid" id="subscription">
                 <div class="c-card">
@@ -294,6 +304,8 @@
                 </div>
             </div>
 
+            @endif
+
             <!-- Recent Appointments Table -->
             <div class="c-card">
                 <div class="c-card-header">
@@ -355,6 +367,7 @@
                 </div>
             </div>
 
+            @if(false) {{-- Moved to the dedicated Settings page. --}}
             <!-- Edit Profile Form -->
             <div class="c-card" id="edit-profile">
                 <div class="c-card-header">
@@ -477,6 +490,7 @@
                     </div>
                 </form>
             </div>
+            @endif
         </div>
 
         <!-- Right Side: Profile Summary -->
@@ -485,6 +499,10 @@
                 <img src="{{ asset('assets/images/cctn-logo.png') }}" alt="Client Avatar" class="c-avatar-img">
                 <h2 class="c-profile-name">{{ $client->firstname }} {{ $client->lastname }}</h2>
                 <p class="c-profile-user">{{ '@' . $client->username }}</p>
+
+                <a href="{{ route('client.settings') }}" class="btn-settings" style="justify-content:center; margin-bottom:1.25rem;">
+                    <i class="bi bi-gear"></i> Account Settings
+                </a>
 
                 <div class="c-info-list">
                     <div class="c-info-item">
@@ -529,69 +547,4 @@
 </div>
 
 @include('partials.delete-booking-modal')
-
-{{-- Shared confirmation for Unsubscribe and Request Disconnection; each form supplies its own wording. --}}
-<div id="client-confirm-modal" class="client-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="client-confirm-title" aria-describedby="client-confirm-message" aria-hidden="true">
-    <div class="client-confirm-modal__backdrop" onclick="hideClientConfirmModal()"></div>
-    <div class="client-confirm-modal__dialog">
-        <div class="client-confirm-modal__icon" aria-hidden="true">
-            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
-        </div>
-        <h2 id="client-confirm-title" class="client-confirm-modal__title"></h2>
-        <p id="client-confirm-message" class="client-confirm-modal__message"></p>
-        <div class="client-confirm-modal__actions">
-            <button type="button" class="client-confirm-modal__button client-confirm-modal__cancel" onclick="hideClientConfirmModal()">Cancel</button>
-            <button type="button" id="client-confirm-button" class="client-confirm-modal__button client-confirm-modal__confirm" onclick="confirmClientAction()"></button>
-        </div>
-    </div>
-</div>
 @endsection
-
-@push('scripts')
-<script src="{{ asset('assets/js/form-restrictions.js') }}?v={{ filemtime(public_path('assets/js/form-restrictions.js')) }}"></script>
-@include('partials.address-age-scripts')
-<script>
-var clientConfirmForm = null;
-var clientConfirmTrigger = null;
-
-function showClientConfirmModal(form) {
-    if (form.dataset.confirmed === 'true') return true;
-
-    clientConfirmForm = form;
-    clientConfirmTrigger = document.activeElement;
-    document.getElementById('client-confirm-title').textContent = form.dataset.confirmTitle;
-    document.getElementById('client-confirm-message').textContent = form.dataset.confirmMessage;
-    document.getElementById('client-confirm-button').textContent = form.dataset.confirmLabel;
-
-    var modal = document.getElementById('client-confirm-modal');
-    modal.classList.add('is-open');
-    modal.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
-    document.getElementById('client-confirm-button').focus();
-    return false;
-}
-
-function hideClientConfirmModal() {
-    var modal = document.getElementById('client-confirm-modal');
-    modal.classList.remove('is-open');
-    modal.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
-    if (clientConfirmTrigger) clientConfirmTrigger.focus();
-    clientConfirmForm = null;
-    clientConfirmTrigger = null;
-}
-
-function confirmClientAction() {
-    if (clientConfirmForm) {
-        clientConfirmForm.dataset.confirmed = 'true';
-        clientConfirmForm.requestSubmit();
-    }
-}
-
-document.addEventListener('keydown', function (event) {
-    if (event.key === 'Escape' && document.getElementById('client-confirm-modal').classList.contains('is-open')) {
-        hideClientConfirmModal();
-    }
-});
-</script>
-@endpush

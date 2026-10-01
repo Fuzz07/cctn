@@ -81,9 +81,10 @@ Route::get('/auth/google/callback', [AuthController::class, 'googleCallback'])->
 // ─── Client Routes (Protected) ──────────────────────────────────────────────
 Route::middleware('auth.client')->group(function () {
     Route::get('/dashboard', [ClientDashboard::class, 'index'])->name('client.dashboard');
-    Route::post('/dashboard/update-profile', [ClientDashboard::class, 'updateProfile'])->name('client.update-profile');
-    Route::post('/dashboard/unsubscribe', [ClientDashboard::class, 'unsubscribe'])->name('client.unsubscribe');
-    Route::post('/dashboard/request-disconnection', [ClientDashboard::class, 'requestDisconnection'])->name('client.disconnection.request');
+    Route::get('/settings', [ClientDashboard::class, 'settings'])->name('client.settings');
+    Route::post('/settings/profile', [ClientDashboard::class, 'updateProfile'])->name('client.update-profile');
+    Route::post('/settings/unsubscribe', [ClientDashboard::class, 'unsubscribe'])->name('client.unsubscribe');
+    Route::post('/settings/request-disconnection', [ClientDashboard::class, 'requestDisconnection'])->name('client.disconnection.request');
 
     Route::get('/my-appointments', [ClientAppointment::class, 'index'])->name('client.appointments');
     Route::post('/my-appointments/{id}/payment-method', [ClientAppointment::class, 'updatePaymentMethod'])->name('client.appointments.payment-method');
