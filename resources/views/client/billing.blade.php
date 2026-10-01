@@ -67,14 +67,6 @@
                 <div style="font-size: 0.82rem; color: var(--text-faint); margin-top: 0.35rem;">Maya Number:</div>
                 <strong style="font-size: 1.1rem; color: #4ade80; font-family: monospace;">0917 888 2099</strong>
             </div>
-
-            <div style="background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 1rem;">
-                <div style="font-size: 0.75rem; font-weight: 800; color: #c084fc; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">● BDO / BPI Bank Account</div>
-                <div style="font-size: 0.82rem; color: var(--text-faint);">Account Name:</div>
-                <strong style="font-size: 0.95rem; color: #ffffff;">Bogo Cable Television Inc.</strong>
-                <div style="font-size: 0.82rem; color: var(--text-faint); margin-top: 0.35rem;">Account Number:</div>
-                <strong style="font-size: 1rem; color: #e9d5ff; font-family: monospace;">0012-3456-7890 (BDO)</strong>
-            </div>
         </div>
     </div>
 
