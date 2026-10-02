@@ -62,9 +62,6 @@ interface CctnApi {
     @POST("profile/unsubscribe")
     suspend fun unsubscribe(): ProfileResponse
 
-    @POST("profile/request-disconnection")
-    suspend fun requestDisconnection(): ProfileResponse
-
     // ── Appointments ─────────────────────────────────────────────────────────
     @GET("appointments")
     suspend fun appointments(): AppointmentsResponse

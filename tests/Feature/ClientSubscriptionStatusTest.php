@@ -143,21 +143,6 @@ class ClientSubscriptionStatusTest extends TestCase
         ]);
     }
 
-    public function test_unsubscribing_is_separate_from_disconnection(): void
-    {
-        $this->createAppointment('approved');
-        $this->client->refresh()->requestDisconnection();
-
-        $this->actingAs($this->client->fresh(), 'client')
-            ->post(route('client.unsubscribe'))
-            ->assertRedirect(route('client.settings', ['tab' => 'service']));
-
-        $client = $this->client->fresh();
-        $this->assertSame('Inactive', $client->account_status);
-        $this->assertSame('pending', $client->disconnection_request_status);
-        $this->assertNull($client->disconnection_reviewed_at);
-    }
-
     public function test_client_without_an_active_subscription_cannot_unsubscribe(): void
     {
         $this->actingAs($this->client, 'client')
@@ -179,15 +164,14 @@ class ClientSubscriptionStatusTest extends TestCase
             ->assertJsonPath('success', true)
             ->assertJsonPath('client.account_status', 'Inactive')
             ->assertJsonPath('client.subscription_status', 'cancelled')
-            ->assertJsonPath('client.current_plan', 'Fiber 100')
-            ->assertJsonPath('client.can_request_disconnection', true);
+            ->assertJsonPath('client.current_plan', 'Fiber 100');
 
         $this->postJson('/api/v1/profile/unsubscribe')
             ->assertUnprocessable()
             ->assertJsonPath('message', 'You do not have an active subscription to cancel.');
     }
 
-    public function test_active_settings_offers_unsubscribe_and_a_separate_disconnection_option(): void
+    public function test_active_settings_offers_unsubscribe_without_disconnection_option(): void
     {
         $this->createAppointment('approved');
 
@@ -197,8 +181,7 @@ class ClientSubscriptionStatusTest extends TestCase
             ->assertSee('Subscription')
             ->assertSee('Active')
             ->assertSee(route('client.unsubscribe'))
-            ->assertSee('Disconnection')
-            ->assertSee(route('client.disconnection.request'));
+            ->assertDontSee('Request Disconnection');
     }
 
     public function test_inactive_settings_lists_plans_to_subscribe_again(): void

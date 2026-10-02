@@ -270,40 +270,6 @@
                         @endif
                     </div>
 
-                    <div class="settings-card">
-                        <div class="settings-card-header">
-                            <h2 class="settings-card-title"><i class="bi bi-router"></i> Disconnection</h2>
-                            @if($client->hasPendingDisconnectionRequest())
-                                <span class="status-pill pending">Pending review</span>
-                            @elseif($client->isDisconnected())
-                                <span class="status-pill inactive">Disconnected</span>
-                            @elseif($client->current_service_id)
-                                <span class="status-pill active">Connected</span>
-                            @else
-                                <span class="status-pill neutral">No service</span>
-                            @endif
-                        </div>
-
-                        @if(! \App\Models\Client::supportsDisconnectionRequests())
-                            <p class="service-note">Disconnection requests are temporarily unavailable. Please contact support.</p>
-                        @elseif($client->hasPendingDisconnectionRequest())
-                            <div class="service-message"><strong>Disconnection request pending</strong><br>Sent {{ $client->disconnection_requested_at?->format('M d, Y \a\t g:i A') }}. An administrator will review it.</div>
-                            <button type="button" class="danger-button" disabled>Request Pending</button>
-                        @elseif($client->isDisconnected())
-                            <p class="service-note">Your service was disconnected{{ $client->disconnection_reviewed_at ? ' on ' . $client->disconnection_reviewed_at->format('M d, Y') : '' }}. Your account and history are kept. Subscribe to a plan to reconnect.</p>
-                        @elseif($client->canRequestDisconnection())
-                            <p class="service-note">Request disconnection of your {{ $client->currentService?->service_name ?? 'current service' }}. An administrator will review the request.</p>
-                            @if($client->disconnection_request_status === 'rejected')
-                                <div class="service-message info">Your previous disconnection request was declined.</div>
-                            @endif
-                            <form action="{{ route('client.disconnection.request') }}" method="POST" onsubmit="return showClientConfirmModal(this);" data-confirm-title="Request Disconnection?" data-confirm-message="Your request will be sent to an administrator for review. Your account and history will be kept." data-confirm-label="Confirm Request">
-                                @csrf
-                                <button type="submit" class="danger-button">Request Disconnection</button>
-                            </form>
-                        @else
-                            <p class="service-note">You do not have a connected service to disconnect.</p>
-                        @endif
-                    </div>
                 </div>
             </section>
         </div>

@@ -21,9 +21,6 @@ class DashboardController extends Controller
             'clients'  => Client::count(),
             'active_clients' => Client::active()->count(),
             'inactive_clients' => Client::inactive()->count(),
-            'disconnection_requests' => Client::supportsDisconnectionRequests()
-                ? Client::where('disconnection_request_status', 'pending')->count()
-                : 0,
             'total'    => Appointment::count(),
             'pending'  => Appointment::where('status', 'pending')->count(),
             'approved' => Appointment::where('status', 'approved')->count(),

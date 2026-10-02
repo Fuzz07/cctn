@@ -67,7 +67,7 @@ class AdminClientArchiveTest extends TestCase
         $this->assertSame(1, $this->client->tokens()->count());
     }
 
-    public function test_unsubscribe_endpoint_sets_the_subscription_inactive_without_a_disconnection_request()
+    public function test_unsubscribe_endpoint_sets_the_subscription_inactive()
     {
         $this->client->update([
             'account_status' => 'Active',
@@ -83,7 +83,6 @@ class AdminClientArchiveTest extends TestCase
         $client = $this->client->fresh();
         $this->assertSame('Inactive', $client->account_status);
         $this->assertSame('cancelled', $client->subscription_status);
-        $this->assertNull($client->disconnection_request_status);
         $this->assertSame(1, $client->tokens()->count());
         $this->assertAuthenticatedAs($client, 'client');
     }

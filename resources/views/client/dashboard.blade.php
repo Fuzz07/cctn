@@ -60,7 +60,7 @@
     .c-input:focus { outline: none; border-color: #dc2626; background: var(--bg-card); box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1); }
     .btn-save-profile { background: #0f172a; color: #ffffff; padding: 0.7rem 1.25rem; border-radius: 10px; font-weight: 700; font-size: 0.88rem; border: none; cursor: pointer; transition: background 0.2s; margin-top: 1rem; display: inline-block; }
     .btn-save-profile:hover { background: #dc2626; }
-    /* Subscription and Disconnection: two separate options */
+    /* Subscription options */
     .c-sub-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 1.25rem; margin-bottom: 1.75rem; }
     .c-sub-grid .c-card { margin-bottom: 0; }
     .c-sub-grid .c-card-header { margin-bottom: 1rem; }
@@ -83,14 +83,10 @@
     .btn-unsubscribe { padding: 0.7rem 1.1rem; border: 1px solid rgba(220, 38, 38, 0.35); border-radius: 10px; background: transparent; color: #b91c1c; font-weight: 700; font-size: 0.88rem; cursor: pointer; }
     .btn-unsubscribe:hover { background: rgba(220, 38, 38, 0.08); }
     .btn-unsubscribe:disabled { opacity: 0.6; cursor: not-allowed; }
-    .disconnection-pending { margin-bottom: 1rem; padding: 0.85rem 1rem; border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 8px; background: rgba(245, 158, 11, 0.1); color: #92400e; font-size: 0.85rem; line-height: 1.45; }
-    .disconnection-pending--info { border-color: rgba(59, 130, 246, 0.35); background: rgba(59, 130, 246, 0.08); color: #1e40af; }
     :root[data-theme="dark"] .c-pill--active { color: #4ade80; }
     :root[data-theme="dark"] .c-pill--inactive,
     :root[data-theme="dark"] .btn-unsubscribe { color: #f87171; }
-    :root[data-theme="dark"] .c-pill--pending,
-    :root[data-theme="dark"] .disconnection-pending { color: #fbbf24; }
-    :root[data-theme="dark"] .disconnection-pending--info { color: #93c5fd; }
+    :root[data-theme="dark"] .c-pill--pending { color: #fbbf24; }
 
     .client-confirm-modal { display: none; position: fixed; inset: 0; z-index: 100000; align-items: center; justify-content: center; padding: 1rem; }
     .client-confirm-modal.is-open { display: flex; }
@@ -193,7 +189,7 @@
         <!-- Left Side -->
         <div>
             @if(false) {{-- Moved to the dedicated Settings page. --}}
-            <!-- Subscription and Disconnection are managed separately -->
+            <!-- Subscription management -->
             <div class="c-sub-grid" id="subscription">
                 <div class="c-card">
                     <div class="c-card-header">
@@ -234,7 +230,7 @@
                         </p>
 
                         @if($pendingPlan)
-                            <div class="disconnection-pending">
+                            <div class="service-message">
                                 <strong>{{ $pendingPlan->service?->service_name ?? 'Your plan' }} is awaiting activation</strong><br>
                                 Requested {{ $pendingPlan->created_at->format('M d, Y') }}. Your status changes to Active once it is approved.
                             </div>
@@ -256,52 +252,6 @@
                     @endif
                 </div>
 
-                <div class="c-card">
-                    <div class="c-card-header">
-                        <h3 class="c-card-title">Disconnection</h3>
-                        @if($client->hasPendingDisconnectionRequest())
-                            <span class="c-pill c-pill--pending">Pending review</span>
-                        @elseif($client->isDisconnected())
-                            <span class="c-pill c-pill--inactive">Disconnected</span>
-                        @elseif($client->current_service_id)
-                            <span class="c-pill c-pill--active">Connected</span>
-                        @else
-                            <span class="c-pill c-pill--neutral">No service</span>
-                        @endif
-                    </div>
-
-                    @if(! \App\Models\Client::supportsDisconnectionRequests())
-                        <p class="c-sub-note">Disconnection requests are temporarily unavailable. Please contact support.</p>
-                    @elseif($client->hasPendingDisconnectionRequest())
-                        <div class="disconnection-pending">
-                            <strong>Disconnection request pending</strong><br>
-                            Sent {{ $client->disconnection_requested_at?->format('M d, Y \a\t g:i A') }}. An administrator will review it. Your subscription status is not changed by this request.
-                        </div>
-                        <button type="button" class="btn-unsubscribe" disabled>Request Pending</button>
-                    @elseif($client->isDisconnected())
-                        <p class="c-sub-note">
-                            Your service was disconnected{{ $client->disconnection_reviewed_at ? ' on ' . $client->disconnection_reviewed_at->format('M d, Y') : '' }}.
-                            Your account and subscription history are kept. Subscribe to a plan to reconnect.
-                        </p>
-                    @elseif($client->canRequestDisconnection())
-                        <p class="c-sub-note">Request disconnection of your {{ $client->currentService?->service_name ?? 'current service' }}. This is separate from your subscription: an administrator reviews the request, and your account and subscription history are kept.</p>
-                        @if($client->disconnection_request_status === 'rejected')
-                            <div class="disconnection-pending disconnection-pending--info">
-                                Your previous disconnection request was declined.
-                            </div>
-                        @endif
-                        <form action="{{ route('client.disconnection.request') }}" method="POST"
-                              onsubmit="return showClientConfirmModal(this);"
-                              data-confirm-title="Request Disconnection?"
-                              data-confirm-message="Your request will be sent to the administrator for review. Your account and subscription history are kept."
-                              data-confirm-label="Confirm Request">
-                            @csrf
-                            <button type="submit" class="btn-unsubscribe">Request Disconnection</button>
-                        </form>
-                    @else
-                        <p class="c-sub-note">You do not have a connected service to disconnect.</p>
-                    @endif
-                </div>
             </div>
 
             @endif
@@ -528,10 +478,6 @@
                     <div class="c-info-item">
                         <span>Current Plan</span>
                         <strong>{{ $client->currentService?->service_name ?? 'None' }}</strong>
-                    </div>
-                    <div class="c-info-item">
-                        <span>Service</span>
-                        <strong>{{ $client->disconnection_status_label }}</strong>
                     </div>
                     <div class="c-info-item">
                         <span>Member Since</span>

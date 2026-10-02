@@ -62,9 +62,6 @@
     <div class="filter-pills">
         <a href="{{ route('admin.clients', ['filter' => 'all', 'search' => $search]) }}" class="filter-pill {{ in_array($filter, ['all', 'active']) ? 'active' : '' }}">Active Clients</a>
         <a href="{{ route('admin.clients', ['filter' => 'active_bookings', 'search' => $search]) }}" class="filter-pill {{ $filter == 'active_bookings' ? 'active' : '' }}">With Active Bookings</a>
-        @if($disconnectionRequestsSupported)
-            <a href="{{ route('admin.clients', ['filter' => 'disconnection_requests', 'search' => $search]) }}" class="filter-pill {{ $filter == 'disconnection_requests' ? 'active' : '' }}">Disconnection Requests ({{ $pendingDisconnectionCount }})</a>
-        @endif
         <a href="{{ route('admin.clients', ['filter' => 'new_this_month', 'search' => $search]) }}" class="filter-pill {{ $filter == 'new_this_month' ? 'active' : '' }}">Joined This Month</a>
         @if ($archivingSupported)
             <a href="{{ route('admin.clients', ['filter' => 'inactive', 'search' => $search]) }}" class="filter-pill {{ in_array($filter, ['inactive', 'archived']) ? 'active' : '' }}">Inactive ({{ $archivedCount }})</a>
@@ -143,14 +140,6 @@
                             <span class="status-tag status-tag--active">Active</span>
                             <div style="font-size:0.75rem; color:#15803d; font-weight:600; margin-top:0.35rem;">{{ $client->subscription_status_label }}</div>
                         @endif
-                        {{-- Disconnection is tracked apart from the subscription status. --}}
-                        @if($client->hasPendingDisconnectionRequest())
-                            <span class="status-tag status-tag--pending">Disconnection requested</span>
-                            <div style="font-size:0.7rem; color:var(--text-muted); margin-top:0.25rem;">{{ $client->disconnection_requested_at?->format('M d, Y g:i A') }}</div>
-                        @elseif($client->isDisconnected())
-                            <span class="status-tag status-tag--inactive">Service disconnected</span>
-                            <div style="font-size:0.7rem; color:var(--text-muted); margin-top:0.25rem;">{{ $client->disconnection_reviewed_at?->format('M d, Y g:i A') }}</div>
-                        @endif
                     </td>
                     <td>
                         <div style="color:var(--text-muted);">{{ $client->created_at->format('M d, Y') }}</div>
@@ -159,18 +148,7 @@
                         @endif
                     </td>
                     <td>
-                        @if($client->hasPendingDisconnectionRequest())
-                            <div class="request-actions">
-                                <form action="{{ route('admin.clients.disconnection.approve', $client->id) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="btn-row btn-approve-request">Approve Disconnection</button>
-                                </form>
-                                <form action="{{ route('admin.clients.disconnection.reject', $client->id) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="btn-row btn-reject-request">Reject Request</button>
-                                </form>
-                            </div>
-                        @elseif (! $client->isAccountActive() && $client->currentService && $client->currentAppointment)
+                        @if (! $client->isAccountActive() && $client->currentService && $client->currentAppointment)
                             <form action="{{ route('admin.clients.restore', $client->id) }}" method="POST">
                                 @csrf
                                 <button type="submit" class="btn-row btn-restore">Re-subscribe</button>
@@ -190,7 +168,7 @@
             @empty
                 <tr>
                     <td colspan="8" style="text-align: center; padding: 3rem; color: var(--text-faint);">
-                        {{ $filter === 'disconnection_requests' && !$search ? 'No pending disconnection requests.' : (in_array($filter, ['inactive', 'archived']) && !$search ? 'No inactive clients.' : 'No clients found matching your search criteria.') }}
+                        {{ in_array($filter, ['inactive', 'archived']) && !$search ? 'No inactive clients.' : 'No clients found matching your search criteria.' }}
                     </td>
                 </tr>
             @endforelse

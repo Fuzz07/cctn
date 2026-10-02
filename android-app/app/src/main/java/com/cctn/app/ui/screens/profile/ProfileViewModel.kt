@@ -48,9 +48,6 @@ data class ProfileUiState(
     val unsubscribeDialogOpen: Boolean = false,
     val unsubscribing: Boolean = false,
 
-    val disconnectionDialogOpen: Boolean = false,
-    val requestingDisconnection: Boolean = false,
-
     val signOutDialogOpen: Boolean = false,
     val signingOut: Boolean = false,
 ) {
@@ -270,41 +267,6 @@ class ProfileViewModel @Inject constructor(
                     it.copy(
                         unsubscribing = false,
                         unsubscribeDialogOpen = false,
-                        message = result.error.message,
-                    )
-                }
-            }
-        }
-    }
-
-    // ── Disconnection (separate from the subscription) ───────────────────────
-
-    fun askToDisconnect() = _state.update { it.copy(disconnectionDialogOpen = true) }
-
-    fun dismissDisconnection() {
-        if (_state.value.requestingDisconnection) return
-        _state.update { it.copy(disconnectionDialogOpen = false) }
-    }
-
-    fun confirmDisconnection() {
-        if (_state.value.requestingDisconnection) return
-        _state.update { it.copy(requestingDisconnection = true) }
-
-        viewModelScope.launch {
-            when (val result = profileRepository.requestDisconnection()) {
-                is AppResult.Success -> _state.update {
-                    it.copy(
-                        requestingDisconnection = false,
-                        disconnectionDialogOpen = false,
-                        message = result.data.message
-                            ?: "Your disconnection request was sent to the administrator.",
-                    )
-                }
-
-                is AppResult.Failure -> _state.update {
-                    it.copy(
-                        requestingDisconnection = false,
-                        disconnectionDialogOpen = false,
                         message = result.error.message,
                     )
                 }

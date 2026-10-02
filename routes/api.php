@@ -38,7 +38,6 @@ Route::prefix('v1')->group(function () {
         Route::get('/profile',  [ProfileController::class, 'show']);
         Route::put('/profile',  [ProfileController::class, 'update']);
         Route::post('/profile/unsubscribe', [ProfileController::class, 'unsubscribe']);
-        Route::post('/profile/request-disconnection', [ProfileController::class, 'requestDisconnection']);
 
         // Notifications
         Route::get('/notifications',           [NotificationController::class, 'index']);

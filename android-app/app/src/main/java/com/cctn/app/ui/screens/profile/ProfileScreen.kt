@@ -20,7 +20,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -131,14 +130,6 @@ fun ProfileScreen(
             }
 
             item {
-                DisconnectionCard(
-                    client = current,
-                    requesting = state.requestingDisconnection,
-                    onRequestDisconnection = viewModel::askToDisconnect,
-                )
-            }
-
-            item {
                 OutlinedButton(
                     onClick = onPaymentMethods,
                     modifier = Modifier
@@ -233,34 +224,6 @@ fun ProfileScreen(
         )
     }
 
-    if (state.disconnectionDialogOpen) {
-        AlertDialog(
-            onDismissRequest = viewModel::dismissDisconnection,
-            title = { Text("Request Disconnection?") },
-            text = {
-                Text(
-                    "Your request will be sent to the administrator for review. " +
-                        "Your account and subscription history are kept."
-                )
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = viewModel::confirmDisconnection,
-                    enabled = !state.requestingDisconnection,
-                ) {
-                    Text("Confirm Request", color = MaterialTheme.colorScheme.error)
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = viewModel::dismissDisconnection,
-                    enabled = !state.requestingDisconnection,
-                ) {
-                    Text("Cancel")
-                }
-            },
-        )
-    }
 }
 
 @Composable
@@ -318,58 +281,6 @@ private fun SubscriptionCard(
                     text = "Choose a plan",
                     onClick = onChoosePlan,
                     modifier = Modifier.fillMaxWidth(),
-                )
-            }
-        }
-    }
-}
-
-/** Disconnection is its own option: it never depends on, or directly changes, the subscription status shown above. */
-@Composable
-private fun DisconnectionCard(
-    client: ClientDto,
-    requesting: Boolean,
-    onRequestDisconnection: () -> Unit,
-) {
-    val isPending = client.disconnectionRequestStatus.equals("pending", ignoreCase = true)
-    val isDisconnected = client.disconnectionRequestStatus.equals("approved", ignoreCase = true)
-    val canRequest = client.canRequestDisconnection
-        ?: (!client.currentPlan.isNullOrBlank() && !isPending && !isDisconnected)
-
-    SectionCard {
-        Column(Modifier.padding(16.dp)) {
-            Text(
-                text = "Disconnection",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-
-            if (!client.disconnectionStatusLabel.isNullOrBlank()) {
-                Spacer(Modifier.height(8.dp))
-                DetailRow("Service", client.disconnectionStatusLabel.orEmpty())
-            }
-
-            Spacer(Modifier.height(8.dp))
-            Text(
-                text = when {
-                    isPending -> "Your disconnection request is awaiting administrator review. It does not change your subscription status."
-                    isDisconnected -> "Your service has been disconnected. Your account and subscription history are kept. Subscribe to a plan to reconnect."
-                    canRequest -> "Request disconnection of your service. This is separate from your subscription: an administrator reviews the request, and your account and subscription history are kept."
-                    else -> "You do not have a connected service to disconnect."
-                },
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-
-            if (isPending || canRequest) {
-                Spacer(Modifier.height(14.dp))
-                LoadingButton(
-                    text = if (isPending) "Request Pending" else "Request Disconnection",
-                    onClick = onRequestDisconnection,
-                    modifier = Modifier.fillMaxWidth(),
-                    loading = requesting,
-                    enabled = !isPending,
-                    icon = Icons.Filled.PowerSettingsNew,
                 )
             }
         }

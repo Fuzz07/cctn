@@ -101,9 +101,6 @@ class ProfileRepository @Inject constructor(
         apiCall(json) { api.unsubscribe() }
             .also { if (it is AppResult.Success) session.updateClient(it.data.client) }
 
-    suspend fun requestDisconnection(): AppResult<ProfileResponse> =
-        apiCall(json) { api.requestDisconnection() }
-            .also { if (it is AppResult.Success) session.updateClient(it.data.client) }
 }
 
 @Singleton

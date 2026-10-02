@@ -92,15 +92,9 @@ class ClientController extends Controller
         $filter = $request->get('filter', 'all');
         $search = $request->get('search', '');
         $archivingSupported = Client::supportsArchiving();
-        $disconnectionRequestsSupported = Client::supportsDisconnectionRequests();
-
         $query = Client::with('currentService');
 
-        if ($filter === 'disconnection_requests' && $disconnectionRequestsSupported) {
-            $query->where('disconnection_request_status', 'pending');
-        } elseif ($filter === 'disconnection_requests') {
-            $query->whereRaw('1 = 0');
-        } elseif (in_array($filter, ['inactive', 'archived'], true)) {
+        if (in_array($filter, ['inactive', 'archived'], true)) {
             $query->inactive();
         } else {
             $query->active();
@@ -127,13 +121,8 @@ class ClientController extends Controller
         $clients = $query->orderBy('id', 'desc')->get();
 
         $archivedCount = Client::inactive()->count();
-        $pendingDisconnectionCount = $disconnectionRequestsSupported
-            ? Client::where('disconnection_request_status', 'pending')->count()
-            : 0;
-
         return view('admin.clients.index', compact(
-            'clients', 'filter', 'search', 'archivedCount', 'pendingDisconnectionCount',
-            'archivingSupported', 'disconnectionRequestsSupported'
+            'clients', 'filter', 'search', 'archivedCount', 'archivingSupported'
         ));
     }
 
@@ -146,8 +135,6 @@ class ClientController extends Controller
             );
         }
 
-        // Only the subscription changes; a pending disconnection request is
-        // reviewed separately with Approve / Decline.
         $client = Client::findOrFail($id);
         $client->deactivateSubscription('cancelled');
 
@@ -190,45 +177,4 @@ class ClientController extends Controller
         return redirect()->back()->with('success_message', "{$client->full_name} has been re-subscribed and the account is now Active.");
     }
 
-    public function approveDisconnection(Request $request, $id)
-    {
-        $request->validate(['review_note' => 'nullable|string|max:500']);
-
-        $client = Client::findOrFail($id);
-        if (! $client->approveDisconnection($request->input('review_note'))) {
-            return redirect()->back()->with('error_message', 'This disconnection request is no longer pending.');
-        }
-
-        Notification::create([
-            'for_admin' => false,
-            'client_id' => $client->id,
-            'title' => 'Disconnection Approved',
-            'message' => 'Your disconnection request was approved and your service has been disconnected. Your account and subscription history are kept, and you can choose a plan to subscribe again.',
-            'link' => 'dashboard',
-        ]);
-
-        return redirect()->route('admin.clients', ['filter' => 'inactive'])
-            ->with('success_message', "{$client->full_name}'s disconnection request was approved. The account is now listed as Inactive.");
-    }
-
-    public function rejectDisconnection(Request $request, $id)
-    {
-        $request->validate(['review_note' => 'nullable|string|max:500']);
-
-        $client = Client::findOrFail($id);
-        if (! $client->rejectDisconnection($request->input('review_note'))) {
-            return redirect()->back()->with('error_message', 'This disconnection request is no longer pending.');
-        }
-
-        Notification::create([
-            'for_admin' => false,
-            'client_id' => $client->id,
-            'title' => 'Disconnection Request Declined',
-            'message' => 'Your disconnection request was declined. Your service stays connected.',
-            'link' => 'dashboard',
-        ]);
-
-        return redirect()->route('admin.clients', ['filter' => 'disconnection_requests'])
-            ->with('success_message', "{$client->full_name}'s disconnection request was declined.");
-    }
 }

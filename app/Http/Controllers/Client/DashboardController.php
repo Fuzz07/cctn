@@ -170,47 +170,4 @@ class DashboardController extends Controller
         );
     }
 
-    /** Ask for the service to be disconnected. This is separate from the subscription status. */
-    public function requestDisconnection()
-    {
-        if (! Client::supportsDisconnectionRequests()) {
-            return redirect()->route('client.settings', ['tab' => 'service'])->with('error_message',
-                'Disconnection requests are temporarily unavailable. Please contact support.'
-            );
-        }
-
-        $client = Auth::guard('client')->user();
-        $client->load('currentService');
-
-        if ($client->hasPendingDisconnectionRequest()) {
-            return redirect()->route('client.settings', ['tab' => 'service'])->with(
-                'success_message',
-                'Your disconnection request is already awaiting administrator review.'
-            );
-        }
-
-        if (! $client->requestDisconnection()) {
-            return redirect()->route('client.settings', ['tab' => 'service'])->with(
-                'error_message',
-                $client->isDisconnected()
-                    ? 'Your service has already been disconnected.'
-                    : 'You do not have a connected service to disconnect.'
-            );
-        }
-
-        $planName = $client->currentService?->service_name ?? 'their current service';
-
-        Notification::create([
-            'for_admin' => true,
-            'client_id' => $client->id,
-            'title' => 'Disconnection Request',
-            'message' => "{$client->full_name} requested disconnection of {$planName}.",
-            'link' => 'admin/clients?filter=disconnection_requests',
-        ]);
-
-        return redirect()->route('client.settings', ['tab' => 'service'])->with(
-            'success_message',
-            'Your disconnection request was sent to the administrator. Your account and subscription history will be kept.'
-        );
-    }
 }
