@@ -298,7 +298,7 @@
         <div class="dashboard-hero">
             <div class="welcome-header">
                 <div class="dashboard-eyebrow"><span class="dashboard-live-dot"></span> Operations overview</div>
-                <h2>Welcome back, {{ $admin->fullname ?? 'BCTVI Admin' }}</h2>
+                <h2>Welcome back, {{ str_ireplace('CCTN', 'BCTVI', $admin->fullname ?? 'BCTVI Admin') }}</h2>
                 <p>Monitor bookings, customers, and service activity from one workspace.</p>
                 <div class="dashboard-hero-meta">{{ date('l, F j, Y') }} &middot; BCTVI Bantayan</div>
             </div>
