@@ -181,6 +181,7 @@ class AdminDashboardAnalyticsTest extends TestCase
     {
         $service = $this->makeService('FTTH - 10 Mbps');
         $this->makeAppointment($service, 'approved', Carbon::now());
+        $this->makePayment(999.00, Carbon::now());
 
         $response = $this->actingAs($this->admin, 'admin')->get(route('admin.dashboard'));
 
