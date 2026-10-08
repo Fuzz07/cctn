@@ -55,7 +55,6 @@
         font-size: 0.8rem;
         font-weight: 600;
         color: #dc2626;
-        display: flex;
         align-items: center;
         gap: 0.3rem;
     }

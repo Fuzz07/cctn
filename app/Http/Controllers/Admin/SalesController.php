@@ -31,7 +31,7 @@ class SalesController extends Controller
 
     public function receipt($id)
     {
-        $payment = Payment::with(['client', 'billing'])->findOrFail($id);
+        $payment = Payment::with(['client.currentAppointment', 'billing'])->findOrFail($id);
         return view('admin.sales.receipt', compact('payment'));
     }
 

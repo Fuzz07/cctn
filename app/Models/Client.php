@@ -385,6 +385,25 @@ class Client extends Authenticatable
     }
 
     /**
+     * The address a technician drives to: the purok / street and landmark the
+     * customer gave when booking, in front of the barangay on their profile.
+     * Falls back to the profile address alone when no booking locator exists.
+     */
+    public function getInstallationAddressAttribute(): string
+    {
+        $parts = array_filter([
+            $this->currentAppointment->purok_landmark ?? null,
+            $this->address_barangay,
+            $this->address_municipality,
+            $this->address_province,
+        ], function ($part) {
+            return trim((string) $part) !== '';
+        });
+
+        return !empty($parts) ? implode(', ', $parts) : 'N/A';
+    }
+
+    /**
      * Generate the next account number in the YYYY-MM-NN series (e.g. 2026-01-01),
      * where NN is a per-month sequence that continues from the highest issued number.
      */

@@ -25,6 +25,9 @@
     .badge-pending { background: #fff7ed; color: #ea580c; border: 1px solid #ffedd5; }
     .badge-approved { background: #f0fdf4; color: #16a34a; border: 1px solid #dcfce7; }
     .badge-cancelled { background: #fef2f2; color: #dc2626; border: 1px solid #fee2e2; }
+    .badge-business { background: #eef2ff; color: #4338ca; border: 1px solid #e0e7ff; }
+    .badge-residential { background: var(--bg-subtle); color: var(--text-muted); border: 1px solid var(--border-light); }
+    .badge-type { padding: 0.15rem 0.5rem; font-size: 0.68rem; letter-spacing: 0.04em; }
 
     .action-links { display: flex; gap: 0.75rem; align-items: center; }
     .btn-sm { padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem; border: 1px solid transparent; cursor: pointer; }
@@ -276,6 +279,14 @@
                value="{{ $filterSearch }}" placeholder="Search by client name...">
     </div>
     <div class="filter-group">
+        <label class="filter-label">Type</label>
+        <select name="installation_type" class="filter-input">
+            <option value="all" {{ $filterType == 'all' ? 'selected' : '' }}>All Types</option>
+            <option value="business" {{ $filterType == 'business' ? 'selected' : '' }}>Business</option>
+            <option value="residential" {{ $filterType == 'residential' ? 'selected' : '' }}>Residential</option>
+        </select>
+    </div>
+    <div class="filter-group">
         <label class="filter-label">Status</label>
         <select name="status" class="filter-input">
             <option value="all" {{ $filterStatus == 'all' ? 'selected' : '' }}>All Statuses</option>
@@ -320,7 +331,12 @@
                 <tr>
                     <td><strong style="color: var(--text-muted); font-family: monospace;">#{{ str_pad($appt->id, 5, '0', STR_PAD_LEFT) }}</strong></td>
                     <td>
-                        <div style="font-weight:700; color:var(--text-dark);">{{ $appt->client->firstname }} {{ $appt->client->lastname }}</div>
+                        <div style="display:flex; align-items:center; gap:.4rem; flex-wrap:wrap;">
+                            <span style="font-weight:700; color:var(--text-dark);">{{ $appt->client->firstname }} {{ $appt->client->lastname }}</span>
+                            <span class="badge badge-type badge-{{ $appt->installation_type === 'business' ? 'business' : 'residential' }}">
+                                {{ $appt->installation_type === 'business' ? 'Business' : 'Residential' }}
+                            </span>
+                        </div>
                         <div style="font-size:0.8rem; color:var(--text-muted);">{{ $appt->client->contact_no }} &middot; {{ $appt->client->address_barangay }}</div>
                         @if ($appt->purok_landmark)
                             <div style="font-size:0.78rem; color:var(--text-faint); margin-top:.15rem;">&#128205; {{ $appt->purok_landmark }}</div>
@@ -425,6 +441,14 @@
                                     <strong>{{ $manageAppointment->purok_landmark }}</strong><br>
                                 @endif
                                 {{ $manageAppointment->client->address_barangay }}, {{ $manageAppointment->client->address_municipality }}
+                            </span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Installation Type</span>
+                            <span class="detail-value">
+                                <span class="badge badge-type badge-{{ $manageAppointment->installation_type === 'business' ? 'business' : 'residential' }}">
+                                    {{ $manageAppointment->installation_type === 'business' ? 'Business' : 'Residential' }}
+                                </span>
                             </span>
                         </div>
                         <div class="detail-item">

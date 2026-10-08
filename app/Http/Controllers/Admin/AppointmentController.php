@@ -15,16 +15,28 @@ class AppointmentController extends Controller
         $filterService = $request->get('service_id', 0);
         $filterDate    = $request->get('date', '');
         $filterSearch  = trim((string) $request->get('search', ''));
+        $filterType    = $request->get('installation_type', 'all');
 
         $query = Appointment::with(['client', 'service']);
 
         if ($filterSearch !== '') {
-            // Match either name part, or the full name as an admin would type it.
-            $query->whereHas('client', function ($q) use ($filterSearch) {
-                $q->where('firstname', 'like', "%{$filterSearch}%")
-                  ->orWhere('lastname', 'like', "%{$filterSearch}%")
-                  ->orWhereRaw("CONCAT(firstname, ' ', lastname) LIKE ?", ["%{$filterSearch}%"]);
+            // Every word typed must appear in the first or last name, so
+            // "dave alagban" and "alagban dave" both find the same client.
+            // Matching per word avoids CONCAT(), which is not portable.
+            $terms = preg_split('/\s+/', $filterSearch, -1, PREG_SPLIT_NO_EMPTY);
+
+            $query->whereHas('client', function ($q) use ($terms) {
+                foreach ($terms as $term) {
+                    $q->where(function ($inner) use ($term) {
+                        $inner->where('firstname', 'like', "%{$term}%")
+                              ->orWhere('lastname', 'like', "%{$term}%");
+                    });
+                }
             });
+        }
+
+        if (in_array($filterType, ['residential', 'business'], true)) {
+            $query->where('installation_type', $filterType);
         }
 
         if ($filterStatus !== 'all') {
@@ -55,7 +67,7 @@ class AppointmentController extends Controller
 
         return view('admin.appointments.index', compact(
             'appointments', 'services', 'filterStatus', 'filterService',
-            'filterDate', 'filterSearch', 'manageAppointment'
+            'filterDate', 'filterSearch', 'filterType', 'manageAppointment'
         ));
     }
 

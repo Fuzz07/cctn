@@ -188,6 +188,7 @@
                 <p>Account #: <span style="font-family:monospace; color:#dc2626;">{{ $payment->account_number ?? $payment->client?->account_number ?? 'N/A' }}</span></p>
                 <p>Contact: {{ $payment->client->contact_no ?? 'N/A' }}</p>
                 <p>Email: {{ $payment->client->email ?? 'N/A' }}</p>
+                <p>Installation Address: {{ $payment->client?->installation_address ?? 'N/A' }}</p>
             </div>
             <div class="info-block">
                 <h4>Payment Transaction Details</h4>
