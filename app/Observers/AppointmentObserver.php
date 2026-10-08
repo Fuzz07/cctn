@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Appointment;
+use App\Services\AppointmentRevenueRecorder;
 
 class AppointmentObserver
 {
@@ -15,6 +16,12 @@ class AppointmentObserver
 
     public function updated(Appointment $appointment): void
     {
+        if ($appointment->status === 'approved'
+            && $appointment->wasChanged('status')
+            && $appointment->getOriginal('status') !== 'approved') {
+            app(AppointmentRevenueRecorder::class)->record($appointment);
+        }
+
         if ($appointment->status === 'approved'
             && ($appointment->wasChanged('status')
                 || $appointment->wasChanged('service_id')

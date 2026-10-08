@@ -488,15 +488,6 @@
                         ₱{{ number_format($amountPaid, 2) }}
                     </td>
                 </tr>
-                @if ($service?->installation_fee > 0)
-                    <tr>
-                        <td><strong>Installation Fee</strong></td>
-                        <td>One-time setup and installation</td>
-                        <td style="text-align:right;font-weight:800;color:var(--text-dark);">
-                            ₱{{ number_format($service->installation_fee, 2) }}
-                        </td>
-                    </tr>
-                @endif
             </tbody>
         </table>
 
@@ -530,7 +521,7 @@
             </div>
             <div style="text-align:right;">
                 <div class="total-label">Total Amount</div>
-                <div class="total-amount">₱{{ number_format($amountPaid + ($service?->installation_fee ?? 0), 2) }}</div>
+                <div class="total-amount">₱{{ number_format($amountPaid, 2) }}</div>
             </div>
         </div>
 

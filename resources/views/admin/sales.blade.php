@@ -76,13 +76,13 @@
     <div>
         <div class="revenue-label">Total Revenue Collected</div>
         <div class="revenue-amount">₱{{ number_format($totalRevenue, 2) }}</div>
-        <div class="revenue-sub">{{ $payments->count() }} payment(s) recorded</div>
+        <div class="revenue-sub">{{ $paymentCount }} payment(s) recorded</div>
     </div>
     <div style="text-align:right;">
         <div class="revenue-label">Last Payment</div>
-        @if($payments->isNotEmpty())
-            <div style="font-size:1.25rem; font-weight:700; color:#fff;">{{ $payments->first()->payment_date ? date('M d, Y', strtotime($payments->first()->payment_date)) : '—' }}</div>
-            <div style="font-size:.85rem; color:rgba(255,255,255,.6);">₱{{ number_format($payments->first()->amount_paid, 2) }}</div>
+        @if($lastPayment)
+            <div style="font-size:1.25rem; font-weight:700; color:#fff;">{{ $lastPayment->payment_date ? date('M d, Y', strtotime($lastPayment->payment_date)) : '—' }}</div>
+            <div style="font-size:.85rem; color:rgba(255,255,255,.6);">₱{{ number_format($lastPayment->amount_paid, 2) }}</div>
         @else
             <div style="font-size:1rem; color:rgba(255,255,255,.6);">No payments yet</div>
         @endif

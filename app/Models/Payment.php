@@ -10,7 +10,7 @@ class Payment extends Model
     use HasFactory;
 
     protected $fillable = [
-        'billing_id', 'client_id', 'account_number', 'amount_paid',
+        'billing_id', 'appointment_id', 'client_id', 'account_number', 'amount_paid',
         'payment_method', 'reference_number', 'received_by', 'notes', 'payment_date', 'receipt_no',
     ];
 
@@ -27,5 +27,10 @@ class Payment extends Model
     public function client()
     {
         return $this->belongsTo(Client::class);
+    }
+
+    public function appointment()
+    {
+        return $this->belongsTo(Appointment::class);
     }
 }

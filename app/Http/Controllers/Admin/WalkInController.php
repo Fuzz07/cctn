@@ -215,6 +215,7 @@ class WalkInController extends Controller
             if ($amountPaid > 0) {
                 $walkinPayment = Payment::create([
                     'billing_id'       => $billing->id,
+                    'appointment_id'   => $appointment->id,
                     'client_id'        => $client->id,
                     'account_number'   => $billing->account_number,
                     'amount_paid'      => $amountPaid,

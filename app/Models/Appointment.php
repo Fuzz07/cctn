@@ -43,6 +43,11 @@ class Appointment extends Model
         return $this->belongsTo(Service::class);
     }
 
+    public function payment()
+    {
+        return $this->hasOne(Payment::class);
+    }
+
     public static function hasConflict(string $date, string $time, int $excludeId = 0): bool
     {
         $query = self::where('preferred_date', $date)

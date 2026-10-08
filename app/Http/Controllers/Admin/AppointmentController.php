@@ -9,8 +9,6 @@ use App\Models\Payment;
 use App\Models\Service;
 use App\Support\TableSort;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Schema;
 
 class AppointmentController extends Controller
 {
@@ -129,12 +127,8 @@ class AppointmentController extends Controller
 
         $appointment->update($updateData);
 
-        // Auto-create a Payment (sales revenue) record when newly approved
         $isNowApproved  = ($appointment->status === 'approved');
         $wasNotApproved = ($previousStatus !== 'approved');
-        if ($isNowApproved && $wasNotApproved) {
-            $this->createApprovalPayment($appointment);
-        }
 
         // Notify client if cancelled
         if ($request->status === 'cancelled' && $previousStatus !== 'cancelled' && $appointment->client_id) {
@@ -186,11 +180,6 @@ class AppointmentController extends Controller
 
         $appointment->update($updateData);
 
-        // Auto-create a Payment (sales revenue) record when newly approved
-        if ($request->status === 'approved' && $previousStatus !== 'approved') {
-            $this->createApprovalPayment($appointment);
-        }
-
         if ($request->status === 'approved') {
             $mailErr = $this->sendPaymentConfirmationEmail($appointment);
             if ($mailErr) {
@@ -207,10 +196,10 @@ class AppointmentController extends Controller
      */
     public function receipt(int $id)
     {
-        $appointment = Appointment::with(['client', 'service'])->findOrFail($id);
+        $appointment = Appointment::with(['client', 'service', 'payment'])->findOrFail($id);
 
-        // Find the linked payment if one was auto-generated
-        $payment = Payment::where('notes', 'Booking #' . $id)
+        // Keep the note lookup for receipts created before appointment_id existed.
+        $payment = $appointment->payment ?: Payment::where('notes', 'Booking #' . $id)
             ->orWhere(function ($q) use ($appointment) {
                 $q->where('client_id', $appointment->client_id)
                   ->where('notes', 'like', '%Booking #' . $id . '%');
@@ -219,59 +208,6 @@ class AppointmentController extends Controller
             ->first();
 
         return view('admin.appointments.receipt', compact('appointment', 'payment'));
-    }
-
-    /**
-     * Auto-generate a Payment record when a booking is approved.
-     * Uses the service price as the amount. Skips if a payment already exists for this booking.
-     */
-    private function createApprovalPayment(Appointment $appointment): void
-    {
-        try {
-            $appointment->loadMissing(['client', 'service']);
-
-            // Skip if already has a linked payment
-            $alreadyExists = Payment::where('notes', 'like', '%Booking #' . $appointment->id . '%')
-                ->exists();
-            if ($alreadyExists) {
-                return;
-            }
-
-            $admin       = Auth::guard('admin')->user();
-            $service     = $appointment->service;
-            $amountPaid  = $appointment->amount_paid > 0
-                ? (float) $appointment->amount_paid
-                : (float) ($service?->price ?? 0);
-
-            if ($amountPaid <= 0) {
-                return; // No amount to record
-            }
-
-            $receiptNo = 'APT-' . now()->format('Ymd') . '-' . str_pad($appointment->id, 5, '0', STR_PAD_LEFT);
-
-            $payment = Payment::create([
-                'client_id'        => $appointment->client_id,
-                'account_number'   => $appointment->client?->account_number ?? '',
-                'amount_paid'      => $amountPaid,
-                'payment_method'   => $appointment->payment_method ?? 'Cash',
-                'reference_number' => $appointment->reference_number ?? '',
-                'received_by'      => $admin?->fullname ?? 'Admin Staff',
-                'notes'            => 'Booking #' . $appointment->id . ' — ' . ($service?->service_name ?? 'Service'),
-                'payment_date'     => $appointment->payment_date ?? now(),
-                'receipt_no'       => $receiptNo,
-            ]);
-
-            // Store receipt_no back on the appointment if column exists
-            $cols = Schema::getColumnListing('appointments');
-            if (in_array('receipt_no', $cols, true)) {
-                $appointment->update(['receipt_no' => $receiptNo]);
-            }
-
-        } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::warning(
-                "Could not create approval payment for appointment #{$appointment->id}: " . $e->getMessage()
-            );
-        }
     }
 
     private function sendPaymentConfirmationEmail(Appointment $appointment): ?string

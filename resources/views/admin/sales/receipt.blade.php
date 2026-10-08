@@ -211,7 +211,9 @@
             <tbody>
                 <tr>
                     <td>
-                        CBTVI Broadband Cable Service Settlement
+                        {{ $payment->appointment?->service
+                            ? str_ireplace('CCTN', 'BCTVI', $payment->appointment->service->service_name)
+                            : 'BCTVI Broadband Cable Service Settlement' }}
                         @if(!empty($payment->notes))
                             <br><small style="color:var(--text-muted); font-weight:normal;">Note: {{ $payment->notes }}</small>
                         @endif
