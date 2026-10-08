@@ -277,8 +277,9 @@
         /* Analytics Charts */
         .analytics-row {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.25rem;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            align-items: stretch;
         }
 
         .chart-card {
@@ -343,11 +344,11 @@
         }
 
         .chart-canvas-wrap--revenue {
-            height: 300px;
+            height: 270px;
         }
 
         .chart-canvas-wrap--doughnut {
-            height: 300px;
+            height: 270px;
         }
 
         .chart-empty {
@@ -407,17 +408,34 @@
             border: 0;
         }
 
-        @media (max-width: 1024px) {
+        @media (max-width: 1280px) {
             .analytics-row {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
             }
 
+            /* the revenue line needs the width more than the other two */
+            .analytics-row > .chart-card:first-child {
+                grid-column: 1 / -1;
+            }
+        }
+
+        @media (max-width: 1024px) {
             .stats-row {
                 grid-template-columns: repeat(2, 1fr);
             }
 
             .dash-split-row {
                 grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 820px) {
+            .analytics-row {
+                grid-template-columns: 1fr;
+            }
+
+            .analytics-row > .chart-card:first-child {
+                grid-column: auto;
             }
         }
 
@@ -531,51 +549,51 @@
             $planHasData = array_sum($bookingsByPlan['values']) > 0;
         @endphp
 
-        <!-- Line chart: collected sales revenue only -->
-        <div class="dash-card chart-card">
-            <div class="dash-card-header">
-                <div>
-                    <h3 class="dash-card-title">Sales Revenue</h3>
-                    <p class="chart-subtitle">Income collected from recorded payments &middot; last 6 months</p>
+        <div class="analytics-row">
+            <!-- Line chart: collected sales revenue only -->
+            <div class="dash-card chart-card">
+                <div class="dash-card-header">
+                    <div>
+                        <h3 class="dash-card-title">Sales Revenue</h3>
+                        <p class="chart-subtitle">Income collected from recorded payments &middot; last 6 months</p>
+                    </div>
+                    <button type="button" class="chart-table-toggle" data-chart-table="sales-revenue-table"
+                        aria-expanded="false" aria-controls="sales-revenue-table">Table view</button>
                 </div>
-                <button type="button" class="chart-table-toggle" data-chart-table="sales-revenue-table"
-                    aria-expanded="false" aria-controls="sales-revenue-table">Table view</button>
+
+                @if ($revenueHasData)
+                    <div class="chart-legend">
+                        <span class="chart-legend-item">
+                            <span class="chart-key" style="background:#16a34a;"></span> Collected revenue
+                        </span>
+                    </div>
+                    <div class="chart-canvas-wrap chart-canvas-wrap--revenue">
+                        <canvas id="salesRevenueChart" role="img"
+                            aria-label="Line chart of collected sales revenue per month for the last six months. The same figures are listed in the table view."></canvas>
+                    </div>
+                @else
+                    <div class="chart-empty">No sales revenue recorded in the last 6 months yet.</div>
+                @endif
+
+                <table class="chart-table" id="sales-revenue-table" hidden>
+                    <caption class="chart-sr-only">Collected sales revenue per month, last 6 months</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Month</th>
+                            <th scope="col">Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($salesRevenueTrend['labels'] as $i => $label)
+                            <tr>
+                                <th scope="row" style="font-weight:600;">{{ $label }}</th>
+                                <td>&#8369;{{ number_format($salesRevenueTrend['values'][$i], 2) }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
 
-            @if ($revenueHasData)
-                <div class="chart-legend">
-                    <span class="chart-legend-item">
-                        <span class="chart-key" style="background:#16a34a;"></span> Collected revenue
-                    </span>
-                </div>
-                <div class="chart-canvas-wrap chart-canvas-wrap--revenue">
-                    <canvas id="salesRevenueChart" role="img"
-                        aria-label="Line chart of collected sales revenue per month for the last six months. The same figures are listed in the table view."></canvas>
-                </div>
-            @else
-                <div class="chart-empty">No sales revenue recorded in the last 6 months yet.</div>
-            @endif
-
-            <table class="chart-table" id="sales-revenue-table" hidden>
-                <caption class="chart-sr-only">Collected sales revenue per month, last 6 months</caption>
-                <thead>
-                    <tr>
-                        <th scope="col">Month</th>
-                        <th scope="col">Revenue</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($salesRevenueTrend['labels'] as $i => $label)
-                        <tr>
-                            <th scope="row" style="font-weight:600;">{{ $label }}</th>
-                            <td>&#8369;{{ number_format($salesRevenueTrend['values'][$i], 2) }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-
-        <div class="analytics-row">
             <!-- Horizontal bar chart: booking volume over time -->
             <div class="dash-card chart-card">
                 <div class="dash-card-header">

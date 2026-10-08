@@ -138,4 +138,9 @@
         </tbody>
     </table>
 </div>
+
+@include('admin.partials.simple-pagination', [
+    'paginator' => $payments,
+    'label' => 'Sales records pagination',
+])
 @endsection

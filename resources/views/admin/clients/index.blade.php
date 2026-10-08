@@ -176,6 +176,11 @@
     </table>
 </div>
 
+@include('admin.partials.simple-pagination', [
+    'paginator' => $clients,
+    'label' => 'Clients pagination',
+])
+
 <div id="unsubscribe-modal" class="unsubscribe-modal" role="dialog" aria-modal="true" aria-labelledby="unsubscribe-modal-title" aria-describedby="unsubscribe-modal-message" aria-hidden="true">
     <div class="unsubscribe-modal__backdrop" onclick="hideUnsubscribeModal()"></div>
     <div class="unsubscribe-modal__dialog">

@@ -10,10 +10,23 @@ class SalesController extends Controller
 {
     public function index()
     {
-        $payments = Payment::with(['client', 'billing'])->orderBy('payment_date', 'desc')->get();
-        $totalRevenue = $payments->sum('amount_paid');
+        $payments = Payment::with(['client', 'billing'])
+            ->orderBy('payment_date', 'desc')
+            ->orderBy('id', 'desc')
+            ->simplePaginate(10)
+            ->withQueryString();
+        $totalRevenue = Payment::sum('amount_paid');
+        $paymentCount = Payment::count();
+        $lastPayment = Payment::orderBy('payment_date', 'desc')
+            ->orderBy('id', 'desc')
+            ->first();
 
-        return view('admin.sales', compact('payments', 'totalRevenue'));
+        return view('admin.sales', compact(
+            'payments',
+            'totalRevenue',
+            'paymentCount',
+            'lastPayment'
+        ));
     }
 
     public function receipt($id)

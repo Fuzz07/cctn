@@ -376,6 +376,11 @@
     </table>
 </div>
 
+@include('admin.partials.simple-pagination', [
+    'paginator' => $appointments,
+    'label' => 'Appointments pagination',
+])
+
 <!-- Manage Appointment Modal -->
 @if($manageAppointment)
     <div class="modal-overlay active">

@@ -118,7 +118,9 @@ class ClientController extends Controller
             });
         }
 
-        $clients = $query->orderBy('id', 'desc')->get();
+        $clients = $query->orderBy('id', 'desc')
+            ->simplePaginate(10)
+            ->withQueryString();
 
         $archivedCount = Client::inactive()->count();
         return view('admin.clients.index', compact(

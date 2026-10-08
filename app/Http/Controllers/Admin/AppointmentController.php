@@ -29,7 +29,9 @@ class AppointmentController extends Controller
 
         $appointments = $query->orderBy('preferred_date', 'desc')
             ->orderBy('preferred_time', 'desc')
-            ->get();
+            ->orderBy('id', 'desc')
+            ->simplePaginate(10)
+            ->withQueryString();
 
         $services = Service::orderBy('service_name')->get()->unique('service_name')->values();
 
