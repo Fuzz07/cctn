@@ -29,11 +29,6 @@ class DashboardController extends Controller
             'services' => Service::where('status', 'Active')->count(),
         ];
 
-        $recentBookings = Appointment::with(['client.currentService', 'service'])
-            ->orderBy('created_at', 'desc')
-            ->limit(5)
-            ->get();
-
         $bookingTrend = $this->bookingTrend();
         $bookingsByPlan = $this->bookingsByPlan();
         $salesRevenueTrend = $this->salesRevenueTrend();
@@ -41,7 +36,6 @@ class DashboardController extends Controller
         return view('admin.dashboard', compact(
             'admin',
             'stats',
-            'recentBookings',
             'bookingTrend',
             'bookingsByPlan',
             'salesRevenueTrend'

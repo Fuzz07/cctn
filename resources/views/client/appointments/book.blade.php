@@ -204,7 +204,9 @@
             @endif
 
             <!-- Installation Type (gates the service list below) -->
-            @php($chosenType = old('installation_type', $selectedInstallationType))
+            @php
+                $chosenType = old('installation_type', $selectedInstallationType);
+            @endphp
             <div class="form-group">
                 <label class="form-label" id="installation-type-label">Select Installation Type <span style="color:#dc2626">*</span></label>
                 <div class="install-type-group {{ $errors->has('installation_type') ? 'has-error' : '' }}"
