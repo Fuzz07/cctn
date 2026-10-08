@@ -9,8 +9,8 @@
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
-            height: 100%;
-            min-height: 0;
+            height: auto;
+            min-height: 100%;
             font-family: system-ui, sans-serif;
             max-width: 1600px;
             margin: 0 auto;
@@ -277,7 +277,7 @@
         /* Analytics Charts */
         .analytics-row {
             display: grid;
-            grid-template-columns: 1.15fr 1fr;
+            grid-template-columns: 1fr;
             gap: 1.25rem;
         }
 

@@ -1326,9 +1326,10 @@ body.admin-app {
     overscroll-behavior: contain;
 }
 
-/* Dashboard is a single-screen workspace on desktop. */
+/* The dashboard can grow beyond the viewport as analytics cards are added. */
 .admin-dashboard-pane {
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
     padding: 0.875rem 1.25rem;
 }
 body.admin-dashboard-page .admin-main-wrapper > footer {
