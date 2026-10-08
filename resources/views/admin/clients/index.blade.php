@@ -83,13 +83,13 @@
     <table class="data-table">
         <thead>
             <tr>
-                <th>Profile</th>
+                <th>@include('admin.partials.sortable-header', ['key' => 'profile', 'label' => 'Profile', 'sort' => $sort])</th>
                 <th>Contact</th>
-                <th>Location</th>
+                <th>@include('admin.partials.sortable-header', ['key' => 'location', 'label' => 'Location', 'sort' => $sort])</th>
                 <th>Verification</th>
                 <th>Current Plan</th>
                 <th>Status</th>
-                <th>Joined</th>
+                <th>@include('admin.partials.sortable-header', ['key' => 'joined', 'label' => 'Joined', 'sort' => $sort, 'firstDir' => 'desc'])</th>
                 <th>Actions</th>
             </tr>
         </thead>

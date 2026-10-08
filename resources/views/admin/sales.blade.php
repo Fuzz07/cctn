@@ -93,14 +93,14 @@
     <table class="data-table">
         <thead>
             <tr>
-                <th>Receipt #</th>
-                <th>Client</th>
+                <th>@include('admin.partials.sortable-header', ['key' => 'receipt', 'label' => 'Receipt #', 'sort' => $sort])</th>
+                <th>@include('admin.partials.sortable-header', ['key' => 'client', 'label' => 'Client', 'sort' => $sort])</th>
                 <th>Account #</th>
                 <th>Period</th>
-                <th>Amount Paid</th>
-                <th>Method</th>
+                <th>@include('admin.partials.sortable-header', ['key' => 'amount', 'label' => 'Amount Paid', 'sort' => $sort, 'firstDir' => 'desc'])</th>
+                <th>@include('admin.partials.sortable-header', ['key' => 'method', 'label' => 'Method', 'sort' => $sort])</th>
                 <th>Received By</th>
-                <th>Date</th>
+                <th>@include('admin.partials.sortable-header', ['key' => 'date', 'label' => 'Date', 'sort' => $sort, 'firstDir' => 'desc'])</th>
                 <th style="text-align:center;">Action</th>
             </tr>
         </thead>

@@ -1336,6 +1336,46 @@ body.admin-dashboard-page .admin-main-wrapper > footer {
     display: none;
 }
 
+/* Sortable column headers for the admin data tables. */
+.th-sort {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    color: inherit;
+    font: inherit;
+    text-decoration: none;
+    white-space: nowrap;
+    border-radius: 4px;
+    transition: color 0.15s ease;
+}
+
+.th-sort:hover {
+    color: var(--text-dark);
+}
+
+.th-sort:focus-visible {
+    outline: 2px solid #0f172a;
+    outline-offset: 2px;
+}
+
+.th-sort__icon {
+    font-size: 0.85em;
+    line-height: 1;
+    opacity: 0.35;
+}
+
+.th-sort:hover .th-sort__icon {
+    opacity: 0.7;
+}
+
+.th-sort.is-active {
+    color: var(--text-dark);
+}
+
+.th-sort.is-active .th-sort__icon {
+    opacity: 1;
+}
+
 /* Reusable Previous / Next controls for admin data tables. */
 .admin-list-pagination {
     display: flex;

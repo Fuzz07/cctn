@@ -318,11 +318,11 @@
     <table class="data-table">
         <thead>
             <tr>
-                <th>Ref ID</th>
-                <th>Client Info</th>
-                <th>Service & Schedule</th>
+                <th>@include('admin.partials.sortable-header', ['key' => 'ref', 'label' => 'Ref ID', 'sort' => $sort])</th>
+                <th>@include('admin.partials.sortable-header', ['key' => 'client', 'label' => 'Client Info', 'sort' => $sort])</th>
+                <th>@include('admin.partials.sortable-header', ['key' => 'schedule', 'label' => 'Service & Schedule', 'sort' => $sort, 'firstDir' => 'desc'])</th>
                 <th>Payment</th>
-                <th>Status</th>
+                <th>@include('admin.partials.sortable-header', ['key' => 'status', 'label' => 'Status', 'sort' => $sort])</th>
                 <th>Actions</th>
             </tr>
         </thead>

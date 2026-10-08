@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Client;
 use App\Models\Appointment;
 use App\Models\Notification;
+use App\Support\TableSort;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -118,13 +119,21 @@ class ClientController extends Controller
             });
         }
 
+        $sort = TableSort::resolve($request, [
+            'profile'  => ['lastname', 'firstname'],
+            'location' => ['address_municipality', 'address_barangay'],
+            'joined'   => 'created_at',
+        ], 'joined', 'desc');
+
+        TableSort::apply($query, $sort);
+
         $clients = $query->orderBy('id', 'desc')
             ->simplePaginate(7)
             ->withQueryString();
 
         $archivedCount = Client::inactive()->count();
         return view('admin.clients.index', compact(
-            'clients', 'filter', 'search', 'archivedCount', 'archivingSupported'
+            'clients', 'filter', 'search', 'archivedCount', 'archivingSupported', 'sort'
         ));
     }
 

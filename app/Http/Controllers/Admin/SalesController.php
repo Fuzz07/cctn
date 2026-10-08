@@ -4,15 +4,32 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Payment;
+use App\Models\Client;
+use App\Support\TableSort;
 use Illuminate\Http\Request;
 
 class SalesController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $payments = Payment::with(['client', 'billing'])
-            ->orderBy('payment_date', 'desc')
-            ->orderBy('id', 'desc')
+        $sort = TableSort::resolve($request, [
+            'receipt' => 'receipt_no',
+            'client'  => function ($q, $dir) {
+                return $q->orderBy(
+                    Client::select('lastname')->whereColumn('clients.id', 'payments.client_id'), $dir
+                )->orderBy(
+                    Client::select('firstname')->whereColumn('clients.id', 'payments.client_id'), $dir
+                );
+            },
+            'amount'  => 'amount_paid',
+            'method'  => 'payment_method',
+            'date'    => 'payment_date',
+        ], 'date', 'desc');
+
+        $query = Payment::with(['client', 'billing']);
+        TableSort::apply($query, $sort);
+
+        $payments = $query->orderBy('id', 'desc')
             ->simplePaginate(10)
             ->withQueryString();
         $totalRevenue = Payment::sum('amount_paid');
@@ -25,7 +42,8 @@ class SalesController extends Controller
             'payments',
             'totalRevenue',
             'paymentCount',
-            'lastPayment'
+            'lastPayment',
+            'sort'
         ));
     }
 

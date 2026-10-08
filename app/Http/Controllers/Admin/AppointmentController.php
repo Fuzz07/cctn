@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
+use App\Models\Client;
 use App\Models\Service;
+use App\Support\TableSort;
 use Illuminate\Http\Request;
 
 class AppointmentController extends Controller
@@ -49,9 +51,23 @@ class AppointmentController extends Controller
             $query->where('preferred_date', $filterDate);
         }
 
-        $appointments = $query->orderBy('preferred_date', 'desc')
-            ->orderBy('preferred_time', 'desc')
-            ->orderBy('id', 'desc')
+        $sort = TableSort::resolve($request, [
+            'ref'      => 'id',
+            // A booking has no name of its own; borrow the client's for ordering.
+            'client'   => function ($q, $dir) {
+                return $q->orderBy(
+                    Client::select('lastname')->whereColumn('clients.id', 'appointments.client_id'), $dir
+                )->orderBy(
+                    Client::select('firstname')->whereColumn('clients.id', 'appointments.client_id'), $dir
+                );
+            },
+            'schedule' => ['preferred_date', 'preferred_time'],
+            'status'   => 'status',
+        ], 'schedule', 'desc');
+
+        TableSort::apply($query, $sort);
+
+        $appointments = $query->orderBy('id', 'desc')
             ->simplePaginate(7)
             // keep the active filters, but never carry an open modal across pages
             ->appends($request->except(['page', 'manage_id']));
@@ -67,7 +83,7 @@ class AppointmentController extends Controller
 
         return view('admin.appointments.index', compact(
             'appointments', 'services', 'filterStatus', 'filterService',
-            'filterDate', 'filterSearch', 'filterType', 'manageAppointment'
+            'filterDate', 'filterSearch', 'filterType', 'manageAppointment', 'sort'
         ));
     }
 
