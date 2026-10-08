@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use App\Models\Client;
+use App\Models\Payment;
 use App\Models\Service;
 use App\Support\TableSort;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 
 class AppointmentController extends Controller
 {
@@ -22,9 +25,6 @@ class AppointmentController extends Controller
         $query = Appointment::with(['client', 'service']);
 
         if ($filterSearch !== '') {
-            // Every word typed must appear in the first or last name, so
-            // "dave alagban" and "alagban dave" both find the same client.
-            // Matching per word avoids CONCAT(), which is not portable.
             $terms = preg_split('/\s+/', $filterSearch, -1, PREG_SPLIT_NO_EMPTY);
 
             $query->whereHas('client', function ($q) use ($terms) {
@@ -53,7 +53,6 @@ class AppointmentController extends Controller
 
         $sort = TableSort::resolve($request, [
             'ref'      => 'id',
-            // A booking has no name of its own; borrow the client's for ordering.
             'client'   => function ($q, $dir) {
                 return $q->orderBy(
                     Client::select('lastname')->whereColumn('clients.id', 'appointments.client_id'), $dir
@@ -69,12 +68,10 @@ class AppointmentController extends Controller
 
         $appointments = $query->orderBy('id', 'desc')
             ->simplePaginate(7)
-            // keep the active filters, but never carry an open modal across pages
             ->appends($request->except(['page', 'manage_id']));
 
         $services = Service::orderBy('service_name')->get()->unique('service_name')->values();
 
-        // If manage_id is set, fetch that appointment for the edit modal
         $manageAppointment = null;
         $manageId = $request->get('manage_id', 0);
         if ($manageId > 0) {
@@ -90,32 +87,31 @@ class AppointmentController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'appointment_id' => 'required|exists:appointments,id',
-            'preferred_date' => 'required|date',
-            'preferred_time' => 'required',
-            'status'         => 'required|in:pending,approved,cancelled',
-            'payment_status' => 'nullable|string|in:Pending Payment,Payment Confirmed,Cancelled,paid,unpaid,pending',
+            'appointment_id'       => 'required|exists:appointments,id',
+            'preferred_date'       => 'required|date',
+            'preferred_time'       => 'required',
+            'status'               => 'required|in:pending,approved,cancelled',
+            'payment_status'       => 'nullable|string|in:Pending Payment,Payment Confirmed,Cancelled,paid,unpaid,pending',
             'subscription_ends_at' => 'nullable|date|after_or_equal:today',
         ]);
 
         $appointment = Appointment::with(['client', 'service'])->findOrFail($request->appointment_id);
 
-        // Check conflict (unless cancelling)
         if ($request->status !== 'cancelled') {
             if (Appointment::hasConflict($request->preferred_date, $request->preferred_time, $appointment->id)) {
                 return back()->withErrors(['preferred_time' => 'Scheduling Conflict: That slot is already booked.'])->withInput();
             }
         }
 
-        $previousStatus = $appointment->status;
+        $previousStatus        = $appointment->status;
         $previousPaymentStatus = $appointment->payment_status;
-        $newPaymentStatus = $request->input('payment_status');
+        $newPaymentStatus      = $request->input('payment_status');
 
         $updateData = [
-            'preferred_date' => $request->preferred_date,
-            'preferred_time' => $request->preferred_time,
-            'status'         => $request->status,
-            'admin_notes'    => $request->input('admin_notes', ''),
+            'preferred_date'       => $request->preferred_date,
+            'preferred_time'       => $request->preferred_time,
+            'status'               => $request->status,
+            'admin_notes'          => $request->input('admin_notes', ''),
             'subscription_ends_at' => $request->input('subscription_ends_at'),
         ];
 
@@ -133,7 +129,14 @@ class AppointmentController extends Controller
 
         $appointment->update($updateData);
 
-        // Notify client if their appointment was cancelled
+        // Auto-create a Payment (sales revenue) record when newly approved
+        $isNowApproved  = ($appointment->status === 'approved');
+        $wasNotApproved = ($previousStatus !== 'approved');
+        if ($isNowApproved && $wasNotApproved) {
+            $this->createApprovalPayment($appointment);
+        }
+
+        // Notify client if cancelled
         if ($request->status === 'cancelled' && $previousStatus !== 'cancelled' && $appointment->client_id) {
             \App\Models\Notification::create([
                 'for_admin' => false,
@@ -144,11 +147,8 @@ class AppointmentController extends Controller
             ]);
         }
 
-        // Notify recipient via email if payment is confirmed or booking approved
-        $isNowConfirmed = in_array($appointment->payment_status, ['Payment Confirmed', 'paid'], true);
+        $isNowConfirmed  = in_array($appointment->payment_status, ['Payment Confirmed', 'paid'], true);
         $wasNotConfirmed = !in_array($previousPaymentStatus, ['Payment Confirmed', 'paid'], true);
-        $isNowApproved = ($appointment->status === 'approved');
-        $wasNotApproved = ($previousStatus !== 'approved');
 
         if (($isNowConfirmed && $wasNotConfirmed) || ($isNowApproved && $wasNotApproved) || ($isNowApproved && $isNowConfirmed)) {
             $mailErr = $this->sendPaymentConfirmationEmail($appointment);
@@ -170,6 +170,8 @@ class AppointmentController extends Controller
 
         $appointment = Appointment::with(['client', 'service'])->findOrFail($request->appointment_id);
 
+        $previousStatus = $appointment->status;
+
         $updateData = [
             'status'      => $request->status,
             'admin_notes' => $request->input('admin_notes', ''),
@@ -184,6 +186,11 @@ class AppointmentController extends Controller
 
         $appointment->update($updateData);
 
+        // Auto-create a Payment (sales revenue) record when newly approved
+        if ($request->status === 'approved' && $previousStatus !== 'approved') {
+            $this->createApprovalPayment($appointment);
+        }
+
         if ($request->status === 'approved') {
             $mailErr = $this->sendPaymentConfirmationEmail($appointment);
             if ($mailErr) {
@@ -193,6 +200,78 @@ class AppointmentController extends Controller
 
         return redirect()->route('admin.appointments')
             ->with('success_message', "Appointment #{$appointment->id} status set to {$request->status}.");
+    }
+
+    /**
+     * Show a printable receipt for an approved appointment.
+     */
+    public function receipt(int $id)
+    {
+        $appointment = Appointment::with(['client', 'service'])->findOrFail($id);
+
+        // Find the linked payment if one was auto-generated
+        $payment = Payment::where('notes', 'Booking #' . $id)
+            ->orWhere(function ($q) use ($appointment) {
+                $q->where('client_id', $appointment->client_id)
+                  ->where('notes', 'like', '%Booking #' . $id . '%');
+            })
+            ->orderByDesc('id')
+            ->first();
+
+        return view('admin.appointments.receipt', compact('appointment', 'payment'));
+    }
+
+    /**
+     * Auto-generate a Payment record when a booking is approved.
+     * Uses the service price as the amount. Skips if a payment already exists for this booking.
+     */
+    private function createApprovalPayment(Appointment $appointment): void
+    {
+        try {
+            $appointment->loadMissing(['client', 'service']);
+
+            // Skip if already has a linked payment
+            $alreadyExists = Payment::where('notes', 'like', '%Booking #' . $appointment->id . '%')
+                ->exists();
+            if ($alreadyExists) {
+                return;
+            }
+
+            $admin       = Auth::guard('admin')->user();
+            $service     = $appointment->service;
+            $amountPaid  = $appointment->amount_paid > 0
+                ? (float) $appointment->amount_paid
+                : (float) ($service?->price ?? 0);
+
+            if ($amountPaid <= 0) {
+                return; // No amount to record
+            }
+
+            $receiptNo = 'APT-' . now()->format('Ymd') . '-' . str_pad($appointment->id, 5, '0', STR_PAD_LEFT);
+
+            $payment = Payment::create([
+                'client_id'        => $appointment->client_id,
+                'account_number'   => $appointment->client?->account_number ?? '',
+                'amount_paid'      => $amountPaid,
+                'payment_method'   => $appointment->payment_method ?? 'Cash',
+                'reference_number' => $appointment->reference_number ?? '',
+                'received_by'      => $admin?->fullname ?? 'Admin Staff',
+                'notes'            => 'Booking #' . $appointment->id . ' — ' . ($service?->service_name ?? 'Service'),
+                'payment_date'     => $appointment->payment_date ?? now(),
+                'receipt_no'       => $receiptNo,
+            ]);
+
+            // Store receipt_no back on the appointment if column exists
+            $cols = Schema::getColumnListing('appointments');
+            if (in_array('receipt_no', $cols, true)) {
+                $appointment->update(['receipt_no' => $receiptNo]);
+            }
+
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning(
+                "Could not create approval payment for appointment #{$appointment->id}: " . $e->getMessage()
+            );
+        }
     }
 
     private function sendPaymentConfirmationEmail(Appointment $appointment): ?string

@@ -120,6 +120,7 @@ Route::prefix('admin')->group(function () {
         Route::get('/appointments', [AdminAppointment::class, 'index'])->name('admin.appointments');
         Route::post('/appointments/update', [AdminAppointment::class, 'update'])->name('admin.appointments.update');
         Route::post('/appointments/quick-update', [AdminAppointment::class, 'quickUpdate'])->name('admin.appointments.quick_update');
+        Route::get('/appointments/{id}/receipt', [AdminAppointment::class, 'receipt'])->name('admin.appointments.receipt');
 
         Route::get('/walk-in/create', [AdminWalkIn::class, 'create'])->name('admin.walkin.create');
         Route::post('/walk-in/store', [AdminWalkIn::class, 'store'])->name('admin.walkin.store');
