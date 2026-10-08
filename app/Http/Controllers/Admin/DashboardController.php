@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use App\Models\Client;
+use App\Models\Payment;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -35,14 +36,42 @@ class DashboardController extends Controller
 
         $bookingTrend = $this->bookingTrend();
         $bookingsByPlan = $this->bookingsByPlan();
+        $salesRevenueTrend = $this->salesRevenueTrend();
 
         return view('admin.dashboard', compact(
             'admin',
             'stats',
             'recentBookings',
             'bookingTrend',
-            'bookingsByPlan'
+            'bookingsByPlan',
+            'salesRevenueTrend'
         ));
+    }
+
+    /**
+     * Collected sales revenue per month over the last six months. Payments are
+     * the sales ledger, so booking prices and unpaid amounts are not included.
+     */
+    private function salesRevenueTrend(): array
+    {
+        $firstMonth = Carbon::now()->startOfMonth()->subMonths(5);
+
+        $payments = Payment::where('payment_date', '>=', $firstMonth)
+            ->get(['amount_paid', 'payment_date']);
+
+        $trend = ['labels' => [], 'values' => []];
+
+        for ($i = 5; $i >= 0; $i--) {
+            $month = Carbon::now()->startOfMonth()->subMonths($i);
+            $revenue = $payments
+                ->filter(fn ($payment) => $payment->payment_date->isSameMonth($month))
+                ->sum(fn ($payment) => (float) $payment->amount_paid);
+
+            $trend['labels'][] = $month->format('M Y');
+            $trend['values'][] = round($revenue, 2);
+        }
+
+        return $trend;
     }
 
     /**
@@ -74,7 +103,7 @@ class DashboardController extends Controller
 
     /**
      * Booking volume per internet plan, keeping the six most requested plans
-     * and folding the remainder into a single "Other plans" bar.
+     * and folding the remainder into a single "Other plans" slice.
      */
     private function bookingsByPlan(int $limit = 6): array
     {

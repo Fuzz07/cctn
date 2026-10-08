@@ -4,7 +4,9 @@ namespace Tests\Feature;
 
 use App\Models\Admin;
 use App\Models\Appointment;
+use App\Models\BillingAccount;
 use App\Models\Client;
+use App\Models\Payment;
 use App\Models\Service;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
@@ -63,6 +65,54 @@ class AdminDashboardAnalyticsTest extends TestCase
         $appointment->forceFill(['created_at' => $createdAt, 'updated_at' => $createdAt])->save();
 
         return $appointment;
+    }
+
+    private function makePayment(float $amount, Carbon $paidAt): Payment
+    {
+        $billing = BillingAccount::create([
+            'client_id'         => $this->client->id,
+            'account_number'    => 'ACC-TEST-001',
+            'statement_period'  => $paidAt->format('F Y'),
+            'amount_due'        => $amount,
+            'penalty_amount'    => 0,
+            'total_amount_due'  => $amount,
+            'status'            => 'paid',
+            'due_date'          => $paidAt->toDateString(),
+            'paid_at'           => $paidAt,
+        ]);
+
+        return Payment::create([
+            'billing_id'     => $billing->id,
+            'client_id'      => $this->client->id,
+            'account_number' => 'ACC-TEST-001',
+            'amount_paid'    => $amount,
+            'payment_method' => 'cash',
+            'payment_date'   => $paidAt,
+        ]);
+    }
+
+    public function test_dashboard_sales_revenue_uses_recorded_payments_only()
+    {
+        $thisMonth = Carbon::now()->startOfMonth()->addDays(2);
+        $lastMonth = Carbon::now()->startOfMonth()->subMonth()->addDays(3);
+        $tooOld = Carbon::now()->startOfMonth()->subMonths(9);
+
+        $this->makePayment(1250.50, $thisMonth);
+        $this->makePayment(749.50, $thisMonth);
+        $this->makePayment(999.00, $lastMonth);
+        $this->makePayment(5000.00, $tooOld);
+
+        $response = $this->actingAs($this->admin, 'admin')->get(route('admin.dashboard'));
+
+        $response->assertOk();
+        $revenue = $response->viewData('salesRevenueTrend');
+
+        $this->assertCount(6, $revenue['labels']);
+        $this->assertCount(6, $revenue['values']);
+        $this->assertSame(Carbon::now()->format('M Y'), end($revenue['labels']));
+        $this->assertSame(2000.0, $revenue['values'][5]);
+        $this->assertSame(999.0, $revenue['values'][4]);
+        $this->assertSame(2999.0, array_sum($revenue['values']));
     }
 
     public function test_dashboard_exposes_six_month_booking_trend()
@@ -127,7 +177,7 @@ class AdminDashboardAnalyticsTest extends TestCase
         $this->assertSame(10, array_sum($plans['values']));
     }
 
-    public function test_dashboard_renders_both_charts()
+    public function test_dashboard_renders_revenue_booking_and_plan_charts()
     {
         $service = $this->makeService('FTTH - 10 Mbps');
         $this->makeAppointment($service, 'approved', Carbon::now());
@@ -135,13 +185,19 @@ class AdminDashboardAnalyticsTest extends TestCase
         $response = $this->actingAs($this->admin, 'admin')->get(route('admin.dashboard'));
 
         $response->assertOk();
+        $response->assertSee('Sales Revenue');
         $response->assertSee('Booking Trend');
         $response->assertSee('Bookings by Plan');
+        $response->assertSee('id="salesRevenueChart"', false);
         $response->assertSee('id="bookingTrendChart"', false);
         $response->assertSee('id="bookingsByPlanChart"', false);
         // Each chart ships a table twin so no value is hover-only.
+        $response->assertSee('id="sales-revenue-table"', false);
         $response->assertSee('id="booking-trend-table"', false);
         $response->assertSee('id="bookings-plan-table"', false);
+        $response->assertSee("type: 'line'", false);
+        $response->assertSee("indexAxis: 'y'", false);
+        $response->assertSee("type: 'doughnut'", false);
     }
 
     public function test_dashboard_renders_without_any_bookings()
@@ -149,6 +205,7 @@ class AdminDashboardAnalyticsTest extends TestCase
         $response = $this->actingAs($this->admin, 'admin')->get(route('admin.dashboard'));
 
         $response->assertOk();
+        $response->assertSee('No sales revenue recorded in the last 6 months yet.');
         $response->assertSee('No bookings recorded in the last 6 months yet.');
         $response->assertSee('No plan bookings to chart yet.');
         $this->assertSame([], $response->viewData('bookingsByPlan')['labels']);

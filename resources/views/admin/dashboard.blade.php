@@ -342,6 +342,14 @@
             min-width: 0;
         }
 
+        .chart-canvas-wrap--revenue {
+            height: 300px;
+        }
+
+        .chart-canvas-wrap--doughnut {
+            height: 300px;
+        }
+
         .chart-empty {
             display: flex;
             align-items: center;
@@ -518,11 +526,57 @@
 
         <!-- Analytics -->
         @php
+            $revenueHasData = array_sum($salesRevenueTrend['values']) > 0;
             $trendHasData = array_sum($bookingTrend['total']) > 0;
             $planHasData = array_sum($bookingsByPlan['values']) > 0;
         @endphp
+
+        <!-- Line chart: collected sales revenue only -->
+        <div class="dash-card chart-card">
+            <div class="dash-card-header">
+                <div>
+                    <h3 class="dash-card-title">Sales Revenue</h3>
+                    <p class="chart-subtitle">Income collected from recorded payments &middot; last 6 months</p>
+                </div>
+                <button type="button" class="chart-table-toggle" data-chart-table="sales-revenue-table"
+                    aria-expanded="false" aria-controls="sales-revenue-table">Table view</button>
+            </div>
+
+            @if ($revenueHasData)
+                <div class="chart-legend">
+                    <span class="chart-legend-item">
+                        <span class="chart-key" style="background:#16a34a;"></span> Collected revenue
+                    </span>
+                </div>
+                <div class="chart-canvas-wrap chart-canvas-wrap--revenue">
+                    <canvas id="salesRevenueChart" role="img"
+                        aria-label="Line chart of collected sales revenue per month for the last six months. The same figures are listed in the table view."></canvas>
+                </div>
+            @else
+                <div class="chart-empty">No sales revenue recorded in the last 6 months yet.</div>
+            @endif
+
+            <table class="chart-table" id="sales-revenue-table" hidden>
+                <caption class="chart-sr-only">Collected sales revenue per month, last 6 months</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Month</th>
+                        <th scope="col">Revenue</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($salesRevenueTrend['labels'] as $i => $label)
+                        <tr>
+                            <th scope="row" style="font-weight:600;">{{ $label }}</th>
+                            <td>&#8369;{{ number_format($salesRevenueTrend['values'][$i], 2) }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+
         <div class="analytics-row">
-            <!-- Line chart: booking volume over time -->
+            <!-- Horizontal bar chart: booking volume over time -->
             <div class="dash-card chart-card">
                 <div class="dash-card-header">
                     <div>
@@ -544,7 +598,7 @@
                     </div>
                     <div class="chart-canvas-wrap">
                         <canvas id="bookingTrendChart" role="img"
-                            aria-label="Line chart of total and approved bookings per month for the last six months. The same figures are listed in the table view."></canvas>
+                            aria-label="Horizontal bar chart of total and approved bookings per month for the last six months. The same figures are listed in the table view."></canvas>
                     </div>
                 @else
                     <div class="chart-empty">No bookings recorded in the last 6 months yet.</div>
@@ -571,7 +625,7 @@
                 </table>
             </div>
 
-            <!-- Bar chart: booking volume per plan -->
+            <!-- Doughnut chart: booking volume per plan -->
             <div class="dash-card chart-card">
                 <div class="dash-card-header">
                     <div>
@@ -583,9 +637,9 @@
                 </div>
 
                 @if ($planHasData)
-                    <div class="chart-canvas-wrap">
+                    <div class="chart-canvas-wrap chart-canvas-wrap--doughnut">
                         <canvas id="bookingsByPlanChart" role="img"
-                            aria-label="Bar chart of total bookings per internet plan. The same figures are listed in the table view."></canvas>
+                            aria-label="Doughnut chart of total bookings per internet plan. The same figures are listed in the table view."></canvas>
                     </div>
                 @else
                     <div class="chart-empty">No plan bookings to chart yet.</div>
@@ -769,6 +823,8 @@
             var AXIS = '#c3c2b7';
             var SERIES_1 = '#2a78d6';
             var SERIES_2 = '#eb6834';
+            var SERIES_REVENUE = '#16a34a';
+            var PLAN_COLORS = ['#2a78d6', '#eb6834', '#16a34a', '#8b5cf6', '#eab308', '#0891b2', '#64748b'];
             var FONT = 'Inter, system-ui, -apple-system, "Segoe UI", sans-serif';
 
             Chart.defaults.font.family = FONT;
@@ -789,48 +845,31 @@
                 bodyFont: { family: FONT, size: 12, weight: '500' }
             };
 
-            // ---- Line chart: booking trend -------------------------------
-            var trendCanvas = document.getElementById('bookingTrendChart');
+            // ---- Line chart: collected sales revenue ---------------------
+            var revenueCanvas = document.getElementById('salesRevenueChart');
 
-            if (trendCanvas) {
-                var trend = @json($bookingTrend);
+            if (revenueCanvas) {
+                var revenue = @json($salesRevenueTrend);
 
-                new Chart(trendCanvas, {
+                new Chart(revenueCanvas, {
                     type: 'line',
                     data: {
-                        labels: trend.labels,
-                        datasets: [
-                            {
-                                label: 'Total bookings',
-                                data: trend.total,
-                                borderColor: SERIES_1,
-                                backgroundColor: 'rgba(42, 120, 214, 0.10)',
-                                fill: true,
-                                borderWidth: 2,
-                                tension: 0.3,
-                                pointRadius: 4,
-                                pointHoverRadius: 6,
-                                pointBackgroundColor: SERIES_1,
-                                pointBorderColor: SURFACE,
-                                pointBorderWidth: 2,
-                                pointHitRadius: 24
-                            },
-                            {
-                                label: 'Approved',
-                                data: trend.approved,
-                                borderColor: SERIES_2,
-                                backgroundColor: SERIES_2,
-                                fill: false,
-                                borderWidth: 2,
-                                tension: 0.3,
-                                pointRadius: 4,
-                                pointHoverRadius: 6,
-                                pointBackgroundColor: SERIES_2,
-                                pointBorderColor: SURFACE,
-                                pointBorderWidth: 2,
-                                pointHitRadius: 24
-                            }
-                        ]
+                        labels: revenue.labels,
+                        datasets: [{
+                            label: 'Collected revenue',
+                            data: revenue.values,
+                            borderColor: SERIES_REVENUE,
+                            backgroundColor: 'rgba(22, 163, 74, 0.10)',
+                            fill: true,
+                            borderWidth: 2,
+                            tension: 0.3,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            pointBackgroundColor: SERIES_REVENUE,
+                            pointBorderColor: SURFACE,
+                            pointBorderWidth: 2,
+                            pointHitRadius: 24
+                        }]
                     },
                     options: {
                         responsive: true,
@@ -839,20 +878,84 @@
                         interaction: { mode: 'index', intersect: false },
                         plugins: {
                             legend: { display: false },
-                            tooltip: tooltip
+                            tooltip: Object.assign({}, tooltip, {
+                                callbacks: {
+                                    label: function (ctx) {
+                                        return ' Revenue: \u20b1' + Number(ctx.parsed.y).toLocaleString(undefined, {
+                                            minimumFractionDigits: 2,
+                                            maximumFractionDigits: 2
+                                        });
+                                    }
+                                }
+                            })
                         },
                         elements: { line: { borderCapStyle: 'round', borderJoinStyle: 'round' } },
                         scales: {
                             x: {
                                 grid: { display: false },
                                 border: { color: AXIS },
-                                ticks: {
-                                    color: INK_MUTED,
-                                    padding: 6,
-                                    font: { size: 11, weight: '600' }
-                                }
+                                ticks: { color: INK_MUTED, padding: 6, font: { size: 11, weight: '600' } }
                             },
                             y: {
+                                beginAtZero: true,
+                                grid: { color: GRID, drawTicks: false },
+                                border: { display: false },
+                                ticks: {
+                                    color: INK_MUTED,
+                                    padding: 8,
+                                    maxTicksLimit: 6,
+                                    callback: function (value) {
+                                        return '\u20b1' + Number(value).toLocaleString();
+                                    },
+                                    font: { size: 11 }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // ---- Horizontal bar chart: booking trend ---------------------
+            var trendCanvas = document.getElementById('bookingTrendChart');
+
+            if (trendCanvas) {
+                var trend = @json($bookingTrend);
+
+                new Chart(trendCanvas, {
+                    type: 'bar',
+                    data: {
+                        labels: trend.labels,
+                        datasets: [
+                            {
+                                label: 'Total bookings',
+                                data: trend.total,
+                                backgroundColor: SERIES_1,
+                                borderRadius: 4,
+                                borderSkipped: false,
+                                maxBarThickness: 18
+                            },
+                            {
+                                label: 'Approved',
+                                data: trend.approved,
+                                backgroundColor: SERIES_2,
+                                borderRadius: 4,
+                                borderSkipped: false,
+                                maxBarThickness: 18
+                            }
+                        ]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        layout: { padding: { right: 10 } },
+                        interaction: { mode: 'index', intersect: false },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: tooltip
+                        },
+                        scales: {
+                            x: {
                                 beginAtZero: true,
                                 grid: { color: GRID, drawTicks: false },
                                 border: { display: false },
@@ -863,90 +966,78 @@
                                     maxTicksLimit: 6,
                                     font: { size: 11 }
                                 }
+                            },
+                            y: {
+                                grid: { display: false },
+                                border: { color: AXIS },
+                                ticks: {
+                                    color: INK_MUTED,
+                                    padding: 8,
+                                    font: { size: 11, weight: '600' }
+                                }
                             }
                         }
                     }
                 });
             }
 
-            // ---- Bar chart: bookings per plan ----------------------------
+            // ---- Doughnut chart: bookings per plan -----------------------
             var planCanvas = document.getElementById('bookingsByPlanChart');
 
             if (planCanvas) {
                 var plans = @json($bookingsByPlan);
-
-                // Every bar is directly labelled at its tip, so the value axis
-                // is dropped rather than repeating the same numbers.
-                var barValueLabels = {
-                    id: 'barValueLabels',
-                    afterDatasetsDraw: function (chart) {
-                        var ctx = chart.ctx;
-                        var bars = chart.getDatasetMeta(0).data;
-                        var values = chart.data.datasets[0].data;
-
-                        ctx.save();
-                        ctx.fillStyle = INK;
-                        ctx.font = '700 11px ' + FONT;
-                        ctx.textAlign = 'left';
-                        ctx.textBaseline = 'middle';
-                        bars.forEach(function (bar, i) {
-                            ctx.fillText(String(values[i]), bar.x + 8, bar.y);
-                        });
-                        ctx.restore();
-                    }
-                };
+                var planColors = plans.labels.map(function (_, index) {
+                    return PLAN_COLORS[index % PLAN_COLORS.length];
+                });
 
                 new Chart(planCanvas, {
-                    type: 'bar',
+                    type: 'doughnut',
                     data: {
                         labels: plans.labels,
                         datasets: [{
                             label: 'Bookings',
                             data: plans.values,
-                            backgroundColor: SERIES_1,
-                            hoverBackgroundColor: SERIES_1,
-                            borderSkipped: false,
-                            borderRadius: { topLeft: 0, bottomLeft: 0, topRight: 4, bottomRight: 4 },
-                            maxBarThickness: 24,
-                            categoryPercentage: 0.75,
-                            barPercentage: 0.9
+                            backgroundColor: planColors,
+                            hoverBackgroundColor: planColors,
+                            borderColor: SURFACE,
+                            borderWidth: 3,
+                            hoverOffset: 6
                         }]
                     },
                     options: {
-                        indexAxis: 'y',
                         responsive: true,
                         maintainAspectRatio: false,
-                        layout: { padding: { right: 28 } },
-                        interaction: { mode: 'index', intersect: false },
+                        cutout: '62%',
+                        layout: { padding: 4 },
                         plugins: {
-                            legend: { display: false },
+                            legend: {
+                                display: true,
+                                position: 'right',
+                                labels: {
+                                    color: INK_SECONDARY,
+                                    usePointStyle: true,
+                                    pointStyle: 'circle',
+                                    boxWidth: 8,
+                                    boxHeight: 8,
+                                    padding: 14,
+                                    font: { size: 11, weight: '600' }
+                                }
+                            },
                             tooltip: Object.assign({}, tooltip, {
                                 callbacks: {
                                     label: function (ctx) {
-                                        var n = ctx.parsed.x;
-                                        return ' ' + n + (n === 1 ? ' booking' : ' bookings');
+                                        var n = ctx.parsed;
+                                        var total = ctx.dataset.data.reduce(function (sum, value) {
+                                            return sum + Number(value);
+                                        }, 0);
+                                        var percentage = total ? Math.round((n / total) * 100) : 0;
+                                        return ' ' + ctx.label + ': ' + n +
+                                            (n === 1 ? ' booking' : ' bookings') + ' (' + percentage + '%)';
                                     }
                                 }
                             })
-                        },
-                        scales: {
-                            x: { display: false, beginAtZero: true, grace: '6%' },
-                            y: {
-                                grid: { display: false },
-                                border: { color: AXIS },
-                                ticks: {
-                                    color: INK_SECONDARY,
-                                    padding: 8,
-                                    font: { size: 11, weight: '600' },
-                                    callback: function (value) {
-                                        var label = String(this.getLabelForValue(value));
-                                        return label.length > 24 ? label.slice(0, 23) + '\u2026' : label;
-                                    }
-                                }
-                            }
                         }
-                    },
-                    plugins: [barValueLabels]
+                    }
                 });
             }
         })();
