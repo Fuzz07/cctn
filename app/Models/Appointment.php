@@ -4,10 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Schema;
 
 class Appointment extends Model
 {
     use HasFactory;
+
+    /** Column list for this table, resolved once per request. */
+    private static ?array $existingColumns = null;
 
     protected $fillable = [
         'booking_ref', 'is_walkin', 'client_id', 'service_id', 'installation_type', 'preferred_date', 'preferred_time',
@@ -50,5 +54,26 @@ class Appointment extends Model
         }
 
         return $query->exists();
+    }
+
+    /**
+     * Drop attributes whose columns do not exist yet.
+     *
+     * The booking form writes columns added by later migrations. On a database
+     * where those migrations have not been run, writing them aborts the whole
+     * booking; dropping them lets the booking succeed and simply not record
+     * those details until `php artisan migrate` has been run.
+     */
+    public static function withExistingColumns(array $attributes): array
+    {
+        if (self::$existingColumns === null) {
+            self::$existingColumns = Schema::getColumnListing((new static)->getTable());
+        }
+
+        if (empty(self::$existingColumns)) {
+            return $attributes;
+        }
+
+        return array_intersect_key($attributes, array_flip(self::$existingColumns));
     }
 }

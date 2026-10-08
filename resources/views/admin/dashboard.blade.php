@@ -489,7 +489,7 @@
                 </table>
             </div>
 
-            <!-- Horizontal bar chart: booking volume over time -->
+            <!-- Vertical bar chart: booking volume over time -->
             <div class="dash-card chart-card">
                 <div class="dash-card-header">
                     <div>
@@ -511,7 +511,7 @@
                     </div>
                     <div class="chart-canvas-wrap">
                         <canvas id="bookingTrendChart" role="img"
-                            aria-label="Horizontal bar chart of total and approved bookings per month for the last six months. The same figures are listed in the table view."></canvas>
+                            aria-label="Vertical bar chart of total and approved bookings per month for the last six months. The same figures are listed in the table view."></canvas>
                     </div>
                 @else
                     <div class="chart-empty">No bookings recorded in the last 6 months yet.</div>
@@ -704,7 +704,7 @@
                 });
             }
 
-            // ---- Horizontal bar chart: booking trend ---------------------
+            // ---- Vertical bar chart: booking trend -----------------------
             var trendCanvas = document.getElementById('bookingTrendChart');
 
             if (trendCanvas) {
@@ -734,17 +734,29 @@
                         ]
                     },
                     options: {
-                        indexAxis: 'y',
                         responsive: true,
                         maintainAspectRatio: false,
-                        layout: { padding: { right: 10 } },
+                        layout: { padding: { top: 10 } },
                         interaction: { mode: 'index', intersect: false },
                         plugins: {
                             legend: { display: false },
                             tooltip: tooltip
                         },
                         scales: {
+                            // Months run left to right; counts run up the side.
                             x: {
+                                grid: { display: false },
+                                border: { color: AXIS },
+                                ticks: {
+                                    color: INK_MUTED,
+                                    padding: 8,
+                                    maxRotation: 45,
+                                    minRotation: 0,
+                                    autoSkip: false,
+                                    font: { size: 11, weight: '600' }
+                                }
+                            },
+                            y: {
                                 beginAtZero: true,
                                 grid: { color: GRID, drawTicks: false },
                                 border: { display: false },
@@ -754,15 +766,6 @@
                                     padding: 8,
                                     maxTicksLimit: 6,
                                     font: { size: 11 }
-                                }
-                            },
-                            y: {
-                                grid: { display: false },
-                                border: { color: AXIS },
-                                ticks: {
-                                    color: INK_MUTED,
-                                    padding: 8,
-                                    font: { size: 11, weight: '600' }
                                 }
                             }
                         }

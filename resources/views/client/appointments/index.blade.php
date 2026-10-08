@@ -164,7 +164,7 @@
                             </div>
                             <div id="ref-field-{{ $appt->id }}">
                                 <label style="display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.35rem; color: var(--text-body);">Reference / Transaction No.</label>
-                                <input type="text" name="reference_number" class="form-control" style="width: 100%; padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid var(--border); font-family: monospace; font-weight: 700;" placeholder="e.g. 10029384756" value="{{ $appt->reference_number }}" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/\D/g, '')">
+                                <input type="text" name="reference_number" class="form-control" style="width: 100%; padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid var(--border); font-family: monospace; font-weight: 700;" placeholder="e.g. 1002938475601" value="{{ $appt->reference_number }}" inputmode="numeric" maxlength="13" pattern="[0-9]{13}" oninput="this.value = this.value.replace(/\D/g, '').slice(0, 13)">
                             </div>
                             <div id="proof-field-{{ $appt->id }}">
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">

@@ -350,15 +350,16 @@
                         </label>
                         <input type="text" name="reference_number" id="reference_number"
                                class="form-control {{ $errors->has('reference_number') ? 'is-invalid' : '' }}"
-                               placeholder="e.g. 10029384756"
+                               placeholder="e.g. 1002938475601"
                                value="{{ old('reference_number') }}"
                                inputmode="numeric"
-                               pattern="[0-9]*"
-                               oninput="this.value = this.value.replace(/\D/g, '')"
+                               maxlength="13"
+                               pattern="[0-9]{13}"
+                               oninput="this.value = this.value.replace(/\D/g, '').slice(0, 13)"
                                style="font-family: monospace; font-size: 0.95rem; font-weight: 700;">
                         <span class="field-error {{ $errors->has('reference_number') ? 'visible' : '' }}" id="error-reference_number">
                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                            {{ $errors->first('reference_number', 'Please enter your payment reference/transaction number.') }}
+                            {{ $errors->first('reference_number', 'Please enter the 13-digit reference number.') }}
                         </span>
                         <small style="color: var(--text-muted); font-size: 0.78rem; display: block; margin-top: 0.25rem;">Enter the reference or reference ID from your payment confirmation screen (numbers only).</small>
                     </div>
@@ -630,12 +631,16 @@
 
         // 6. Reference Number
         const refNum = document.getElementById('reference_number');
-        if (!refNum || !refNum.value.trim()) {
-            setFieldError('reference_number', 'error-reference_number', 'Please enter your payment reference/transaction number.');
+        const refValue = refNum ? refNum.value.trim() : '';
+        if (!refValue) {
+            setFieldError('reference_number', 'error-reference_number', 'Please enter the 13-digit reference number.');
             errors.push('Reference Number: Please enter your payment reference or transaction number.');
-        } else if (!/^\d+$/.test(refNum.value.trim())) {
+        } else if (!/^\d+$/.test(refValue)) {
             setFieldError('reference_number', 'error-reference_number', 'Reference number must contain numbers only.');
             errors.push('Reference Number: Reference number must contain numbers only.');
+        } else if (refValue.length !== 13) {
+            setFieldError('reference_number', 'error-reference_number', 'Reference number must be exactly 13 digits (you entered ' + refValue.length + ').');
+            errors.push('Reference Number: Must be exactly 13 digits.');
         }
 
         // 7. Payment Proof
@@ -706,7 +711,7 @@
                 const paste = (e.clipboardData || window.clipboardData)?.getData('text') || '';
                 if (/\D/.test(paste)) {
                     e.preventDefault();
-                    const clean = paste.replace(/\D/g, '');
+                    const clean = paste.replace(/\D/g, '').slice(0, 13);
                     const start = this.selectionStart;
                     const end = this.selectionEnd;
                     this.value = this.value.substring(0, start) + clean + this.value.substring(end);
