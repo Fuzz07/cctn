@@ -47,25 +47,25 @@ class DashboardController extends Controller
         $bookingsByPlan    = $this->bookingsByPlan();
         $salesRevenueTrend = $this->salesRevenueTrend();
 
-        // Recent clients (last 8)
+        // Recent clients (last 5)
         $recentClients = Client::with('currentService')
             ->orderByDesc('created_at')
-            ->limit(8)
+            ->limit(5)
             ->get();
 
-        // Upcoming appointments (next 8, approved/pending, future dates)
+        // Upcoming appointments (next 5, approved/pending, future dates)
         $upcomingAppointments = Appointment::with(['client', 'service'])
             ->whereIn('status', ['pending', 'approved'])
             ->where('preferred_date', '>=', now()->toDateString())
             ->orderBy('preferred_date')
             ->orderBy('preferred_time')
-            ->limit(8)
+            ->limit(5)
             ->get();
 
         // Recent revenue payments (last 6)
         $recentPayments = Payment::with('client')
             ->orderByDesc('payment_date')
-            ->limit(6)
+            ->limit(4)
             ->get();
 
         return view('admin.dashboard', compact(
