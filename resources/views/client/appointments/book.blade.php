@@ -27,6 +27,10 @@
     .form-control { width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem; font-family: inherit; box-sizing: border-box; }
     .form-control:focus { outline: none; border-color: #dc2626; box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1); }
 
+    /* ── Installation address ── */
+    .install-address-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 520px) { .install-address-grid { grid-template-columns: 1fr; } }
+
     /* ── Installation Type picker ── */
     .install-type-group { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
     .install-type-card {
@@ -248,25 +252,6 @@
                 </span>
             </div>
 
-            <!-- Installation site locator (profile only stores barangay + municipality) -->
-            <div class="form-group">
-                <label class="form-label" for="purok_landmark">Purok / Street &amp; Nearby Landmark <span style="color:#dc2626">*</span></label>
-                <input type="text" name="purok_landmark" id="purok_landmark" maxlength="255"
-                       class="form-control {{ $errors->has('purok_landmark') ? 'is-invalid' : '' }}"
-                       value="{{ old('purok_landmark') }}"
-                       placeholder="e.g. Purok 3 Mabini St., beside the barangay chapel">
-                <small style="display:block; margin-top:.35rem; color:#64748b; font-size:.78rem;">
-                    @if ($client->address_barangay || $client->address_municipality)
-                        Your barangay ({{ trim(($client->address_barangay ?: '') . ', ' . ($client->address_municipality ?: ''), ', ') }}) is already on file &mdash;
-                    @endif
-                    add the purok or street and a nearby landmark so our technician can find your place.
-                </small>
-                <span class="field-error {{ $errors->has('purok_landmark') ? 'visible' : '' }}" id="error-purok_landmark">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                    {{ $errors->first('purok_landmark', 'Please enter your purok / street and a nearby landmark.') }}
-                </span>
-            </div>
-
             <!-- Date Selection (reloads page to fetch timeslots) -->
             <div class="form-group">
                 <label class="form-label" for="preferred_date">Preferred Date <span style="color:#dc2626">*</span></label>
@@ -425,10 +410,59 @@
                 </div>
             </div>
 
-            <!-- Additional Message -->
-            <div class="form-group">
-                <label class="form-label" for="message">Additional Message (Optional)</label>
-                <textarea name="message" id="message" class="form-control" rows="3" placeholder="Any specific requirements or notes regarding location/landmarks?">{{ old('message') }}</textarea>
+            <!-- Installation Address: where the technician actually goes -->
+            <div class="form-group" style="background:#fafafa; border:1px solid var(--border-light); border-radius:12px; padding:1.25rem;">
+                <label class="form-label" style="font-size:0.95rem;">Installation Address <span style="color:#dc2626">*</span></label>
+                <small style="display:block; margin:-0.25rem 0 1rem; color:#64748b; font-size:.78rem;">
+                    Tell us exactly where to install so our technician can find the site.
+                </small>
+
+                <div class="install-address-grid">
+                    <div>
+                        <label class="form-label" for="installation_municipality">Municipality <span style="color:#dc2626">*</span></label>
+                        <select name="installation_municipality" id="installation_municipality"
+                                class="form-control {{ $errors->has('installation_municipality') ? 'is-invalid' : '' }}">
+                            <option value="">Select Municipality</option>
+                            @foreach (\App\Support\ServiceArea::municipalities() as $municipality)
+                                <option value="{{ $municipality }}"
+                                    {{ old('installation_municipality', $client->address_municipality) == $municipality ? 'selected' : '' }}>
+                                    {{ $municipality }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <span class="field-error {{ $errors->has('installation_municipality') ? 'visible' : '' }}" id="error-installation_municipality">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            {{ $errors->first('installation_municipality', 'Please select a municipality.') }}
+                        </span>
+                    </div>
+
+                    <div>
+                        <label class="form-label" for="installation_barangay">Barangay <span style="color:#dc2626">*</span></label>
+                        {{-- Filled from the municipality beside it; see partials/address-age-scripts. --}}
+                        <select name="installation_barangay" id="installation_barangay"
+                                class="form-control {{ $errors->has('installation_barangay') ? 'is-invalid' : '' }}"
+                                data-barangay-for="installation_municipality" data-placeholder="Select Barangay"
+                                data-old="{{ old('installation_barangay', $client->address_barangay) }}">
+                            <option value="">Select Barangay</option>
+                        </select>
+                        <span class="field-error {{ $errors->has('installation_barangay') ? 'visible' : '' }}" id="error-installation_barangay">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            {{ $errors->first('installation_barangay', 'Please select a barangay.') }}
+                        </span>
+                    </div>
+                </div>
+
+                <div style="margin-top:1rem;">
+                    <label class="form-label" for="purok_landmark">Purok / Street &amp; Nearby Landmark <span style="color:#dc2626">*</span></label>
+                    <input type="text" name="purok_landmark" id="purok_landmark" maxlength="255"
+                           class="form-control {{ $errors->has('purok_landmark') ? 'is-invalid' : '' }}"
+                           value="{{ old('purok_landmark') }}"
+                           placeholder="e.g. Purok 3 Mabini St., beside the barangay chapel">
+                    <span class="field-error {{ $errors->has('purok_landmark') ? 'visible' : '' }}" id="error-purok_landmark">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        {{ $errors->first('purok_landmark', 'Please enter your purok / street and a nearby landmark.') }}
+                    </span>
+                </div>
             </div>
 
             <button type="button" id="submit-btn" class="btn-submit" onclick="handleFormSubmit()">
@@ -558,7 +592,19 @@
             errors.push('Service: Please select a service package.');
         }
 
-        // 3. Purok / Street & Landmark
+        // 3. Installation Address
+        const municipality = document.getElementById('installation_municipality');
+        if (!municipality || !municipality.value) {
+            setFieldError('installation_municipality', 'error-installation_municipality', 'Please select a municipality.');
+            errors.push('Installation Address: Please select a municipality.');
+        }
+
+        const barangay = document.getElementById('installation_barangay');
+        if (!barangay || !barangay.value) {
+            setFieldError('installation_barangay', 'error-installation_barangay', 'Please select a barangay.');
+            errors.push('Installation Address: Please select a barangay.');
+        }
+
         const purok = document.getElementById('purok_landmark');
         if (!purok || !purok.value.trim()) {
             setFieldError('purok_landmark', 'error-purok_landmark', 'Please enter your purok / street and a nearby landmark.');
@@ -634,6 +680,8 @@
     document.addEventListener('DOMContentLoaded', function () {
         const fieldMap = [
             ['service_id',       'error-service_id'],
+            ['installation_municipality', 'error-installation_municipality'],
+            ['installation_barangay',     'error-installation_barangay'],
             ['purok_landmark',   'error-purok_landmark'],
             ['preferred_date',   'error-preferred_date'],
             ['reference_number', 'error-reference_number'],
@@ -904,4 +952,6 @@
 
 
 </script>
+
+@include('partials.address-age-scripts')
 @endpush

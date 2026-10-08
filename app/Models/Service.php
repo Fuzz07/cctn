@@ -36,12 +36,27 @@ class Service extends Model
             return $query;
         }
 
-        return $query->whereIn('account_type', [$type, 'both']);
+        return $query->where(function ($q) use ($type) {
+            $q->whereIn('account_type', [$type, 'both'])
+              ->orWhereNull('account_type');
+        });
     }
 
-    /** True when this plan may be booked under the given installation type. */
+    /**
+     * True when this plan may be booked under the given installation type.
+     *
+     * An untagged plan counts as available to everyone: that matches the
+     * column's own default and the fallback the booking form uses, so a plan
+     * the dropdown offers is never rejected on submit.
+     */
     public function availableTo($type)
     {
-        return $this->account_type === 'both' || $this->account_type === $type;
+        $accountType = trim((string) $this->account_type);
+
+        if ($accountType === '' || $accountType === 'both') {
+            return true;
+        }
+
+        return $accountType === $type;
     }
 }

@@ -391,10 +391,14 @@ class Client extends Authenticatable
      */
     public function getInstallationAddressAttribute(): string
     {
+        $appointment = $this->currentAppointment;
+
+        // The booking captures its own site address, which may differ from the
+        // barangay on the profile; fall back to the profile when it is absent.
         $parts = array_filter([
-            $this->currentAppointment->purok_landmark ?? null,
-            $this->address_barangay,
-            $this->address_municipality,
+            $appointment->purok_landmark ?? null,
+            $appointment->installation_barangay ?? $this->address_barangay,
+            $appointment->installation_municipality ?? $this->address_municipality,
             $this->address_province,
         ], function ($part) {
             return trim((string) $part) !== '';

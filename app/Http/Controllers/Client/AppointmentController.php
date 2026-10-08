@@ -10,6 +10,7 @@ use App\Models\Notification;
 use App\Models\ClientPaymentMethod;
 use App\Rules\PortraitPaymentScreenshot;
 use App\Support\InputRules;
+use App\Support\ServiceArea;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -89,6 +90,8 @@ class AppointmentController extends Controller
     {
         $request->validate([
             'installation_type' => ['required', Rule::in(Service::INSTALLATION_TYPES)],
+            'installation_municipality' => ['required', Rule::in(ServiceArea::municipalities())],
+            'installation_barangay'     => ['required', 'string', 'max:100'],
             'purok_landmark'   => InputRules::address(true, 255),
             'service_id'       => 'required|exists:services,id',
             'preferred_date'   => 'required|date|after_or_equal:today',
@@ -98,6 +101,9 @@ class AppointmentController extends Controller
             'payment_proof'    => ['required', 'image', 'mimes:jpeg,png,jpg,webp', 'max:4096', new PortraitPaymentScreenshot],
         ], [
             'installation_type.required' => 'Please select an installation type.',
+            'installation_municipality.required' => 'Please select a municipality.',
+            'installation_municipality.in'       => 'We do not currently serve that municipality.',
+            'installation_barangay.required'     => 'Please select a barangay.',
             'purok_landmark.required'   => 'Please enter your purok / street and a nearby landmark.',
             'purok_landmark.regex'      => 'The purok / street and landmark contains characters that are not allowed.',
             'installation_type.in'       => 'Please select either Residential or Business.',
@@ -108,6 +114,12 @@ class AppointmentController extends Controller
             'payment_proof.image'       => 'The payment receipt must be an image file (JPEG, PNG, JPG, or WebP).',
             'payment_proof.max'         => 'The payment receipt file must not exceed 4MB.',
         ]);
+
+        if (! ServiceArea::isValidPair($request->installation_municipality, $request->installation_barangay)) {
+            return back()
+                ->withErrors(['installation_barangay' => 'That barangay is not in the selected municipality.'])
+                ->withInput();
+        }
 
         // The dropdown is filtered client-side, so confirm the pairing server-side too.
         $service = Service::find($request->service_id);
@@ -120,10 +132,14 @@ class AppointmentController extends Controller
         $client = Auth::guard('client')->user();
 
         $purokLandmark = trim($request->input('purok_landmark', ''));
+        $installationMunicipality = trim($request->input('installation_municipality', ''));
+        $installationBarangay = trim($request->input('installation_barangay', ''));
+
         $installationAddress = implode(', ', array_filter([
             $purokLandmark,
-            $client->address_barangay,
-            $client->address_municipality,
+            $installationBarangay,
+            $installationMunicipality,
+            ServiceArea::PROVINCE,
         ], function ($part) {
             return trim((string) $part) !== '';
         }));
@@ -146,6 +162,8 @@ class AppointmentController extends Controller
                     'service_id'       => $request->service_id,
                     'installation_type' => $request->installation_type,
                     'purok_landmark'   => $purokLandmark,
+                    'installation_municipality' => $installationMunicipality,
+                    'installation_barangay' => $installationBarangay,
                     'installation_address' => $installationAddress,
                     'preferred_date'   => $next['date'],
                     'preferred_time'   => $next['time'],
@@ -176,6 +194,8 @@ class AppointmentController extends Controller
             'service_id'       => $request->service_id,
             'installation_type' => $request->installation_type,
             'purok_landmark'   => $purokLandmark,
+            'installation_municipality' => $installationMunicipality,
+            'installation_barangay' => $installationBarangay,
             'installation_address' => $installationAddress,
             'preferred_date'   => $request->preferred_date,
             'preferred_time'   => $request->preferred_time,
