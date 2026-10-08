@@ -20,31 +20,68 @@ class DashboardController extends Controller
         $admin = Auth::guard('admin')->user();
 
         $stats = [
-            'clients'  => Client::count(),
-            'active_clients' => Client::active()->count(),
+            'clients'          => Client::count(),
+            'active_clients'   => Client::active()->count(),
             'inactive_clients' => Client::inactive()->count(),
-            'total'    => Appointment::count(),
-            'pending'  => Appointment::where('status', 'pending')->count(),
-            'approved' => Appointment::where('status', 'approved')->count(),
-            'services' => Service::where('status', 'Active')->count(),
+            'total'            => Appointment::count(),
+            'pending'          => Appointment::where('status', 'pending')->count(),
+            'approved'         => Appointment::where('status', 'approved')->count(),
+            'services'         => Service::where('status', 'Active')->count(),
         ];
 
-        $bookingTrend = $this->bookingTrend();
-        $bookingsByPlan = $this->bookingsByPlan();
+        // Total revenue (all time)
+        $stats['total_revenue'] = (float) Payment::sum('amount_paid');
+
+        // Revenue this month
+        $stats['revenue_this_month'] = (float) Payment::whereYear('payment_date', now()->year)
+            ->whereMonth('payment_date', now()->month)
+            ->sum('amount_paid');
+
+        // Revenue last month for comparison
+        $lastMonth = now()->subMonth();
+        $stats['revenue_last_month'] = (float) Payment::whereYear('payment_date', $lastMonth->year)
+            ->whereMonth('payment_date', $lastMonth->month)
+            ->sum('amount_paid');
+
+        $bookingTrend      = $this->bookingTrend();
+        $bookingsByPlan    = $this->bookingsByPlan();
         $salesRevenueTrend = $this->salesRevenueTrend();
+
+        // Recent clients (last 8)
+        $recentClients = Client::with('currentService')
+            ->orderByDesc('created_at')
+            ->limit(8)
+            ->get();
+
+        // Upcoming appointments (next 8, approved/pending, future dates)
+        $upcomingAppointments = Appointment::with(['client', 'service'])
+            ->whereIn('status', ['pending', 'approved'])
+            ->where('preferred_date', '>=', now()->toDateString())
+            ->orderBy('preferred_date')
+            ->orderBy('preferred_time')
+            ->limit(8)
+            ->get();
+
+        // Recent revenue payments (last 6)
+        $recentPayments = Payment::with('client')
+            ->orderByDesc('payment_date')
+            ->limit(6)
+            ->get();
 
         return view('admin.dashboard', compact(
             'admin',
             'stats',
             'bookingTrend',
             'bookingsByPlan',
-            'salesRevenueTrend'
+            'salesRevenueTrend',
+            'recentClients',
+            'upcomingAppointments',
+            'recentPayments'
         ));
     }
 
     /**
-     * Collected sales revenue per month over the last six months. Payments are
-     * the sales ledger, so booking prices and unpaid amounts are not included.
+     * Collected sales revenue per month over the last six months.
      */
     private function salesRevenueTrend(): array
     {
@@ -56,10 +93,10 @@ class DashboardController extends Controller
         $trend = ['labels' => [], 'values' => []];
 
         for ($i = 5; $i >= 0; $i--) {
-            $month = Carbon::now()->startOfMonth()->subMonths($i);
+            $month   = Carbon::now()->startOfMonth()->subMonths($i);
             $revenue = $payments
-                ->filter(fn ($payment) => $payment->payment_date->isSameMonth($month))
-                ->sum(fn ($payment) => (float) $payment->amount_paid);
+                ->filter(fn ($p) => $p->payment_date->isSameMonth($month))
+                ->sum(fn ($p) => (float) $p->amount_paid);
 
             $trend['labels'][] = $month->format('M Y');
             $trend['values'][] = round($revenue, 2);
@@ -69,8 +106,7 @@ class DashboardController extends Controller
     }
 
     /**
-     * Bookings created per month over the last six months, split into the
-     * total requested and the subset that was approved.
+     * Bookings created per month over the last six months.
      */
     private function bookingTrend(): array
     {
@@ -82,10 +118,8 @@ class DashboardController extends Controller
         $trend = ['labels' => [], 'total' => [], 'approved' => []];
 
         for ($i = 5; $i >= 0; $i--) {
-            $month = Carbon::now()->startOfMonth()->subMonths($i);
-            $inMonth = $appointments->filter(
-                fn ($appt) => $appt->created_at->isSameMonth($month)
-            );
+            $month   = Carbon::now()->startOfMonth()->subMonths($i);
+            $inMonth = $appointments->filter(fn ($a) => $a->created_at->isSameMonth($month));
 
             $trend['labels'][]   = $month->format('M Y');
             $trend['total'][]    = $inMonth->count();
@@ -96,8 +130,7 @@ class DashboardController extends Controller
     }
 
     /**
-     * Booking volume per internet plan, keeping the six most requested plans
-     * and folding the remainder into a single "Other plans" slice.
+     * Booking volume per internet plan (top 6 + Other).
      */
     private function bookingsByPlan(int $limit = 6): array
     {
@@ -115,7 +148,7 @@ class DashboardController extends Controller
         $labels = $top->pluck('label')->map(
             fn ($label) => str_ireplace('CCTN', 'BCTVI', $label)
         )->values()->all();
-        $values = $top->pluck('bookings')->map(fn ($count) => (int) $count)->values()->all();
+        $values = $top->pluck('bookings')->map(fn ($c) => (int) $c)->values()->all();
 
         if ($rest->isNotEmpty()) {
             $labels[] = 'Other plans';
