@@ -40,7 +40,7 @@ class AppointmentController extends Controller
         $appointments = $query->orderBy('preferred_date', 'desc')
             ->orderBy('preferred_time', 'desc')
             ->orderBy('id', 'desc')
-            ->simplePaginate(10)
+            ->simplePaginate(7)
             // keep the active filters, but never carry an open modal across pages
             ->appends($request->except(['page', 'manage_id']));
 

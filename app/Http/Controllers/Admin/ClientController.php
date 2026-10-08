@@ -119,7 +119,7 @@ class ClientController extends Controller
         }
 
         $clients = $query->orderBy('id', 'desc')
-            ->simplePaginate(10)
+            ->simplePaginate(7)
             ->withQueryString();
 
         $archivedCount = Client::inactive()->count();
