@@ -27,6 +27,22 @@
     .form-control { width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem; font-family: inherit; box-sizing: border-box; }
     .form-control:focus { outline: none; border-color: #dc2626; box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1); }
 
+    /* ── Installation Type picker ── */
+    .install-type-group { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .install-type-card {
+        display: flex; flex-direction: column; gap: 0.15rem;
+        padding: 0.9rem 1rem; border: 1px solid var(--border); border-radius: 10px;
+        background: #fff; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+    }
+    .install-type-card:hover { border-color: #dc2626; }
+    .install-type-card input { position: absolute; opacity: 0; width: 0; height: 0; }
+    .install-type-card:focus-within { outline: none; border-color: #dc2626; box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1); }
+    .install-type-card.is-selected { border-color: #dc2626; background: #fef2f2; box-shadow: 0 0 0 1px #dc2626 inset; }
+    .install-type-name { font-weight: 700; font-size: 0.95rem; color: #1e293b; }
+    .install-type-hint { font-size: 0.78rem; color: #64748b; }
+    .install-type-group.has-error .install-type-card { border-color: #dc2626; }
+    @media (max-width: 520px) { .install-type-group { grid-template-columns: 1fr; } }
+
     /* ── Validation States ── */
     .form-control.is-invalid {
         border-color: #dc2626 !important;
@@ -187,13 +203,40 @@
                 <div id="validation-banner"></div>
             @endif
 
+            <!-- Installation Type (gates the service list below) -->
+            @php($chosenType = old('installation_type', $selectedInstallationType))
+            <div class="form-group">
+                <label class="form-label" id="installation-type-label">Select Installation Type <span style="color:#dc2626">*</span></label>
+                <div class="install-type-group {{ $errors->has('installation_type') ? 'has-error' : '' }}"
+                     id="installation-type-group" role="radiogroup" aria-labelledby="installation-type-label">
+                    @foreach ([
+                        'residential' => ['Residential', 'For homes and personal use'],
+                        'business'    => ['Business', 'For offices, shops and enterprises'],
+                    ] as $typeValue => $typeMeta)
+                        <label class="install-type-card {{ $chosenType === $typeValue ? 'is-selected' : '' }}">
+                            <input type="radio" name="installation_type" value="{{ $typeValue }}"
+                                   {{ $chosenType === $typeValue ? 'checked' : '' }}>
+                            <span class="install-type-name">{{ $typeMeta[0] }}</span>
+                            <span class="install-type-hint">{{ $typeMeta[1] }}</span>
+                        </label>
+                    @endforeach
+                </div>
+                <span class="field-error {{ $errors->has('installation_type') ? 'visible' : '' }}" id="error-installation_type">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    {{ $errors->first('installation_type', 'Please select an installation type.') }}
+                </span>
+            </div>
+
             <!-- Service Selection -->
             <div class="form-group">
                 <label class="form-label" for="service_id">Select Service <span style="color:#dc2626">*</span></label>
-                <select name="service_id" id="service_id" class="form-control {{ $errors->has('service_id') ? 'is-invalid' : '' }}">
+                <select name="service_id" id="service_id" class="form-control {{ $errors->has('service_id') ? 'is-invalid' : '' }}"
+                        data-placeholder-empty="Choose a service package..."
+                        data-placeholder-locked="Select an installation type first...">
                     <option value="">Choose a service package...</option>
                     @foreach ($services as $serv)
-                        <option value="{{ $serv->id }}" {{ (old('service_id', $preselectedServiceId) == $serv->id) ? 'selected' : '' }}>
+                        <option value="{{ $serv->id }}" data-account-type="{{ $serv->account_type }}"
+                            {{ (old('service_id', $preselectedServiceId) == $serv->id) ? 'selected' : '' }}>
                             {{ $serv->service_name }} - ₱{{ number_format($serv->price, 2) }}
                         </option>
                     @endforeach
@@ -201,6 +244,25 @@
                 <span class="field-error {{ $errors->has('service_id') ? 'visible' : '' }}" id="error-service_id">
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                     {{ $errors->first('service_id', 'Please select a service package.') }}
+                </span>
+            </div>
+
+            <!-- Installation site locator (profile only stores barangay + municipality) -->
+            <div class="form-group">
+                <label class="form-label" for="purok_landmark">Purok / Street &amp; Nearby Landmark <span style="color:#dc2626">*</span></label>
+                <input type="text" name="purok_landmark" id="purok_landmark" maxlength="255"
+                       class="form-control {{ $errors->has('purok_landmark') ? 'is-invalid' : '' }}"
+                       value="{{ old('purok_landmark') }}"
+                       placeholder="e.g. Purok 3 Mabini St., beside the barangay chapel">
+                <small style="display:block; margin-top:.35rem; color:#64748b; font-size:.78rem;">
+                    @if ($client->address_barangay || $client->address_municipality)
+                        Your barangay ({{ trim(($client->address_barangay ?: '') . ', ' . ($client->address_municipality ?: ''), ', ') }}) is already on file &mdash;
+                    @endif
+                    add the purok or street and a nearby landmark so our technician can find your place.
+                </small>
+                <span class="field-error {{ $errors->has('purok_landmark') ? 'visible' : '' }}" id="error-purok_landmark">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    {{ $errors->first('purok_landmark', 'Please enter your purok / street and a nearby landmark.') }}
                 </span>
             </div>
 
@@ -449,6 +511,8 @@
         document.querySelectorAll('.field-error.visible, .slots-error-msg.visible').forEach(el => el.classList.remove('visible'));
         const slotsContainer = document.getElementById('slots-container');
         if (slotsContainer) slotsContainer.classList.remove('has-error');
+        const typeGroup = document.getElementById('installation-type-group');
+        if (typeGroup) typeGroup.classList.remove('has-error');
         hideBanner();
     }
 
@@ -477,21 +541,37 @@
         clearAllErrors();
         const errors = [];
 
-        // 1. Service
+        // 1. Installation Type — gates the service list, so it is checked first
+        if (!getInstallationType()) {
+            const typeGroup = document.getElementById('installation-type-group');
+            const typeError = document.getElementById('error-installation_type');
+            if (typeGroup) typeGroup.classList.add('has-error');
+            if (typeError) typeError.classList.add('visible');
+            errors.push('Installation Type: Please select Residential or Business.');
+        }
+
+        // 2. Service (only once a type has unlocked the list)
         const serviceId = document.getElementById('service_id');
-        if (!serviceId || !serviceId.value) {
+        if (getInstallationType() && (!serviceId || !serviceId.value)) {
             setFieldError('service_id', 'error-service_id', 'Please select a service package.');
             errors.push('Service: Please select a service package.');
         }
 
-        // 2. Preferred Date
+        // 3. Purok / Street & Landmark
+        const purok = document.getElementById('purok_landmark');
+        if (!purok || !purok.value.trim()) {
+            setFieldError('purok_landmark', 'error-purok_landmark', 'Please enter your purok / street and a nearby landmark.');
+            errors.push('Purok / Street & Landmark: Please describe your exact location.');
+        }
+
+        // 4. Preferred Date
         const prefDate = document.getElementById('preferred_date');
         if (!prefDate || !prefDate.value) {
             setFieldError('preferred_date', 'error-preferred_date', 'Please select a preferred date.');
             errors.push('Preferred Date: Please select a date.');
         }
 
-        // 3. Time Slot
+        // 5. Time Slot
         const slotSelected = document.querySelector('input[name="preferred_time"]:checked');
         if (!slotSelected) {
             const slotsContainer = document.getElementById('slots-container');
@@ -501,7 +581,7 @@
             errors.push('Time Slot: Please select an available time slot.');
         }
 
-        // 4. Reference Number
+        // 6. Reference Number
         const refNum = document.getElementById('reference_number');
         if (!refNum || !refNum.value.trim()) {
             setFieldError('reference_number', 'error-reference_number', 'Please enter your payment reference/transaction number.');
@@ -511,7 +591,7 @@
             errors.push('Reference Number: Reference number must contain numbers only.');
         }
 
-        // 5. Payment Proof
+        // 7. Payment Proof
         const payProof = document.getElementById('payment_proof');
         if (!payProof || !payProof.files || payProof.files.length === 0) {
             setFieldError('payment_proof', 'error-payment_proof', 'Please upload a vertical screenshot of your GCash receipt.');
@@ -553,6 +633,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         const fieldMap = [
             ['service_id',       'error-service_id'],
+            ['purok_landmark',   'error-purok_landmark'],
             ['preferred_date',   'error-preferred_date'],
             ['reference_number', 'error-reference_number'],
             ['payment_proof',    'error-payment_proof'],
@@ -705,9 +786,77 @@
             if (serviceId) {
                 url.searchParams.set('service_id', serviceId);
             }
+            const chosenType = getInstallationType();
+            if (chosenType) {
+                url.searchParams.set('installation_type', chosenType);
+            }
             window.location.href = url.toString();
         });
+
+        initInstallationType();
     });
+
+    /* ── Installation type gates the service list ── */
+    function getInstallationType() {
+        const picked = document.querySelector('input[name="installation_type"]:checked');
+        return picked ? picked.value : '';
+    }
+
+    function applyServiceFilter() {
+        const select = document.getElementById('service_id');
+        if (!select) return;
+
+        const type = getInstallationType();
+        const placeholder = select.querySelector('option[value=""]');
+        let visibleCount = 0;
+
+        Array.prototype.forEach.call(select.options, function (opt) {
+            if (opt.value === '') return;
+
+            const accountType = opt.dataset.accountType || 'both';
+            const matches = !!type && (accountType === 'both' || accountType === type);
+
+            // `hidden` alone still leaves the option reachable with a keyboard in
+            // some browsers, so disable it as well.
+            opt.hidden = !matches;
+            opt.disabled = !matches;
+            if (matches) visibleCount++;
+        });
+
+        if (placeholder) {
+            placeholder.textContent = type
+                ? (visibleCount ? select.dataset.placeholderEmpty : 'No packages available for this type')
+                : select.dataset.placeholderLocked;
+        }
+
+        // Drop a selection that the new type no longer offers.
+        const current = select.selectedOptions[0];
+        if (current && current.value !== '' && current.disabled) {
+            select.value = '';
+        }
+
+        select.disabled = !type;
+    }
+
+    function initInstallationType() {
+        const group = document.getElementById('installation-type-group');
+        if (!group) return;
+
+        group.addEventListener('change', function (e) {
+            if (e.target.name !== 'installation_type') return;
+
+            group.querySelectorAll('.install-type-card').forEach(function (card) {
+                card.classList.toggle('is-selected', card.contains(e.target));
+            });
+            group.classList.remove('has-error');
+            const err = document.getElementById('error-installation_type');
+            if (err) err.classList.remove('visible');
+
+            applyServiceFilter();
+        });
+
+        applyServiceFilter();
+    }
 
     function updatePaymentInstructions() {
         const pmSelect = document.getElementById('payment_method');

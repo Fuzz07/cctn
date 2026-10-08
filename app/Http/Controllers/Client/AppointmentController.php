@@ -9,8 +9,10 @@ use App\Models\TimeSlot;
 use App\Models\Notification;
 use App\Models\ClientPaymentMethod;
 use App\Rules\PortraitPaymentScreenshot;
+use App\Support\InputRules;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class AppointmentController extends Controller
 {
@@ -32,6 +34,11 @@ class AppointmentController extends Controller
         $preselectedServiceId = $request->get('service_id', 0);
         $selectedDate = $request->get('date', date('Y-m-d', strtotime('+1 day')));
 
+        $selectedInstallationType = $request->get('installation_type', '');
+        if (! in_array($selectedInstallationType, Service::INSTALLATION_TYPES, true)) {
+            $selectedInstallationType = '';
+        }
+
         if (strtotime($selectedDate) < strtotime(date('Y-m-d'))) {
             $selectedDate = date('Y-m-d', strtotime('+1 day'));
         }
@@ -46,6 +53,15 @@ class AppointmentController extends Controller
                 }
             }
         }
+        // Arriving from a "Book this plan" link preselects a service. Infer the
+        // installation type from that plan so the preselection is not cleared.
+        if ($selectedInstallationType === '' && $preselectedServiceId) {
+            $preselected = $services->firstWhere('id', $preselectedServiceId);
+            if ($preselected && in_array($preselected->account_type, Service::INSTALLATION_TYPES, true)) {
+                $selectedInstallationType = $preselected->account_type;
+            }
+        }
+
         $allSlots = TimeSlot::available()->pluck('slot_time')->toArray();
         if (empty($allSlots)) {
             $allSlots = ['08:00:00', '10:00:00', '12:00:00', '14:00:00', '16:00:00', '18:00:00'];
@@ -65,13 +81,15 @@ class AppointmentController extends Controller
 
         return view('client.appointments.book', compact(
             'services', 'allSlots', 'bookedSlots', 'selectedDate', 'preselectedServiceId',
-            'paymentMethods', 'defaultMethod'
+            'paymentMethods', 'defaultMethod', 'selectedInstallationType', 'client'
         ));
     }
 
     public function store(Request $request)
     {
         $request->validate([
+            'installation_type' => ['required', Rule::in(Service::INSTALLATION_TYPES)],
+            'purok_landmark'   => InputRules::address(true, 255),
             'service_id'       => 'required|exists:services,id',
             'preferred_date'   => 'required|date|after_or_equal:today',
             'preferred_time'   => 'required',
@@ -79,6 +97,10 @@ class AppointmentController extends Controller
             'reference_number' => ['required', 'string', 'regex:/^[0-9]+$/', 'max:100'],
             'payment_proof'    => ['required', 'image', 'mimes:jpeg,png,jpg,webp', 'max:4096', new PortraitPaymentScreenshot],
         ], [
+            'installation_type.required' => 'Please select an installation type.',
+            'purok_landmark.required'   => 'Please enter your purok / street and a nearby landmark.',
+            'purok_landmark.regex'      => 'The purok / street and landmark contains characters that are not allowed.',
+            'installation_type.in'       => 'Please select either Residential or Business.',
             'payment_method.in'         => 'GCash is the only available digital payment method.',
             'reference_number.required' => 'Please enter the reference or transaction number from your payment confirmation.',
             'reference_number.regex'    => 'The reference/transaction number must contain numbers only.',
@@ -87,7 +109,24 @@ class AppointmentController extends Controller
             'payment_proof.max'         => 'The payment receipt file must not exceed 4MB.',
         ]);
 
+        // The dropdown is filtered client-side, so confirm the pairing server-side too.
+        $service = Service::find($request->service_id);
+        if ($service && ! $service->availableTo($request->installation_type)) {
+            return back()
+                ->withErrors(['service_id' => 'That package is not available for the selected installation type.'])
+                ->withInput();
+        }
+
         $client = Auth::guard('client')->user();
+
+        $purokLandmark = trim($request->input('purok_landmark', ''));
+        $installationAddress = implode(', ', array_filter([
+            $purokLandmark,
+            $client->address_barangay,
+            $client->address_municipality,
+        ], function ($part) {
+            return trim((string) $part) !== '';
+        }));
 
         $paymentProofPath = null;
         if ($request->hasFile('payment_proof')) {
@@ -105,6 +144,9 @@ class AppointmentController extends Controller
                 $appointment = Appointment::create([
                     'client_id'        => $client->id,
                     'service_id'       => $request->service_id,
+                    'installation_type' => $request->installation_type,
+                    'purok_landmark'   => $purokLandmark,
+                    'installation_address' => $installationAddress,
                     'preferred_date'   => $next['date'],
                     'preferred_time'   => $next['time'],
                     'message'          => $request->input('message', ''),
@@ -132,6 +174,9 @@ class AppointmentController extends Controller
         $appointment = Appointment::create([
             'client_id'        => $client->id,
             'service_id'       => $request->service_id,
+            'installation_type' => $request->installation_type,
+            'purok_landmark'   => $purokLandmark,
+            'installation_address' => $installationAddress,
             'preferred_date'   => $request->preferred_date,
             'preferred_time'   => $request->preferred_time,
             'message'          => $request->input('message', ''),

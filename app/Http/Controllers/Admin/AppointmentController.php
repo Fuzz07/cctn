@@ -14,8 +14,18 @@ class AppointmentController extends Controller
         $filterStatus  = $request->get('status', 'all');
         $filterService = $request->get('service_id', 0);
         $filterDate    = $request->get('date', '');
+        $filterSearch  = trim((string) $request->get('search', ''));
 
         $query = Appointment::with(['client', 'service']);
+
+        if ($filterSearch !== '') {
+            // Match either name part, or the full name as an admin would type it.
+            $query->whereHas('client', function ($q) use ($filterSearch) {
+                $q->where('firstname', 'like', "%{$filterSearch}%")
+                  ->orWhere('lastname', 'like', "%{$filterSearch}%")
+                  ->orWhereRaw("CONCAT(firstname, ' ', lastname) LIKE ?", ["%{$filterSearch}%"]);
+            });
+        }
 
         if ($filterStatus !== 'all') {
             $query->where('status', $filterStatus);
@@ -31,7 +41,8 @@ class AppointmentController extends Controller
             ->orderBy('preferred_time', 'desc')
             ->orderBy('id', 'desc')
             ->simplePaginate(10)
-            ->withQueryString();
+            // keep the active filters, but never carry an open modal across pages
+            ->appends($request->except(['page', 'manage_id']));
 
         $services = Service::orderBy('service_name')->get()->unique('service_name')->values();
 
@@ -44,7 +55,7 @@ class AppointmentController extends Controller
 
         return view('admin.appointments.index', compact(
             'appointments', 'services', 'filterStatus', 'filterService',
-            'filterDate', 'manageAppointment'
+            'filterDate', 'filterSearch', 'manageAppointment'
         ));
     }
 

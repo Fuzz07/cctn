@@ -95,6 +95,17 @@
                     <input type="number" name="price" class="form-control" step="0.01" value="{{ old('price', $editService->price ?? '') }}" required min="0" placeholder="e.g. 2500.00">
                 </div>
                 <div class="form-group">
+                    <label class="form-label">Offered To *</label>
+                    <select name="account_type" class="form-control" required>
+                        @foreach (['both' => 'Residential & Business', 'residential' => 'Residential only', 'business' => 'Business only'] as $value => $label)
+                            <option value="{{ $value }}" {{ old('account_type', $editService->account_type ?? 'both') == $value ? 'selected' : '' }}>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                    <small style="display:block; margin-top:.35rem; color:var(--text-faint); font-size:.78rem;">
+                        Controls which installation type sees this package when booking.
+                    </small>
+                </div>
+                <div class="form-group">
                     <label class="form-label">Status *</label>
                     <select name="status" class="form-control" required>
                         <option value="Active" {{ old('status', $editService->status ?? '') == 'Active' ? 'selected' : '' }}>Active</option>
@@ -127,6 +138,7 @@
                             </div>
                             <div class="service-meta">
                                 ₱{{ number_format($svc->price, 2) }} &middot; ~{{ rtrim(rtrim(number_format($svc->duration_minutes / 60, 2), '0'), '.') }} {{ $svc->duration_minutes == 60 ? 'hour' : 'hours' }}
+                                &middot; {{ ['both' => 'Residential & Business', 'residential' => 'Residential only', 'business' => 'Business only'][$svc->account_type] ?? 'Residential & Business' }}
                             </div>
                             @if($svc->description)
                                 <div class="service-desc">{{ $svc->description }}</div>

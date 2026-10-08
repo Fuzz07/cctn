@@ -42,11 +42,12 @@ class ServiceController extends Controller
             ],
             'duration_hours'   => 'required|numeric|min:0.25',
             'price'            => 'required|numeric|min:0',
+            'account_type'     => ['required', \Illuminate\Validation\Rule::in(['residential', 'business', 'both'])],
         ], [
             'service_name.unique' => 'A service with this name already exists. Please use a different name or edit the existing service.',
         ]);
 
-        $data = $request->only(['service_name', 'description', 'price', 'status']);
+        $data = $request->only(['service_name', 'description', 'price', 'status', 'account_type']);
         $data['duration_minutes'] = (int) round(((float) $validated['duration_hours']) * 60);
 
         if ($id > 0) {

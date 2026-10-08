@@ -9,6 +9,7 @@
     
     .filter-card { background: var(--bg-card); border-radius: 12px; padding: 1.25rem; border: 1px solid var(--border-light); margin-bottom: 1.5rem; display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end; }
     .filter-group { display: flex; flex-direction: column; gap: 0.4rem; min-width: 200px; flex: 1; }
+    .filter-group--search { flex: 1.5; min-width: 240px; }
     .filter-label { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
     .filter-input { padding: 0.6rem 0.85rem; border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem; width: 100%; box-sizing: border-box; }
     .btn-filter { background: #0f172a; color: #fff; padding: 0.65rem 1.25rem; border-radius: 8px; font-weight: 700; font-size: 0.9rem; border: none; cursor: pointer; white-space: nowrap; }
@@ -269,6 +270,11 @@
 @endif
 
 <form action="{{ route('admin.appointments') }}" method="GET" class="filter-card">
+    <div class="filter-group filter-group--search">
+        <label class="filter-label" for="appointment-search">Search Client</label>
+        <input type="search" name="search" id="appointment-search" class="filter-input"
+               value="{{ $filterSearch }}" placeholder="Search by client name...">
+    </div>
     <div class="filter-group">
         <label class="filter-label">Status</label>
         <select name="status" class="filter-input">
@@ -316,6 +322,9 @@
                     <td>
                         <div style="font-weight:700; color:var(--text-dark);">{{ $appt->client->firstname }} {{ $appt->client->lastname }}</div>
                         <div style="font-size:0.8rem; color:var(--text-muted);">{{ $appt->client->contact_no }} &middot; {{ $appt->client->address_barangay }}</div>
+                        @if ($appt->purok_landmark)
+                            <div style="font-size:0.78rem; color:var(--text-faint); margin-top:.15rem;">&#128205; {{ $appt->purok_landmark }}</div>
+                        @endif
                     </td>
                     <td>
                         <div style="font-weight:600; color:var(--text-dark);">{{ $appt->service->service_name }}</div>
@@ -368,7 +377,11 @@
             @empty
                 <tr>
                     <td colspan="6" style="text-align: center; padding: 3rem; color: var(--text-faint);">
-                        No appointments found matching your criteria.
+                        @if ($filterSearch !== '')
+                            No appointments found for &ldquo;{{ $filterSearch }}&rdquo;.
+                        @else
+                            No appointments found matching your criteria.
+                        @endif
                     </td>
                 </tr>
             @endforelse
@@ -407,7 +420,12 @@
                         </div>
                         <div class="detail-item">
                             <span class="detail-label">Address</span>
-                            <span class="detail-value">{{ $manageAppointment->client->address_barangay }}, {{ $manageAppointment->client->address_municipality }}</span>
+                            <span class="detail-value">
+                                @if ($manageAppointment->purok_landmark)
+                                    <strong>{{ $manageAppointment->purok_landmark }}</strong><br>
+                                @endif
+                                {{ $manageAppointment->client->address_barangay }}, {{ $manageAppointment->client->address_municipality }}
+                            </span>
                         </div>
                         <div class="detail-item">
                             <span class="detail-label">Service</span>

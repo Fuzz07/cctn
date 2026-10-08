@@ -10,8 +10,8 @@ class Appointment extends Model
     use HasFactory;
 
     protected $fillable = [
-        'booking_ref', 'is_walkin', 'client_id', 'service_id', 'preferred_date', 'preferred_time',
-        'installation_address', 'message', 'status', 'installation_status', 'payment_status',
+        'booking_ref', 'is_walkin', 'client_id', 'service_id', 'installation_type', 'preferred_date', 'preferred_time',
+        'installation_address', 'purok_landmark', 'message', 'status', 'installation_status', 'payment_status',
         'payment_method', 'amount_paid', 'amount_due', 'change_amount', 'bank_name', 'reference_number',
         'due_date', 'subscription_ends_at', 'payment_date', 'admin_notes', 'proof_of_address', 'valid_id', 'valid_id_type',
         'valid_id_number', 'payment_proof',
