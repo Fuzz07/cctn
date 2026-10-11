@@ -70,6 +70,11 @@ data class ServiceDto(
     val price: Double = 0.0,
     @SerialName("duration_minutes") val durationMinutes: Int? = null,
     val status: String? = null,
+    @SerialName("promo_title") val promoTitle: String? = null,
+    @SerialName("promo_discount_percent") val promoDiscountPercent: Double? = null,
+    @SerialName("promo_discount_amount") val promoDiscountAmount: Double? = null,
+    @SerialName("original_amount") val originalAmount: Double? = null,
+    @SerialName("amount_due") val amountDue: Double? = null,
 )
 
 @Serializable

@@ -17,6 +17,7 @@ class Appointment extends Model
         'booking_ref', 'is_walkin', 'client_id', 'service_id', 'installation_type', 'preferred_date', 'preferred_time',
         'installation_address', 'installation_municipality', 'installation_barangay', 'purok_landmark', 'message', 'status', 'installation_status', 'payment_status',
         'payment_method', 'amount_paid', 'amount_due', 'change_amount', 'bank_name', 'reference_number',
+        'promo_id', 'promo_title', 'promo_description', 'promo_discount_percent', 'promo_discount_amount', 'original_amount',
         'due_date', 'subscription_ends_at', 'payment_date', 'admin_notes', 'proof_of_address', 'valid_id', 'valid_id_type',
         'valid_id_number', 'payment_proof',
     ];
@@ -31,6 +32,9 @@ class Appointment extends Model
         'amount_paid'    => 'decimal:2',
         'amount_due'     => 'decimal:2',
         'change_amount'  => 'decimal:2',
+        'promo_discount_percent' => 'decimal:2',
+        'promo_discount_amount' => 'decimal:2',
+        'original_amount' => 'decimal:2',
     ];
 
     public function client()
@@ -46,6 +50,11 @@ class Appointment extends Model
     public function payment()
     {
         return $this->hasOne(Payment::class);
+    }
+
+    public function promo()
+    {
+        return $this->belongsTo(Promo::class);
     }
 
     public static function hasConflict(string $date, string $time, int $excludeId = 0): bool

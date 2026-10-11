@@ -463,6 +463,15 @@
                             <span class="detail-value">{{ $manageAppointment->service->service_name }} (₱{{ number_format($manageAppointment->service->price, 2) }})</span>
                         </div>
                     </div>
+                    @if($manageAppointment->promo_title)
+                        <div style="margin:-.5rem 0 1rem;padding:.75rem 1rem;border:1px solid #bbf7d0;border-radius:8px;background:#f0fdf4;color:#166534;font-size:.85rem;">
+                            <strong>Promo applied:</strong> {{ $manageAppointment->promo_title }}
+                            ({{ rtrim(rtrim(number_format($manageAppointment->promo_discount_percent, 2), '0'), '.') }}% off) —
+                            ₱{{ number_format($manageAppointment->original_amount, 2) }} less
+                            ₱{{ number_format($manageAppointment->promo_discount_amount, 2) }} =
+                            <strong>₱{{ number_format($manageAppointment->amount_due, 2) }}</strong>
+                        </div>
+                    @endif
                     
                     @if($manageAppointment->message)
                         <div style="background: var(--bg-page); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid var(--border-light);">

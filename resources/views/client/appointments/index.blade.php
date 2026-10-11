@@ -84,6 +84,15 @@
                     <div class="appt-detail">
                         <span class="appt-label">Service Required</span>
                         <span class="appt-value">{{ $appt->service->service_name }}</span>
+                        @if($appt->promo_title)
+                            <span class="appt-value" style="font-size:.85rem;color:#15803d;">
+                                {{ $appt->promo_title }} ({{ rtrim(rtrim(number_format($appt->promo_discount_percent, 2), '0'), '.') }}% off)
+                            </span>
+                            <span style="font-size:.8rem;color:var(--text-muted);">
+                                ₱{{ number_format($appt->original_amount, 2) }} − ₱{{ number_format($appt->promo_discount_amount, 2) }}
+                                = <strong>₱{{ number_format($appt->amount_due, 2) }}</strong>
+                            </span>
+                        @endif
                     </div>
                     <div class="appt-detail">
                         <span class="appt-label">Schedule Date & Time</span>

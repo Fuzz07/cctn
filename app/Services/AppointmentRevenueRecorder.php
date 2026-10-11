@@ -28,11 +28,14 @@ class AppointmentRevenueRecorder
                 return $existing;
             }
 
-            $amount = (float) $appointment->amount_paid > 0
-                ? (float) $appointment->amount_paid
-                : (float) ($appointment->service?->price ?? 0);
+            $hasPromo = filled($appointment->promo_title);
+            $amount = $hasPromo
+                ? (float) $appointment->amount_due
+                : ((float) $appointment->amount_paid > 0
+                    ? (float) $appointment->amount_paid
+                    : (float) ($appointment->service?->price ?? 0));
 
-            if ($amount <= 0) {
+            if ($amount <= 0 && ! $hasPromo) {
                 return null;
             }
 
@@ -52,7 +55,8 @@ class AppointmentRevenueRecorder
                 'total_amount_due' => $amount,
                 'status'           => 'paid',
                 'due_date'         => $paymentDate->toDateString(),
-                'notes'            => 'Automatically created when booking #' . $appointment->id . ' was approved.',
+                'notes'            => 'Automatically created when booking #' . $appointment->id . ' was approved.'
+                    . ($hasPromo ? ' Promo: ' . $appointment->promo_title . ' (' . $appointment->promo_discount_percent . '% off).' : ''),
                 'paid_at'          => $paymentDate,
             ]);
 

@@ -591,10 +591,34 @@ private fun ServiceOption(
                     color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.weight(1f),
                 )
+                if (!service.promoTitle.isNullOrBlank() && (service.promoDiscountPercent ?: 0.0) > 0) {
+                    Column(horizontalAlignment = Alignment.End) {
+                        Text(
+                            text = Formatters.peso(service.amountDue ?: service.price),
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.primary,
+                        )
+                        Text(
+                            text = Formatters.peso(service.originalAmount ?: service.price),
+                            style = MaterialTheme.typography.bodySmall.copy(
+                                textDecoration = androidx.compose.ui.text.style.TextDecoration.LineThrough,
+                            ),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                } else {
+                    Text(
+                        text = Formatters.peso(service.price),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
+            }
+            if (!service.promoTitle.isNullOrBlank() && (service.promoDiscountPercent ?: 0.0) > 0) {
                 Text(
-                    text = Formatters.peso(service.price),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary,
+                    text = "${service.promoTitle} · ${service.promoDiscountPercent?.toInt()}% off",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = Color(0xFF15803D),
                 )
             }
             if (!service.description.isNullOrBlank()) {

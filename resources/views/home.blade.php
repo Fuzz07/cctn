@@ -735,6 +735,13 @@
         gap: 1.75rem;
         align-items: stretch;
     }
+    .bl-promos-section { padding: 2.5rem 0 0; background: var(--bg-card); }
+    .bl-promos-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:1rem; }
+    .bl-promo-card { padding:1.25rem 1.5rem; border:1px solid var(--bl-pink-border); border-radius:16px; background:linear-gradient(135deg, var(--bl-pink-bg), var(--bg-card)); }
+    .bl-promo-discount { display:inline-block; margin-bottom:.55rem; padding:.3rem .65rem; border-radius:99px; background:var(--bl-red); color:#fff; font-size:.75rem; font-weight:800; }
+    .bl-promo-title { margin:0 0 .4rem; color:var(--bl-navy); font-size:1.05rem; font-weight:800; }
+    .bl-promo-description { margin:0 0 .65rem; color:var(--bl-slate); font-size:.88rem; line-height:1.5; }
+    .bl-promo-dates { color:var(--bl-slate); font-size:.75rem; font-weight:700; }
 
     .bl-plan-card {
         background: var(--bg-card);
@@ -1176,6 +1183,28 @@
         </div>
     </div>
 </section>
+
+@if($promos->isNotEmpty())
+<section class="bl-promos-section" aria-labelledby="active-promos-title">
+    <div class="bl-container">
+        <div class="bl-section-label">SPECIAL OFFERS</div>
+        <h2 class="bl-section-title" id="active-promos-title">Active Promos</h2>
+        <p class="bl-section-sub">Book an installation during these dates and enjoy a discount.</p>
+        <div class="bl-promos-grid">
+            @foreach($promos as $promo)
+                <article class="bl-promo-card">
+                    <span class="bl-promo-discount">{{ rtrim(rtrim(number_format($promo->discount_percent, 2), '0'), '.') }}% OFF</span>
+                    <h3 class="bl-promo-title">{{ $promo->title }}</h3>
+                    <p class="bl-promo-description">{{ $promo->description }}</p>
+                    <div class="bl-promo-dates">
+                        {{ $promo->start_date->format('M d, Y') }} – {{ $promo->end_date->format('M d, Y') }}
+                    </div>
+                </article>
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
 
 <!-- ========== PLANS ========== -->
 <section class="bl-plans-section" id="plans">

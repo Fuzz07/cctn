@@ -72,6 +72,14 @@
         .auth-live-date { position: fixed; top: 1.52rem; left: 4.25rem; z-index: 11; color: #ffffff; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.01em; text-shadow: 0 1px 5px rgba(0,0,0,0.65); white-space: nowrap; }
         .auth-form-card { background: var(--bg-card); width: 100%; max-width: 440px; border-radius: 20px; padding: 3rem 2.5rem; box-shadow: 0 25px 60px rgba(0,0,0,0.35); border: 1px solid #e5e7eb; position: relative; z-index: 2; }
         :root[data-theme="dark"] .auth-form-card { border-color: var(--border); }
+        .auth-main-card { width: min(100%, 1050px); display: grid; grid-template-columns: 1fr 1fr; overflow: hidden; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 22px; box-shadow: 0 25px 60px rgba(0,0,0,0.35); }
+        .auth-right > .auth-logo { display: none; }
+        .auth-left { display: flex; align-items: center; padding: clamp(2rem, 5vw, 4rem); background: #0f172a; }
+        .auth-left-content { padding: 0; }
+        .auth-left-content .auth-title { font-size: clamp(2.2rem, 4vw, 3rem); }
+        .auth-form-card { background: transparent; max-width: none; padding: 2rem clamp(1.5rem, 4vw, 3rem); box-shadow: none; border: 0; border-radius: 0; }
+        .auth-right { max-width: none; padding: 1.5rem 0; background: var(--bg-card); }
+        .auth-right .auth-copyright { color: var(--text-muted); text-shadow: none; }
         .auth-avatar { width: 64px; height: 64px; background: #dc2626; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; margin: 0 auto 1.5rem; }
         .auth-form-title { text-align: center; font-family: var(--font-heading); font-size: 1.6rem; font-weight: 800; color: var(--text-dark); margin-bottom: 0.5rem; letter-spacing: -0.02em; }
         .auth-form-sub { text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem; }
@@ -368,37 +376,29 @@
 
         @media (max-width: 768px) {
             .auth-layout { justify-content: flex-start; padding: 4.5rem 1rem 2.5rem; }
-            .auth-form-card { padding: 2rem 1.5rem; }
+            .auth-main-card { width: min(100%, 520px); display: flex; flex-direction: column; }
+            .auth-left { display: block; padding: 1.5rem 1.5rem 1rem; }
+            .auth-left-content .auth-logo { justify-content: flex-start; margin-bottom: 1rem; }
+            .auth-left-content .auth-title { font-size: 1.65rem; margin-bottom: 0.65rem; }
+            .auth-left-content .auth-subtitle { font-size: 0.88rem; margin-bottom: 1rem; }
+            .auth-left-content .auth-badges { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.45rem; max-width: none; }
+            .auth-left-content .auth-badge { gap: 0.4rem; padding: 0.55rem; border-radius: 8px; }
+            .auth-left-content .auth-badge-icon { width: 16px; height: 16px; flex-shrink: 0; }
+            .auth-left-content .auth-badge-text strong { font-size: 0.68rem; }
+            .auth-left-content .auth-badge-text span { font-size: 0.62rem; }
+            .auth-right { padding: 0 1.5rem 1rem; }
+            .auth-form-card { padding: 1.25rem 0; }
             .terms-modal-actions { width: 100%; justify-content: flex-end; }
         }
         @media (max-width: 430px) {
             .auth-live-date { font-size: 0.68rem; left: 4rem; top: 1.58rem; }
+            .auth-left-content .auth-badges { grid-template-columns: 1fr; }
+            .auth-left-content .auth-badge { padding: 0.5rem 0.65rem; }
         }
-        @media (min-width: 900px) {
-            .auth-layout {
-                flex-direction: row;
-                justify-content: center;
-                gap: clamp(3rem, 8vw, 8rem);
-                padding: 4rem clamp(2rem, 6vw, 6rem);
-            }
-            .auth-left {
-                display: flex;
-                flex: 1;
-                justify-content: flex-end;
-                max-width: 560px;
-            }
-            .auth-left-content { padding: 0; }
-            .auth-title { font-size: clamp(2.4rem, 4vw, 3.5rem); }
-            .auth-right {
-                width: min(100%, 480px);
-                max-width: 480px;
-                flex-shrink: 0;
-            }
-            .auth-right > .auth-logo { display: none; }
-            .auth-form-card {
-                max-width: none;
-                padding: 2.5rem 2.25rem;
-            }
+        @media (max-width: 360px) {
+            .auth-left { padding: 1.25rem 1rem 0.75rem; }
+            .auth-right { padding: 0 1rem 0.75rem; }
+            .auth-form-card { padding: 1rem 0; }
         }
     </style>
 </head>
@@ -409,6 +409,7 @@
 </button>
 <time class="auth-live-date" id="authLiveDate" aria-live="polite"></time>
 <div class="auth-layout">
+    <div class="auth-main-card">
     <div class="auth-left">
         <div class="auth-left-content">
             <a href="{{ route('home') }}" class="auth-logo">
@@ -557,6 +558,7 @@
         <div class="auth-copyright">
             &copy; {{ date('Y') }} BCTVI Bantayan. All rights reserved.
         </div>
+    </div>
     </div>
 </div>
 

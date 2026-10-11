@@ -7,6 +7,7 @@ use App\Http\Resources\AppointmentResource;
 use App\Models\Appointment;
 use App\Models\Notification;
 use App\Models\TimeSlot;
+use App\Services\PromoPricing;
 use App\Rules\PortraitPaymentScreenshot;
 use Illuminate\Http\Request;
 
@@ -93,6 +94,8 @@ class AppointmentController extends Controller
         }
 
         $paymentMethod = 'GCash';
+        $service = \App\Models\Service::findOrFail($request->service_id);
+        $promoPricing = app(PromoPricing::class)->snapshot((float) $service->price);
 
         // Check conflict → auto-reschedule
         if (Appointment::hasConflict($request->preferred_date, $request->preferred_time)) {
@@ -115,6 +118,7 @@ class AppointmentController extends Controller
                 'payment_method'   => $paymentMethod,
                 'reference_number' => $request->input('reference_number'),
                 'payment_proof'    => $paymentProofPath,
+                ...$promoPricing,
             ]);
 
             Notification::create([
@@ -142,6 +146,7 @@ class AppointmentController extends Controller
             'payment_method'   => $paymentMethod,
             'reference_number' => $request->input('reference_number'),
             'payment_proof'    => $paymentProofPath,
+            ...$promoPricing,
         ]);
 
         Notification::create([

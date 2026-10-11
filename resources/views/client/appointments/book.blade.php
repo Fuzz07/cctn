@@ -241,11 +241,27 @@
                     <option value="">Choose a service package...</option>
                     @foreach ($services as $serv)
                         <option value="{{ $serv->id }}" data-account-type="{{ $serv->account_type }}"
+                            data-price="{{ $serv->price }}"
                             {{ (old('service_id', $preselectedServiceId) == $serv->id) ? 'selected' : '' }}>
                             {{ $serv->service_name }} - ₱{{ number_format($serv->price, 2) }}
                         </option>
                     @endforeach
                 </select>
+                <div id="booking-price-quote" style="display:none;margin-top:.75rem;padding:.85rem 1rem;border:1px solid #fecaca;border-radius:10px;background:#fff7f7;color:#1e293b;">
+                    <div id="booking-promo-label" style="font-weight:800;color:#b91c1c;margin-bottom:.35rem;"></div>
+                    <div style="display:flex;justify-content:space-between;gap:.75rem;font-size:.85rem;">
+                        <span>Regular price</span><span id="booking-original-price"></span>
+                    </div>
+                    <div id="booking-discount-row" style="display:flex;justify-content:space-between;gap:.75rem;font-size:.85rem;color:#15803d;">
+                        <span>Promo discount</span><span id="booking-discount-price"></span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;gap:.75rem;margin-top:.35rem;padding-top:.4rem;border-top:1px solid #fecaca;font-weight:800;">
+                        <span>Amount to send</span><span id="booking-final-price"></span>
+                    </div>
+                    @if($activePromos->isNotEmpty())
+                        <small style="display:block;margin-top:.45rem;color:#64748b;">{{ $selectedPromo['promo_title'] ? 'The best currently active promo is applied automatically.' : 'An active promo will be applied automatically when you book.' }}</small>
+                    @endif
+                </div>
                 <span class="field-error {{ $errors->has('service_id') ? 'visible' : '' }}" id="error-service_id">
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                     {{ $errors->first('service_id', 'Please select a service package.') }}
@@ -831,6 +847,33 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         updatePaymentInstructions();
+        const serviceSelect = document.getElementById('service_id');
+        const priceQuote = document.getElementById('booking-price-quote');
+        const activePromoPercent = @json((float) $selectedPromo['promo_discount_percent']);
+        const activePromoTitle = @json($selectedPromo['promo_title']);
+        const activePromoCount = @json($activePromos->count());
+
+        function updateBookingPriceQuote() {
+            const option = serviceSelect.options[serviceSelect.selectedIndex];
+            const original = option && option.dataset.price ? Number(option.dataset.price) : 0;
+            if (!original || original <= 0) {
+                priceQuote.style.display = 'none';
+                return;
+            }
+
+            const discount = Math.round(original * activePromoPercent) / 100;
+            document.getElementById('booking-promo-label').textContent =
+                activePromoTitle ? activePromoTitle + ' (' + activePromoPercent + '% off)' :
+                    (activePromoCount ? 'Active promo will be applied at booking' : 'Installation amount');
+            document.getElementById('booking-original-price').textContent = '₱' + original.toFixed(2);
+            document.getElementById('booking-discount-price').textContent = '-₱' + discount.toFixed(2);
+            document.getElementById('booking-discount-row').style.display = activePromoPercent ? 'flex' : 'none';
+            document.getElementById('booking-final-price').textContent = '₱' + (original - discount).toFixed(2);
+            priceQuote.style.display = 'block';
+        }
+
+        serviceSelect.addEventListener('change', updateBookingPriceQuote);
+        updateBookingPriceQuote();
         
         document.getElementById('preferred_date').addEventListener('change', function() {
             let selectedDate = this.value;

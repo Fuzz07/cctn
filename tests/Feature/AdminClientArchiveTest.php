@@ -120,6 +120,38 @@ class AdminClientArchiveTest extends TestCase
             ->assertDontSee('target="_blank"');
     }
 
+    public function test_client_list_shows_six_customers_and_places_the_rest_on_the_next_page()
+    {
+        $this->client->update([
+            'account_status' => 'Active',
+            'subscription_status' => 'active',
+        ]);
+
+        for ($index = 1; $index <= 6; $index++) {
+            Client::create([
+                'firstname' => 'Page',
+                'lastname' => 'Customer ' . $index,
+                'email' => "page-customer-{$index}@example.com",
+                'username' => "pagecustomer{$index}",
+                'password' => Hash::make('password123'),
+                'account_status' => 'Active',
+                'subscription_status' => 'active',
+            ]);
+        }
+
+        $this->actingAs($this->admin, 'admin')
+            ->get(route('admin.clients'))
+            ->assertOk()
+            ->assertViewHas('clients', fn ($clients) => $clients->count() === 6 && $clients->perPage() === 6)
+            ->assertSee('rel="next"', false)
+            ->assertDontSee('Juan Dela Cruz');
+
+        $this->get(route('admin.clients', ['page' => 2]))
+            ->assertOk()
+            ->assertViewHas('clients', fn ($clients) => $clients->count() === 1 && $clients->perPage() === 6)
+            ->assertSee('Juan Dela Cruz');
+    }
+
     public function test_admin_can_restore_an_archived_client()
     {
         $this->client->update(['archived_at' => now()]);

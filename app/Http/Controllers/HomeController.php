@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Service;
+use App\Models\Promo;
 use App\Rules\Recaptcha;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,12 +13,13 @@ class HomeController extends Controller
     public function index()
     {
         $services = Service::active()->where('price', '>', 0)->orderBy('price', 'asc')->get()->unique('service_name')->values();
+        $promos = Promo::active()->orderByDesc('discount_percent')->orderBy('start_date')->get();
 
         // Get troubleshooting service ID dynamically
         $troubleService = Service::where('service_name', 'like', '%Troubleshooting%')->first();
         $troubleId = $troubleService ? $troubleService->id : 16;
 
-        return view('home', compact('services', 'troubleId'));
+        return view('home', compact('services', 'troubleId', 'promos'));
     }
 
     /**

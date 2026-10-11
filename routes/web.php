@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\AppointmentController as AdminAppointment;
 use App\Http\Controllers\Admin\ClientController as AdminClient;
 use App\Http\Controllers\Admin\ServiceController as AdminService;
+use App\Http\Controllers\Admin\PromoController as AdminPromo;
 use App\Http\Controllers\Admin\BillingController as AdminBilling;
 use App\Http\Controllers\Admin\SalesController as AdminSales;
 use App\Http\Controllers\Admin\ScheduleController as AdminSchedule;
@@ -135,6 +136,10 @@ Route::prefix('admin')->group(function () {
         Route::get('/services', [AdminService::class, 'index'])->name('admin.services');
         Route::post('/services', [AdminService::class, 'store'])->name('admin.services.store');
         Route::delete('/services/{id}', [AdminService::class, 'destroy'])->name('admin.services.destroy');
+
+        Route::get('/promos', [AdminPromo::class, 'index'])->name('admin.promos');
+        Route::post('/promos', [AdminPromo::class, 'store'])->name('admin.promos.store');
+        Route::delete('/promos/{promo}', [AdminPromo::class, 'destroy'])->name('admin.promos.destroy');
 
         Route::get('/billing', [AdminBilling::class, 'index'])->name('admin.billing');
         Route::post('/billing/create', [AdminBilling::class, 'createBilling'])->name('admin.billing.create');

@@ -219,7 +219,14 @@
                         @endif
                     </td>
                     <td>{{ $payment->billing->statement_period ?? date('F Y') }}</td>
-                    <td style="text-align:right;">₱{{ number_format($payment->amount_paid, 2) }}</td>
+                    <td style="text-align:right;">
+                        @if($payment->appointment?->promo_title)
+                            <div style="font-size:.78rem;color:var(--text-muted);text-decoration:line-through;">₱{{ number_format($payment->appointment->original_amount, 2) }}</div>
+                            <div style="font-size:.78rem;color:#15803d;">{{ $payment->appointment->promo_title }} ({{ rtrim(rtrim(number_format($payment->appointment->promo_discount_percent, 2), '0'), '.') }}% off)</div>
+                            <div style="font-size:.78rem;color:#15803d;">Discount: −₱{{ number_format($payment->appointment->promo_discount_amount, 2) }}</div>
+                        @endif
+                        <strong>₱{{ number_format($payment->amount_paid, 2) }}</strong>
+                    </td>
                 </tr>
             </tbody>
         </table>

@@ -128,7 +128,7 @@ class ClientController extends Controller
         TableSort::apply($query, $sort);
 
         $clients = $query->orderBy('id', 'desc')
-            ->simplePaginate(7)
+            ->simplePaginate(6)
             ->withQueryString();
 
         $archivedCount = Client::inactive()->count();

@@ -8,7 +8,9 @@ use App\Models\Service;
 use App\Models\TimeSlot;
 use App\Models\Notification;
 use App\Models\ClientPaymentMethod;
+use App\Models\Promo;
 use App\Rules\PortraitPaymentScreenshot;
+use App\Services\PromoPricing;
 use App\Support\InputRules;
 use App\Support\ServiceArea;
 use Illuminate\Http\Request;
@@ -79,10 +81,12 @@ class AppointmentController extends Controller
             ->orderBy('is_default', 'desc')
             ->get();
         $defaultMethod = $paymentMethods->firstWhere('is_default', true) ?? $paymentMethods->first();
+        $activePromos = Promo::active()->orderByDesc('discount_percent')->get();
+        $selectedPromo = app(PromoPricing::class)->snapshot((float) ($services->firstWhere('id', $preselectedServiceId)?->price ?? 0));
 
         return view('client.appointments.book', compact(
             'services', 'allSlots', 'bookedSlots', 'selectedDate', 'preselectedServiceId',
-            'paymentMethods', 'defaultMethod', 'selectedInstallationType', 'client'
+            'paymentMethods', 'defaultMethod', 'selectedInstallationType', 'client', 'activePromos', 'selectedPromo'
         ));
     }
 
@@ -131,6 +135,7 @@ class AppointmentController extends Controller
         }
 
         $client = Auth::guard('client')->user();
+        $promoPricing = app(PromoPricing::class)->snapshot((float) ($service?->price ?? 0));
 
         $purokLandmark = trim($request->input('purok_landmark', ''));
         $installationMunicipality = trim($request->input('installation_municipality', ''));
@@ -173,6 +178,7 @@ class AppointmentController extends Controller
                     'payment_method'   => $paymentMethod,
                     'reference_number' => $request->input('reference_number'),
                     'payment_proof'    => $paymentProofPath,
+                    ...$promoPricing,
                 ]));
 
                 // Create notification for admin
@@ -205,6 +211,7 @@ class AppointmentController extends Controller
             'payment_method'   => $paymentMethod,
             'reference_number' => $request->input('reference_number'),
             'payment_proof'    => $paymentProofPath,
+            ...$promoPricing,
         ]));
 
         // Create notification for admin

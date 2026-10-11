@@ -394,7 +394,9 @@
             ?? ('APT-' . now()->format('Ymd') . '-' . str_pad($appointment->id, 5, '0', STR_PAD_LEFT));
         $amountPaid = $payment
             ? (float) $payment->amount_paid
-            : ((float) ($appointment->amount_paid > 0 ? $appointment->amount_paid : ($service->price ?? 0)));
+            : ((float) ($appointment->promo_title
+                ? $appointment->amount_due
+                : ($appointment->amount_paid > 0 ? $appointment->amount_paid : ($service->price ?? 0))));
     @endphp
 
     <div class="receipt-card">
@@ -485,6 +487,11 @@
                         @endif
                     </td>
                     <td style="text-align:right;font-weight:800;color:var(--text-dark);">
+                        @if($appointment->promo_title)
+                            <div style="font-size:.78rem;color:var(--text-muted);text-decoration:line-through;">₱{{ number_format($appointment->original_amount, 2) }}</div>
+                            <div style="font-size:.78rem;color:#15803d;">{{ $appointment->promo_title }} ({{ rtrim(rtrim(number_format($appointment->promo_discount_percent, 2), '0'), '.') }}% off)</div>
+                            <div style="font-size:.78rem;color:#15803d;">Discount: −₱{{ number_format($appointment->promo_discount_amount, 2) }}</div>
+                        @endif
                         ₱{{ number_format($amountPaid, 2) }}
                     </td>
                 </tr>
