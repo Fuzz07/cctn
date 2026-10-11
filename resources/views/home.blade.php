@@ -852,6 +852,20 @@
         font-weight: 600;
     }
 
+    .bl-plan-promo {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        margin: 0 0 1rem;
+        padding: 0.4rem 0.7rem;
+        border: 1px solid #bbf7d0;
+        border-radius: 8px;
+        background: #f0fdf4;
+        color: #166534;
+        font-size: 0.78rem;
+        font-weight: 700;
+    }
+
     .bl-plan-speed {
         font-size: 0.92rem;
         color: var(--bl-slate);
@@ -1221,6 +1235,7 @@
         <div class="bl-plans-grid">
             @forelse ($services as $index => $service)
                 @php
+                    $servicePromo = $promos->first();
                     $displayName = preg_replace('/\s*Plan\s*$/i', '', $service->service_name);
                     preg_match('/(\d+)\s*Mbps/i', $service->service_name . ' ' . ($service->speed ?? ''), $m);
                     $mbps = $m[1] ?? null;
@@ -1248,6 +1263,12 @@
                         <span class="bl-plan-amount">₱{{ number_format($service->price, 0) }}</span>
                         <span class="bl-plan-period">/month</span>
                     </div>
+                    @if ($servicePromo)
+                        <div class="bl-plan-promo">
+                            {{ rtrim(rtrim(number_format($servicePromo->discount_percent, 2), '0'), '.') }}% off installation booking
+                            · {{ $servicePromo->title }}
+                        </div>
+                    @endif
                     
                     <div class="bl-plan-speed">
                         {{ $mbps ? "Up to {$mbps} Mbps" : ($service->speed ?? 'High-Speed Fiber') }}

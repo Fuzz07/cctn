@@ -74,6 +74,7 @@ class PromoBookingTest extends TestCase
             ->assertOk()
             ->assertSee('Active Promos')
             ->assertSee('Christmas Promo')
+            ->assertSee('20% off installation booking')
             ->assertDontSee('Expired Offer');
 
         Sanctum::actingAs($this->client);
@@ -85,6 +86,17 @@ class PromoBookingTest extends TestCase
                 'promo_discount_amount' => 200,
                 'amount_due' => 800,
             ]);
+    }
+
+    public function test_active_promo_is_shown_with_customer_service_packages(): void
+    {
+        $this->promo();
+
+        $this->actingAs($this->client, 'client')
+            ->get(route('client.book'))
+            ->assertOk()
+            ->assertSee('20% off installation booking with Christmas Promo')
+            ->assertSee('booking-price-quote');
     }
 
     public function test_admin_can_create_a_promo_with_percentage_and_active_dates(): void

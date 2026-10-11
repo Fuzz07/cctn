@@ -247,6 +247,11 @@
                         </option>
                     @endforeach
                 </select>
+                @if($activePromos->isNotEmpty())
+                    <small style="display:block;margin-top:.45rem;color:#15803d;font-weight:700;">
+                        {{ rtrim(rtrim(number_format($selectedPromo['promo_discount_percent'], 2), '0'), '.') }}% off installation booking with {{ $selectedPromo['promo_title'] }}. The discount is shown in the price quote after selecting a package.
+                    </small>
+                @endif
                 <div id="booking-price-quote" style="display:none;margin-top:.75rem;padding:.85rem 1rem;border:1px solid #fecaca;border-radius:10px;background:#fff7f7;color:#1e293b;">
                     <div id="booking-promo-label" style="font-weight:800;color:#b91c1c;margin-bottom:.35rem;"></div>
                     <div style="display:flex;justify-content:space-between;gap:.75rem;font-size:.85rem;">
