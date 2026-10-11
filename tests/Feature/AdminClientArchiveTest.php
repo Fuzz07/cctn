@@ -103,6 +103,23 @@ class AdminClientArchiveTest extends TestCase
             ->assertSee('Inactive');
     }
 
+    public function test_admin_can_open_proof_of_billing_from_the_client_list_modal()
+    {
+        $this->client->update([
+            'account_status' => 'Active',
+            'subscription_status' => 'active',
+            'proof_of_billing' => 'uploads/proof_of_billing/proof.jpg',
+        ]);
+
+        $this->actingAs($this->admin, 'admin')
+            ->get(route('admin.clients'))
+            ->assertOk()
+            ->assertSee('id="proof-modal"', false)
+            ->assertSee('class="proof-modal-trigger"', false)
+            ->assertSee('data-proof-url="' . route('admin.clients.proof-of-billing', $this->client->id) . '"', false)
+            ->assertDontSee('target="_blank"');
+    }
+
     public function test_admin_can_restore_an_archived_client()
     {
         $this->client->update(['archived_at' => now()]);

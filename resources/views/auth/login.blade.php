@@ -374,6 +374,32 @@
         @media (max-width: 430px) {
             .auth-live-date { font-size: 0.68rem; left: 4rem; top: 1.58rem; }
         }
+        @media (min-width: 900px) {
+            .auth-layout {
+                flex-direction: row;
+                justify-content: center;
+                gap: clamp(3rem, 8vw, 8rem);
+                padding: 4rem clamp(2rem, 6vw, 6rem);
+            }
+            .auth-left {
+                display: flex;
+                flex: 1;
+                justify-content: flex-end;
+                max-width: 560px;
+            }
+            .auth-left-content { padding: 0; }
+            .auth-title { font-size: clamp(2.4rem, 4vw, 3.5rem); }
+            .auth-right {
+                width: min(100%, 480px);
+                max-width: 480px;
+                flex-shrink: 0;
+            }
+            .auth-right > .auth-logo { display: none; }
+            .auth-form-card {
+                max-width: none;
+                padding: 2.5rem 2.25rem;
+            }
+        }
     </style>
 </head>
 <body>

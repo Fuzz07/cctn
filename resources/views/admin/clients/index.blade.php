@@ -50,6 +50,16 @@
     .unsubscribe-modal__button--confirm { border: none; background: #dc2626; color: #fff; }
     @keyframes unsubscribe-modal-in { from { opacity: 0; transform: scale(0.88) translateY(12px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 
+    .proof-modal { display: none; position: fixed; inset: 0; z-index: 100001; align-items: center; justify-content: center; padding: 1rem; }
+    .proof-modal.is-open { display: flex; }
+    .proof-modal__backdrop { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.72); }
+    .proof-modal__dialog { position: relative; width: min(100%, 1000px); max-height: 92vh; padding: 1rem; background: #fff; border-radius: 14px; box-shadow: 0 20px 60px rgba(0,0,0,0.25); }
+    .proof-modal__header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 0.75rem; }
+    .proof-modal__title { margin: 0; color: #0f172a; font-size: 1rem; font-weight: 700; }
+    .proof-modal__close { border: 1px solid #e2e8f0; border-radius: 8px; background: #f8fafc; color: #334155; padding: 0.45rem 0.75rem; font-weight: 700; cursor: pointer; }
+    .proof-modal__image { display: block; max-width: 100%; max-height: calc(92vh - 5rem); margin: 0 auto; object-fit: contain; }
+    .proof-modal__error { display: none; margin: 1rem 0; color: #b91c1c; text-align: center; }
+
 </style>
 @endpush
 
@@ -110,9 +120,9 @@
                     </td>
                     <td>
                         @if ($client->proof_of_billing)
-                            <a href="{{ route('admin.clients.proof-of-billing', $client->id) }}" target="_blank" rel="noopener" style="display:inline-block; background:#f0fdf4; color:#15803d; border:1px solid #bbf7d0; padding:0.3rem 0.75rem; border-radius:50px; font-size:0.75rem; font-weight:700; text-decoration:none;">
+                            <button type="button" class="proof-modal-trigger" data-proof-url="{{ route('admin.clients.proof-of-billing', $client->id) }}" data-client-name="{{ $client->firstname }} {{ $client->lastname }}" style="display:inline-block; background:#f0fdf4; color:#15803d; border:1px solid #bbf7d0; padding:0.3rem 0.75rem; border-radius:50px; font-size:0.75rem; font-weight:700; cursor:pointer;">
                                 View Proof of Billing
-                            </a>
+                            </button>
                         @else
                             <span style="display:inline-block; background:#fef9c3; color:#a16207; border:1px solid #fde68a; padding:0.3rem 0.75rem; border-radius:50px; font-size:0.75rem; font-weight:700;">
                                 Not Submitted
@@ -181,6 +191,18 @@
     'label' => 'Clients pagination',
 ])
 
+<div id="proof-modal" class="proof-modal" role="dialog" aria-modal="true" aria-labelledby="proof-modal-title" aria-hidden="true">
+    <div class="proof-modal__backdrop" data-proof-modal-close></div>
+    <div class="proof-modal__dialog">
+        <div class="proof-modal__header">
+            <h2 id="proof-modal-title" class="proof-modal__title">Proof of Billing</h2>
+            <button type="button" class="proof-modal__close" data-proof-modal-close aria-label="Close proof of billing">Close</button>
+        </div>
+        <img id="proof-modal-image" class="proof-modal__image" alt="Proof of billing">
+        <p id="proof-modal-error" class="proof-modal__error" role="alert">The proof of billing image could not be loaded.</p>
+    </div>
+</div>
+
 <div id="unsubscribe-modal" class="unsubscribe-modal" role="dialog" aria-modal="true" aria-labelledby="unsubscribe-modal-title" aria-describedby="unsubscribe-modal-message" aria-hidden="true">
     <div class="unsubscribe-modal__backdrop" onclick="hideUnsubscribeModal()"></div>
     <div class="unsubscribe-modal__dialog">
@@ -201,6 +223,49 @@
 <script>
 var unsubscribeForm = null;
 var unsubscribeTrigger = null;
+var proofModalTrigger = null;
+
+function showProofModal(trigger) {
+    proofModalTrigger = trigger;
+    var modal = document.getElementById('proof-modal');
+    var image = document.getElementById('proof-modal-image');
+    var error = document.getElementById('proof-modal-error');
+
+    document.getElementById('proof-modal-title').textContent =
+        'Proof of Billing - ' + trigger.dataset.clientName;
+    error.style.display = 'none';
+    image.style.display = 'block';
+    image.src = trigger.dataset.proofUrl;
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    modal.querySelector('.proof-modal__close').focus();
+}
+
+function hideProofModal() {
+    var modal = document.getElementById('proof-modal');
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.getElementById('proof-modal-image').removeAttribute('src');
+    document.body.style.overflow = '';
+    if (proofModalTrigger) proofModalTrigger.focus();
+    proofModalTrigger = null;
+}
+
+document.querySelectorAll('.proof-modal-trigger').forEach(function (trigger) {
+    trigger.addEventListener('click', function () {
+        showProofModal(trigger);
+    });
+});
+
+document.querySelectorAll('[data-proof-modal-close]').forEach(function (element) {
+    element.addEventListener('click', hideProofModal);
+});
+
+document.getElementById('proof-modal-image').addEventListener('error', function () {
+    this.style.display = 'none';
+    document.getElementById('proof-modal-error').style.display = 'block';
+});
 
 function showUnsubscribeModal(form) {
     unsubscribeForm = form;
@@ -236,6 +301,9 @@ function confirmUnsubscribe() {
 }
 
 document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && document.getElementById('proof-modal').classList.contains('is-open')) {
+        hideProofModal();
+    }
     if (event.key === 'Escape' && document.getElementById('unsubscribe-modal').classList.contains('is-open')) {
         hideUnsubscribeModal();
     }
