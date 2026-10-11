@@ -168,6 +168,7 @@ class PromoBookingTest extends TestCase
         $this->get(route('admin.sales.receipt', $payment))
             ->assertOk()
             ->assertSee('Anniversary Promo')
+            ->assertSee('Promo Paid — Anniversary Promo')
             ->assertSee('Discount: −₱250.00')
             ->assertSee('₱750.00');
     }

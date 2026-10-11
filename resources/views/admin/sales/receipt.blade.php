@@ -197,6 +197,9 @@
                 <p>Payment Method: <strong>{{ strtoupper($payment->payment_method ?? 'CASH') }}</strong></p>
                 <p>Reference #: {{ $payment->reference_number ?? 'N/A' }}</p>
                 <p>Processed By: {{ $payment->received_by ?? 'Admin Staff' }}</p>
+                @if($payment->appointment?->promo_title)
+                    <p>Remarks: <strong style="color:#15803d;">Promo Paid — {{ $payment->appointment->promo_title }}</strong></p>
+                @endif
             </div>
         </div>
 
